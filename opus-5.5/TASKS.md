@@ -1,0 +1,81 @@
+# 遗留任务（2026-09-29 交接）
+
+给接手的 code agent：先读完这一页再动手。和用户用中文沟通，有进展、发现或改计划时及时告诉用户。
+
+## 先读
+
+- 流程：`.claude/skills/new-film/SKILL.md`（每部片都照它做：分镜先批、镜头逐个做、交付物、出片）
+- 引擎和工具：`factory/README.md`
+- 04 的设计：`docs/specs/2026-09-29-04-year-review-design.md`（§10 配乐，§12 验收，§14 顺序）
+- 03 是做完的样板：`03-perfume/`（配乐 `js/score.js`，配音 `assets/vo/`）
+- 所有命令都在 `opus-5.5/` 下执行，Node 22。`npm test` 现在是 225/225，`node factory/check.mjs 04-year-review` 全绿
+
+## 规矩（用户定的，一直有效）
+
+- **先问再做：**
+  - 调 Bedrock 之前（`factory/story.mjs` 不带 `--dry`）先问用户，并确认 AWS profile、region 和模型（默认 `us.anthropic.claude-opus-5-5`）
+  - 调 Kokoro 之前（`factory/vo.mjs` 不带 `--dry`，包括 `--audition`）先问用户
+  - 任何 IAM 改动先问用户；自动模式拦下过 `iam create-role`，不要绕过去
+  - 推送由用户自己做（新仓库要过 Code Defender，`git-defender request-repo` 已经办过）；永远不要 `--no-verify`
+- **云 GPU：** 批量出片走 `factory/cloud.mjs`（`up`、`run`、`render <film>`、`pull`、`down`），`AWS_PROFILE=global_ruiliang AWS_REGION=us-east-1`。
+  - 资源名 `opus55-render`、tag `Project=opus55-showcase` 保持不变（用户确认过，不跟着仓库改名）
+  - 用完马上 `down`；不碰账号里别的实例；不动账号级的 SSM associations 和 patch baseline（它们会在开机 5 分钟内打补丁重启，`up` 已经会等）
+  - 本地只做预览、`sheet.mjs`、`snap.mjs`
+- **交付物：** 每部片每个产品正好三条，都带配音：16x9 15 s zh `none`、16x9 15 s en `launch`、1x1 6 s zh `1111`。不主动提别的规格
+- **引擎扩展自带测试**；改了引擎，别的片子的成片会算过期（指纹变了），只有内容也变了才重出
+- `factory/Video-Factory.md` 和仓库根目录的 `README.md` 是用户的文件，要改先问
+- commit 信息结尾：`Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`
+- 英文里的双十一：画面写 "Double 11"，配音稿写 "Double Eleven"，不用 "11.11"
+
+## 云端环境要注意
+
+- 云端大概率没有 `global_ruiliang` 的凭证，也没有并排检出的 `aws-is-how`（Kokoro 的 `tts.sh` 在那里，`KOKORO_TTS` 可以指到别处）。第 6–8 步需要这些，先问用户怎么办，可能要回用户的 Mac 上做
+- `03-perfume/test/preview.test.mjs` 会起 Chromium，要 GPU 和网络；没有 GPU 时它失败不代表代码坏了，先看报错
+- `*/out/`、`.scratch/` 不入库：渲染出的视频和样张云端都没有
+
+## 1. 04 年度购物报告（进行中，已在 master 上）
+
+已完成：引擎（say.js、story.js、story.mjs、grade.js）、数据、脚手架、六个镜头都用实物模型做完并过了样张。2026-09-29 用户定下：
+
+- 计数镜头的字幕不带数字，只给上面的大数字作注释（`captions.count` 没有占位符）
+- 营地灯、耳机照实物建模（`js/models/product.js` 的 `lantern`、`headset`）；耳机在 gamer 深色背景上偏暗，用户说不用再调
+- 英文推荐卡用单数名（`catalog.js` 的 `one`）
+
+接下来按 spec §14：
+
+- [ ] **第 5 步 配乐和音效：** 照 spec §10 写 `04-year-review/js/score.js`，在 `film.js` 里导出 `score`（参照 03）。D 大调 80 bpm；months 的柱子音高按每月订单数映到五声音阶，每位顾客的旋律不同。补 §12 的测试：每个命中点落在 0.75 s 网格上，同一混音渲两次样本一致。响度 −14 LUFS、真峰值 ≤ −1 dBTP（引擎已经管）
+- [ ] **第 6 步 Bedrock 写文案：** 先 `node factory/story.mjs 04-year-review --dry` 给用户看提示词；用户同意并确认 profile、region、模型后再真调用；四份 `stories/*.json` 的 `model` 不能再是 `draft`，每份最多三次尝试，写完给用户审
+- [ ] **第 7 步 配音：** 先问用户，再 `node factory/vo.mjs 04-year-review --audition` 试听（候选在 `copy.js` 的 `AUDITION`，现在暂用 03 的 `zm_yunxi` / `bf_emma`），用户选定声音后生成
+- [ ] **第 8 步 出片和收尾：** 云 GPU 上 `run node factory/check.mjs 04-year-review` → `render 04-year-review`（manifest 12 条）→ `pull` → `down`；本地 `factory/gallery.html?film=04-year-review` 给用户审；写中文的 `04-year-review/README.md`；仓库根 `README.md` 的索引表加一行（先问）；factory README 和 skill 的 Level 3 说明核对一遍
+- [ ] 每做完一步就提交，告诉用户可以推送（本地的 `opus55-04-year-review` 分支和 master 的 cb798a2 一样，已经没用了）
+
+## 2. 05–10：`factory/Video-Factory.md` 的场景 B–H 里剩下的
+
+每部都走 new-film skill：先出分镜给用户批，批了再写代码。编号（字母顺序）：
+
+| 编号 | 场景 | 要新加的引擎能力（各自带测试） |
+|---|---|---|
+| 05 | C 奶茶广告 | `bake.js`（在 `setup` 里定步长模拟，按 t 查表）；把 03 的玻璃 shader 挪成共用模块 |
+| 06 | D 丝巾 | `bake.js`（布料） |
+| 07 | E 开箱 ASMR | `audio.js` 加拟音（胶带、纸） |
+| 08 | F 一个包裹的旅程 | `bake.js`（机器人群路径） |
+| 09 | G 双11 零点大屏 | 见下面的地图问题 |
+| 10 | H 直播间秒杀 motion pack | — |
+
+**G 的地图还没定：** 用户提过用自然资源部的标准地图（带审图号）再叠城市灯光和弧线。按 2025 年的规定，标准地图只有原样使用才不用送审，叠加、缩放、裁剪、改色都算修改，要重新送审（只能法人申请，约 20 个工作日）。我建议 G 改用不画地理边界的"订单星座"布局。做 09 的分镜之前要用户拍板。
+
+## 3. 03 香水的遗留
+
+- [ ] 用户还没听过 03 的 Kokoro 配音片段（`03-perfume/assets/vo/`），只做过响度测量。提醒用户听，有读错的就改词重生成那一条（生成前先问）
+- [ ] 最终评审暂缓的小问题，都没修：
+  - M1：本地 dev server（`factory/lib/serve.mjs`）会被构造的 URL 弄崩，有开放重定向，读文件出错没处理
+  - M3：`vo.mjs` 中途中断，新片段可能配上旧片段的时长和响度；"缩短这几句"的提示可能点名一句重生成就放得下的
+  - M4：`--workers`、`--fps` 没校验，`--workers abc` 直接崩而不是打印用法
+  - M5：Node 端的文字宽度估计会偏窄一点（如 "Shop now"），文档却说它偏宽；浏览器里的溢出检查仍然兜底
+  - M6：字体下载失败时，报错不一定点名是哪款字体
+  - M7：`check.mjs` 的可重复性和音频只查一个 SKU
+  - M8：`index.json` 列出文件夹里所有视频，不只是这份 manifest 的；中断后会过期
+  - M9：渲染中 Ctrl-C 会在临时目录留下音频文件
+  - M10：音频开头没有淡入（测过是设计好的第一个音，不是爆音）
+  - M11：字体 CDN 链接只锁到大版本 5
+- 04 加了 `grade.js` 之后，03 的成片按指纹算过期；03 的像素没变，内容不变就不用重出
