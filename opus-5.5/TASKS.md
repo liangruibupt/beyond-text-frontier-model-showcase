@@ -21,6 +21,13 @@
   - 资源名 `opus55-render`、tag `Project=opus55-showcase` 保持不变（用户确认过，不跟着仓库改名）
   - 用完马上 `down`；不碰账号里别的实例；不动账号级的 SSM associations 和 patch baseline（它们会在开机 5 分钟内打补丁重启，`up` 已经会等）
   - 本地只做预览、`sheet.mjs`、`snap.mjs`
+  - 实例的细节看 `factory/README.md` 的「cloud.mjs：云端出片」，要点：
+    - 机型按 `g6.4xlarge`（L4）→ `g5.4xlarge`（A10G）的顺序试，L4 常缺容量；两种都过了 `check.mjs`。账号的按需 G 类配额是 864 vCPU
+    - AMI 是最新的 Deep Learning Base OSS Nvidia Driver GPU AMI（Ubuntu 24.04，带 ffmpeg 6.1；22.04 的 ffmpeg 4.4 没有 `alimiter latency=`）
+    - IAM 角色和同名实例配置文件 `opus55-render`（只挂 `AmazonSSMManagedInstanceCore`）用户已经建好；安全组（无入站规则，走 SSM）和 ssh 密钥 `~/.ssh/opus55-render` 由 `up` 自动建
+    - 本机要有 AWS CLI 和 Session Manager 插件；Linux 上的 Chromium 必须用 `--use-angle=vulkan`（`lib/browser.mjs` 已经处理）
+    - 实例自带关机期限（`up --hours`，默认 3 小时，到点关机即终止），忘了 `down` 也不会一直计费；现在账号里没有这个项目的实例
+    - 03 的 12 条在 g5.4xlarge 上用 6 个 worker 出了 5.2 分钟，瓶颈在 CPU（PNG 和 x264）；经 SSM 拉回约 0.8 MB/s，167 MB 要 3.5 分钟
 - **交付物：** 每部片每个产品正好三条，都带配音：16x9 15 s zh `none`、16x9 15 s en `launch`、1x1 6 s zh `1111`。不主动提别的规格
 - **引擎扩展自带测试**；改了引擎，别的片子的成片会算过期（指纹变了），只有内容也变了才重出
 - `factory/Video-Factory.md` 和仓库根目录的 `README.md` 是用户的文件，要改先问
