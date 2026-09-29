@@ -8,10 +8,10 @@
 
 ## 准备
 
-所有命令都在 `opus55-showcase/` 下执行。下文的 `<film>` 指成片目录名，如 `03-perfume`。
+所有命令都在 `opus-5.5/` 下执行。下文的 `<film>` 指成片目录名，如 `03-perfume`。
 
 ```bash
-cd opus55-showcase
+cd opus-5.5
 npm install                       # playwright 1.57.0；three 0.170.0 只给 Node 测试用
 npx playwright install chromium   # 本机已缓存 Chromium build 1200 时可跳过
 brew install ffmpeg               # render.mjs、vo.mjs 要用 ffmpeg 和 ffprobe
@@ -48,7 +48,7 @@ npm run serve
 # 打开 http://127.0.0.1:8765/<film>/        例：http://127.0.0.1:8765/03-perfume/
 ```
 
-`npm run serve` 起的是 `factory/lib/serve.mjs`：根目录是 `opus55-showcase/`，只监听 127.0.0.1，支持 Range 请求（画廊里的视频可以拖动进度）。
+`npm run serve` 起的是 `factory/lib/serve.mjs`：根目录是 `opus-5.5/`，只监听 127.0.0.1，支持 Range 请求（画廊里的视频可以拖动进度）。
 
 页面下方是播放器：每条轴一个下拉框，还有播放 / 暂停、带镜头名的时间轴、「声音」开关（成片有 `score` 时才显示）和「HQ」开关。选择会写回网址，刷新或把网址发给别人都能打开同一个变体。
 
@@ -159,7 +159,7 @@ node factory/vo.mjs <film-dir> [--audition] [--force] [--dry] [--out dir]
 - 比时段（`max`）长的句子提速重念一次，最多 1.15 倍。还放不下就报出这一句，以状态码 1 结束，这时要改短文案。
 - `--dry`：只列出要生成的句子，不调 Kokoro。`--force`：全部重新生成。
 - `--audition`：用 `film.audition = { 语言: [音色…] }` 里的每个候选音色，把同一段话（该语言默认变体的全部台词）各念一遍，写到 `<film>/out/audition/<语言>_<音色>.mp3`（`--out` 只对试听有效），挑好后写进成片的默认音色。
-- Kokoro 走 [aws-is-how](https://github.com/liangruibupt/aws-is-how) 仓库里的 `ai-ml/aigc/audio_models/Kokoro/tts.sh`（默认找和本仓库并排检出的 `../aws-is-how`；Lambda `kokoro-tts:live`，us-east-1），可以用环境变量 `KOKORO_TTS`、`REGION`、`FUNC` 改。Lambda 按「音色-秒」给输出文件起名，同一音色同时念两句会互相覆盖，所以同一音色的句子排队念，不同音色的并行。
+- Kokoro 走 [aws-is-how](https://github.com/liangruibupt/aws-is-how) 仓库里的 `ai-ml/aigc/audio_models/Kokoro/tts.sh`（默认找和本仓库并排检出的 aws-is-how，从 `opus-5.5/` 看是 `../../aws-is-how`；Lambda `kokoro-tts:live`，us-east-1），可以用环境变量 `KOKORO_TTS`、`REGION`、`FUNC` 改。Lambda 按「音色-秒」给输出文件起名，同一音色同时念两句会互相覆盖，所以同一音色的句子排队念，不同音色的并行。
 - 成片没有 `voLines` 时，打印 `<film> has no voLines: nothing to do` 并以状态码 0 退出。
 
 ### render.mjs：批量出片

@@ -57,7 +57,7 @@
 ES Module 需要经 HTTP 打开（`file://` 不行）：
 
 ```bash
-cd opus55-showcase
+cd opus-5.5
 npm install          # 只有批量出片和测试要用
 npm run serve
 # 浏览器打开 http://127.0.0.1:8765/03-perfume/

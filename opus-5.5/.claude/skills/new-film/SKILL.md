@@ -1,6 +1,6 @@
 ---
 name: new-film
-description: Turn a storyline prompt into a new product film on the shared factory engine in opus55-showcase/factory — storyboard for approval, scaffold NN-name/, build and review shots one at a time in every aspect ratio and language, then voice-over, batch render and gallery review. Use when the user asks for a new film, product video, ad or video template in this showcase.
+description: Turn a storyline prompt into a new product film on the shared factory engine in opus-5.5/factory — storyboard for approval, scaffold NN-name/, build and review shots one at a time in every aspect ratio and language, then voice-over, batch render and gallery review. Use when the user asks for a new film, product video, ad or video template in this showcase.
 ---
 
 # new-film
@@ -9,7 +9,7 @@ This skill turns a storyline into a film directory `NN-name/` that plugs into th
 
 **The contract is [`factory/README.md`](../../../factory/README.md). Read it in full before writing any code.** It lists every field the engine reads, the exact command flags, and a minimal working film (`99-demo`, under 新片起步) to copy. The finished example is `03-perfume/`.
 
-Run every command from `opus55-showcase/`. Node 22 is required. Rendering needs Playwright's Chromium on a real GPU and ffmpeg on PATH.
+Run every command from `opus-5.5/`. Node 22 is required. Rendering needs Playwright's Chromium on a real GPU and ffmpeg on PATH.
 
 ## Ground rules
 
@@ -107,7 +107,7 @@ When all shots are in, run `node factory/check.mjs NN-name`. Pay particular atte
   node factory/vo.mjs NN-name --dry        # the lines that will be generated
   node factory/vo.mjs NN-name              # generate NN-name/assets/vo/ (committed)
   ```
-  `--audition` and generation call the deployed Kokoro Lambda through `ai-ml/aigc/audio_models/Kokoro/tts.sh` in the aws-is-how repo (by default a checkout next to this one, `../aws-is-how`; `KOKORO_TTS` overrides it), so they need AWS credentials. **Ask the user before running them.** `--dry` makes no calls.
+  `--audition` and generation call the deployed Kokoro Lambda through `ai-ml/aigc/audio_models/Kokoro/tts.sh` in the aws-is-how repo (by default a checkout next to this repo, `../../aws-is-how` from `opus-5.5/`; `KOKORO_TTS` overrides it), so they need AWS credentials. **Ask the user before running them.** `--dry` makes no calls.
   - A line that doesn't fit its slot even at 1.15× speed must be shortened in the copy.
   - A Kokoro misreading is fixed by rewording that line and regenerating.
 

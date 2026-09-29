@@ -14,7 +14,7 @@ import { expandJobs } from './engine/variant.js';
 import { fresh } from './engine/audio.js';
 
 export const VO_LUFS = -20, VO_PEAK = -6, MAX_RATE = 1.15;
-const TTS = process.env.KOKORO_TTS ?? path.resolve(ROOT, '../aws-is-how/ai-ml/aigc/audio_models/Kokoro/tts.sh');
+const TTS = process.env.KOKORO_TTS ?? path.resolve(ROOT, '../../aws-is-how/ai-ml/aigc/audio_models/Kokoro/tts.sh');
 const TRIM = 'silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.05,areverse,silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.08,areverse';   // 前留 50 ms、后留 80 ms
 // 语音的峰值比响度高 16–20 dB（爆破音）；这里先限到比 VO_LUFS 高 14 dB，成片的总限幅器就几乎不用再压语音，配乐也不会跟着一个个字起伏
 const LIMIT = `alimiter=limit=${Math.pow(10, VO_PEAK / 20).toFixed(4)}:level=false:latency=true`;

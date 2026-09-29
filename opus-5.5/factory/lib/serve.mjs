@@ -1,4 +1,4 @@
-// serve.mjs — 静态文件服务，根目录为 opus55-showcase/（这样 ../factory/ 的导入能解析）；支持 Range，画廊里的视频可以拖动
+// serve.mjs — 静态文件服务，根目录为 opus-5.5/（这样 ../factory/ 的导入能解析）；支持 Range，画廊里的视频可以拖动
 // 命令行：node factory/lib/serve.mjs [端口]
 import http from 'node:http';
 import fs from 'node:fs';
