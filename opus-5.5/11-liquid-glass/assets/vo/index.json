@@ -1,0 +1,290 @@
+{
+  "en_15_end_1111": {
+    "text": "Double Eleven: just one dollar.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.799,
+    "lufs": -20
+  },
+  "en_15_end_dawn_launch": {
+    "text": "New from Liuguang: Dawn.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.612,
+    "lufs": -20
+  },
+  "en_15_end_dawn_none": {
+    "text": "Liuguang Dawn. Let your screen flow.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.108,
+    "lufs": -20
+  },
+  "en_15_end_iris_launch": {
+    "text": "New from Liuguang: Iris.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.709,
+    "lufs": -20
+  },
+  "en_15_end_iris_none": {
+    "text": "Liuguang Iris. Let your screen flow.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.221,
+    "lufs": -20
+  },
+  "en_15_end_mint_launch": {
+    "text": "New from Liuguang: Mint.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.722,
+    "lufs": -20
+  },
+  "en_15_end_mint_none": {
+    "text": "Liuguang Mint. Let your screen flow.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.216,
+    "lufs": -20
+  },
+  "en_15_flow": {
+    "text": "Every drop of light, in motion.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.814,
+    "lufs": -20
+  },
+  "en_15_hero": {
+    "text": "Liquid glass, for your screen.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.671,
+    "lufs": -20
+  },
+  "en_6_one_dawn_1111": {
+    "text": "Liuguang Dawn, Double Eleven, just one dollar.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.714,
+    "lufs": -20
+  },
+  "en_6_one_dawn_launch": {
+    "text": "New from Liuguang: Dawn. Out now.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.112,
+    "lufs": -20
+  },
+  "en_6_one_dawn_none": {
+    "text": "Liuguang Dawn: glass that flows.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.176,
+    "lufs": -20
+  },
+  "en_6_one_iris_1111": {
+    "text": "Liuguang Iris, Double Eleven, just one dollar.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.8,
+    "lufs": -20
+  },
+  "en_6_one_iris_launch": {
+    "text": "New from Liuguang: Iris. Out now.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.149,
+    "lufs": -20
+  },
+  "en_6_one_iris_none": {
+    "text": "Liuguang Iris: glass that flows.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.201,
+    "lufs": -20
+  },
+  "en_6_one_mint_1111": {
+    "text": "Liuguang Mint, Double Eleven, just one dollar.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.635,
+    "lufs": -20
+  },
+  "en_6_one_mint_launch": {
+    "text": "New from Liuguang: Mint. Out now.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.105,
+    "lufs": -20
+  },
+  "en_6_one_mint_none": {
+    "text": "Liuguang Mint: glass that flows.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.132,
+    "lufs": -20
+  },
+  "zh_15_end_1111": {
+    "text": "双十一，到手六元。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.394,
+    "lufs": -20
+  },
+  "zh_15_end_dawn_launch": {
+    "text": "琉光新主题，晨桃上线。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2,
+    "lufs": -20
+  },
+  "zh_15_end_dawn_none": {
+    "text": "琉光晨桃，让屏幕流动起来。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.155,
+    "lufs": -20
+  },
+  "zh_15_end_iris_launch": {
+    "text": "琉光新主题，鸢尾上线。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.938,
+    "lufs": -20
+  },
+  "zh_15_end_iris_none": {
+    "text": "琉光鸢尾，让屏幕流动起来。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.013,
+    "lufs": -20
+  },
+  "zh_15_end_mint_launch": {
+    "text": "琉光新主题，薄荷上线。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.934,
+    "lufs": -20
+  },
+  "zh_15_end_mint_none": {
+    "text": "琉光薄荷，让屏幕流动起来。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.083,
+    "lufs": -20
+  },
+  "zh_15_flow": {
+    "text": "每一滴光，都会流动。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.471,
+    "lufs": -20
+  },
+  "zh_15_hero": {
+    "text": "琉光，液态玻璃主题。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.643,
+    "lufs": -20
+  },
+  "zh_6_one_dawn_1111": {
+    "text": "琉光晨桃，双十一到手六元。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.08,
+    "lufs": -20
+  },
+  "zh_6_one_dawn_launch": {
+    "text": "琉光新主题，晨桃，现已上线。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.369,
+    "lufs": -20
+  },
+  "zh_6_one_dawn_none": {
+    "text": "琉光晨桃，会流动的玻璃。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.912,
+    "lufs": -20
+  },
+  "zh_6_one_iris_1111": {
+    "text": "琉光鸢尾，双十一到手六元。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.913,
+    "lufs": -20
+  },
+  "zh_6_one_iris_launch": {
+    "text": "琉光新主题，鸢尾，现已上线。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.226,
+    "lufs": -20
+  },
+  "zh_6_one_iris_none": {
+    "text": "琉光鸢尾，会流动的玻璃。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.757,
+    "lufs": -20
+  },
+  "zh_6_one_mint_1111": {
+    "text": "琉光薄荷，双十一到手六元。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.026,
+    "lufs": -20
+  },
+  "zh_6_one_mint_launch": {
+    "text": "琉光新主题，薄荷，现已上线。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.241,
+    "lufs": -20
+  },
+  "zh_6_one_mint_none": {
+    "text": "琉光薄荷，会流动的玻璃。",
+    "voice": "zm_yunxi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.833,
+    "lufs": -20
+  }
+}
