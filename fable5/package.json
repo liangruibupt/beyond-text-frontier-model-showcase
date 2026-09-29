@@ -1,0 +1,8 @@
+{
+  "name": "fable5-solar-system-showcase",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "test": "node --test test/asset.test.cjs"
+  }
+}

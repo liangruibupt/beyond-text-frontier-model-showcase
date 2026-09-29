@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#202421">
+  <title>清明上河图 · 一卷入宋</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="assets/lucide.min.js"></script>
+  <script defer src="assets/tiles.js"></script>
+  <script defer src="assets/actors.js"></script>
+  <script defer src="characters.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <main class="gallery">
+    <header class="topbar">
+      <div class="identity">
+        <span class="seal" aria-hidden="true">入宋</span>
+        <div>
+          <h1>清明上河图</h1>
+          <p>张择端 <span>北宋 · 绢本设色</span></p>
+        </div>
+      </div>
+      <nav class="chapters" aria-label="长卷景段">
+        <button data-scene="country"><span class="chapter-number">01</span>郊野春风</button>
+        <button data-scene="river"><span class="chapter-number">02</span>汴河行舟</button>
+        <button data-scene="bridge" aria-current="true"><span class="chapter-number">03</span>虹桥人家</button>
+        <button data-scene="gate"><span class="chapter-number">04</span>城门往来</button>
+        <button data-scene="market"><span class="chapter-number">05</span>街市烟火</button>
+      </nav>
+      <button id="fullscreen" class="icon-button" aria-label="进入全屏" data-tip="全屏">
+        <i data-lucide="maximize"></i>
+      </button>
+    </header>
+
+    <section class="stage" aria-label="动态清明上河图">
+      <canvas id="painting" role="img" tabindex="0" aria-label="清明上河图动态长卷：人物行走摆臂，树枝随风摇曳，水面泛起涟漪。可用左右方向键平移，加减号缩放。"></canvas>
+      <div class="scene-caption" aria-hidden="true"><span id="scene-index">第三景</span><span id="scene-title">虹桥人家</span></div>
+      <div id="loading" class="loading" role="status"><span class="loading-line"></span><span id="loading-text">正在展卷</span><button id="retry" hidden>重新加载</button></div>
+      <div class="stage-tools">
+        <button id="zoom-out" class="icon-button" aria-label="缩小" data-tip="缩小"><i data-lucide="minus"></i></button>
+        <output id="zoom-label" aria-label="放大倍数">1.0×</output>
+        <button id="zoom-in" class="icon-button" aria-label="放大" data-tip="放大"><i data-lucide="plus"></i></button>
+        <span class="tool-divider"></span>
+        <button id="reset" class="icon-button" aria-label="复位画面" data-tip="复位"><i data-lucide="scan"></i></button>
+      </div>
+    </section>
+
+    <footer class="console">
+      <div class="playback-row">
+        <div class="playback">
+          <button id="play" class="play-button icon-button" aria-label="暂停动画" data-tip="暂停"><i data-lucide="pause"></i></button>
+          <div class="live-state"><span id="live-dot"></span><span id="play-state">画卷正生息</span></div>
+          <button id="tour" class="tour-button" aria-pressed="false"><i data-lucide="move-horizontal"></i><span>展卷</span></button>
+        </div>
+        <div class="motion-controls">
+          <label class="switch-label"><span>人物</span><input id="people" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
+          <label class="switch-label"><span>水纹</span><input id="water" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
+          <label class="wind-control" for="wind"><i data-lucide="wind" aria-hidden="true"></i><span>风力</span><input id="wind" type="range" min="0" max="100" value="55"><output id="wind-value">55</output></label>
+          <label class="pace-control"><span class="sr-only">动画速度</span><select id="pace" aria-label="动画速度"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label>
+        </div>
+        <div class="view-controls">
+          <button id="original" aria-pressed="false"><i data-lucide="image"></i><span>原画</span></button>
+          <button id="snapshot" class="icon-button" aria-label="保存当前画面" data-tip="保存画面"><i data-lucide="camera"></i></button>
+        </div>
+      </div>
+      <div class="scroll-track">
+        <span class="scroll-end">卷尾</span>
+        <div id="navigator" class="navigator">
+          <img src="assets/overview.jpg" alt="" draggable="false">
+          <div id="view-window" class="view-window" aria-hidden="true"><span></span><span></span></div>
+          <input id="position" type="range" min="0" max="25609" value="13350" step="1" aria-label="长卷位置">
+        </div>
+        <span class="scroll-end">卷首</span>
+      </div>
+      <div class="provenance">
+        <span>故宫博物院藏 <span class="provenance-divider">/</span> 原作局部动态演绎</span>
+        <a href="https://commons.wikimedia.org/wiki/File:Alongtheriver_QingMing.jpg" target="_blank" rel="noreferrer">图像来源 · 公共领域<i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
+      </div>
+    </footer>
+    <div id="notice" class="notice" role="status" hidden></div>
+  </main>
+</body>
+</html>

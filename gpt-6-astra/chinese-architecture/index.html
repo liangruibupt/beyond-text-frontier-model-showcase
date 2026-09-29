@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中国古建筑 · 三维形制与结构演变</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700;900&family=Noto+Sans+SC:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="title-block">
+    <div class="seal" aria-hidden="true">营造</div>
+    <div>
+      <h1>中国古建筑结构演变</h1>
+      <p>唐宋辽金元明 · 六座木构 <em>Chinese timber halls, 857–1427</em></p>
+    </div>
+  </div>
+  <nav class="dynasties" id="dynastyNav" aria-label="朝代"></nav>
+  <div class="controls">
+    <div class="ctl-group">
+      <button id="btnBuild" title="逐层构建"><i data-lucide="play"></i><span>构建</span></button>
+      <button id="btnExplode" class="secondary" title="拆解 / 复原"><i data-lucide="layers-3"></i><span>拆解</span></button>
+      <button id="btnEvo" class="secondary" title="六朝演变对比"><i data-lucide="columns-3"></i><span>演变</span></button>
+      <button id="btnTour" class="secondary" title="自动导览"><i data-lucide="route"></i><span>导览</span></button>
+    </div>
+    <div class="ctl-group section-options">
+      <label title="高对比、加粗线条，适合教室投影"><input type="checkbox" id="chkProjector"> 投影</label>
+      <label title="将侧脚与生起放大三倍以便观察"><input type="checkbox" id="chkExaggerate"> 夸大侧脚</label>
+      <label title="六座建筑用同一比例显示，便于比较体量"><input type="checkbox" id="chkSameScale"> 等比</label>
+    </div>
+  </div>
+</header>
+<main>
+  <section id="stage" aria-label="建筑视图">
+    <div id="exterior"></div>
+    <svg id="section" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="建筑横断面"></svg>
+    <div class="view-switch" role="group" aria-label="建筑视图模式">
+      <button data-view="exterior" aria-pressed="true"><i data-lucide="box"></i>三维外观</button>
+      <button data-view="section" aria-pressed="false"><i data-lucide="panels-top-left"></i>结构剖面</button>
+    </div>
+    <div id="modelNote">形制参考模型 · 非测绘复原</div>
+    <div id="exteriorTools">
+      <select id="modelLight" aria-label="建筑光照"><option value="daylight">自然日光</option><option value="raking">侧光观察</option></select>
+      <button id="modelFront" class="view-tool" title="正立面" aria-label="正立面"><i data-lucide="square"></i></button>
+      <button id="modelReset" class="view-tool" title="复位视角" aria-label="复位视角"><i data-lucide="focus"></i></button>
+      <button id="modelRotate" class="view-tool" title="自动旋转" aria-label="自动旋转" aria-pressed="false"><i data-lucide="rotate-3d"></i></button>
+      <button id="modelPhoto" class="view-tool" title="保存三维画面" aria-label="保存三维画面"><i data-lucide="camera"></i></button>
+    </div>
+    <div id="legend" aria-label="构件类别筛选"></div>
+    <div id="hint">滚轮缩放 · 拖动平移 · 点击构件看说明 · 双击放大细节</div>
+    <div id="tip" role="tooltip"></div>
+    <div id="scaleBar"><div id="scaleLine"></div><span id="scaleLabel">5 m</span></div>
+    <button id="btnFs" class="secondary" title="全屏" aria-label="全屏"><i data-lucide="maximize"></i></button>
+    <div id="inset" title="正立面示意 · 点击查看门窗棂花">
+      <svg id="elev" xmlns="http://www.w3.org/2000/svg"></svg>
+      <span id="insetCap">正立面示意 · 点击看门窗棂花</span>
+    </div>
+    <div id="lensWrap" hidden><svg id="lensSvg" xmlns="http://www.w3.org/2000/svg"></svg></div>
+    <div id="lensBar" hidden>
+      <span id="lensTitle"></span>
+      <div id="lensTabs"></div>
+      <button id="lensClose" class="secondary">✕ 退出细节 (Esc)</button>
+    </div>
+    <div id="lensNote" hidden></div>
+    <div id="tourBar" hidden>
+      <div id="tourText"></div>
+      <span id="tourPos"></span>
+      <button id="tourPrev" class="secondary">‹ 上一步</button>
+      <button id="tourNext">下一步 ›</button>
+      <button id="tourExit" class="secondary">退出</button>
+    </div>
+    <div id="evo" hidden>
+      <header><h2>六朝演变 <em>What changed from Tang to Ming</em></h2><button id="evoClose" class="secondary">✕ 关闭 (V)</button></header>
+      <p class="lead">六座建筑的正立面按同一比例排列。下方数值由剖面模型直接算出，均为示意近似值（约）。点击卡片切换到该建筑。</p>
+      <div id="evoCards"></div>
+      <div id="evoTrends"></div>
+    </div>
+    <div id="stageBar">
+      <div id="stageChips"></div>
+      <div id="stageCaption"></div>
+    </div>
+  </section>
+  <aside id="panel" aria-label="说明">
+    <div id="bDyn"></div>
+    <h2 id="bName"></h2>
+    <p id="bMeta"></p>
+    <div id="bMetrics"></div>
+    <div id="panelBody"></div>
+  </aside>
+</main>
+<footer>
+  <div class="keys">
+    <span><kbd>1</kbd>–<kbd>6</kbd> 切换朝代</span><span><kbd>B</kbd> 构建</span><span><kbd>←</kbd><kbd>→</kbd> 逐层</span><span><kbd>E</kbd> 拆解</span><span><kbd>L</kbd> 细节</span><span><kbd>V</kbd> 演变</span><span><kbd>T</kbd> 导览</span><span><kbd>F</kbd> 全屏</span><span><kbd>0</kbd> 复位</span><span><kbd>Esc</kbd> 退出</span>
+  </div>
+  <div class="src">示意剖面 · 按实测比例简化 · 参考：梁思成《图像中国建筑史》、潘谷西《中国建筑史》、《营造法式》、《工程做法则例》及各殿修缮工程报告</div>
+</footer>
+<script src="data.js"></script>
+<script src="glossary.js"></script>
+<script src="geometry.js"></script>
+<script src="render.js"></script>
+<script src="assets/lucide.min.js"></script>
+<script src="assets/three-bundle.js"></script>
+<script src="realistic-model.js"></script>
+<script src="realistic.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

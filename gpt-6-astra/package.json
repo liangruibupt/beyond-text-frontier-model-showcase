@@ -1,0 +1,9 @@
+{
+  "name": "gpt-6-astra-multimodal-showcase",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "test": "npm test --prefix chinese-architecture && node --test qingming-scroll/test/*.test.cjs",
+    "build:architecture": "npm run build:vendor --prefix chinese-architecture"
+  }
+}

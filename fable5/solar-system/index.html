@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Solar System — Orbits in Motion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #06080f;
+    --panel: rgba(13, 18, 33, 0.78);
+    --line: rgba(255, 255, 255, 0.09);
+    --text: #e9edf7;
+    --dim: #9aa6c0;
+    --accent: #ffb454;
+    --accent-soft: rgba(255, 180, 84, 0.16);
+    --blue: #7ec8ff;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: 'Atkinson Hyperlegible', 'Trebuchet MS', sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(1100px 700px at 78% -12%, rgba(80, 48, 140, 0.32), transparent 62%),
+      radial-gradient(900px 650px at -8% 95%, rgba(18, 90, 110, 0.26), transparent 60%),
+      var(--bg);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    padding: 16px 22px 12px;
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(6px);
+  }
+
+  .title-block h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 800;
+    font-size: clamp(17px, 2.4vw, 24px);
+    letter-spacing: 0.02em;
+    background: linear-gradient(92deg, #ffd9a0 0%, var(--accent) 45%, #ff8e6e 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .title-block p {
+    margin-top: 3px;
+    font-size: 13px;
+    color: var(--dim);
+  }
+  .title-block p strong { color: var(--blue); font-weight: 700; }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+  }
+
+  .ctl-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+
+  button {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    background: var(--accent-soft);
+    border: 1px solid rgba(255, 180, 84, 0.4);
+    border-radius: 999px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+  button:hover { background: rgba(255, 180, 84, 0.3); box-shadow: 0 0 14px rgba(255, 180, 84, 0.25); }
+  button.secondary { background: transparent; border-color: var(--line); }
+  button.secondary:hover { border-color: var(--dim); box-shadow: none; }
+
+  .ctl-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--dim);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .ctl-group input[type="checkbox"] {
+    accent-color: var(--accent);
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 130px;
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), #ff8e6e);
+    outline: none;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid var(--accent);
+    box-shadow: 0 0 8px rgba(255, 180, 84, 0.6);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid var(--accent);
+  }
+
+  #speedReadout {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 86px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #clock {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--blue);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  #clock span { color: var(--dim); font-family: 'Atkinson Hyperlegible', sans-serif; font-weight: 400; }
+
+  /* ---------- Main layout ---------- */
+  main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 16px;
+    padding: 16px 22px 10px;
+    min-height: 0;
+  }
+
+  #stage {
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    min-height: 480px;
+    background: radial-gradient(ellipse at center, rgba(20, 26, 48, 0.45), rgba(4, 6, 12, 0.7));
+  }
+  #space { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+  .scale-note {
+    position: absolute;
+    left: 14px;
+    bottom: 12px;
+    font-size: 12px;
+    color: var(--dim);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 6px 10px;
+    pointer-events: none;
+    max-width: 75%;
+  }
+  .scale-note b { color: var(--accent); }
+
+  /* ---------- Info panel ---------- */
+  aside {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+    backdrop-filter: blur(8px);
+  }
+
+  .planet-chip {
+    align-self: flex-start;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid rgba(255, 180, 84, 0.35);
+    border-radius: 999px;
+    padding: 4px 12px;
+  }
+
+  #pName {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1.15;
+  }
+
+  #pFact {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--text);
+    background: rgba(126, 200, 255, 0.07);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 12px;
+  }
+  #pFact::before { content: '★ '; color: var(--blue); }
+
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 9px 13px;
+    background: rgba(10, 14, 26, 0.8);
+    font-size: 13.5px;
+  }
+  .stat .k { color: var(--dim); white-space: nowrap; }
+  .stat .v { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  .kepler {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--dim);
+    border-top: 1px dashed var(--line);
+    padding-top: 12px;
+  }
+  .kepler b { color: var(--accent); }
+
+  /* ---------- Footer ---------- */
+  footer {
+    padding: 8px 22px 14px;
+    font-size: 12px;
+    color: var(--dim);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+  }
+  footer kbd {
+    font-family: inherit;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 11px;
+  }
+
+  #fsBtn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 5;
+    padding: 5px 11px;
+    font-size: 15px;
+  }
+  #stage:fullscreen { border-radius: 0; border: none; }
+  #stage.strip-on .scale-note { bottom: calc(min(110px, 22%) + 10px); }
+
+  .ctl-group select {
+    background: rgba(10, 14, 26, 0.8);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 5px 8px;
+    font-family: inherit;
+    font-size: 12.5px;
+    cursor: pointer;
+  }
+  button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  #raceBanner {
+    position: absolute;
+    left: 50%;
+    top: 12px;
+    transform: translateX(-50%);
+    background: var(--panel);
+    border: 1px solid rgba(255, 180, 84, 0.4);
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-size: 13.5px;
+    z-index: 6;
+    text-align: center;
+    max-width: 80%;
+    backdrop-filter: blur(6px);
+  }
+  #raceBanner[hidden] { display: none; }
+  #raceBanner b { color: var(--accent); }
+
+  #tourBar {
+    position: absolute;
+    left: 50%;
+    bottom: 14px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 8px 12px;
+    z-index: 6;
+    backdrop-filter: blur(6px);
+  }
+  #tourBar[hidden] { display: none; }
+  #tourPos {
+    font-size: 12.5px;
+    color: var(--dim);
+    min-width: 44px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Projector mode ---------- */
+  body.projector { --text: #ffffff; --dim: #c7d1e8; }
+  body.projector #pFact { font-size: 16px; }
+  body.projector .stat { font-size: 15px; }
+  body.projector footer { font-size: 13.5px; }
+  body.projector .scale-note { font-size: 13.5px; }
+
+  @media (max-width: 920px) {
+    main { grid-template-columns: 1fr; }
+    #stage { min-height: 62vh; }
+    aside { max-height: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-block">
+    <h1>OUR SOLAR SYSTEM · ORBITS IN MOTION</h1>
+    <p>Top-down view · <strong>orbital speeds are true to life</strong> relative to each other · sizes &amp; distances are stylized</p>
+  </div>
+  <div class="controls">
+    <div id="clock">0 yr 0 d <span>elapsed</span></div>
+    <div class="ctl-group">
+      <button id="playBtn" aria-pressed="true">⏸ Pause</button>
+      <button id="resetBtn" class="secondary">↺ Reset</button>
+      <button id="tourBtn">🎓 Tour</button>
+      <button id="keplerBtn" class="secondary">☄ Kepler</button>
+    </div>
+    <div class="ctl-group">
+      <input type="range" id="speed" min="0" max="100" value="51" aria-label="Simulation speed">
+      <span id="speedReadout">30 days/s</span>
+    </div>
+    <div class="ctl-group">
+      <select id="raceA" aria-label="First racer"></select>
+      <span style="color: var(--dim); font-size: 12px;">vs</span>
+      <select id="raceB" aria-label="Second racer"></select>
+      <button id="raceBtn">🏁 Race</button>
+    </div>
+    <div class="ctl-group">
+      <label><input type="checkbox" id="cbLabels" checked> Labels</label>
+      <label><input type="checkbox" id="cbOrbits" checked> Orbits</label>
+      <label><input type="checkbox" id="cbBelt" checked> Belt</label>
+      <label><input type="checkbox" id="cbTrueSizes"> True sizes</label>
+      <label><input type="checkbox" id="cbProjector"> Projector</label>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div id="stage">
+    <canvas id="space"></canvas>
+    <button id="fsBtn" class="secondary" title="Fullscreen (F)">⛶</button>
+    <div class="scale-note">
+      <b>Not to scale:</b> if distances were real, Neptune would orbit ~6&nbsp;km away from a football-sized Sun.
+      But the <b>speeds are real</b> — watch Mercury lap everyone!
+    </div>
+    <div id="raceBanner" hidden></div>
+    <div id="tourBar" hidden>
+      <button id="tourPrev" class="secondary">← Prev</button>
+      <span id="tourPos">1 / 9</span>
+      <button id="tourNext" class="secondary">Next →</button>
+      <button id="tourExit">✕ Exit</button>
+    </div>
+  </div>
+
+  <aside id="infoPanel" aria-live="polite">
+    <span class="planet-chip" id="pType">Star</span>
+    <h2 id="pName">The Sun</h2>
+    <p id="pFact">Fun fact loads here.</p>
+    <div class="stats">
+      <div class="stat"><span class="k">Diameter</span><span class="v" id="sDiameter">—</span></div>
+      <div class="stat"><span class="k">Distance from Sun</span><span class="v" id="sDistance">—</span></div>
+      <div class="stat"><span class="k">Year length (1 orbit)</span><span class="v" id="sYear">—</span></div>
+      <div class="stat"><span class="k">Day length (1 spin)</span><span class="v" id="sDay">—</span></div>
+      <div class="stat"><span class="k">Moons</span><span class="v" id="sMoons">—</span></div>
+      <div class="stat"><span class="k">Orbital speed</span><span class="v" id="sSpeed">—</span></div>
+    </div>
+    <p class="kepler">
+      <b>Why do inner planets move faster?</b> The closer a planet is to the Sun, the stronger
+      the Sun's gravity pulls on it — so it must travel faster to stay in orbit.
+      That's Kepler's laws in action. (1&nbsp;AU = the Earth–Sun distance ≈ 150&nbsp;million&nbsp;km.)
+    </p>
+  </aside>
+</main>
+
+<footer>
+  <span>🖱️ Click any planet (or the Sun) to learn about it</span>
+  <span><kbd>Space</kbd> play / pause</span>
+  <span><kbd>0</kbd>–<kbd>8</kbd> select Sun → Neptune</span>
+  <span><kbd>R</kbd> reset clock</span>
+  <span><kbd>T</kbd> guided tour</span>
+  <span><kbd>K</kbd> Kepler demo</span>
+  <span><kbd>F</kbd> fullscreen</span>
+</footer>
+
+<script>
+'use strict';
+
+/* ============================================================
+   DATA — periods, distances and speeds are real astronomy.
+   On-screen orbit radii (frac) and dot sizes (size) are
+   stylized so everything fits in one classroom view.
+   ============================================================ */
+const SUN = {
+  name: 'The Sun', type: 'G-type star',
+  hi: '#fff3c4', main: '#ffcf5e', lo: '#ff9a3d', size: 26, dkm: 1392700,
+  diameter: '1,392,700 km (109× Earth)',
+  distance: '— (it IS the center)',
+  year: '—',
+  day: '≈ 25 Earth days (equator)',
+  moons: '0 — but 8 planets orbit it',
+  speed: '—',
+  fact: 'The Sun holds 99.8% of all the mass in the solar system. About 1.3 million Earths could fit inside it.'
+};
+
+const PLANETS = [
+  { name: 'Mercury', type: 'Rocky planet', hi: '#cfc7ba', main: '#9c9489', lo: '#56514a',
+    frac: 0.135, size: 5, period: 88, angle0: 0.6, speedKms: 47.4, dkm: 4879,
+    diameter: '4,879 km (0.38× Earth)', distance: '57.9 million km (0.39 AU)',
+    year: '88 Earth days', day: '59 Earth days', moons: '0',
+    fact: 'Mercury’s year (88 days) is so short and its spin so slow that one full day–night cycle lasts about two of its years. Temperatures swing by almost 600°C.' },
+
+  { name: 'Venus', type: 'Rocky planet', hi: '#f7e3bd', main: '#e0b97e', lo: '#9c6c33',
+    frac: 0.195, size: 8, period: 225, angle0: 2.2, speedKms: 35.0, dkm: 12104,
+    diameter: '12,104 km (0.95× Earth)', distance: '108.2 million km (0.72 AU)',
+    year: '225 Earth days', day: '243 Earth days — it spins backwards!', moons: '0',
+    fact: 'Venus is the hottest planet (about 465°C) — hotter than Mercury! — because its thick CO₂ atmosphere traps heat like a runaway greenhouse.' },
+
+  { name: 'Earth', type: 'Rocky planet', hi: '#9bd4ff', main: '#4f95dd', lo: '#1b4071',
+    frac: 0.26, size: 9, period: 365.25, angle0: 4.0, speedKms: 29.8, dkm: 12756,
+    diameter: '12,756 km', distance: '149.6 million km (1 AU)',
+    year: '365.25 days (1 year)', day: '24 hours', moons: '1 — the Moon',
+    fact: 'Earth is the only world we know with liquid-water oceans on its surface — and the only place we know of where life exists.' },
+
+  { name: 'Mars', type: 'Rocky planet', hi: '#ef9168', main: '#cd5c33', lo: '#76301a',
+    frac: 0.325, size: 7, period: 687, angle0: 5.5, speedKms: 24.1, dkm: 6792,
+    diameter: '6,792 km (0.53× Earth)', distance: '227.9 million km (1.52 AU)',
+    year: '687 Earth days (1.9 years)', day: '24.6 hours', moons: '2 — Phobos & Deimos',
+    fact: 'Mars has the tallest volcano in the solar system: Olympus Mons, nearly 2.5 times the height of Mount Everest.' },
+
+  { name: 'Jupiter', type: 'Gas giant', hi: '#eeD2a8', main: '#cf9d63', lo: '#7e552c',
+    frac: 0.48, size: 18, period: 4333, angle0: 1.2, speedKms: 13.1, dkm: 142984,
+    diameter: '142,984 km (11.2× Earth)', distance: '778.5 million km (5.2 AU)',
+    year: '11.9 Earth years', day: '9.9 hours — the shortest!', moons: '95 known',
+    fact: 'Jupiter’s Great Red Spot is a storm wider than the whole Earth, and it has been raging for at least 350 years.' },
+
+  { name: 'Saturn', type: 'Gas giant', hi: '#f4e2b8', main: '#ddbe7a', lo: '#8d7236',
+    frac: 0.60, size: 15, period: 10759, angle0: 3.1, speedKms: 9.7, ringed: true, dkm: 120536,
+    diameter: '120,536 km (9.4× Earth)', distance: '1,434 million km (9.6 AU)',
+    year: '29.4 Earth years', day: '10.7 hours', moons: '274 known — the record!',
+    fact: 'Saturn is less dense than water — if you had a bathtub big enough, it would float. Its rings are mostly chunks of ice.' },
+
+  { name: 'Uranus', type: 'Ice giant', hi: '#cdeff2', main: '#8ecfd6', lo: '#3f8a96',
+    frac: 0.72, size: 12, period: 30687, angle0: 0.2, speedKms: 6.8, dkm: 51118,
+    diameter: '51,118 km (4.0× Earth)', distance: '2,871 million km (19.2 AU)',
+    year: '84 Earth years', day: '17.2 hours', moons: '28 known',
+    fact: 'Uranus rolls around the Sun on its side — its axis is tilted 98°. Each season there lasts about 21 Earth years.' },
+
+  { name: 'Neptune', type: 'Ice giant', hi: '#8aa6f2', main: '#4f6fd8', lo: '#243a85',
+    frac: 0.84, size: 12, period: 60190, angle0: 4.8, speedKms: 5.4, dkm: 49528,
+    diameter: '49,528 km (3.9× Earth)', distance: '4,495 million km (30 AU)',
+    year: '165 Earth years', day: '16.1 hours', moons: '16 known',
+    fact: 'Neptune has the fastest winds in the solar system — up to 2,100 km/h, faster than the speed of sound on Earth.' }
+];
+
+const MOON = { period: 27.3, size: 2.6, gap: 9 };
+
+/* ============================================================
+   STATE & SETUP
+   ============================================================ */
+const canvas = document.getElementById('space');
+const ctx = canvas.getContext('2d');
+const stage = document.getElementById('stage');
+
+let W = 0, H = 0, CX = 0, CY = 0, R = 0, K = 1;
+let simDays = 0;
+let daysPerSec = 30;
+let playing = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+let selected = SUN;
+let hovered = null;
+let stars = [];
+let belt = [];
+let mode = 'orbit';   // 'orbit' | 'kepler'
+let tour = null;      // { index, timer } | null
+let race = null;      // { a, b, startDays, ... } | null
+
+function pj() { return cbProjector.checked; }   // projector-contrast flag
+
+function makeBelt() {
+  belt = [];
+  for (let i = 0; i < 320; i++) {
+    belt.push({
+      frac: 0.375 + Math.random() * 0.055,
+      angle0: Math.random() * Math.PI * 2,
+      period: 1500 + Math.random() * 800,
+      size: 0.5 + Math.random() * 1.1,
+      alpha: 0.25 + Math.random() * 0.45
+    });
+  }
+}
+
+function makeStars() {
+  stars = [];
+  const n = Math.floor((W * H) / 4500);
+  for (let i = 0; i < n; i++) {
+    stars.push({
+      x: Math.random() * W, y: Math.random() * H,
+      r: Math.random() * 1.2 + 0.3,
+      base: 0.25 + Math.random() * 0.5,
+      amp: Math.random() * 0.3,
+      phase: Math.random() * Math.PI * 2,
+      tw: 0.5 + Math.random() * 1.5
+    });
+  }
+}
+
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  W = stage.clientWidth;
+  H = stage.clientHeight;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  CX = W / 2;
+  CY = H / 2;
+  R = Math.min(CX, CY) - 24;
+  K = Math.max(0.55, Math.min(1.25, R / 380));   // scale dot sizes with viewport
+  makeStars();
+}
+window.addEventListener('resize', resize);
+
+/* ============================================================
+   POSITIONS & HIT TESTING
+   ============================================================ */
+function planetPos(p) {
+  const a = p.angle0 + (Math.PI * 2 * simDays) / p.period;
+  return { x: CX + Math.cos(a) * p.frac * R, y: CY + Math.sin(a) * p.frac * R, a };
+}
+
+function bodyAt(mx, my) {
+  for (const p of PLANETS) {
+    const { x, y } = planetPos(p);
+    const hit = Math.max(11, p.size * K + 6);
+    if ((mx - x) ** 2 + (my - y) ** 2 < hit * hit) return p;
+  }
+  const sunHit = SUN.size * K + 8;
+  if ((mx - CX) ** 2 + (my - CY) ** 2 < sunHit * sunHit) return SUN;
+  return null;
+}
+
+/* ============================================================
+   DRAWING
+   ============================================================ */
+function drawStars(t) {
+  for (const s of stars) {
+    const a = s.base + Math.sin(t * s.tw + s.phase) * s.amp;
+    ctx.globalAlpha = Math.max(0.05, a) * (pj() ? 0.35 : 1);
+    ctx.fillStyle = '#dfe8ff';
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawOrbits() {
+  ctx.strokeStyle = pj() ? 'rgba(190, 210, 255, 0.5)' : 'rgba(160, 180, 230, 0.16)';
+  ctx.lineWidth = pj() ? 2 : 1;
+  for (const p of PLANETS) {
+    ctx.beginPath();
+    ctx.arc(CX, CY, p.frac * R, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+}
+
+function drawBelt() {
+  ctx.fillStyle = '#b8aa90';
+  for (const a of belt) {
+    const ang = a.angle0 + (Math.PI * 2 * simDays) / a.period;
+    const x = CX + Math.cos(ang) * a.frac * R;
+    const y = CY + Math.sin(ang) * a.frac * R;
+    ctx.globalAlpha = a.alpha;
+    ctx.beginPath();
+    ctx.arc(x, y, a.size * K, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawSun(t, x = CX, y = CY) {
+  const r = SUN.size * K;
+  const halo = ctx.createRadialGradient(x, y, r * 0.4, x, y, r * 3.6);
+  halo.addColorStop(0, 'rgba(255, 200, 90, 0.55)');
+  halo.addColorStop(0.4, 'rgba(255, 150, 60, 0.16)');
+  halo.addColorStop(1, 'rgba(255, 120, 40, 0)');
+  ctx.fillStyle = halo;
+  ctx.beginPath();
+  ctx.arc(x, y, r * 3.6, 0, Math.PI * 2);
+  ctx.fill();
+
+  const g = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, r * 0.1, x, y, r);
+  g.addColorStop(0, SUN.hi);
+  g.addColorStop(0.55, SUN.main);
+  g.addColorStop(1, SUN.lo);
+  ctx.fillStyle = g;
+  ctx.shadowColor = 'rgba(255, 180, 80, 0.9)';
+  ctx.shadowBlur = 28 * K;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+function drawRing(x, y, size) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(-0.45);
+  ctx.strokeStyle = 'rgba(232, 213, 165, 0.75)';
+  ctx.lineWidth = size * 0.34;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, size * 1.85, size * 0.72, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(180, 160, 115, 0.45)';
+  ctx.lineWidth = size * 0.16;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, size * 1.42, size * 0.55, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawPlanet(p, t) {
+  if (tour && selected !== p) ctx.globalAlpha = 0.35;
+  const { x, y, a } = planetPos(p);
+  const size = p.size * K;
+
+  // light comes from the Sun: offset the gradient toward the center
+  const ox = -Math.cos(a) * size * 0.38;
+  const oy = -Math.sin(a) * size * 0.38;
+  const g = ctx.createRadialGradient(x + ox, y + oy, size * 0.1, x, y, size * 1.05);
+  g.addColorStop(0, p.hi);
+  g.addColorStop(0.55, p.main);
+  g.addColorStop(1, p.lo);
+
+  ctx.shadowColor = p.main;
+  ctx.shadowBlur = 10 * K;
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(x, y, size, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  if (p.ringed) drawRing(x, y, size);
+
+  if (p.name === 'Earth') {
+    const ma = (Math.PI * 2 * simDays) / MOON.period;
+    const mx = x + Math.cos(ma) * (size + MOON.gap * K);
+    const my = y + Math.sin(ma) * (size + MOON.gap * K);
+    ctx.fillStyle = '#cfd2da';
+    ctx.beginPath();
+    ctx.arc(mx, my, MOON.size * K, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  if (hovered === p || selected === p) {
+    ctx.save();
+    ctx.strokeStyle = selected === p ? 'rgba(255, 180, 84, 0.9)' : 'rgba(255, 255, 255, 0.5)';
+    ctx.lineWidth = pj() ? 2.5 : 1.5;
+    ctx.setLineDash([5, 5]);
+    ctx.lineDashOffset = -t * 12;
+    ctx.beginPath();
+    ctx.arc(x, y, Math.max(size + 7, 13), 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  if (race && (p === race.a || p === race.b)) {
+    ctx.save();
+    ctx.strokeStyle = p === race.a ? 'rgba(126, 200, 255, 0.9)' : 'rgba(255, 140, 110, 0.9)';
+    ctx.lineWidth = pj() ? 2.5 : 1.8;
+    ctx.beginPath();
+    ctx.arc(x, y, Math.max(size + 10, 16), 0, Math.PI * 2);
+    ctx.stroke();
+    const laps = race.done ? (p === race.a ? race.finalA : race.finalB) : raceLaps(p);
+    ctx.font = `700 ${Math.round((pj() ? 13 : 11) * Math.max(1, K))}px 'Atkinson Hyperlegible', sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = ctx.strokeStyle;
+    ctx.fillText(`${laps.toFixed(1)} laps`, x, y - Math.max(size + 14, 20));
+    ctx.restore();
+  }
+
+  if (cbLabels.checked) {
+    ctx.font = `${Math.round((pj() ? 15 : 11.5) * Math.max(1, K))}px 'Atkinson Hyperlegible', sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = pj() ? 'rgba(255, 255, 255, 1)' : 'rgba(233, 237, 247, 0.85)';
+    ctx.fillText(p.name, x, y + Math.max(size, p.ringed ? size * 1.1 : size) + 16 * K);
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawSelectedSunRing(t) {
+  if (selected !== SUN && hovered !== SUN) return;
+  ctx.save();
+  ctx.strokeStyle = selected === SUN ? 'rgba(255, 180, 84, 0.9)' : 'rgba(255, 255, 255, 0.5)';
+  ctx.lineWidth = pj() ? 2.5 : 1.5;
+  ctx.setLineDash([5, 5]);
+  ctx.lineDashOffset = -t * 12;
+  ctx.beginPath();
+  ctx.arc(CX, CY, SUN.size * K + 9, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawTrueSizeStrip() {
+  const stripH = Math.min(110, H * 0.22);
+  const top = H - stripH;
+
+  ctx.fillStyle = 'rgba(8, 11, 22, 0.85)';
+  ctx.fillRect(0, top, W, stripH);
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, top);
+  ctx.lineTo(W, top);
+  ctx.stroke();
+
+  const midY = top + stripH * 0.45;
+  // Jupiter anchors the scale: its strip diameter is 52% of the strip height
+  const pxPerKm = (stripH * 0.52) / PLANETS[4].dkm;
+
+  // Sun limb at the left edge (center far off-canvas)
+  const sunR = (SUN.dkm / 2) * pxPerKm;
+  const sunCX = -sunR + stripH * 0.3;
+  const sg = ctx.createRadialGradient(sunCX, midY, sunR * 0.92, sunCX, midY, sunR);
+  sg.addColorStop(0, SUN.main);
+  sg.addColorStop(1, SUN.lo);
+  ctx.fillStyle = sg;
+  ctx.beginPath();
+  ctx.arc(sunCX, midY, sunR, 0, Math.PI * 2);
+  ctx.fill();
+
+  const x0 = stripH * 0.65 + 30;
+  const gap = (W - x0 - 20) / PLANETS.length;
+  ctx.textAlign = 'center';
+  ctx.font = `${pj() ? 13 : 11}px 'Atkinson Hyperlegible', sans-serif`;
+  PLANETS.forEach((p, i) => {
+    const x = x0 + gap * (i + 0.5);
+    const r = Math.max(0.7, (p.dkm / 2) * pxPerKm);
+    const g = ctx.createRadialGradient(x - r * 0.3, midY - r * 0.3, r * 0.15, x, midY, r);
+    g.addColorStop(0, p.hi);
+    g.addColorStop(0.6, p.main);
+    g.addColorStop(1, p.lo);
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(x, midY, r, 0, Math.PI * 2);
+    ctx.fill();
+    if (p.ringed) drawRing(x, midY, r);
+    ctx.fillStyle = pj() ? '#ffffff' : 'rgba(233, 237, 247, 0.8)';
+    ctx.fillText(p.name, x, top + stripH - 10);
+  });
+
+  ctx.textAlign = 'left';
+  ctx.fillStyle = 'rgba(154, 166, 192, 0.9)';
+  ctx.fillText('True relative sizes — the Sun barely fits! (distances not shown)', 12, top + 15);
+}
+
+/* ============================================================
+   KEPLER MODE — one exaggerated ellipse, Sun at a focus,
+   equal-area sweep segments (Kepler's 1st & 2nd laws).
+   ============================================================ */
+const KEPLER = { e: 0.65, period: 400, slices: 12 };
+
+function solveE(M, e) {          // Kepler's equation, Newton iteration
+  let E = M;
+  for (let i = 0; i < 6; i++) {
+    E -= (E - e * Math.sin(E) - M) / (1 - e * Math.cos(E));
+  }
+  return E;
+}
+
+function keplerPoint(M) {        // position in px relative to the ellipse center
+  const a = R * 0.62, e = KEPLER.e, b = a * Math.sqrt(1 - e * e);
+  const E = solveE(M, e);
+  return { x: a * (Math.cos(E) - e), y: b * Math.sin(E) };
+}
+
+function drawKepler(t) {
+  const a = R * 0.62, e = KEPLER.e, b = a * Math.sqrt(1 - e * e);
+  const sunX = CX + a * e, sunY = CY;   // ellipse centered on canvas, Sun at right focus
+
+  // equal-area slices: one per 1/12 of the period — thin & long near
+  // aphelion (left), fat & short near perihelion (right)
+  for (let k = 0; k < KEPLER.slices; k++) {
+    ctx.beginPath();
+    ctx.moveTo(sunX, sunY);
+    for (let s = 0; s <= 16; s++) {
+      const M = (Math.PI * 2 * (k + s / 16)) / KEPLER.slices;
+      const pt = keplerPoint(M);
+      ctx.lineTo(sunX + pt.x, sunY + pt.y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = k % 2 ? 'rgba(126, 200, 255, 0.10)' : 'rgba(255, 180, 84, 0.10)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // ellipse path
+  ctx.strokeStyle = pj() ? 'rgba(200, 215, 255, 0.6)' : 'rgba(160, 180, 230, 0.35)';
+  ctx.lineWidth = pj() ? 2 : 1.2;
+  ctx.beginPath();
+  ctx.ellipse(CX, CY, a, b, 0, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // the empty focus
+  const f2x = CX - a * e;
+  ctx.strokeStyle = 'rgba(154, 166, 192, 0.8)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(f2x - 6, sunY - 6); ctx.lineTo(f2x + 6, sunY + 6);
+  ctx.moveTo(f2x - 6, sunY + 6); ctx.lineTo(f2x + 6, sunY - 6);
+  ctx.stroke();
+  ctx.font = `12px 'Atkinson Hyperlegible', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(154, 166, 192, 0.9)';
+  ctx.fillText('empty focus', f2x, sunY + 22);
+
+  drawSun(t, sunX, sunY);
+
+  // comet position + sweeping radius line
+  const M0 = (Math.PI * 2 * simDays) / KEPLER.period;
+  const pt = keplerPoint(M0);
+  const cx2 = sunX + pt.x, cy2 = sunY + pt.y;
+
+  ctx.strokeStyle = 'rgba(255, 220, 150, 0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(sunX, sunY);
+  ctx.lineTo(cx2, cy2);
+  ctx.stroke();
+
+  // comet tail points away from the Sun
+  const dx = cx2 - sunX, dy = cy2 - sunY, dist = Math.hypot(dx, dy) || 1;
+  const tx = cx2 + (dx / dist) * 34, ty = cy2 + (dy / dist) * 34;
+  const tail = ctx.createLinearGradient(cx2, cy2, tx, ty);
+  tail.addColorStop(0, 'rgba(170, 220, 255, 0.8)');
+  tail.addColorStop(1, 'rgba(170, 220, 255, 0)');
+  ctx.strokeStyle = tail;
+  ctx.lineWidth = 5;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(cx2, cy2);
+  ctx.lineTo(tx, ty);
+  ctx.stroke();
+  ctx.lineCap = 'butt';
+
+  ctx.fillStyle = '#dff1ff';
+  ctx.shadowColor = 'rgba(170, 220, 255, 0.9)';
+  ctx.shadowBlur = 12;
+  ctx.beginPath();
+  ctx.arc(cx2, cy2, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  ctx.textAlign = 'left';
+  ctx.fillStyle = 'rgba(154, 166, 192, 0.95)';
+  ctx.font = `${pj() ? 14 : 12.5}px 'Atkinson Hyperlegible', sans-serif`;
+  ctx.fillText('Each colored slice is swept in the same amount of time — equal areas, equal times.', 14, 24);
+}
+
+/* ============================================================
+   MAIN LOOP
+   ============================================================ */
+let lastTime = performance.now();
+
+function frame(now) {
+  const dt = Math.min(0.05, (now - lastTime) / 1000);
+  lastTime = now;
+  if (playing) {
+    simDays += daysPerSec * dt;
+    updateClock();
+    updateRace();
+  }
+  // tour advances on real time even when the sim is paused,
+  // so a teacher can pause the orbits and keep talking
+  if (tour) {
+    tour.timer += dt;
+    if (tour.timer >= TOUR_SECONDS) tourStep(1);
+  }
+  const t = now / 1000;
+
+  ctx.clearRect(0, 0, W, H);
+  drawStars(t);
+  if (mode === 'kepler') {
+    drawKepler(t);
+  } else {
+    if (cbOrbits.checked) drawOrbits();
+    if (cbBelt.checked) drawBelt();
+    drawSun(t);
+    drawSelectedSunRing(t);
+    for (const p of PLANETS) drawPlanet(p, t);
+    if (cbTrueSizes.checked) drawTrueSizeStrip();
+  }
+
+  requestAnimationFrame(frame);
+}
+
+/* ============================================================
+   UI WIRING
+   ============================================================ */
+const playBtn = document.getElementById('playBtn');
+const resetBtn = document.getElementById('resetBtn');
+const speedEl = document.getElementById('speed');
+const speedReadout = document.getElementById('speedReadout');
+const clockEl = document.getElementById('clock');
+const cbLabels = document.getElementById('cbLabels');
+const cbOrbits = document.getElementById('cbOrbits');
+const cbBelt = document.getElementById('cbBelt');
+const cbTrueSizes = document.getElementById('cbTrueSizes');
+cbTrueSizes.addEventListener('change', () => {
+  stage.classList.toggle('strip-on', cbTrueSizes.checked);
+});
+const cbProjector = document.getElementById('cbProjector');
+cbProjector.addEventListener('change', () => {
+  document.body.classList.toggle('projector', cbProjector.checked);
+});
+
+const fsBtn = document.getElementById('fsBtn');
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    if (stage.requestFullscreen) stage.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen();
+  }
+}
+fsBtn.addEventListener('click', (e) => { e.currentTarget.blur(); toggleFullscreen(); });
+document.addEventListener('fullscreenchange', resize);
+
+/* ----- Guided tour ----- */
+const TOUR_SECONDS = 12;
+const TOUR_BODIES = [SUN, ...PLANETS];
+const tourBtn = document.getElementById('tourBtn');
+const tourBar = document.getElementById('tourBar');
+const tourPos = document.getElementById('tourPos');
+
+function startTour() {
+  exitKepler();
+  endRace();
+  tour = { index: 0, timer: 0 };
+  tourBar.hidden = false;
+  tourBtn.textContent = '✕ End tour';
+  tourShow();
+}
+
+function endTour() {
+  if (!tour) return;
+  tour = null;
+  tourBar.hidden = true;
+  tourBtn.textContent = '🎓 Tour';
+}
+
+function tourShow() {
+  select(TOUR_BODIES[tour.index]);
+  tourPos.textContent = `${tour.index + 1} / ${TOUR_BODIES.length}`;
+}
+
+function tourStep(dir) {
+  if (!tour) return;
+  const next = tour.index + dir;
+  if (next >= TOUR_BODIES.length) { endTour(); return; }
+  tour.index = Math.max(0, next);
+  tour.timer = 0;
+  tourShow();
+}
+
+/* ----- Kepler mode ----- */
+const keplerBtn = document.getElementById('keplerBtn');
+
+function enterKepler() {
+  endTour();
+  endRace();
+  mode = 'kepler';
+  keplerBtn.textContent = '← Orbits';
+  document.getElementById('pType').textContent = "Kepler's Laws";
+  document.getElementById('pName').textContent = 'The Ellipse Demo';
+  document.getElementById('pFact').textContent =
+    'Orbits are ellipses with the Sun at one focus (1st law). A line from the ' +
+    'Sun to the body sweeps out equal areas in equal times (2nd law) — so the ' +
+    'body races when close to the Sun and crawls when far away.';
+  document.getElementById('sDiameter').textContent = '—';
+  document.getElementById('sDistance').textContent = 'varies 2.9× (eccentricity 0.65)';
+  document.getElementById('sYear').textContent = '400 days (this demo)';
+  document.getElementById('sDay').textContent = '—';
+  document.getElementById('sMoons').textContent = '—';
+  document.getElementById('sSpeed').textContent = 'fastest at perihelion';
+}
+
+function exitKepler() {
+  if (mode !== 'kepler') return;
+  mode = 'orbit';
+  keplerBtn.textContent = '☄ Kepler';
+  select(selected);   // restore the info panel
+}
+
+keplerBtn.addEventListener('click', (e) => { e.currentTarget.blur(); mode === 'kepler' ? exitKepler() : enterKepler(); });
+
+/* ----- Planet race ----- */
+const raceASel = document.getElementById('raceA');
+const raceBSel = document.getElementById('raceB');
+const raceBtn = document.getElementById('raceBtn');
+const raceBanner = document.getElementById('raceBanner');
+
+PLANETS.forEach((p, i) => {
+  raceASel.add(new Option(p.name, i));
+  raceBSel.add(new Option(p.name, i));
+});
+raceASel.value = '0';   // Mercury
+raceBSel.value = '2';   // Earth
+
+function refreshRaceBtn() {
+  raceBtn.disabled = !race && raceASel.value === raceBSel.value;
+}
+raceASel.addEventListener('change', refreshRaceBtn);
+raceBSel.addEventListener('change', refreshRaceBtn);
+
+function startRace() {
+  exitKepler();
+  endTour();
+  const a = PLANETS[Number(raceASel.value)];
+  const b = PLANETS[Number(raceBSel.value)];
+  race = { a, b, startDays: simDays, origA: a.angle0, origB: b.angle0,
+           done: false, finalA: 0, finalB: 0 };
+  // snap both racers to 12 o'clock at the current sim time
+  for (const p of [a, b]) {
+    p.angle0 = -Math.PI / 2 - (Math.PI * 2 * simDays) / p.period;
+  }
+  raceBtn.textContent = '↺ Reset race';
+  raceBanner.hidden = false;
+  updateRace();
+}
+
+function endRace() {
+  if (!race) return;
+  race.a.angle0 = race.origA;
+  race.b.angle0 = race.origB;
+  race = null;
+  raceBtn.textContent = '🏁 Race';
+  raceBanner.hidden = true;
+  refreshRaceBtn();
+}
+
+raceBtn.addEventListener('click', (e) => { e.currentTarget.blur(); race ? endRace() : startRace(); });
+
+function raceLaps(p) {
+  return (simDays - race.startDays) / p.period;
+}
+
+function updateRace() {
+  if (!race || race.done) return;
+  const slower = race.a.period >= race.b.period ? race.a : race.b;
+  const faster = slower === race.a ? race.b : race.a;
+  if (raceLaps(slower) >= 1) {
+    race.done = true;
+    race.finalA = raceLaps(race.a);
+    race.finalB = raceLaps(race.b);
+    const fasterLaps = faster === race.a ? race.finalA : race.finalB;
+    raceBanner.innerHTML =
+      `🏁 <b>${faster.name}</b> lapped the Sun <b>${fasterLaps.toFixed(1)} times</b> ` +
+      `while ${slower.name} orbited once!`;
+  } else {
+    raceBanner.innerHTML =
+      `<b>${race.a.name}</b>: ${raceLaps(race.a).toFixed(1)} laps · ` +
+      `<b>${race.b.name}</b>: ${raceLaps(race.b).toFixed(1)} laps`;
+  }
+}
+
+// blur after click so keyboard shortcuts keep working (keydown guard skips focused buttons)
+tourBtn.addEventListener('click', (e) => { e.currentTarget.blur(); tour ? endTour() : startTour(); });
+document.getElementById('tourNext').addEventListener('click', (e) => { e.currentTarget.blur(); tourStep(1); });
+document.getElementById('tourPrev').addEventListener('click', (e) => { e.currentTarget.blur(); tourStep(-1); });
+document.getElementById('tourExit').addEventListener('click', (e) => { e.currentTarget.blur(); endTour(); });
+
+function updateClock() {
+  const yr = Math.floor(simDays / 365.25);
+  const d = Math.floor(simDays % 365.25);
+  clockEl.innerHTML = `${yr} yr ${d} d <span>elapsed</span>`;
+}
+
+function setPlaying(v) {
+  playing = v;
+  playBtn.textContent = playing ? '⏸ Pause' : '▶ Play';
+  playBtn.setAttribute('aria-pressed', String(playing));
+  lastTime = performance.now();
+}
+
+playBtn.addEventListener('click', () => setPlaying(!playing));
+resetBtn.addEventListener('click', () => { simDays = 0; updateClock(); });
+
+function applySpeed() {
+  const tpos = speedEl.value / 100;                 // 0..1
+  daysPerSec = Math.exp(tpos * Math.log(800));      // 1 → 800 days/s, log scale
+  speedReadout.textContent =
+    daysPerSec < 10 ? `${daysPerSec.toFixed(1)} days/s` : `${Math.round(daysPerSec)} days/s`;
+}
+speedEl.addEventListener('input', applySpeed);
+
+function select(body) {
+  selected = body;
+  document.getElementById('pType').textContent = body.type;
+  document.getElementById('pName').textContent = body.name;
+  document.getElementById('pFact').textContent = body.fact;
+  document.getElementById('sDiameter').textContent = body.diameter;
+  document.getElementById('sDistance').textContent = body.distance;
+  document.getElementById('sYear').textContent = body.year;
+  document.getElementById('sDay').textContent = body.day;
+  document.getElementById('sMoons').textContent = body.moons;
+  document.getElementById('sSpeed').textContent = body.speed ?? `${body.speedKms} km/s`;
+}
+
+canvas.addEventListener('click', (e) => {
+  if (mode !== 'orbit') return;
+  const rect = canvas.getBoundingClientRect();
+  const hit = bodyAt(e.clientX - rect.left, e.clientY - rect.top);
+  if (hit) select(hit);
+});
+
+canvas.addEventListener('mousemove', (e) => {
+  if (mode !== 'orbit') { hovered = null; canvas.style.cursor = 'default'; return; }
+  const rect = canvas.getBoundingClientRect();
+  hovered = bodyAt(e.clientX - rect.left, e.clientY - rect.top);
+  canvas.style.cursor = hovered ? 'pointer' : 'default';
+});
+canvas.addEventListener('mouseleave', () => { hovered = null; });
+
+window.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT') return;
+  if (e.code === 'Space') { e.preventDefault(); setPlaying(!playing); }
+  else if (e.key === 'r' || e.key === 'R') { simDays = 0; updateClock(); }
+  else if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); }
+  else if (e.key === 't' || e.key === 'T') { tour ? endTour() : startTour(); }
+  else if (tour && e.key === 'ArrowRight') { e.preventDefault(); tourStep(1); }
+  else if (tour && e.key === 'ArrowLeft') { e.preventDefault(); tourStep(-1); }
+  else if (e.key === 'k' || e.key === 'K') { mode === 'kepler' ? exitKepler() : enterKepler(); }
+  else if (e.key >= '0' && e.key <= '8' && mode === 'orbit') {
+    select(e.key === '0' ? SUN : PLANETS[Number(e.key) - 1]);
+  }
+});
+
+/* ============================================================
+   GO
+   ============================================================ */
+resize();
+makeBelt();
+applySpeed();
+select(SUN);
+setPlaying(playing);
+updateClock();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
