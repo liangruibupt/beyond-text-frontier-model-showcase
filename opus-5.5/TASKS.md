@@ -13,11 +13,11 @@
 ## 规矩（用户定的，一直有效）
 
 - **先问再做：**
-  - 调 Bedrock 之前（`factory/story.mjs` 不带 `--dry`）先问用户，并确认 AWS profile、region 和模型（默认 `us.anthropic.claude-opus-5-5`）
-  - 调 Kokoro 之前（`factory/vo.mjs` 不带 `--dry`，包括 `--audition`）先问用户
+  - 调 Bedrock 之前（`factory/story.mjs` 不带 `--dry`）先问用户，并确认 region 和模型（默认 `us.anthropic.claude-opus-5-5`）。用本机实例角色，不用 `AWS_PROFILE`。04 第 6 步已完成。视频/多模态步骤本身不调 Bedrock
+  - Kokoro 配音：用户已定不做 EC2 上试听（直接看最终网页），所以不再要求先 `--audition`；但**部署 Kokoro Lambda 前**（本账号还没部署，见下方环境节）先问用户——那是花钱且要 Docker 的动作
   - 任何 IAM 改动先问用户；自动模式拦下过 `iam create-role`，不要绕过去
   - 推送由用户自己做（新仓库要过 Code Defender，`git-defender request-repo` 已经办过）；永远不要 `--no-verify`
-- **云 GPU：** 批量出片走 `factory/cloud.mjs`（`up`、`run`、`render <film>`、`pull`、`down`），`AWS_PROFILE=global_ruiliang AWS_REGION=us-east-1`。
+- **云 GPU：** 批量出片走 `factory/cloud.mjs`（`up`、`run`、`render <film>`、`pull`、`down`），`AWS_REGION=us-east-1`。凭证用本机 EC2 实例角色（这台是 EC2 上的 KiroCrew，`aws` 默认就走实例角色，不用设 `AWS_PROFILE`；旧文档里的 `global_ruiliang` 都改用实例角色）。
   - 资源名 `opus55-render`、tag `Project=opus55-showcase` 保持不变（用户确认过，不跟着仓库改名）
   - 用完马上 `down`；不碰账号里别的实例；不动账号级的 SSM associations 和 patch baseline（它们会在开机 5 分钟内打补丁重启，`up` 已经会等）
   - 本地只做预览、`sheet.mjs`、`snap.mjs`
@@ -34,10 +34,12 @@
 - commit 信息结尾：`Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`
 - 英文里的双十一：画面写 "Double 11"，配音稿写 "Double Eleven"，不用 "11.11"
 
-## 云端环境要注意
+## 环境（这台机：EC2 上的 KiroCrew，用 Kiro 构建）
 
-- 云端大概率没有 `global_ruiliang` 的凭证，也没有并排检出的 `aws-is-how`（Kokoro 的 `tts.sh` 在那里，`KOKORO_TTS` 可以指到别处）。第 6–8 步需要这些，先问用户怎么办，可能要回用户的 Mac 上做
-- `03-perfume/test/preview.test.mjs` 会起 Chromium，要 GPU 和网络；没有 GPU 时它失败不代表代码坏了，先看报错
+- **凭证：** 用本机 EC2 实例角色（账号 747411437379，角色 `openclaw-bedrock-OpenClawInstanceRole`），`aws` 默认就走它。所有旧文档里的 `AWS_PROFILE=global_ruiliang` 都改成「用实例角色」，不再需要设 `AWS_PROFILE`。写操作若被 CLI guardrail 拦，走 boto3 SDK。
+- **构建用 Kiro：** 由 KiroCrew（Kiro）自己构建，不用为编码调 Bedrock。剩下的 05–10 都是视频 / 多模态工厂活（场景、镜头、配乐、出片），本身不需要调 Bedrock；只有 `factory/story.mjs` 那种「让模型写文案」的步骤才调（04 第 6 步已用 opus-5.5 跑完）。
+- **Kokoro 配音（第 7 步）：** `tts.sh` 已随并排检出的 `aws-is-how` 拉到 `ai-ml/aigc/audio_models/Kokoro/tts.sh`（`vo.mjs` 默认就找这里；也可用 `KOKORO_TTS` 指别处）。它是**远程** Kokoro——`aws lambda invoke kokoro-tts:live` 出音频再从 S3 下载，不用本地装模型。**但这个 Lambda 目前没部署在本账号**（us-east-1/us-west-2/ap-southeast-1 都没有 `kokoro-tts` 函数），要先按 `Kokoro/README.md` 的 `build.sh`+`deploy.sh` 部署（建 ~1GB ECR 镜像、6GB SnapStart Lambda≈$20+/月、S3、IAM 角色——花钱且要 Docker，动手前先跟用户确认）。声音只能用已部署集合里的：zh=`zm_*`（`zm_yunjian` 推荐），en=`am_*`（美）/`bm_*`（英）；**没有 `bf_*`/`af_*`/`zf_*`**（`copy.js` 已改）。用户在 EC2 上不方便试听，直接看最终网页效果，不再要求先 `--audition`。
+- `03-perfume/test/preview.test.mjs` 会起 Chromium，要 GPU 和网络；本机无 GPU（SwiftShader 软件渲染被 `browser.mjs` 拒绝），preview / check.mjs 的渲染测试失败不代表代码坏了，先看报错。`npm test` 现约 226 过 / 4 失（全是这些 preview 测试）/ 5 跳
 - `*/out/`、`.scratch/` 不入库：渲染出的视频和样张云端都没有
 
 ## 1. 04 年度购物报告（进行中，已在 master 上）
@@ -50,10 +52,10 @@
 
 接下来按 spec §14：
 
-- [ ] **第 5 步 配乐和音效：** 照 spec §10 写 `04-year-review/js/score.js`，在 `film.js` 里导出 `score`（参照 03）。D 大调 80 bpm；months 的柱子音高按每月订单数映到五声音阶，每位顾客的旋律不同。补 §12 的测试：每个命中点落在 0.75 s 网格上，同一混音渲两次样本一致。响度 −14 LUFS、真峰值 ≤ −1 dBTP（引擎已经管）
-- [ ] **第 6 步 Bedrock 写文案：** 先 `node factory/story.mjs 04-year-review --dry` 给用户看提示词；用户同意并确认 profile、region、模型后再真调用；四份 `stories/*.json` 的 `model` 不能再是 `draft`，每份最多三次尝试，写完给用户审
-- [ ] **第 7 步 配音：** 先问用户，再 `node factory/vo.mjs 04-year-review --audition` 试听（候选在 `copy.js` 的 `AUDITION`，现在暂用 03 的 `zm_yunxi` / `bf_emma`），用户选定声音后生成
-- [ ] **第 8 步 出片和收尾：** 云 GPU 上 `run node factory/check.mjs 04-year-review` → `render 04-year-review`（manifest 12 条）→ `pull` → `down`；本地 `factory/gallery.html?film=04-year-review` 给用户审；写中文的 `04-year-review/README.md`；仓库根 `README.md` 的索引表加一行（先问）；factory README 和 skill 的 Level 3 说明核对一遍
+- [x] **第 5 步 配乐和音效：**（2026-09-29 完成：`js/score.js` 按镜头写、按剪辑表摆放，15 / 6 秒共用；`test/score.test.mjs` 10 条，混音两遍逐采样相同在无头 Chromium 里测，不要 GPU；四位顾客 × 两个剪辑过了 −14 LUFS / 真峰值 −1.6 dBTP）照 spec §10 写 `04-year-review/js/score.js`，在 `film.js` 里导出 `score`（参照 03）。D 大调 80 bpm；months 的柱子音高按每月订单数映到五声音阶，每位顾客的旋律不同。补 §12 的测试：每个命中点落在 0.75 s 网格上，同一混音渲两次样本一致。响度 −14 LUFS、真峰值 ≤ −1 dBTP（引擎已经管）
+- [x] **第 6 步 Bedrock 写文案：**（2026-09-29 完成：用本机实例角色 `AWS_REGION=us-east-1`、默认模型 `us.anthropic.claude-opus-5-5` 真调 Bedrock，四份 `stories/*.json` 的 `model` 从 `draft` 换成 opus-5.5，各一次尝试过 check；顺带修 `story.mjs` 的 `toolChoice`——opus-5.5 不支持强制 `tool`/`any`，改成 `auto`）先看 `--dry` 提示词；四份 `stories/*.json` 的 `model` 不再是 `draft`，每份最多三次尝试
+- [ ] **第 7 步 配音（Kokoro，远程）：** 前置——本账号还没部署 `kokoro-tts:live` Lambda，先按 `aws-is-how/ai-ml/aigc/audio_models/Kokoro/README.md` 的 `build.sh`+`deploy.sh` 部署（花钱、要 Docker，先问用户）。声音已在 `copy.js` 改成部署集合里的：zh=`zm_yunjian`，en=`am_michael`（`bf_*`/`af_*`/`zf_*` 不存在）。用户不做 EC2 试听，直接 `node factory/vo.mjs 04-year-review` 生成全部 64 句（每片每客户 8 句），看最终网页效果。生成后引擎会裁静音、统一到 −20 LUFS
+- [ ] **第 8 步 出片和收尾：** 云 GPU 上 `run node factory/check.mjs 04-year-review` → `render 04-year-review`（manifest 12 条）→ `pull` → `down`，用本机实例角色 `AWS_REGION=us-east-1`；本地 `factory/gallery.html?film=04-year-review` 给用户审；写中文的 `04-year-review/README.md`；仓库根 `README.md` 的索引表加一行（先问）；factory README 和 skill 的 Level 3 说明核对一遍
 - [ ] 每做完一步就提交，告诉用户可以推送（本地的 `opus55-04-year-review` 分支和 master 的 cb798a2 一样，已经没用了）
 
 ## 2. 05–10：`factory/Video-Factory.md` 的场景 B–H 里剩下的

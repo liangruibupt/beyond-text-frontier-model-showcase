@@ -7,6 +7,8 @@ import { fontsFor } from './captions.js';
 import { storyOf, statsFor } from './facts.js';
 import { buildScene } from './js/scene.js';
 import { SHOTS } from './js/shots.js';
+import { score } from './js/score.js';
+import { voLines, AUDITION } from './copy.js';
 
 export default {
   ...META,
@@ -20,4 +22,7 @@ export default {
   /** 每次求值镜头前复位所有逐帧可变的状态：跳着看和顺序播放得到同一帧 */
   reset(ctx) { ctx.subjects.show(); },
   shots: SHOTS,
+  score,
+  voLines,
+  audition: AUDITION,
 };

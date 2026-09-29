@@ -1,42 +1,42 @@
 {
   "id": "coffee",
   "key": "c759f2564798ae2f",
-  "model": "draft",
-  "tries": 0,
+  "model": "us.anthropic.claude-opus-5-5",
+  "tries": 1,
   "usage": {
-    "inputTokens": 0,
-    "outputTokens": 0
+    "inputTokens": 4583,
+    "outputTokens": 1144
   },
   "story": {
     "title": {
-      "zh": "咖啡续命官",
-      "en": "Chief Caffeine Officer"
+      "zh": "早起咖啡人",
+      "en": "The Dawn Brewer"
     },
     "captions": {
       "count": {
-        "zh": "今年在有集下的单",
-        "en": "orders this year"
+        "zh": "这一年，你的每一单都在这里",
+        "en": "orders this year, most before breakfast"
       },
       "months": {
-        "zh": "{month}最忙：{monthOrders} 单",
-        "en": "Busiest month: {month}, {monthOrders} orders"
+        "zh": "{month}最忙，一口气下了{monthOrders}单",
+        "en": "{month} went big: {monthOrders} orders"
       },
       "top": {
-        "zh": "最爱{top}，回购 {repeat} 次",
-        "en": "Your favourite: {top}, {repeat} repeat buys"
+        "zh": "{top}，又回购了{repeat}次",
+        "en": "{top}, back in the cart {repeat} times"
       }
     },
     "vo": {
       "intro": {
-        "zh": "{name}，{year}年，你在有集下单{orders}次。",
-        "en": "{name}, this year you ordered {orders} times."
+        "zh": "早安，{name}。这一年，你下了{orders}单",
+        "en": "Morning, {name}. {orders} orders this year."
       },
       "top": {
-        "zh": "最爱的还是{top}，回购了{repeat}次。",
-        "en": "{top}, again and again: {repeat} times."
+        "zh": "{top}，又买了{repeat}次",
+        "en": "{top}, back {repeat} more times."
       }
     },
     "pick": "cf-geisha",
-    "why": "手写占位稿：林一最常买咖啡豆、多在早上 9 点前下单，瑰夏是同品类的升级款。"
+    "why": "About half the orders (74 of 146) came in early in the morning, and coffee beans were the clear favourite with 12 re-buys, so the title is 'Dawn Brewer' and the pick is the Geisha beans as a treat-level upgrade at the 11.11 price."
   }
 }

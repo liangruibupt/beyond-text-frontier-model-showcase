@@ -1,42 +1,42 @@
 {
   "id": "camp",
   "key": "9655ae6ef5e16337",
-  "model": "draft",
-  "tries": 0,
+  "model": "us.anthropic.claude-opus-5-5",
+  "tries": 1,
   "usage": {
-    "inputTokens": 0,
-    "outputTokens": 0
+    "inputTokens": 4506,
+    "outputTokens": 1280
   },
   "story": {
     "title": {
-      "zh": "周末野营家",
-      "en": "Weekend Wanderer"
+      "zh": "周末营地人",
+      "en": "Weekend Campfire Chef"
     },
     "captions": {
       "count": {
-        "zh": "今年下的单，多在周末",
-        "en": "orders, mostly weekends"
+        "zh": "张订单，大多赶在周末出发前",
+        "en": "orders, most placed right before a weekend away"
       },
       "months": {
-        "zh": "{month}最忙：{monthOrders} 单",
-        "en": "Busiest month: {month}, {monthOrders} orders"
+        "zh": "{month}山野在召唤，你下了{monthOrders}单",
+        "en": "{month} called you outdoors: {monthOrders} orders"
       },
       "top": {
-        "zh": "最爱{top}，回购 {repeat} 次",
-        "en": "Top pick: {top}, {repeat} repeat buys"
+        "zh": "{top}又回购了{repeat}次，炉火从没断过",
+        "en": "{top}, restocked {repeat} times"
       }
     },
     "vo": {
       "intro": {
-        "zh": "{name}，{year}年你下单{orders}次，多在周末。",
-        "en": "{name}, {orders} orders this year, mostly weekends."
+        "zh": "{name}，这一年你下了{orders}单，大多为了出发。",
+        "en": "{name}, {orders} orders, packed for the road."
       },
       "top": {
-        "zh": "{top}回购{repeat}次，说走就走。",
-        "en": "{top}, restocked {repeat} times."
+        "zh": "{top}又补了{repeat}回。",
+        "en": "{top}: {repeat} refills."
       }
     },
-    "pick": "od-lantern",
-    "why": "手写占位稿：周野的订单七成在周末、五一最忙，营地灯是露营装备里还没常买的一件。"
+    "pick": "od-meal",
+    "why": "Outdoor is 36% of orders, gas canisters were bought 11 times, 74% of orders land on weekends and the peak was a May Day streak. That makes them a weekend camper, and camp meals are the natural next thing to cook on all that gas."
   }
 }

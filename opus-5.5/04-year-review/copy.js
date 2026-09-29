@@ -37,8 +37,10 @@ export function valuesFor(u, lang, story) {
 }
 
 // ── 配音 ──
-export const VOICE = { zh: 'zm_yunxi', en: 'bf_emma' };               // 03 的声音，先用着；试听（node factory/vo.mjs 04-year-review --audition）后再定
-export const AUDITION = { zh: ['zf_xiaoxiao', 'zf_xiaoyi', 'zm_yunjian', 'zm_yunxi'], en: ['af_heart', 'bf_emma', 'am_michael', 'bm_george'] };
+// 声音必须是已部署的 Kokoro（aws-is-how/.../Kokoro/README.md）里有的：zh 只有 zm_* 四个男声；en 有 am_*（美）/ bm_*（英）。
+// 没有 bf_*/af_*/zf_* 这些声音——用了会 Lambda 报错。README 推荐：zh=zm_yunjian（最自然），en=am_michael（美，沉稳）/ bm_george（英，播音腔）
+export const VOICE = { zh: 'zm_yunjian', en: 'am_michael' };
+export const AUDITION = { zh: ['zm_yunjian', 'zm_yunxi', 'zm_yunxia', 'zm_yunyang'], en: ['am_michael', 'am_fenrir', 'bm_george', 'bm_fable'] };
 export const SPEED = { zh: 1, en: 1 };
 // 时段（成片秒）：[开始, 最长]。intro 可以念进 months 的开头（最高的柱子 6.0 秒才亮），top 在 title 的闪白（10.5）之前念完，
 // end 从 title 的最后一拍开始；每句在成片最后 0.3 秒的淡出之前念完
