@@ -8,6 +8,7 @@ import { storyOf, statsFor } from './facts.js';
 import { buildScene } from './js/scene.js';
 import { SHOTS } from './js/shots.js';
 import { score } from './js/score.js';
+import { voLines, AUDITION } from './copy.js';
 
 export default {
   ...META,
@@ -22,4 +23,6 @@ export default {
   reset(ctx) { ctx.subjects.show(); },
   shots: SHOTS,
   score,
+  voLines,
+  audition: AUDITION,
 };
