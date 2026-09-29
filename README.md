@@ -2,6 +2,8 @@
 
 验证 Claude Opus 5.5 在网页动画、视频制作等方向的能力。每个案例都是一个独立子目录，内含完整代码、素材和说明。
 
+本仓库原是 [aws-is-how](https://github.com/liangruibupt/aws-is-how) 里的 `ai-ml/chatgpt/claude/opus55-showcase/`，2026-09-29 拆出来单独成库（历史都保留了），往后加案例和素材不再撑大 aws-is-how。配音用的 Kokoro 部署脚本还在 aws-is-how 里（见 [factory/README.md](factory/README.md) 的配音一节）。
+
 ## 案例
 
 | # | 案例 | 类型 | 要点 |

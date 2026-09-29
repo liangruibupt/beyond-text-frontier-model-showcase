@@ -107,7 +107,7 @@ When all shots are in, run `node factory/check.mjs NN-name`. Pay particular atte
   node factory/vo.mjs NN-name --dry        # the lines that will be generated
   node factory/vo.mjs NN-name              # generate NN-name/assets/vo/ (committed)
   ```
-  `--audition` and generation call the deployed Kokoro Lambda through `ai-ml/aigc/audio_models/Kokoro/tts.sh`, so they need AWS credentials. **Ask the user before running them.** `--dry` makes no calls.
+  `--audition` and generation call the deployed Kokoro Lambda through `ai-ml/aigc/audio_models/Kokoro/tts.sh` in the aws-is-how repo (by default a checkout next to this one, `../aws-is-how`; `KOKORO_TTS` overrides it), so they need AWS credentials. **Ask the user before running them.** `--dry` makes no calls.
   - A line that doesn't fit its slot even at 1.15× speed must be shortened in the copy.
   - A Kokoro misreading is fixed by rewording that line and regenerating.
 

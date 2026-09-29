@@ -33,7 +33,7 @@
 ES Module 需要经 HTTP 打开（`file://` 不行）：
 
 ```bash
-cd ai-ml/chatgpt/claude/opus55-showcase
+cd opus55-showcase
 python3 -m http.server 8765
 # 浏览器打开 http://localhost:8765/02-devastator/
 ```
