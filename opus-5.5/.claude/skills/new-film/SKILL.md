@@ -94,7 +94,18 @@ For each shot, in story order:
 
 When all shots are in, run `node factory/check.mjs NN-name`. Pay particular attention to `determinism`: it fails when `reset` misses some state a shot changed.
 
-## 4. Sound and voice-over
+## 4. Copy from data (Level 3, only if the film has it)
+
+Use this when the copy should differ for each value of an axis and come from data, as in 04's year-in-review, which has one story per user. The contract is `STORY` in `factory/README.md` under 文案（story.js）.
+
+- **Code computes every number.** The model writes words only, with `{placeholders}` where the numbers go, and code fills them in. `check` rejects any number the model wrote itself (`writtenNumbers`), a wrong set of placeholders (`slotErrors`), text that overflows a zone in any aspect ratio (`approxMeasure`), and narration longer than its slot (`speechSec`). Word each error so the model can act on it: say which field, which ratio and how many characters to cut.
+- Until the user approves the Bedrock call, commit hand-written draft stories with `"model": "draft"`. The film must run on them, and its tests must run `check` on every committed story.
+- `node factory/story.mjs NN-name --dry` prints the prompt and makes no call. Show it to the user.
+- **Ask the user before the real call.** Confirm the profile, the region and the model; the default is `us.anthropic.claude-opus-5-5`. Then run `AWS_PROFILE=… AWS_REGION=… node factory/story.mjs NN-name`, and read every story it writes before moving on.
+- Changing the data makes a story stale, and the page refuses to start until `story.mjs` has been run again. A layout change that makes a story fail `check` does the same.
+- Spell numbers out in narration with `factory/engine/say.js` (`sayNum`, `sayYear`, `sayMonth`).
+
+## 5. Sound and voice-over
 
 - `score(v, built)` returns `{ notes, reverb }` using the voices in `factory/engine/audio.js`. Align notes to `built.hits`. A film with no `score` renders silent videos, and its voice-over is dropped too. So a narrated film needs a `score`, even if it is only a quiet bed. `{ notes: [] }` works while a variant has narration, but a mix that comes out completely silent (for example `vo: off` with no notes) fails the loudness step with `… is silent`.
 - `voLines(v)` returns `[]` when `v.vo === 'off'`. Its lines must not depend on `ar`, and an id must have the same text in every variant.
@@ -111,20 +122,30 @@ When all shots are in, run `node factory/check.mjs NN-name`. Pay particular atte
   - A line that doesn't fit its slot even at 1.15× speed must be shortened in the copy.
   - A Kokoro misreading is fixed by rewording that line and regenerating.
 
-## 5. Render and review
+## 6. Render and review
+
+Batch renders run on a cloud GPU instance, not on the user's MacBook. Keep previews, `snap.mjs` and `sheet.mjs` local. Details are in factory/README.md under 云端出片.
 
 ```bash
-node factory/render.mjs NN-name --dry    # always first: 3 videos per product, nothing else
-node factory/render.mjs NN-name          # the manifest; resumable, skips finished videos whose inputs are unchanged
+node factory/render.mjs NN-name --dry    # always first, locally: 3 videos per product, nothing else
+export AWS_PROFILE=global_ruiliang AWS_REGION=us-east-1
+node factory/cloud.mjs up --hours 2      # reuses a running instance; ~10 min from scratch
+node factory/cloud.mjs run node factory/check.mjs NN-name
+node factory/cloud.mjs render NN-name    # the manifest; resumable; pulls NN-name/out/ back
+node factory/cloud.mjs down              # always, as soon as the renders are pulled back
 npm run serve                            # then open http://127.0.0.1:8765/factory/gallery.html?film=NN-name
 ```
+
+- `up` needs the IAM role and instance profile `opus55-render` (AmazonSSMManagedInstanceCore). If they are missing, ask the user to create them. Don't create IAM resources yourself.
+- Run `up` and `render` in the background and poll their output. `render` streams the remote `render.mjs` log. Pulling back runs at about 0.8 MB/s, so 12 videos take a few minutes after the last one finishes.
+- The instance powers itself off at its deadline. Use `extend --hours N` for a long batch.
 
 - A misspelt `--<axis>` name on the command line is ignored silently. If no valid axis is left, the script falls back to the manifest. The `--dry` count catches this.
 - A video counts as finished only if its sidecar's `inputs` fingerprint matches: editing the film folder, the engine, `factory/lib/`, `render.mjs` or `--fps` re-renders it. Upgrading three, the fonts, Chromium or ffmpeg does not, so use `--force` then.
 - Each video is checked after encoding: duration, size, frame count, audio, −14 ± 1 LUFS and true peak ≤ −1 dBTP. Failures are listed at the end and in the gallery.
 - Review the gallery with the user: every group, every filter, and a few videos played with sound.
 
-## 6. Finish
+## 7. Finish
 
 - Write `NN-name/README.md` in Chinese, in the style of `02-devastator/README.md` and `03-perfume/README.md`:
   - intro;

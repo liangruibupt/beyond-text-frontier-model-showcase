@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>有集 YOUJI · 年度报告视频工厂</title>
+  <meta name="description" content="一个模板给每位顾客出一条年度购物报告：数字由代码从订单算出，称号、字幕和配音由 Opus 5.5 按统计写，覆盖三种画面比例、中英文、15 / 6 秒和促销版本。" />
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5/500.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5/900.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5/500.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5/800.css" />
+  <link rel="stylesheet" href="../factory/engine/player.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <main id="stage" aria-label="有集年度报告视频预览"></main>
+  <script type="module">
+    import { boot } from '../factory/engine/app.js';
+    import film from './film.js';
+    boot(film);
+  </script>
+</body>
+</html>

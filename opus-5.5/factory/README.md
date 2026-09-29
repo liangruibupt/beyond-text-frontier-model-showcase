@@ -2,7 +2,7 @@
 
 03 起各案例共用的引擎。一部成片（film）只提供数据和镜头函数：轴、剪辑表、构图、字体、场景、镜头、配乐和配音台词。其余的事都由引擎来做：时钟与剪辑表、按画面比例取景、字幕排版、后期、混音、预览页、审片工具、批量出片和成片画廊。
 
-每一帧只由（变体, t）决定，所以拖动预览、联系表和批量出片画出的是同一帧。页面是纯静态的：原生 ES Module，[Three.js 0.170](https://threejs.org/) 经 importmap 从 jsDelivr 加载，没有构建步骤。出片时，Node 脚本用 Playwright 驱动无头 Chromium（走 Metal GPU）逐帧取 PNG，经管道交给 ffmpeg。
+每一帧只由（变体, t）决定，所以拖动预览、联系表和批量出片画出的是同一帧。页面是纯静态的：原生 ES Module，[Three.js 0.170](https://threejs.org/) 经 importmap 从 jsDelivr 加载，没有构建步骤。出片时，Node 脚本用 Playwright 驱动无头 Chromium（Mac 上走 Metal，Linux 上走 Vulkan）逐帧取 PNG，经管道交给 ffmpeg。批量出片可以放到 AWS 的 GPU 实例上做（`cloud.mjs`）。
 
 第一部用这套引擎的成片是 [03 · 闻境](../03-perfume/)。要从一段故事梗概起一部新片，可以让 Claude Code 按 [`new-film`](../.claude/skills/new-film/SKILL.md) 技能来做，技能里的约定都以本文为准。
 
@@ -19,6 +19,8 @@ brew install ffmpeg               # render.mjs、vo.mjs 要用 ffmpeg 和 ffprob
 
 出片必须用 GPU：`openFilm` 拿到的 WebGL 渲染器如果是 SwiftShader 之类的软件实现，会直接报错，不会用软件渲染慢慢出片。
 
+Chromium 的 GPU 后端按平台选（`lib/browser.mjs`）：Mac 用 ANGLE + Metal，Linux 用 ANGLE + Vulkan。Linux 上不指定后端会落到 SwiftShader。在 NVIDIA A10G 上试过，ANGLE + GL/EGL 也能拿到 GPU，但 `check.mjs` 的确定性检查不过（同一帧顺着画和倒着画不一样），所以不用它。要换一组参数试，设环境变量 `FACTORY_GPU_ARGS`（空格分隔），它会替换掉按平台选的那一组。
+
 ## 目录
 
 ```
@@ -32,11 +34,13 @@ factory/
 │   ├── post.js             MSAA → 景深 → 泛光 → AgX + 调色 + 暗角 + 颗粒 + 闪白 / 叠化
 │   ├── audio.js            合成音色、离线混音、配音排布与压低配乐、预览发声
 │   ├── mix.js · rng.js · ease.js · particles.js   纯函数工具：压低曲线、WAV、种子随机数、缓动、闭式漂移粒子
+│   ├── say.js              配音里数字、年份、月份的读法
+│   ├── story.js            Level 3 文案的纯函数：数据指纹、占位符、查模型自己写的数字、估念多久
 │   ├── player.js · player.css   预览页的播放器
 │   ├── sheet.js            ?safe 安全区叠加、?sheet 联系表
 │   └── exporter.js         导出：start / frame / cover / audio
 ├── lib/                    Node 端：serve.mjs 静态服务 · args.mjs 参数 · browser.mjs 启动 Chromium · ffmpeg.mjs 编码与响度 · jobs.mjs 选任务与记账
-├── check.mjs · snap.mjs · sheet.mjs · vo.mjs · render.mjs   命令行工具，见下
+├── check.mjs · snap.mjs · sheet.mjs · story.mjs · vo.mjs · render.mjs · cloud.mjs   命令行工具，见下
 ├── gallery.html            成片画廊
 └── test/                   引擎单元测试（node:test）
 ```
@@ -85,8 +89,10 @@ npm run serve
 | `node factory/check.mjs <film>` | 出片前自检 |
 | `node factory/snap.mjs <film>` | 按成片尺寸截几帧 PNG |
 | `node factory/sheet.mjs <film>` | 联系表 PNG |
+| `node factory/story.mjs <film>` | 请 Bedrock 上的 Claude 按数据写文案，代码查过才存（Level 3，见[story.mjs](#storymjs模型写文案)） |
 | `node factory/vo.mjs <film>` | 用 Kokoro 生成配音片段 |
 | `node factory/render.mjs <film>` | 批量出片 |
+| `node factory/cloud.mjs render <film>` | 在 AWS 的 GPU 实例上批量出片，出完拉回本机（见[云端出片](#cloudmjs云端出片)） |
 | `http://127.0.0.1:8765/factory/gallery.html?film=<film>` | 成片画廊（先 `npm run serve`） |
 
 这些脚本在参数写错时打印用法、以状态码 2 退出；检查不通过（溢出、失败的任务等）以状态码 1 退出。每个脚本都自己起一个临时的静态服务（随机端口），不需要先 `npm run serve`。
@@ -147,6 +153,22 @@ node factory/sheet.mjs <film-dir> [--ar 9x16,1x1] [--lang zh,en] [--t 1,4.6] [--
 
 同一个变体按「比例 × 语言」分行，每行是几个关键帧；成片没有 `lang` 轴时只按比例分行。`--ar`、`--lang` 不写就取全部，`--t` 不写就取每条剪辑的 60% 处，其余轴用 `--<axis> value` 固定。输出 `<film>/out/sheet/sheet_<其余轴的值>_<比例>_<语言>.png`，例如 `sheet_teal_3_on_9x16-1x1-16x9_zh-en.png`。有溢出时列出 `OVERFLOW: 9x16 en t=2.4 card.title` 这样的行，并以状态码 1 退出。
 
+### story.mjs：模型写文案
+
+```
+node factory/story.mjs <film-dir> [--<axis> a,b] [--force] [--dry] [--model id] [--tries 3]
+```
+
+- 给有 `story.js` 的成片用（约定见[文案（story.js）](#文案storyjs)）。对 `STORY.ids`（或 `--<STORY.axis>` 给出的几个）逐个处理：
+  1. 代码先算好统计，连同每个字段的占位符和字数预算写进提示词；
+  2. Bedrock 上的 Claude 用强制的工具调用 `write_story` 交回一个对象；
+  3. `STORY.check` 查过，才写进 `<film>/stories/<id>.json`（入库）。
+- 查不过时，错误作为工具结果（`status: error`）发回同一段对话让模型改，最多 `--tries` 次（默认 3）。还不过就报出最后一次的错误，这一个不写，最后以状态码 1 结束。
+- 已存的文案分五种状态：`current` 跳过（`--force` 才重写）；`draft`（手写的占位稿）、`stale`（统计变了）、`failing`（`check` 不过）、`missing` 都会重写。
+- `--dry`：列出每个的状态，打印系统提示、第一个要写的提示词和工具的输入 schema，不调用模型。
+- 模型默认是 `us.anthropic.claude-opus-5-5`，可用 `--model` 换。调用走 AWS CLI（`aws bedrock-runtime converse`），账号和区域用 `AWS_PROFILE`、`AWS_REGION`，如 `AWS_PROFILE=global_ruiliang AWS_REGION=us-east-1 node factory/story.mjs 04-year-review`。
+- 成片没有 `story.js` 时，打印用法并以状态码 2 退出。
+
 ### vo.mjs：配音
 
 ```
@@ -201,6 +223,46 @@ done 2, skipped 0, failed 0  ·  0.2 min  ·  99-demo/out/index.json
 ### 画廊
 
 `gallery.html?film=<film>` 读 `<film>/out/index.json`。成片按第一条场景轴分组（03 是香型），每格按真实比例显示封面，下面写着其余轴的值、文件大小、时长和响度。其余每条轴一排筛选按钮，只列出成片里出现过的值，选中状态写进网址。鼠标悬停时静音播放，点开后带声音播放。标题行显示筛选后的条数、总大小和总时长；上次出片有失败的，另起一行用红字列出。不写 `?film=` 时默认打开 `03-perfume`。
+
+### cloud.mjs：云端出片
+
+本机性能不够时，批量出片放到 AWS 的 GPU 实例上做。代码经 rsync 同步上去，云端跑 `render.mjs`，成片再拉回 `<film>/out/`，本机的画廊照常看。
+
+```
+node factory/cloud.mjs up [--type g6.4xlarge,g5.4xlarge] [--hours 3]   开机（已有就复用，并把关机期限重设为从现在起 --hours 小时）
+node factory/cloud.mjs render <film> [render.mjs 的参数…]               同步 → 云端出片 → 拉回 <film>/out/；不写 --workers 时用 6
+node factory/cloud.mjs run <命令…>                                      同步后在云端跑，如 run node factory/check.mjs 03-perfume
+node factory/cloud.mjs pull <film>                                     只拉回 <film>/out/
+node factory/cloud.mjs extend --hours 2                                关机期限改为从现在起 2 小时
+node factory/cloud.mjs status                                          实例、关机期限、GPU 占用
+node factory/cloud.mjs down                                            终止实例
+```
+
+账号和区域用 AWS CLI 自己的环境变量，如 `AWS_PROFILE=global_ruiliang AWS_REGION=us-east-1 node factory/cloud.mjs up`。本机要装 AWS CLI 和 [Session Manager 插件](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html)。
+
+用到的资源都叫 `opus55-render`，都打了 `Project=opus55-showcase` 标签：
+
+| 资源 | 说明 | 谁来建 |
+|---|---|---|
+| IAM 角色和同名实例配置文件 | 只挂 `AmazonSSMManagedInstanceCore` | 要先由人建好，`up` 找不到就报错退出 |
+| 安全组 | 默认 VPC 里，没有入站规则 | `up` 没找到就建 |
+| ssh 密钥 | `~/.ssh/opus55-render`，公钥经开机脚本放进实例 | `up` 没找到就生成 |
+| ssh 配置 | `~/.ssh/opus55-render.config`，主机名是实例 ID，ProxyCommand 走 SSM | 每次运行都重写。也可以手动 `ssh -F ~/.ssh/opus55-render.config opus55-render` |
+| 实例 | 最新的 Deep Learning Base OSS Nvidia Driver GPU AMI（Ubuntu 24.04，带 ffmpeg 6.1）。`--type` 里的类型按顺序、逐个可用区地试，容量不够就换下一个 | `up` |
+
+`up` 的流程：
+1. 开机。开机脚本先写好关机期限和 ssh 公钥，再装 Node（和本机同一版本）和 ffmpeg，装完留下 `/var/lib/cloud/opus55-ready`。
+2. 等实例安顿好：SSM 在线；账号里的 SSM 关联跑完；开机脚本做完；没有待执行的重启。有些账号给所有实例挂了 `AWS-RunPatchBaseline` 这类关联，新实例一注册就打补丁，打完还会重启。所以安装部分写成 cloud-init 的 per-boot 脚本，被重启打断了，下次开机接着装。开机脚本失败时 `up` 直接报错，并给出看日志的命令。
+3. rsync 同步代码（不带 `node_modules/` 和各片的 `out/`）。`package-lock.json` 变了，或者是第一次同步，就装一遍依赖、Chromium 和它要的系统库。
+
+实例自己会到点关机：开机脚本把期限写进 `/etc/opus55-deadline`，cron 每 5 分钟看一次，过了期限就关机。关机行为设成了终止，所以忘了 `down` 也不会一直计费。这里不用 `shutdown -h +分钟`，因为补丁任务一重启，排好的关机就没了。云端命令中途断线（多半是补丁任务重启了实例）时，工具会等实例安顿好，再重跑一次。`render.mjs` 能断点续做，已出完的片子会跳过。
+
+2026-09-29 用 g5.4xlarge（16 vCPU，NVIDIA A10G）出 03 的清单，12 条共 4320 帧，6 个 worker，用时 5.2 分钟。几点实测：
+- 瓶颈在 CPU：出片时负载约 19，GPU 占用只有 5%，时间主要花在 PNG 编码和 x264 上。要更快就选 vCPU 更多的类型，比如 `--type g5.8xlarge`，再加大 `--workers`。
+- 成片和 Mac 上出的不是逐字节相同（GPU 不同），但肉眼看不出差别：同一条片逐帧比，PSNR 37.8 dB，SSIM 0.97。
+- 经 SSM 拉回成片约 0.8 MB/s，03 的 167 MB 用了 3.5 分钟。
+
+用完记得 `down`。
 
 ## 清单
 
@@ -300,6 +362,8 @@ NN-name/
 ├── meta.js         export const META：Node 脚本（render.mjs、check.mjs）不加载 Three.js，直接读它
 ├── film.js         export default { ...META, … }：成片本体
 ├── manifest.json   默认清单（只用 --all 或命令行轴出片时可以没有）
+├── story.js        （Level 3）给 story.mjs 的 STORY
+├── stories/        story.mjs 写的文案（入库）
 ├── assets/vo/      vo.mjs 生成的配音（入库）
 ├── test/           *.test.mjs，npm test 会一起跑
 ├── out/            出片结果（不入库）
@@ -503,8 +567,36 @@ check.mjs 的 `determinism` 项查的就是这一点。
 - `v.vo === 'off'` 时返回 `[]`。引擎只提供这条轴，关掉配音要靠成片自己。
 - 同一个 `id` 在所有变体里文字相同。
 - 台词不能随 `ar` 变：vo.mjs 只按 9x16 收集台词。
-- 数字写成汉字或英文单词，Kokoro 直接读阿拉伯数字不稳定。
+- 数字写成汉字或英文单词，Kokoro 直接读阿拉伯数字不稳定。用 `engine/say.js`：`sayNum`（0–99 999）、`sayYear`（二零二六 · twenty twenty-six）、`sayMonth`（十一月 · November）。
 - 每句要在成片最后 0.3 秒的淡出之前念完。
+
+### 文案（story.js）
+
+Level 3 的成片把「写什么」交给模型，分工如下：
+- 数字和统计都由代码从数据算好；
+- 模型只写字，数字留成 `{占位符}`，由代码填进去；
+- 模型写的字里不许自己带数字，所以它编不出统计。
+
+出片时只读已存的 `stories/<id>.json`，不调用模型，每一帧仍只由（变体, t）决定。
+
+`story.js` 导出 `STORY`：
+
+| 字段 | 说明 |
+|---|---|
+| `axis` · `ids` | 一份文案对应这条轴的一个值，如 04 的 `user`；`ids` 是全部值 |
+| `facts(id)` | 代码算好的统计。它的指纹 `storyKey(facts)` 存进文案，数据一变，文案就算过期 |
+| `schema` | 模型要填的字段（JSON Schema），也就是 `write_story` 的输入 |
+| `system` · `prompt(id)` | 系统提示；给这一个的提示词，写明统计、每个字段的占位符和字数预算 |
+| `toolDescription` | 可选，`write_story` 的说明 |
+| `check(id, story)` | 返回错误描述的数组，空数组表示通过。错误会原样发回给模型，所以要写成它能照着改的话，如 `captions.top.en is 3 characters too wide for 9x16` |
+
+写 `check` 用的纯函数在 `engine/story.js`：
+- `slotErrors(label, tpl, { required, optional })`：`required` 里的占位符每个正好一次，`optional` 里的最多一次，别的都不许有。`fill(tpl, values)` 填值，缺值就报错。
+- `writtenNumbers(s, lang)`：找出模型自己写的数字，包括阿拉伯数字、英文数词和中文数字。中文的「一」不查，一起、每一次这样的词太常见。
+- `speechSec(s, lang)`：估一句配音要念多久。按中文每秒 4.8 个字、英文每秒 4 个音节算，句中每个标点加 0.15 秒。比 Kokoro 实测略慢，所以只会高估。真正的时长还是由 vo.mjs 量。
+- 字宽用 `text.js` 的 `approxMeasure`，和字幕测试一样。
+
+成片在 `setup` 里读文案，缺了或过期了就报错，并给出要跑的命令。成片测试会对入库的文案都跑一遍 `check`。还没调用模型时，可以先手写占位稿，把 `model` 写成 `"draft"`：页面照常能看，`story.mjs` 不带 `--force` 也会替换它。
 
 ### 测试
 

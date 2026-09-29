@@ -23,7 +23,7 @@ npm run serve            # 或 python3 -m http.server 8765
 #     http://127.0.0.1:8765/03-perfume/
 ```
 
-从 03 起，批量出片、测试和审片工具都在 [factory/](factory/README.md) 里，要先 `npm install`（另需 Node 22 和 ffmpeg）。出片用 `node factory/render.mjs 03-perfume`，出完打开 `http://127.0.0.1:8765/factory/gallery.html?film=03-perfume` 看画廊。要从一段故事梗概起一部新片，在本目录运行 Claude Code，让它按 `new-film` 技能（`.claude/skills/new-film/`）来做。
+从 03 起，批量出片、测试和审片工具都在 [factory/](factory/README.md) 里，要先 `npm install`（另需 Node 22 和 ffmpeg）。出片用 `node factory/render.mjs 03-perfume`；本机慢的话，用 `node factory/cloud.mjs render 03-perfume` 放到 AWS 的 GPU 实例上出，出完拉回本机（见 [factory/README.md](factory/README.md#cloudmjs云端出片)）。出完打开 `http://127.0.0.1:8765/factory/gallery.html?film=03-perfume` 看画廊。要从一段故事梗概起一部新片，在本目录运行 Claude Code，让它按 `new-film` 技能（`.claude/skills/new-film/`）来做。
 
 ## 视频工厂：原理与技术
 
@@ -59,7 +59,7 @@ factory 是 03 起各案例共用的商品视频引擎。一部成片只提供�
 | **Web Audio API** | 浏览器 | 用 `OfflineAudioContext` 离线合成整段 48 kHz 立体声：<br>- 音色：拨弦（Karplus–Strong）、铺底、长笛、钟、水滴、滤波噪声、咔哒，外加混响；<br>- 配音按台词表排进混音，每句下面把配乐压低 9 dB。<br>预览里听到的和写进成片的是同一块缓冲 |
 | **原生 ES Module + importmap** | 浏览器 | 纯静态页面，没有构建步骤。Three.js 和字体经 jsDelivr 加载 |
 | **Node.js 22** | 本机 | 命令行工具：静态服务、选任务、并发池、断点续做的记账，调用 ffmpeg 和 Kokoro；`node:test` 跑单元测试 |
-| **Playwright + 无头 Chromium** | 本机 · GPU | 出片和审片时打开成片页面。Chromium 经 ANGLE 走 Metal，也就是 Mac 的 GPU。视口设成成片尺寸，按 t = i / fps 逐帧调页面里的 `draw(t)` 取 PNG |
+| **Playwright + 无头 Chromium** | 本机 / 云端 · GPU | 出片和审片时打开成片页面。Chromium 经 ANGLE 用 GPU 渲染：Mac 上走 Metal，云端的 Linux 实例上走 Vulkan。视口设成成片尺寸，按 t = i / fps 逐帧调页面里的 `draw(t)` 取 PNG |
 | **ffmpeg / ffprobe** | 本机 | PNG 帧经管道编成 H.264 MP4（libx264，CRF 18）；WAV 编成 192 kbps 的 AAC，响度 −14 LUFS、真峰值 ≤ −1 dBTP。ffprobe 核对时长、尺寸、帧数和音轨 |
 | **Kokoro-82M** | AWS Lambda | 文本转语音，生成中英文配音 mp3（03 用 `zm_yunxi` 和 `bf_emma`）。生成后随仓库提交，出片时不再调用 |
 
@@ -97,7 +97,7 @@ factory 是 03 起各案例共用的商品视频引擎。一部成片只提供�
 | Playwright + Chromium | 1.57.0 | 驱动无头浏览器 | 出片、截帧、联系表、自检（`npm install`，再 `npx playwright install chromium`） |
 | ffmpeg / ffprobe | 系统安装 | 编码、响度、校验 | 出片、生成配音 |
 | Node.js | 22 | 命令行工具和测试 | 除了在浏览器里预览，其余都要 |
-| GPU | 03 在 Apple M1 Pro（Metal）上出片 | WebGL 渲染 | 预览和出片，软件渲染会被拒绝 |
+| GPU | 本机是 Apple M1 Pro（Metal）；批量出片在 AWS 的 g5.4xlarge（NVIDIA A10G，Vulkan）上，03 的 12 条用 5 分钟 | WebGL 渲染 | 预览和出片，软件渲染会被拒绝 |
 | Kokoro-82M（AWS Lambda `kokoro-tts:live`，us-east-1） | — | 生成配音，经 S3 取回 mp3 | 只在重新生成配音时（`vo.mjs`）需要，要 AWS CLI 和凭证 |
 
 ## 参考

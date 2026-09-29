@@ -4,9 +4,10 @@
 import * as THREE from 'three';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { FullScreenQuad } from 'three/addons/postprocessing/Pass.js';
+import { TONE_GLSL, toneOf } from './grade.js';
 
 export const POST_DEFAULTS = {
-  exposure: 1,
+  exposure: 1, tone: 'agx',                          // 色调映射：agx | neutral（grade.js）
   focus: 'target', aperture: 0, maxBlur: 0.012,     // 对焦距离（米，'target' = 相机注视点）；景深强度（0 = 关）；最大弥散圆半径（画面短边比例）
   bloom: { strength: 0.22, radius: 0.45, threshold: 0.85 },
   lift: [0, 0, 0], gamma: [1, 1, 1], gain: [1, 1, 1], saturation: 1,
@@ -40,27 +41,18 @@ void main() {
   gl_FragColor = vec4(acc / ws, 1.0);
 }`;
 
-// AgX 取自 three 0.170 的 tonemapping_pars_fragment（输入输出都是线性 sRGB）
+// 色调映射 agx / neutral 在 grade.js（和 JS 版写在一起，ungrade 用）；输入输出都是线性 sRGB
 const GRADE = /* glsl */`
 uniform sampler2D tDiffuse, tPrev; uniform vec2 res;
 uniform float exposure, saturation, vignette, grain, seed, flash, mixK;
 uniform vec3 lift, gamma, gain, flashColor;
+uniform int tone;
 varying vec2 vUv;
-const mat3 S2R = mat3(vec3(0.6274, 0.0691, 0.0164), vec3(0.3293, 0.9195, 0.0880), vec3(0.0433, 0.0113, 0.8956));
-const mat3 R2S = mat3(vec3(1.6605, -0.1246, -0.0182), vec3(-0.5876, 1.1329, -0.1006), vec3(-0.0728, -0.0083, 1.1187));
-const mat3 INSET = mat3(vec3(0.856627153315983, 0.137318972929847, 0.11189821299995), vec3(0.0951212405381588, 0.761241990602591, 0.0767994186031903), vec3(0.0482516061458583, 0.101439036467562, 0.811302368396859));
-const mat3 OUTSET = mat3(vec3(1.1271005818144368, -0.1413297634984383, -0.14132976349843826), vec3(-0.11060664309660323, 1.157823702216272, -0.11060664309660294), vec3(-0.016493938717834573, -0.016493938717834257, 1.2519364065950405));
-vec3 agx(vec3 c) {
-  c = INSET * (S2R * c);
-  c = clamp((log2(max(c, 1e-10)) + 12.47393) / 16.5, 0.0, 1.0);
-  vec3 x2 = c * c, x4 = x2 * x2;
-  c = 15.5 * x4 * x2 - 40.14 * x4 * c + 31.96 * x4 - 6.868 * x2 * c + 0.4298 * x2 + 0.1191 * c - 0.00232;
-  return clamp(R2S * pow(max(OUTSET * c, 0.0), vec3(2.2)), 0.0, 1.0);
-}
+${TONE_GLSL}
 vec3 srgb(vec3 c) { return mix(c * 12.92, 1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055, step(0.0031308, c)); }
 float hash(vec2 p) { vec3 q = fract(vec3(p.xyx) * 0.1031); q += dot(q, q.yzx + 33.33); return fract((q.x + q.y) * q.z); }
 void main() {
-  vec3 c = agx(texture2D(tDiffuse, vUv).rgb * exposure);
+  vec3 x = texture2D(tDiffuse, vUv).rgb * exposure, c = tone == 1 ? neutral(x) : agx(x);
   c = mix(vec3(dot(c, vec3(0.2126, 0.7152, 0.0722))), c, saturation);
   c = pow(max(c * gain + lift * (1.0 - c), 0.0), 1.0 / gamma);
   float r = length(vUv - 0.5) * 1.4142;
@@ -77,7 +69,7 @@ export function createPost(renderer) {
   const dofRT = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType });
   const prevRT = new THREE.WebGLRenderTarget(1, 1);                   // 叠化时上一镜头的成品（已编码 sRGB）
   const dof = quad(DOF, { tColor: { value: null }, tDepth: { value: null }, res: { value: new THREE.Vector2() }, focus: { value: 1 }, aperture: { value: 0 }, maxR: { value: 0 }, near: { value: 0.01 }, far: { value: 100 }, taps: { value: 32 } });
-  const U = { tDiffuse: { value: dofRT.texture }, tPrev: { value: null }, res: { value: new THREE.Vector2() }, seed: { value: 0 }, flash: { value: 0 }, mixK: { value: 1 } };
+  const U = { tDiffuse: { value: dofRT.texture }, tPrev: { value: null }, res: { value: new THREE.Vector2() }, seed: { value: 0 }, flash: { value: 0 }, mixK: { value: 1 }, tone: { value: 0 } };
   for (const k of ['exposure', 'saturation', 'vignette', 'grain']) U[k] = { value: 0 };
   for (const k of ['lift', 'gamma', 'gain', 'flashColor']) U[k] = { value: new THREE.Vector3() };
   const grade = quad(GRADE, U);
@@ -105,7 +97,7 @@ export function createPost(renderer) {
       renderer.setRenderTarget(dofRT); dof.render(renderer);
       bloom.strength = P.bloom.strength; bloom.radius = P.bloom.radius; bloom.threshold = P.bloom.threshold;
       if (P.bloom.strength > 0) bloom.render(renderer, null, dofRT, 0, false);
-      U.exposure.value = P.exposure; U.saturation.value = P.saturation; U.vignette.value = P.vignette; U.grain.value = P.grain;
+      U.tone.value = toneOf(P); U.exposure.value = P.exposure; U.saturation.value = P.saturation; U.vignette.value = P.vignette; U.grain.value = P.grain;
       U.lift.value.fromArray(P.lift); U.gamma.value.fromArray(P.gamma); U.gain.value.fromArray(P.gain); U.flashColor.value.fromArray(P.flashColor);
       U.seed.value = Math.round(t * 60) % 997; U.flash.value = flash;
       U.tPrev.value = prev ?? black; U.mixK.value = prev ? k : 1;

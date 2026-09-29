@@ -1,0 +1,42 @@
+{
+  "id": "camp",
+  "key": "9655ae6ef5e16337",
+  "model": "draft",
+  "tries": 0,
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0
+  },
+  "story": {
+    "title": {
+      "zh": "周末野营家",
+      "en": "Weekend Wanderer"
+    },
+    "captions": {
+      "count": {
+        "zh": "今年下单 {orders} 次",
+        "en": "{orders} orders, mostly weekends"
+      },
+      "months": {
+        "zh": "{month}最忙：{monthOrders} 单",
+        "en": "Busiest month: {month}, {monthOrders} orders"
+      },
+      "top": {
+        "zh": "最爱{top}，回购 {repeat} 次",
+        "en": "Top pick: {top}, {repeat} repeat buys"
+      }
+    },
+    "vo": {
+      "intro": {
+        "zh": "{name}，{year}年你下单{orders}次，多在周末。",
+        "en": "{name}, {orders} orders this year, mostly weekends."
+      },
+      "top": {
+        "zh": "{top}回购{repeat}次，说走就走。",
+        "en": "{top}, restocked {repeat} times."
+      }
+    },
+    "pick": "od-lantern",
+    "why": "手写占位稿：周野的订单七成在周末、五一最忙，营地灯是露营装备里还没常买的一件。"
+  }
+}

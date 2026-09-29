@@ -1,0 +1,5 @@
+{ "jobs": [
+  { "user": ["*"], "ar": ["16x9"], "lang": ["zh"], "cut": [15], "promo": ["none"]   },
+  { "user": ["*"], "ar": ["16x9"], "lang": ["en"], "cut": [15], "promo": ["launch"] },
+  { "user": ["*"], "ar": ["1x1"],  "lang": ["zh"], "cut": [6],  "promo": ["1111"]   }
+] }

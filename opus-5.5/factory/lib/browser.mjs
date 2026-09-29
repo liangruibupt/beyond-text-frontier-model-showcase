@@ -1,10 +1,18 @@
-// browser.mjs — 启动无头 Chromium（走 Metal GPU）、打开成片页面并等 __app.ready；拿到软件渲染（SwiftShader）直接报错
+// browser.mjs — 启动无头 Chromium（Mac 走 Metal，Linux 走 Vulkan）、打开成片页面并等 __app.ready；拿到软件渲染（SwiftShader）直接报错
 import { chromium } from 'playwright';
 import { ASPECTS } from '../engine/variant.js';
 
-export const CHROME_ARGS = ['--use-angle=metal', '--enable-gpu', '--ignore-gpu-blocklist'];
+// ANGLE 后端按平台选。Linux 上不指定就落到 SwiftShader；NVIDIA 驱动下 vulkan 和 gl-egl 都能拿到 GPU，这里用 vulkan
+const GPU_ARGS = {
+  darwin: ['--use-angle=metal'],
+  linux: ['--use-angle=vulkan', '--enable-features=Vulkan', '--disable-vulkan-surface'],
+};
 
-export const launch = () => chromium.launch({ headless: true, args: CHROME_ARGS });
+/** 启动参数。环境变量 FACTORY_GPU_ARGS（空格分隔）可以换掉按平台选的那一组 */
+export const chromeArgs = (platform = process.platform, env = process.env) =>
+  [...(env.FACTORY_GPU_ARGS?.trim() ? env.FACTORY_GPU_ARGS.trim().split(/\s+/) : GPU_ARGS[platform] ?? []), '--enable-gpu', '--ignore-gpu-blocklist'];
+
+export const launch = () => chromium.launch({ headless: true, args: chromeArgs() });
 
 /**
  * 打开 <base>/<film>/?<query>，视口 = 成片尺寸。页面报错、字体没加载上、GPU 是软件渲染都会抛错。

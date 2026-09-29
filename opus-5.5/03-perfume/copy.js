@@ -1,6 +1,7 @@
 // copy.js — 文案：字体、界面用语、价格、配音台词与时段（纯数据）
 // 配音里的数字一律写成汉字 / 英文单词：Kokoro 直接读阿拉伯数字不稳定
 import { SKUS } from './skus.js';
+import { sayNum } from '../factory/engine/say.js';
 
 export const FONTS = {
   zh: { display: { family: 'Noto Serif SC', weight: 600 }, body: { family: 'Noto Serif SC', weight: 500 } },
@@ -13,29 +14,8 @@ export const T = {
 };
 export const money = (n, lang) => (lang === 'zh' ? `¥${n}` : `$${n}`);
 
-const ZH = '零一二三四五六七八九', UNIT = ['', '十', '百', '千'];
-const ONES = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
-const TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-function zhNum(n) {
-  if (n === 0) return '零';
-  const ds = [...String(n)].map(Number);
-  let s = '', zero = false;
-  ds.forEach((d, i) => {
-    const u = UNIT[ds.length - 1 - i];
-    if (d === 0) { zero = true; return; }
-    if (zero) { s += '零'; zero = false; }
-    s += (d === 1 && u === '十' && i === 0 ? '' : ZH[d]) + u;
-  });
-  return s;
-}
-function enNum(n) {
-  if (n < 20) return ONES[n];
-  if (n < 100) return TENS[Math.floor(n / 10)] + (n % 10 ? `-${ONES[n % 10]}` : '');
-  if (n < 1000) return `${ONES[Math.floor(n / 100)]} hundred${n % 100 ? ` ${enNum(n % 100)}` : ''}`;
-  return `${enNum(Math.floor(n / 1000))} thousand${n % 1000 ? ` ${enNum(n % 1000)}` : ''}`;
-}
-/** 0–9999 → 读法 */
-export const sayNum = (n, lang) => (lang === 'zh' ? zhNum(n) : enNum(n));
+/** 0–99 999 → 读法（引擎的 say.js；从这里再导出，台词和测试照旧从 copy.js 取） */
+export { sayNum };
 
 // ── 配音 ──
 export const VOICE = { zh: 'zm_yunxi', en: 'bf_emma' };               // 试听（node factory/vo.mjs 03-perfume --audition）后选定
