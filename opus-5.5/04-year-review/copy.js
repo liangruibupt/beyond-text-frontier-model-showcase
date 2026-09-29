@@ -19,7 +19,7 @@ export const T = {
 };
 export const PROMO_T = {
   zh: { pick: '双11 为你推荐', deal: '到手价', was: '日常价', launch: '年度报告上线', coupon: '分享得 5 元券', cta: '查看我的' },
-  en: { pick: '11.11 picked for you', deal: 'Now', was: 'Was', launch: 'Your Year in Review is here', coupon: 'Share it for a $5 coupon', cta: 'See yours' },
+  en: { pick: 'Double 11 pick for you', deal: 'Now', was: 'Was', launch: 'Your Year in Review is here', coupon: 'Share it for a $5 coupon', cta: 'See yours' },
 };
 export const money = (n, lang) => (lang === 'zh' ? `¥${n}` : `$${n}`);
 
@@ -32,7 +32,7 @@ export function valuesFor(u, lang, story) {
   const screen = { name, year: s.year, orders: s.orders, month: MONTHS[lang][m - 1], monthOrders: s.busiest.orders, top, repeat: s.top.repeat };
   const spoken = { name, year: sayYear(s.year, lang), orders: sayNum(s.orders, lang), month: sayMonth(m, lang), monthOrders: sayNum(s.busiest.orders, lang), top, repeat: sayNum(s.top.repeat, lang) };
   const it = story && ITEMS[story.pick];
-  if (it) Object.assign(spoken, { pick: it.name[lang], deal: sayNum(it.deal[T[lang].currency], lang) });
+  if (it) Object.assign(spoken, { pick: it.one[lang], deal: sayNum(it.deal[T[lang].currency], lang) });
   return { screen, spoken };
 }
 
@@ -48,11 +48,11 @@ export const SLOTS = { 15: { intro: [0.3, 4.6], top: [7.55, 2.9], end: [11.9, 2.
 // 推荐的商品不一定买过，所以说"为你挑的"，不说"你爱的"
 export const END = {
   zh: { none: '有集，记得你的每一次喜欢。', launch: '有集年度报告，现已上线。', 1111: '双十一，到手{deal}元。' },
-  en: { none: 'Youji. Every like, remembered.', launch: 'Your Youji Year in Review is here.', 1111: 'Eleven-eleven: just {deal} dollars.' },
+  en: { none: 'Youji. Every like, remembered.', launch: 'Your Youji Year in Review is here.', 1111: 'Double Eleven: just {deal} dollars.' },
 };
 export const ONE = {
   zh: { none: '{name}，你的这一年，有集都记得。', launch: '{name}，你的有集年度报告已上线。', 1111: '{name}，为你挑的{pick}，双十一到手{deal}元。' },
-  en: { none: '{name}, Youji remembers your year.', launch: '{name}, your Youji Year in Review is here.', 1111: '{name}, picked for you: {pick}, now {deal} dollars.' },
+  en: { none: '{name}, Youji remembers your year.', launch: '{name}, your Youji Year in Review is here.', 1111: '{name}, your Double Eleven pick: {pick}, just {deal} dollars.' },
 };
 
 /** 变体 → 配音台词 [{ id, text, voice, speed, at, max }]；id 是 用户_语言_剪辑_句，同一 id 在所有变体里文字相同 */

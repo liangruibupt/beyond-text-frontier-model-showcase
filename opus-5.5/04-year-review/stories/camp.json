@@ -14,8 +14,8 @@
     },
     "captions": {
       "count": {
-        "zh": "今年下单 {orders} 次",
-        "en": "{orders} orders, mostly weekends"
+        "zh": "今年下的单，多在周末",
+        "en": "orders, mostly weekends"
       },
       "months": {
         "zh": "{month}最忙：{monthOrders} 单",

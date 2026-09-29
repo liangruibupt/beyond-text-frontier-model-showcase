@@ -15,7 +15,7 @@ export function promoLayers(v, { a = 0, align = 'center', pal, story }) {
     const it = ITEMS[story.pick];
     return [
       { ...pill('ribbon', 'line1', P.pick, a, RED, '#ffffff'), box: { fill: RED, color: '#ffffff', pad: 0.45, radius: 0.15 } },
-      { ...base, id: 'pick', zone: 'line2', text: it.name[L], font: F.display, size: 0.056, min: MODEL_MIN * 0.056, maxLines: 1, tracking: L === 'zh' ? 0.08 : 0, in: [a + 0.2, a + 0.6], story: 'pick' },
+      { ...base, id: 'pick', zone: 'line2', text: it.one[L], font: F.display, size: 0.056, min: MODEL_MIN * 0.056, maxLines: 1, tracking: L === 'zh' ? 0.08 : 0, in: [a + 0.2, a + 0.6], story: 'pick' },
       { ...base, id: 'price', zone: 'line3', text: `${P.deal} ${money(it.deal[cur], L)}`, font: F.display, size: 0.075, lineHeight: 1.1, maxLines: 1, color: RED, in: [a + 0.4, a + 0.8], pop: true },
       { ...base, id: 'was', zone: 'line4', text: `${P.was} ${money(it.price[cur], L)}`, font: F.body, size: 0.036, maxLines: 1, in: [a + 0.7, a + 1.1], strike: true, color: pal.soft },
     ];

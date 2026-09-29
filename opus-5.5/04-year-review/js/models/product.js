@@ -1,4 +1,5 @@
-// product.js — 有集的五种商品外形（程序建模，没有素材）：立袋 pouch、盒 box、软包 pack、罐 can、瓶 bottle
+// product.js — 有集的商品外形（程序建模，没有素材）：立袋 pouch、盒 box、软包 pack、罐 can、瓶 bottle，
+// 还有两件照实物做的：营地灯 lantern、头戴耳机 headset
 // 原点在底面中心，正面朝 +z，高 0.6–0.9，宽不过 0.85；颜色取 catalog.js 的 [主体, 标签, 点缀]
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -59,6 +60,19 @@ function bulge(geo) {
   return geo.translate(0, hy, 0);
 }
 
+// ── 营地灯：矮圆底座，上面一圈发光的灯罩（四根护条罩着），顶盖和提手 ──
+const LANTERN = { r: 0.17, y: [0.16, 0.6], bars: 4 };
+
+// ── 耳机：两只耳罩竖着立在地上（朝 ±x），头梁从一只拱到另一只，左耳罩伸出麦克风杆 ──
+const HEADSET = { x: 0.24, r: 0.17, w: 0.11, top: 0.74 };
+/** 沿着点列的圆管 */
+const tube = (pts, r, seg = 48) => new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(p => new THREE.Vector3(...p))), seg, r, 12);
+/** 头梁的中线：从耳罩顶上起，拱到 HEADSET.top */
+const bandPts = (y0, t0 = 0, t1 = 1) => Array.from({ length: 17 }, (_, i) => {
+  const a = Math.PI * (t0 + ((t1 - t0) * i) / 16);
+  return [-HEADSET.x * Math.cos(a), y0 + (HEADSET.top - y0) * Math.sin(a), 0];
+});
+
 const BUILD = {
   pouch(M) {
     return [
@@ -101,6 +115,36 @@ const BUILD = {
       mesh(band(0.242, 0.14, 0.42), M.label),
     ];
   },
+  lantern(M) {
+    const { r, y: [y0, y1] } = LANTERN, bar = new THREE.CylinderGeometry(0.014, 0.014, y1 - y0, 8);
+    return [
+      mesh(lathe([[0, 0], [0.22, 0], [0.24, 0.03], [0.24, 0.13], [0.2, 0.17], [0, 0.17]], 0.02), M.main),
+      mesh(band(0.242, 0.055, 0.1), M.label),
+      mesh(lathe([[0, y0], [r, y0], [r + 0.02, y0 + 0.12], [r + 0.02, y1 - 0.12], [r, y1], [0, y1]], 0.04), M.glow),
+      ...Array.from({ length: LANTERN.bars }, (_, i) => {
+        const a = Math.PI / 4 + (2 * Math.PI * i) / LANTERN.bars;
+        return mesh(bar, M.main, [(r + 0.03) * Math.sin(a), (y0 + y1) / 2, (r + 0.03) * Math.cos(a)]);
+      }),
+      mesh(lathe([[0, y1 - 0.02], [0.21, y1 - 0.02], [0.22, y1 + 0.02], [0.14, y1 + 0.1], [0, y1 + 0.11]], 0.02), M.main),
+      mesh(new THREE.TorusGeometry(0.12, 0.016, 8, 32, Math.PI), M.label, [0, y1 + 0.1, 0]),
+    ];
+  },
+  headset(M) {
+    const { x, r, w } = HEADSET, cup = lathe([[0, 0], [r - 0.02, 0], [r, 0.03], [r, w - 0.02], [r - 0.03, w], [0, w]], 0.02);
+    const cushion = new THREE.TorusGeometry(r - 0.045, 0.035, 10, 40).rotateY(Math.PI / 2);
+    return [
+      ...[1, -1].flatMap(side => [
+        mesh(cup.clone().rotateZ(-side * Math.PI / 2), M.main, [side * (x - w / 2 + 0.02), r, 0]),
+        mesh(cushion, M.seal, [side * (x - w / 2 + 0.005), r, 0]),
+        mesh(disc(0.08).rotateY(side * Math.PI / 2), M.accent, [side * (x + w / 2 + 0.02), r, 0]),
+        mesh(rbox(0.04, 0.12, 0.05, 0.015), M.main, [side * x, 2 * r + 0.03, 0]),
+      ]),
+      mesh(tube(bandPts(2 * r + 0.06), 0.022), M.main),
+      mesh(tube(bandPts(2 * r + 0.06, 0.3, 0.7).map(([px, py]) => [px, py - 0.03, 0]), 0.03, 24), M.label),
+      mesh(tube([[x + w / 2, r - 0.03, 0.06], [x + 0.06, r - 0.08, 0.2], [0.12, r - 0.07, 0.27]], 0.012, 24), M.main),
+      mesh(new THREE.SphereGeometry(0.03, 16, 12), M.accent, [0.1, r - 0.07, 0.275]),
+    ];
+  },
 };
 export const KIND_NAMES = Object.keys(BUILD);
 
@@ -111,6 +155,7 @@ export function buildProduct(item) {
     main: clay({ color: main }), label: clay({ color: label, roughness: 0.6 }), accent: clay({ color: accent }),
     seal: clay({ color: new THREE.Color(main).lerp(new THREE.Color('#000000'), 0.15) }),
     metal: new THREE.MeshPhysicalMaterial({ color: '#c9ccd1', metalness: 0.8, roughness: 0.28 }),
+    glow: clay({ color: accent, emissive: accent, emissiveIntensity: 0.55, roughness: 0.25 }),
   };
   const g = new THREE.Group();
   g.add(...BUILD[item.kind](M));

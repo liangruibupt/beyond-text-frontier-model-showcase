@@ -14,8 +14,8 @@
     },
     "captions": {
       "count": {
-        "zh": "这一年，下单 {orders} 次",
-        "en": "{orders} orders in a big year"
+        "zh": "这一年，你下的单",
+        "en": "orders in a big year"
       },
       "months": {
         "zh": "{month}最忙，{monthOrders} 单",

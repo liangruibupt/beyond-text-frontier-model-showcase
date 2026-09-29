@@ -25,10 +25,11 @@ test('every field leaves the model room to write in', () => {
   }
 });
 
-test('check catches a written number, a long caption, a missing placeholder and an unknown pick', () => {
+test('check catches a written number, a long caption, a missing or extra placeholder and an unknown pick', () => {
   const s = storyOf('coffee'), with_ = (key, lang, text) => { const c = structuredClone(s), [a, b] = key.split('.'); (b ? c[a][b] : c[a])[lang] = text; return c; };
-  assert.match(check('coffee', with_('captions.count', 'zh', '这一年你下了 {orders} 单，其中 12 单在早上')).join('\n'), /writes numbers itself \("12"\)/);
+  assert.match(check('coffee', with_('captions.count', 'zh', '这一年你下的单，其中 12 单在早上')).join('\n'), /writes numbers itself \("12"\)/);
   assert.match(check('coffee', with_('captions.top', 'en', `{top} ${'again and again '.repeat(8)}{repeat}`)).join('\n'), /too long for its caption zone/);
   assert.match(check('coffee', with_('vo.intro', 'zh', '{name}，这一年辛苦了')).join('\n'), /orders/);
+  assert.match(check('coffee', with_('captions.count', 'en', '{orders} orders this year')).join('\n'), /captions\.count.*orders/);   // 大数字已经在上面了
   assert.match(check('coffee', { ...s, pick: 'nope' }).join('\n'), /pick must be a catalogue id/);
 });

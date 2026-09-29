@@ -18,7 +18,7 @@ const LANGS = META.axes.lang;
 /** 模型写的字段和各自的占位符（required 每个正好一次，optional 最多一次） */
 export const FIELDS = {
   title: {},
-  'captions.count': { required: ['orders'] },
+  'captions.count': {},                                              // 大数字就在上面，字幕只作注释，不再写一遍
   'captions.months': { required: ['month', 'monthOrders'] },
   'captions.top': { required: ['top', 'repeat'] },
   'vo.intro': { required: ['name', 'orders'], optional: ['year'] },
@@ -109,7 +109,7 @@ export function check(id, story) {
     for (const lang of LANGS) {
       const bad = Object.keys(ASPECTS).filter(ar => !fits(id, lang, ar, key, story));
       if (!bad.length) continue;
-      if (key === 'pick') { errs.push(`pick ${story.pick}: its ${lang} name "${ITEMS[story.pick].name[lang]}" does not fit the 11.11 end card in ${bad.join(', ')}; pick an item with a shorter name`); continue; }
+      if (key === 'pick') { errs.push(`pick ${story.pick}: its ${lang} name "${ITEMS[story.pick].one[lang]}" does not fit the 11.11 end card in ${bad.join(', ')}; pick an item with a shorter name`); continue; }
       const k = Math.max(...bad.map(ar => overBy(id, lang, ar, key, story)));
       errs.push(`${key}.${lang} is too long for its caption zone in ${bad.join(', ')} (the ${SHOT[key]} shot): cut about ${k} ${lang === 'zh' ? 'characters' : 'letters'}`);
     }
@@ -137,7 +137,7 @@ const SCHEMA = {
     title: bilingual('The customer\'s title of the year, no placeholders'),
     captions: {
       type: 'object', additionalProperties: false, required: ['count', 'months', 'top'],
-      properties: { count: bilingual('Caption under the rolling order count: {orders}'), months: bilingual('Caption over the monthly bars: {month} {monthOrders}'), top: bilingual('Caption when the favourite lands in the cart: {top} {repeat}') },
+      properties: { count: bilingual('Caption under the rolling order count, no placeholders'), months: bilingual('Caption over the monthly bars: {month} {monthOrders}'), top: bilingual('Caption when the favourite lands in the cart: {top} {repeat}') },
     },
     vo: {
       type: 'object', additionalProperties: false, required: ['intro', 'top'],
@@ -174,7 +174,7 @@ ${vals(said)}
 
 Fields to write (each in zh and en):
 - title: the title of the year, no placeholders. zh 2–6 characters, no punctuation; en at most 4 words, no punctuation. It sits under the label "${T.zh.label}" / "${T.en.label}".
-- captions.count: shown under the big rolling number of orders. Must contain {orders} once. Budget besides the placeholders: ${bud('captions.count')}.
+- captions.count: shown under the big rolling number of orders, e.g. "orders this year". No placeholders: the number is right above it, so don't repeat it. Budget: ${bud('captions.count')}.
 - captions.months: shown over the twelve monthly bars as the busiest bar lights up. Must contain {month} and {monthOrders} once each. Budget: ${bud('captions.months')}.
 - captions.top: shown as the favourite product flies into the cart. Must contain {top} and {repeat} once each ({repeat} = re-buys after the first order). Budget: ${bud('captions.top')}.
 - vo.intro: narration over the opening, about ${SLOTS[15].intro[1]} s. Must contain {name} and {orders} once each; {year} is optional. Budget besides the spoken values: zh ≤ ${B['vo.intro.zh']} characters, en ≤ ${B['vo.intro.en']} syllables.

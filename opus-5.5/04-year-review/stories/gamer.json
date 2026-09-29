@@ -14,8 +14,8 @@
     },
     "captions": {
       "count": {
-        "zh": "今年下单 {orders} 次",
-        "en": "{orders} orders this year"
+        "zh": "今年下的单，多在午夜后",
+        "en": "orders, mostly after midnight"
       },
       "months": {
         "zh": "{month}最忙：{monthOrders} 单",

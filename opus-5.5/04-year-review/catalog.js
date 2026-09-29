@@ -1,8 +1,8 @@
 // catalog.js — 有集的商品目录（虚构）：品类、商品名（字幕和配音里说的简称）、模型、颜色、价格（纯数据）
-// kind 是程序建模的外形（js/models/）：pouch 立袋 · box 盒 · pack 软包 · can 罐 · bottle 瓶
-// colors：[主体, 标签, 点缀]；price 日常价，deal 双11 到手价
+// kind 是程序建模的外形（js/models/）：pouch 立袋 · box 盒 · pack 软包 · can 罐 · bottle 瓶 · lantern 营地灯 · headset 耳机
+// colors：[主体, 标签, 点缀]；price 日常价，deal 双11 到手价；one 是说一件时的叫法（英文的器物用单数，1111 推荐一件）
 
-export const KINDS = ['pouch', 'box', 'pack', 'can', 'bottle'];
+export const KINDS = ['pouch', 'box', 'pack', 'can', 'bottle', 'lantern', 'headset'];
 
 /** 品类，按这个顺序排：统计里订单数相同的品类，排前面的在前 */
 export const CATS = {
@@ -15,7 +15,7 @@ export const CATS = {
   gaming: { zh: '游戏', en: 'gaming' },
 };
 
-const item = (cat, zh, en, kind, colors, price, deal) => ({ cat, name: { zh, en }, kind, colors, price: { CNY: price[0], USD: price[1] }, deal: { CNY: deal[0], USD: deal[1] } });
+const item = (cat, zh, en, kind, colors, price, deal, one = en) => ({ cat, name: { zh, en }, one: { zh, en: one }, kind, colors, price: { CNY: price[0], USD: price[1] }, deal: { CNY: deal[0], USD: deal[1] } });
 
 export const ITEMS = {
   'cf-beans': item('coffee', '咖啡豆', 'coffee beans', 'pouch', ['#5a3a26', '#f1e3cc', '#c98a3d'], [99, 15], [69, 10]),
@@ -39,10 +39,10 @@ export const ITEMS = {
   'bb-bottle': item('baby', '奶瓶', 'baby bottles', 'bottle', ['#f2f5f7', '#f4a38c', '#8fc9e8'], [129, 19], [89, 13]),
   'od-gas': item('outdoor', '气罐', 'gas canisters', 'can', ['#e8742c', '#1f3a2a', '#f2e9d6'], [45, 7], [29, 4]),
   'od-meal': item('outdoor', '自热米饭', 'camp meals', 'box', ['#d9482b', '#fbe9c9', '#2f6b45'], [39, 6], [26, 4]),
-  'od-lantern': item('outdoor', '营地灯', 'lanterns', 'box', ['#2f6b45', '#f1e6c8', '#f2b233'], [189, 28], [129, 19]),
+  'od-lantern': item('outdoor', '营地灯', 'lanterns', 'lantern', ['#2f6b45', '#f1e6c8', '#f2b233'], [189, 28], [129, 19], 'lantern'),
   'gm-cards': item('gaming', '游戏点卡', 'game cards', 'box', ['#6b3cf0', '#f2eeff', '#35e6f0'], [100, 15], [88, 13]),
-  'gm-controller': item('gaming', '手柄', 'controllers', 'box', ['#1b1238', '#35e6f0', '#9a5cff'], [399, 59], [299, 45]),
-  'gm-headset': item('gaming', '耳机', 'headsets', 'box', ['#26203a', '#ff5c8a', '#f2eeff'], [499, 75], [359, 55]),
+  'gm-controller': item('gaming', '手柄', 'controllers', 'box', ['#1b1238', '#35e6f0', '#9a5cff'], [399, 59], [299, 45], 'controller'),
+  'gm-headset': item('gaming', '耳机', 'headsets', 'headset', ['#26203a', '#ff5c8a', '#f2eeff'], [499, 75], [359, 55], 'headset'),
 };
 
 export const CATALOG = { cats: CATS, items: ITEMS };

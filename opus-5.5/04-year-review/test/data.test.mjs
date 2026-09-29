@@ -26,10 +26,11 @@ test('orders are well formed: one year, sorted, unique ids, catalogue items, pri
   }
 });
 
-test('the catalogue: every item has names, a known kind, three colours, a deal below its price', () => {
+test('the catalogue: every item has names (and a name for one of it), a known kind, three colours, a deal below its price', () => {
   for (const [id, it] of Object.entries(ITEMS)) {
     assert.ok(CATS[it.cat], id);
     assert.ok(it.name.zh && it.name.en, id);
+    assert.ok(it.one.zh === it.name.zh && it.one.en, id);                 // 说一件的叫法：中文不分单复数
     assert.ok(KINDS.includes(it.kind), id);
     assert.equal(it.colors.length, 3, id);
     for (const c of ['CNY', 'USD']) assert.ok(Number.isInteger(it.deal[c]) && it.deal[c] > 0 && it.deal[c] < it.price[c], `${id} ${c}`);
