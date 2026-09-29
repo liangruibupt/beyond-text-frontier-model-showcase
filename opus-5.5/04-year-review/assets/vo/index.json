@@ -1,0 +1,514 @@
+{
+  "baby_en_15_end_1111": {
+    "text": "Double Eleven: just sixteen dollars.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.496,
+    "lufs": -20
+  },
+  "baby_en_15_end_launch": {
+    "text": "Your Youji Year in Review is here.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.872,
+    "lufs": -20
+  },
+  "baby_en_15_end_none": {
+    "text": "Youji. Every like, remembered.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.848,
+    "lufs": -20
+  },
+  "baby_en_15_intro": {
+    "text": "Chen An, this year you placed two hundred twelve orders.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.096,
+    "lufs": -20
+  },
+  "baby_en_15_top": {
+    "text": "diapers, back thirty more times.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.016,
+    "lufs": -20
+  },
+  "baby_en_6_one_1111": {
+    "text": "Chen An, your Double Eleven pick: diapers, just sixteen dollars.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 4.224,
+    "lufs": -20
+  },
+  "baby_en_6_one_launch": {
+    "text": "Chen An, your Youji Year in Review is here.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.304,
+    "lufs": -20
+  },
+  "baby_en_6_one_none": {
+    "text": "Chen An, Youji remembers your year.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.112,
+    "lufs": -20
+  },
+  "baby_zh_15_end_1111": {
+    "text": "双十一，到手一百零九元。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.112,
+    "lufs": -20
+  },
+  "baby_zh_15_end_launch": {
+    "text": "有集年度报告，现已上线。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.232,
+    "lufs": -20
+  },
+  "baby_zh_15_end_none": {
+    "text": "有集，记得你的每一次喜欢。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.256,
+    "lufs": -20
+  },
+  "baby_zh_15_intro": {
+    "text": "陈安，这一年你一共下了二百一十二单。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.904,
+    "lufs": -20
+  },
+  "baby_zh_15_top": {
+    "text": "纸尿裤，回购了三十次。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.944,
+    "lufs": -20
+  },
+  "baby_zh_6_one_1111": {
+    "text": "陈安，为你挑的纸尿裤，双十一到手一百零九元。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.816,
+    "lufs": -20
+  },
+  "baby_zh_6_one_launch": {
+    "text": "陈安，你的有集年度报告已上线。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.592,
+    "lufs": -20
+  },
+  "baby_zh_6_one_none": {
+    "text": "陈安，你的这一年，有集都记得。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.424,
+    "lufs": -20
+  },
+  "camp_en_15_end_1111": {
+    "text": "Double Eleven: just four dollars.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.304,
+    "lufs": -20
+  },
+  "camp_en_15_end_launch": {
+    "text": "Your Youji Year in Review is here.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.872,
+    "lufs": -20
+  },
+  "camp_en_15_end_none": {
+    "text": "Youji. Every like, remembered.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.848,
+    "lufs": -20
+  },
+  "camp_en_15_intro": {
+    "text": "Zhou Ye, seventy-two orders, packed for the road.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.88,
+    "lufs": -20
+  },
+  "camp_en_15_top": {
+    "text": "gas canisters: ten refills.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.16,
+    "lufs": -20
+  },
+  "camp_en_6_one_1111": {
+    "text": "Zhou Ye, your Double Eleven pick: camp meals, just four dollars.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 4.248,
+    "lufs": -20
+  },
+  "camp_en_6_one_launch": {
+    "text": "Zhou Ye, your Youji Year in Review is here.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.448,
+    "lufs": -20
+  },
+  "camp_en_6_one_none": {
+    "text": "Zhou Ye, Youji remembers your year.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.184,
+    "lufs": -20
+  },
+  "camp_zh_15_end_1111": {
+    "text": "双十一，到手二十六元。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.944,
+    "lufs": -20
+  },
+  "camp_zh_15_end_launch": {
+    "text": "有集年度报告，现已上线。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.232,
+    "lufs": -20
+  },
+  "camp_zh_15_end_none": {
+    "text": "有集，记得你的每一次喜欢。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.256,
+    "lufs": -20
+  },
+  "camp_zh_15_intro": {
+    "text": "周野，这一年你下了七十二单，大多为了出发。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.408,
+    "lufs": -20
+  },
+  "camp_zh_15_top": {
+    "text": "气罐又补了十回。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.632,
+    "lufs": -20
+  },
+  "camp_zh_6_one_1111": {
+    "text": "周野，为你挑的自热米饭，双十一到手二十六元。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.72,
+    "lufs": -20
+  },
+  "camp_zh_6_one_launch": {
+    "text": "周野，你的有集年度报告已上线。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.592,
+    "lufs": -20
+  },
+  "camp_zh_6_one_none": {
+    "text": "周野，你的这一年，有集都记得。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.424,
+    "lufs": -20
+  },
+  "coffee_en_15_end_1111": {
+    "text": "Double Eleven: just nineteen dollars.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.568,
+    "lufs": -20
+  },
+  "coffee_en_15_end_launch": {
+    "text": "Your Youji Year in Review is here.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.872,
+    "lufs": -20
+  },
+  "coffee_en_15_end_none": {
+    "text": "Youji. Every like, remembered.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.872,
+    "lufs": -20
+  },
+  "coffee_en_15_intro": {
+    "text": "Morning, Lin Yi. one hundred forty-six orders this year.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.744,
+    "lufs": -20
+  },
+  "coffee_en_15_top": {
+    "text": "coffee beans, back twelve more times.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.304,
+    "lufs": -20
+  },
+  "coffee_en_6_one_1111": {
+    "text": "Lin Yi, your Double Eleven pick: Geisha beans, just nineteen dollars.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 4.632,
+    "lufs": -20
+  },
+  "coffee_en_6_one_launch": {
+    "text": "Lin Yi, your Youji Year in Review is here.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.448,
+    "lufs": -20
+  },
+  "coffee_en_6_one_none": {
+    "text": "Lin Yi, Youji remembers your year.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.136,
+    "lufs": -20
+  },
+  "coffee_zh_15_end_1111": {
+    "text": "双十一，到手一百二十九元。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.208,
+    "lufs": -20
+  },
+  "coffee_zh_15_end_launch": {
+    "text": "有集年度报告，现已上线。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.232,
+    "lufs": -20
+  },
+  "coffee_zh_15_end_none": {
+    "text": "有集，记得你的每一次喜欢。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.256,
+    "lufs": -20
+  },
+  "coffee_zh_15_intro": {
+    "text": "早安，林一。这一年，你下了一百四十六单",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3,
+    "lufs": -20
+  },
+  "coffee_zh_15_top": {
+    "text": "咖啡豆，又买了十二次",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.8,
+    "lufs": -20
+  },
+  "coffee_zh_6_one_1111": {
+    "text": "林一，为你挑的瑰夏咖啡豆，双十一到手一百二十九元。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 4.248,
+    "lufs": -20
+  },
+  "coffee_zh_6_one_launch": {
+    "text": "林一，你的有集年度报告已上线。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.568,
+    "lufs": -20
+  },
+  "coffee_zh_6_one_none": {
+    "text": "林一，你的这一年，有集都记得。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.4,
+    "lufs": -20
+  },
+  "gamer_en_15_end_1111": {
+    "text": "Double Eleven: just seven dollars.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.328,
+    "lufs": -20
+  },
+  "gamer_en_15_end_launch": {
+    "text": "Your Youji Year in Review is here.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.872,
+    "lufs": -20
+  },
+  "gamer_en_15_end_none": {
+    "text": "Youji. Every like, remembered.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.848,
+    "lufs": -20
+  },
+  "gamer_en_15_intro": {
+    "text": "Xu Xing, one hundred four orders, mostly after dark.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.384,
+    "lufs": -20
+  },
+  "gamer_en_15_top": {
+    "text": "energy drinks, twenty restocks.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.016,
+    "lufs": -20
+  },
+  "gamer_en_6_one_1111": {
+    "text": "Xu Xing, your Double Eleven pick: energy drinks, just seven dollars.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 4.656,
+    "lufs": -20
+  },
+  "gamer_en_6_one_launch": {
+    "text": "Xu Xing, your Youji Year in Review is here.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.592,
+    "lufs": -20
+  },
+  "gamer_en_6_one_none": {
+    "text": "Xu Xing, Youji remembers your year.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.304,
+    "lufs": -20
+  },
+  "gamer_zh_15_end_1111": {
+    "text": "双十一，到手四十九元。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.968,
+    "lufs": -20
+  },
+  "gamer_zh_15_end_launch": {
+    "text": "有集年度报告，现已上线。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.232,
+    "lufs": -20
+  },
+  "gamer_zh_15_end_none": {
+    "text": "有集，记得你的每一次喜欢。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.256,
+    "lufs": -20
+  },
+  "gamer_zh_15_intro": {
+    "text": "许星，今年你下了一百零四单，多在深夜。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.336,
+    "lufs": -20
+  },
+  "gamer_zh_15_top": {
+    "text": "能量饮料，回购二十次。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.992,
+    "lufs": -20
+  },
+  "gamer_zh_6_one_1111": {
+    "text": "许星，为你挑的能量饮料，双十一到手四十九元。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.864,
+    "lufs": -20
+  },
+  "gamer_zh_6_one_launch": {
+    "text": "许星，你的有集年度报告已上线。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.64,
+    "lufs": -20
+  },
+  "gamer_zh_6_one_none": {
+    "text": "许星，你的这一年，有集都记得。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.496,
+    "lufs": -20
+  }
+}
