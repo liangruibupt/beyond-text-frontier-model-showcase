@@ -50,7 +50,7 @@
 
 接下来按 spec §14：
 
-- [ ] **第 5 步 配乐和音效：** 照 spec §10 写 `04-year-review/js/score.js`，在 `film.js` 里导出 `score`（参照 03）。D 大调 80 bpm；months 的柱子音高按每月订单数映到五声音阶，每位顾客的旋律不同。补 §12 的测试：每个命中点落在 0.75 s 网格上，同一混音渲两次样本一致。响度 −14 LUFS、真峰值 ≤ −1 dBTP（引擎已经管）
+- [x] **第 5 步 配乐和音效：**（2026-09-29 完成：`js/score.js` 按镜头写、按剪辑表摆放，15 / 6 秒共用；`test/score.test.mjs` 10 条，混音两遍逐采样相同在无头 Chromium 里测，不要 GPU；四位顾客 × 两个剪辑过了 −14 LUFS / 真峰值 −1.6 dBTP）照 spec §10 写 `04-year-review/js/score.js`，在 `film.js` 里导出 `score`（参照 03）。D 大调 80 bpm；months 的柱子音高按每月订单数映到五声音阶，每位顾客的旋律不同。补 §12 的测试：每个命中点落在 0.75 s 网格上，同一混音渲两次样本一致。响度 −14 LUFS、真峰值 ≤ −1 dBTP（引擎已经管）
 - [ ] **第 6 步 Bedrock 写文案：** 先 `node factory/story.mjs 04-year-review --dry` 给用户看提示词；用户同意并确认 profile、region、模型后再真调用；四份 `stories/*.json` 的 `model` 不能再是 `draft`，每份最多三次尝试，写完给用户审
 - [ ] **第 7 步 配音：** 先问用户，再 `node factory/vo.mjs 04-year-review --audition` 试听（候选在 `copy.js` 的 `AUDITION`，现在暂用 03 的 `zm_yunxi` / `bf_emma`），用户选定声音后生成
 - [ ] **第 8 步 出片和收尾：** 云 GPU 上 `run node factory/check.mjs 04-year-review` → `render 04-year-review`（manifest 12 条）→ `pull` → `down`；本地 `factory/gallery.html?film=04-year-review` 给用户审；写中文的 `04-year-review/README.md`；仓库根 `README.md` 的索引表加一行（先问）；factory README 和 skill 的 Level 3 说明核对一遍
