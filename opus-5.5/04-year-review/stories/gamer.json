@@ -1,42 +1,42 @@
 {
   "id": "gamer",
   "key": "fc12101e0d6f9007",
-  "model": "draft",
-  "tries": 0,
+  "model": "us.anthropic.claude-opus-5-5",
+  "tries": 1,
   "usage": {
-    "inputTokens": 0,
-    "outputTokens": 0
+    "inputTokens": 4516,
+    "outputTokens": 1151
   },
   "story": {
     "title": {
-      "zh": "午夜玩家",
+      "zh": "深夜玩家",
       "en": "Midnight Player"
     },
     "captions": {
       "count": {
-        "zh": "今年下的单，多在午夜后",
-        "en": "orders, mostly after midnight"
+        "zh": "单，大多下在别人睡着以后",
+        "en": "orders, most of them after dark"
       },
       "months": {
-        "zh": "{month}最忙：{monthOrders} 单",
-        "en": "Busiest month: {month}, {monthOrders} orders"
+        "zh": "{month}下了{monthOrders}单，手速拉满",
+        "en": "{month}: {monthOrders} orders. Full combo."
       },
       "top": {
-        "zh": "最爱{top}，回购 {repeat} 次",
-        "en": "Fuel of choice: {top}, {repeat} restocks"
+        "zh": "{top}续了{repeat}次，满血复活",
+        "en": "{top}, restocked {repeat} times"
       }
     },
     "vo": {
       "intro": {
-        "zh": "{name}，{year}年你下单{orders}次，多在午夜后。",
-        "en": "{name}, {orders} orders this year, mostly after midnight."
+        "zh": "{name}，今年你下了{orders}单，多在深夜。",
+        "en": "{name}, {orders} orders, mostly after dark."
       },
       "top": {
-        "zh": "{top}回购了{repeat}次，续航拉满。",
-        "en": "{top}: {repeat} restocks to keep you going."
+        "zh": "{top}，回购{repeat}次。",
+        "en": "{top}, {repeat} restocks."
       }
     },
-    "pick": "gm-headset",
-    "why": "手写占位稿：许星过半订单在午夜后，常买能量饮料和点卡，耳机是游戏装备的下一步。"
+    "pick": "dr-energy",
+    "why": "66 of 104 orders were placed late at night, the first order was energy drinks at 4:12 am and gaming is a top category, so the title is \"Midnight Player\"; energy drinks are the favourite with 20 re-buys, so restocking at the 11.11 price (¥49, down from ¥72) is the obvious pick."
   }
 }

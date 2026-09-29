@@ -2,7 +2,7 @@
 //   node factory/story.mjs <film> [--<axis> a,b] [--force] [--dry] [--model id] [--tries 3]
 // 成片的 story.js 导出 STORY = { axis, ids, facts(id), schema, system, prompt(id), check(id, story) }：
 //   facts 是代码算好的统计；schema 是模型要填的字段（JSON Schema）；check 返回错误描述，空数组 = 通过
-// 模型经由强制的工具调用（write_story）交回一个对象；check 不过就把错误作为工具结果发回同一段对话，让它改，最多 --tries 次
+// 模型经由工具调用（write_story）交回一个对象（toolChoice=auto，系统提示要求它调用；opus-5.5 不支持强制 tool/any）；check 不过就把错误作为工具结果发回同一段对话，让它改，最多 --tries 次
 // 结果写进 <film>/stories/<id>.json（入库）：{ id, key, model, tries, usage, story }。key = storyKey(facts)，统计变了就算过期；
 // model 为 "draft" 的是手写的占位稿，不带 --force 也会被替换
 // 调用走 AWS CLI（aws bedrock-runtime converse），账号和区域用 AWS_PROFILE、AWS_REGION；--dry 只打印提示词，不调用
@@ -28,7 +28,7 @@ export function storyState(dir, STORY, id) {
   return { state: rec.model === 'draft' ? 'draft' : 'current', rec };
 }
 
-/** Converse 的请求：系统提示、对话、唯一的工具并强制调用它 */
+/** Converse 的请求：系统提示、对话、唯一的工具（toolChoice=auto，靠系统提示让模型自己调用；opus-5.5 不支持强制 tool/any） */
 export function request(STORY, { model, messages }) {
   return {
     modelId: model,
@@ -36,7 +36,7 @@ export function request(STORY, { model, messages }) {
     messages,
     toolConfig: {
       tools: [{ toolSpec: { name: TOOL, description: STORY.toolDescription ?? 'Hand back the story fields.', inputSchema: { json: STORY.schema } } }],
-      toolChoice: { tool: { name: TOOL } },
+      toolChoice: { auto: {} },
     },
     inferenceConfig: { maxTokens: 4000 },
   };

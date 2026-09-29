@@ -55,11 +55,11 @@ const STORY = {
 };
 const reply = (input, n) => ({ stopReason: 'tool_use', usage: { inputTokens: 100, outputTokens: 10 }, output: { message: { role: 'assistant', content: [{ toolUse: { toolUseId: `t${n}`, name: TOOL, input } }] } } });
 
-test('request forces the one tool and carries the schema', () => {
+test('request offers the one tool (auto) and carries the schema', () => {
   const r = request(STORY, { model: 'm', messages: [] });
   assert.equal(r.modelId, 'm');
   assert.deepEqual(r.system, [{ text: 'sys' }]);
-  assert.deepEqual(r.toolConfig.toolChoice, { tool: { name: TOOL } });
+  assert.deepEqual(r.toolConfig.toolChoice, { auto: {} });
   assert.deepEqual(r.toolConfig.tools[0].toolSpec.inputSchema.json, STORY.schema);
 });
 

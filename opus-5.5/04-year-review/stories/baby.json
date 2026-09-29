@@ -1,42 +1,42 @@
 {
   "id": "baby",
   "key": "f24310c84a93a1f1",
-  "model": "draft",
-  "tries": 0,
+  "model": "us.anthropic.claude-opus-5-5",
+  "tries": 1,
   "usage": {
-    "inputTokens": 0,
-    "outputTokens": 0
+    "inputTokens": 4508,
+    "outputTokens": 1269
   },
   "story": {
     "title": {
-      "zh": "深夜补给站",
-      "en": "Midnight Supply Run"
+      "zh": "午夜补给官",
+      "en": "Midnight Supply Chief"
     },
     "captions": {
       "count": {
-        "zh": "这一年，你下的单",
-        "en": "orders in a big year"
+        "zh": "这一年，小家的补给都从这里出发",
+        "en": "orders to keep a little home running"
       },
       "months": {
-        "zh": "{month}最忙，{monthOrders} 单",
-        "en": "{month} was busiest: {monthOrders} orders"
+        "zh": "{month}最忙，一个月下了{monthOrders}单",
+        "en": "{month} was peak mode: {monthOrders} orders"
       },
       "top": {
-        "zh": "买得最多：{top}，回购 {repeat} 次",
-        "en": "Most bought: {top}, {repeat} restocks"
+        "zh": "{top}又回购了{repeat}次，囤货有方",
+        "en": "{top}, restocked {repeat} more times"
       }
     },
     "vo": {
       "intro": {
-        "zh": "{name}，这一年你在有集下单{orders}次。",
-        "en": "{name}, you ordered {orders} times this year."
+        "zh": "{name}，这一年你一共下了{orders}单。",
+        "en": "{name}, this year you placed {orders} orders."
       },
       "top": {
-        "zh": "{top}回购了{repeat}次，从没断过。",
-        "en": "{top}: {repeat} restocks, never missed."
+        "zh": "{top}，回购了{repeat}次。",
+        "en": "{top}, back {repeat} more times."
       }
     },
     "pick": "bb-diapers",
-    "why": "手写占位稿：陈安三月起大量买母婴用品、常在深夜下单，纸尿裤是最常回购的一件。"
+    "why": "Diapers are the top item with 30 re-buys and baby is 45% of orders, so a restock at the ¥109 deal price is the most useful pick; the title comes from 76 of 212 orders being placed late at night, which fits night-time baby-supply runs."
   }
 }
