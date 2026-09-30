@@ -101,7 +101,7 @@ Use this when the copy should differ for each value of an axis and come from dat
 - **Code computes every number.** The model writes words only, with `{placeholders}` where the numbers go, and code fills them in. `check` rejects any number the model wrote itself (`writtenNumbers`), a wrong set of placeholders (`slotErrors`), text that overflows a zone in any aspect ratio (`approxMeasure`), and narration longer than its slot (`speechSec`). Word each error so the model can act on it: say which field, which ratio and how many characters to cut.
 - Until the user approves the Bedrock call, commit hand-written draft stories with `"model": "draft"`. The film must run on them, and its tests must run `check` on every committed story.
 - `node factory/story.mjs NN-name --dry` prints the prompt and makes no call. Show it to the user.
-- **Ask the user before the real call.** Confirm the profile, the region and the model; the default is `us.anthropic.claude-opus-5-5`. Then run `AWS_PROFILE=… AWS_REGION=… node factory/story.mjs NN-name`, and read every story it writes before moving on.
+- **Ask the user before the real call.** Confirm the region and the model; the default is `us.anthropic.claude-opus-5-5`. Then run `AWS_REGION=… node factory/story.mjs NN-name` (add `AWS_PROFILE=…` only off an instance-role machine), and read every story it writes before moving on.
 - Changing the data makes a story stale, and the page refuses to start until `story.mjs` has been run again. A layout change that makes a story fail `check` does the same.
 - Spell numbers out in narration with `factory/engine/say.js` (`sayNum`, `sayYear`, `sayMonth`).
 
@@ -109,7 +109,7 @@ Use this when the copy should differ for each value of an axis and come from dat
 
 - `score(v, built)` returns `{ notes, reverb }` using the voices in `factory/engine/audio.js`. Align notes to `built.hits`. A film with no `score` renders silent videos, and its voice-over is dropped too. So a narrated film needs a `score`, even if it is only a quiet bed. `{ notes: [] }` works while a variant has narration, but a mix that comes out completely silent (for example `vo: off` with no notes) fails the loudness step with `… is silent`.
 - `voLines(v)` returns `[]` when `v.vo === 'off'`. Its lines must not depend on `ar`, and an id must have the same text in every variant.
-- Voice choice:
+- Voice choice. **Only voices in the deployed Kokoro Lambda work**: zh `zm_*` (e.g. `zm_yunjian`, `zm_yunxi`), en-US `am_*` (e.g. `am_michael`), en-UK `bm_*` (e.g. `bm_george`) — there is no `bf_*`/`af_*`/`zf_*`; picking one fails the Lambda call. See `ai-ml/aigc/audio_models/Kokoro/README.md` for the full list.
   ```bash
   node factory/vo.mjs NN-name --audition   # every voice in film.audition reads the default lines → NN-name/out/audition/
   ```
@@ -127,8 +127,8 @@ Use this when the copy should differ for each value of an axis and come from dat
 Batch renders run on a cloud GPU instance, not on the user's MacBook. Keep previews, `snap.mjs` and `sheet.mjs` local. Details are in factory/README.md under 云端出片.
 
 ```bash
-node factory/render.mjs NN-name --dry    # always first, locally: 3 videos per product, nothing else
-export AWS_PROFILE=global_ruiliang AWS_REGION=us-east-1
+node factory/render.mjs NN-name --dry    # always first, locally: the manifest's videos, nothing else
+export AWS_REGION=us-east-1               # on an instance-role machine (e.g. KiroCrew on EC2) no AWS_PROFILE is needed; otherwise set AWS_PROFILE too
 node factory/cloud.mjs up --hours 2      # reuses a running instance; ~10 min from scratch
 node factory/cloud.mjs run node factory/check.mjs NN-name
 node factory/cloud.mjs render NN-name    # the manifest; resumable; pulls NN-name/out/ back
