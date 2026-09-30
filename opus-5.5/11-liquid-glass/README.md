@@ -104,7 +104,7 @@ node factory/render.mjs 11-liquid-glass --all       # 全部 108 个变体（配
 | 晨桃 | 16:9 | 英文 | 15 秒 | 新主题上线 |
 | 薄荷 | 1:1 | 中文 | 6 秒 | 双11 |
 
-共 36 秒、1080 帧。在 EC2 g5.2xlarge（NVIDIA A10G）上 6 个 worker 实测 2.1 分钟出完（每条 3.6–5.0 fps，16:9 慢、1:1 快），三条成片共 12.4 MB，响度 −13.3 到 −14.4 LUFS。成片文件名是 `liuguang_<主题>_<长度>s_<比例>_<语言>[_<活动>][_novo].mp4`，如 `liuguang_mint_6s_1x1_zh_1111.mp4`，封面和说明文件与成片同名。输出目录结构、断点续做规则和响度标准见 [factory/README.md](../factory/README.md#输出)。
+共 36 秒、1080 帧。在 EC2 g5.2xlarge（NVIDIA A10G）上用 3 个 worker（`--workers 3`）实测 2.1 分钟出完（每条 3.6–5.0 fps，16:9 慢、1:1 快），三条成片共 12.4 MB，响度 −13.3 到 −14.4 LUFS。新实例第一次从 jsDelivr 加载字体要 20 多秒，6 个 worker 同时开页可能超过 30 秒的加载时限而失败。成片文件名是 `liuguang_<主题>_<长度>s_<比例>_<语言>[_<活动>][_novo].mp4`，如 `liuguang_mint_6s_1x1_zh_1111.mp4`，封面和说明文件与成片同名。输出目录结构、断点续做规则和响度标准见 [factory/README.md](../factory/README.md#输出)。
 
 ### 配音
 
