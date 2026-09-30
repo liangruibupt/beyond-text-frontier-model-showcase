@@ -15,11 +15,11 @@ export const rIn = y => rOut(y) - CUP.wall * SLANT;
 
 // ── 冷凝水珠（闭式）──
 // 杯壁上 N 颗水珠：高度在液面以下（冰茶把杯壁冷下来的那一段），方位角、半径都由 rand 定；半径随 t 从 0 长到 r（凝出来）
-export const DEW = { seed: 23, n: 260, r: [0.0005, 0.0019], grow: [0.2, 2.2], drip: { i: 0, at: 1.5, dur: 1.3, fall: 0.055 } };
+export const DEW = { seed: 23, n: 180, r: [0.0003, 0.0016], grow: [0.2, 2.2], drip: { i: 0, at: 1.5, dur: 1.3, fall: 0.055 } };
 /** 第 i 颗水珠在 hero 本地 t 秒的 [方位角, 高度, 半径]；drip 那颗在 drip.at 秒开始往下滑，边滑边拉长（半径不变） */
 export function dewAt(i, t, D = DEW) {
   const a = rand(D.seed, 3 * i) * Math.PI * 2, y0 = CUP.base + 0.006 + rand(D.seed, 3 * i + 1) * (CUP.fill - CUP.base - 0.012);
-  const r1 = lerp(D.r[0], D.r[1], rand(D.seed, 3 * i + 2) ** 1.6), g = ss(D.grow[0] * (0.6 + rand(D.seed, 7000 + i) * 0.8), D.grow[1], t);
+  const r1 = lerp(D.r[0], D.r[1], rand(D.seed, 3 * i + 2) ** 2.4), g = ss(D.grow[0] * (0.6 + rand(D.seed, 7000 + i) * 0.8), D.grow[1], t);
   if (i !== D.drip.i) return [a, y0, r1 * g];
   const top = CUP.fill - 0.004, k = easeOut(clamp((t - D.drip.at) / D.drip.dur)) ** 1.4;   // 滑落那颗放在正面偏上，个头最大
   return [-0.35, top - D.drip.fall * k, D.r[1] * 1.25 * g];
@@ -94,8 +94,12 @@ export function buildCup(ctx, flavor, pearls, { art = null } = {}) {
   // 茶汤：一个实心截锥，顶面是液面（fill 由 pose 改：pour 镜头里茶汤往上涨）
   const liquid = new THREE.Group(), gap = 0.0003, r = y => rIn(y) - gap * SLANT;
   const liqMat = new THREE.MeshPhysicalMaterial({ color: flavor.liquid.color, roughness: 0.2 });
-  const body = new THREE.Mesh(frustumGeo(r(CUP.base + gap), r(CUP.fill), CUP.base + gap, CUP.fill, 96, false), liqMat);
+  const body = new THREE.Mesh(frustumGeo(r(CUP.pile), r(CUP.fill), CUP.pile, CUP.fill, 96, false), liqMat);   // 茶汤从珍珠层上面开始
   liquid.add(body);
+  // 珍珠层里的糖浆 / 果泥：半透明，透过杯壁看得见泡在里面的珍珠（在第 0 层画，不走折射）
+  const syrupMat = new THREE.MeshPhysicalMaterial({ color: flavor.syrup ?? flavor.liquid.color, roughness: 0.15, transparent: true, opacity: 0.42, depthWrite: false });
+  const syrup = new THREE.Mesh(frustumGeo(r(CUP.base + gap), r(CUP.pile), CUP.base + gap, CUP.pile, 96, false), syrupMat);
+  syrup.renderOrder = 1;
 
   // 珍珠：一个 InstancedMesh，逐帧按烘好的表摆位置
   const pearlMat = new THREE.MeshPhysicalMaterial({ color: flavor.pearl.color, roughness: flavor.pearl.roughness, clearcoat: 1, clearcoatRoughness: 0.08,
@@ -111,7 +115,8 @@ export function buildCup(ctx, flavor, pearls, { art = null } = {}) {
   }
 
   // 冷凝水珠：一个 InstancedMesh，半球贴在外壁上
-  const dewMat = new THREE.MeshPhysicalMaterial({ color: '#ffffff', roughness: 0.02, transmission: 1, thickness: 0.002, ior: 1.33, transparent: true });
+  // 水珠：几乎全透明，只剩高光和一点折射的暗边（白色半透明的点看起来像涂上去的斑）
+  const dewMat = new THREE.MeshPhysicalMaterial({ color: '#ffffff', roughness: 0.0, metalness: 0, transmission: 1, thickness: 0.0015, ior: 1.33, specularIntensity: 1, envMapIntensity: 1.4, transparent: true, opacity: 0.55, depthWrite: false });
   const dew = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 14, 10, 0, Math.PI * 2, 0, Math.PI / 2), dewMat, DEW.n);
   dew.frustumCulled = false;
 
@@ -123,7 +128,7 @@ export function buildCup(ctx, flavor, pearls, { art = null } = {}) {
   straw.castShadow = true;
   const tip = new THREE.Mesh(new THREE.RingGeometry(STRAW.r * 0.85, STRAW.r, 40), straw.material); tip.rotation.x = Math.PI / 2; tip.position.y = STRAW.len / 2; straw.add(tip);
 
-  root.add(glass, lip, liquid, pearlMesh, ice, dew, lid.mesh, lid.flaps, straw, contactShadow());
+  root.add(glass, lip, liquid, syrup, pearlMesh, ice, dew, lid.mesh, lid.flaps, straw, contactShadow());
 
   const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), S = new THREE.Vector3(), P = new THREE.Vector3(), q3 = [0, 0, 0], UP = new THREE.Vector3(0, 1, 0), N = new THREE.Vector3();
   const lp = lid.mesh.geometry.attributes.position;
@@ -135,7 +140,7 @@ export function buildCup(ctx, flavor, pearls, { art = null } = {}) {
   }
 
   const cup = {
-    root, parts: { glass, liquid, body, ice, pearls: pearlMesh, dew, lid: lid.mesh, straw }, posed: null,
+    root, parts: { glass, liquid, body, syrup, ice, pearls: pearlMesh, dew, lid: lid.mesh, straw }, posed: null,
     /**
      * 完整姿态，没写的量回到默认：
      *   pearlsT 珍珠表的取样时刻（秒，默认烘焙末尾：已堆好）；fill 茶汤高度 0..1（0 = 空杯）；iceT 冰块落下后的秒数（< 0 = 没有冰）；
@@ -155,9 +160,10 @@ export function buildCup(ctx, flavor, pearls, { art = null } = {}) {
       }
       pearlMesh.instanceMatrix.needsUpdate = true;
       // 茶汤：fill 0..1 从杯底涨到 CUP.fill
-      const top = lerp(CUP.base + 0.001, CUP.fill, clamp(fill));
+      const top = lerp(CUP.pile + 0.001, CUP.fill, clamp(fill));
       liquid.visible = fill > 0.001;
-      body.scale.y = Math.max((top - CUP.base) / (CUP.fill - CUP.base), 1e-3); body.position.y = (CUP.base + gap) * (1 - body.scale.y);
+      syrup.visible = fill > 0.001;
+      body.scale.y = Math.max((top - CUP.pile) / (CUP.fill - CUP.pile), 1e-3); body.position.y = CUP.pile * (1 - body.scale.y);
       // 冰块：落下（阻尼的弹簧沉浮），第二块在 0.75 秒撞上第一块；iceT < 0 不显示
       ice.visible = iceT >= 0;
       ice.children.forEach((c, j) => {
@@ -171,7 +177,7 @@ export function buildCup(ctx, flavor, pearls, { art = null } = {}) {
         const dt = Math.max(dewT, 0), [a, y, rr] = dewAt(i, dt), R = rOut(y), stretch = i === DEW.drip.i ? 1 + 0.8 * ss(DEW.drip.at, DEW.drip.at + 0.3, dt) : 1;
         N.set(Math.cos(a), -K, Math.sin(a)).normalize(); Q.setFromUnitVectors(UP, N);
         P.set(Math.cos(a) * R, y, Math.sin(a) * R);
-        S.set(rr, rr * 0.55, rr * stretch);
+        S.set(rr, rr * 0.38, rr * stretch);                                  // 扁：贴在壁上的水珠只鼓起来一点
         M.compose(P, Q, S); dew.setMatrixAt(i, M);
       }
       dew.instanceMatrix.needsUpdate = true;

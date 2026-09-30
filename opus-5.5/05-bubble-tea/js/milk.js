@@ -23,7 +23,7 @@ export function attachMilk(material, flavor) {
   const U = {
     uMilk: { value: 1 }, uTea: { value: new THREE.Color(flavor.liquid.color).multiplyScalar(0.72) }, uMilkC: { value: new THREE.Color(flavor.milk) },
     uMix: { value: new THREE.Color(flavor.liquid.color) }, uSyrup: { value: new THREE.Color(flavor.syrup ?? flavor.liquid.color) },
-    uBand: { value: flavor.liquid.band }, uFill: { value: CUP.fill }, uBase: { value: CUP.base }, uStripes: { value: flavor.stripes ? 1 : 0 },
+    uBand: { value: flavor.liquid.band }, uFill: { value: CUP.fill }, uBase: { value: CUP.pile }, uStripes: { value: flavor.stripes ? 1 : 0 },
   };
   const prev = material.onBeforeCompile;
   material.onBeforeCompile = sh => {

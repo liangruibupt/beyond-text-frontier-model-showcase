@@ -27,21 +27,23 @@ export const CUTS = {
 };
 
 // 杯子（米）：透明 PP 杯，杯底半径 3.0 cm、杯口 4.2 cm、高 12 cm，壁厚 0.6 mm，杯底 2 mm；茶汤满到 9.6 cm（上面留 2.4 cm 空气，折射看得出来）
+// 杯底 2.6 cm 是珍珠层（pile）：珍珠贴着杯壁、缝里是糖浆 / 果泥，茶汤从它上面开始（不透明的奶茶会把泡在里面的珍珠盖掉）
 // 封膜压在杯口；吸管直径 1.2 cm、长 21 cm
-export const CUP = { rBottom: 0.030, rTop: 0.042, height: 0.12, wall: 0.0006, base: 0.002, fill: 0.096, lid: 0.0012 };
+export const CUP = { rBottom: 0.030, rTop: 0.042, height: 0.12, wall: 0.0006, base: 0.002, fill: 0.096, pile: 0.026, lid: 0.0012 };
 export const STRAW = { r: 0.006, len: 0.21 };
 export const PEARL = { r: 0.0048, count: 60 };
 const R = CUP.rTop;
 export const BOX = {
   cup: [[-R, 0, -R], [R, CUP.height, R]],
-  low: [[-R, 0, -R], [R, CUP.height * 0.55, R]],                                         // 杯子下半截：珍珠、冰块的特写
-  straw: [[-R, 0, -R], [R, CUP.height + 0.06, R]],                                       // 连杯口上方露出的吸管
+  low: [[-R, 0, -R], [R, CUP.height * 0.55, R]],                                         // 杯子下半截：珍珠落杯的特写
+  top: [[-R, CUP.height * 0.42, -R], [R, CUP.height, R]],                                 // 杯子上半截：冰块浮在液面上
+  straw: [[-R, CUP.height * 0.18, -R], [R, CUP.height + 0.035, R]],                        // 杯子上大半截 + 杯口上方露出的一段吸管
 };
 // 各镜头框取的对象与机位：pitch 仰角、yaw 绕竖轴（度，[起, 止] 随镜头进度变化），shots.js 与 layouts 测试共用
 export const VIEW = {
   pearls: { box: 'low', pitch: 38, yaw: [-10, -4], fov: 30 },
   pour: { box: 'cup', pitch: 14, yaw: [-6, 2], fov: 28 },
-  ice: { box: 'low', pitch: 22, yaw: [18, 12], fov: 30 },
+  ice: { box: 'top', pitch: 24, yaw: [18, 12], fov: 30 },
   hero: { box: 'cup', pitch: 8, yaw: [-28, 18], fov: 28 },
   straw: { box: 'straw', pitch: 16, yaw: [-14, -8], fov: 28 },
   end: { box: 'cup', pitch: 7, yaw: [10, 4], fov: 28 },

@@ -22,8 +22,8 @@ export const LAYOUTS = {
     pearls: { anchor: [0.7, 0.47], size: 0.74, maxW: 0.4, align: 'left', zones: { hook: [0.06, 0.4, 0.4, 0.2] } },
     pour: { anchor: [0.62, 0.5], size: 0.84 },
     ice: { anchor: [0.62, 0.5], size: 0.78, maxW: 0.52 },
-    hero: { anchor: [0.68, 0.5], size: 0.8, align: 'left', zones: { title: [0.07, 0.3, 0.42, 0.24], sub: [0.07, 0.55, 0.42, 0.08] } },
-    straw: { anchor: [0.68, 0.5], size: 0.8, align: 'left', zones: { parts: [0.07, 0.4, 0.42, 0.2] } },
+    hero: { anchor: [0.7, 0.5], size: 0.86, align: 'left', zones: { title: [0.07, 0.3, 0.42, 0.24], sub: [0.07, 0.55, 0.42, 0.08] } },
+    straw: { anchor: [0.68, 0.5], size: 0.88, align: 'left', zones: { parts: [0.07, 0.4, 0.42, 0.2] } },
     end: { anchor: [0.73, 0.5], size: 0.7, align: 'left', zones: { logo: [0.07, 0.2, 0.45, 0.16], brand: [0.07, 0.36, 0.45, 0.07], line1: [0.07, 0.5, 0.45, 0.08], line2: [0.07, 0.59, 0.45, 0.13], line3: [0.07, 0.73, 0.45, 0.08] } },
   },
 };
