@@ -61,7 +61,7 @@ Numbers in examples are for `coffee` (林一); all of them are computed (§5).
 | Time | Shot | Picture | Caption | Hit |
 |---|---|---|---|---|
 | 0–2.25 | `open` | 365 rounded tiles stand in a wall, backs to the camera, laid along the strokes of the year's four digits. They flip in day order along the strokes (0.15–1.85 s), so the year writes itself; days with orders face the camera in the accent colour and glow, the rest in the user's base tone, a step darker than the background (a step lighter on the dark palette). The backs are close to the background, so before the flips the year is only a faint ghost on the wall. Slow push-in | 林一的 2026 / 有集年度购物报告 | — |
-| 2.25–4.5 | `count` | Continuous camera. The lit tiles lift off the wall on staggered arcs and land as parcels in a pile; the pale tiles sink away. A big number rolls from 0 to the order count and lands at 0.75 s | 146 (rolling) / model line with `{orders}` | 3.0 land |
+| 2.25–4.5 | `count` | Continuous camera. The lit tiles lift off the wall on staggered arcs and land as parcels in a pile; the pale tiles sink away. A big number rolls from 0 to the order count and lands at 0.75 s | 146 (rolling) / model line that annotates the big number, no placeholder | 3.0 land |
 | 4.5–7.5 | `months` | Hard cut on the bar line. Twelve bars rise one after another (0.1–1.3 s), heights from the monthly counts; the busiest bar peaks and glows at 1.5 s. Month numbers 1–12 under the bars are made of small tiles in the same stroke font | model line with `{month}` and `{monthOrders}` | 6.0 peak |
 | 7.5–10.5 | `top` | Continuous camera. The bars sink while donut slices (categories, sized by order share) sweep up out of the floor (0–0.9 s). The largest slice slides out (0.9–1.2 s), the favourite product rises from it and flies an arc into a shopping cart, landing at 1.5 s | model line with `{top}` and `{repeat}` | 9.0 cart |
 | 10.5–12 | `title` | Flash cut. A medal drops, lands at 0.25 s, settles and turns to face the camera; a few sparkles | 年度称号 / the model's title | 10.5 medal |
@@ -151,12 +151,14 @@ price: {CNY, USD}, deal: {CNY, USD} }`. `kind` is one of the procedural models: 
 
 ### 6.2 Fields and placeholders
 
-The model returns one object through a forced tool call (`write_story`, JSON schema input), so there is no free-text
-parsing:
+The model returns one object through a tool call (`write_story`, JSON schema input), so there is no free-text
+parsing. `toolChoice` is `auto`: Bedrock Converse rejects a forced `tool`/`any` choice for `us.anthropic.claude-opus-5-5`,
+so the system prompt asks for the call, and a reply that is only text counts as a failed attempt and is retried with a
+nudge:
 
 ```json
 { "title":    { "zh": "咖啡续命官", "en": "Chief Caffeine Officer" },
-  "captions": { "count":  { "zh": "今年下单 {orders} 次", "en": "{orders} orders this year" },
+  "captions": { "count":  { "zh": "单，大多在早饭前", "en": "orders, most before breakfast" },
                 "months": { "zh": "{month}最忙：{monthOrders} 单", "en": "Busiest month: {month}, {monthOrders} orders" },
                 "top":    { "zh": "最爱{top}，回购 {repeat} 次", "en": "Your #1: {top}, {repeat} repeat buys" } },
   "vo":       { "intro": { "zh": "{name}，{year}年，你在有集下单{orders}次。", "en": "{name}, this year you ordered {orders} times." },
@@ -164,7 +166,7 @@ parsing:
   "pick": "cf-geisha", "why": "…" }
 ```
 
-Required placeholders per field: `count` {orders}; `months` {month} {monthOrders}; `top` {top} {repeat};
+Required placeholders per field: `count` none (the rolling number sits right above it, so the line only annotates it; decided 2026-09-29); `months` {month} {monthOrders}; `top` {top} {repeat};
 `vo.intro` {name} {orders} ({year} optional); `vo.top` {top} {repeat}. Titles take none.
 
 Values differ by medium. On screen: `146`, `11月` / `November`, `咖啡豆` / `coffee beans`. In narration they are spelt
@@ -202,9 +204,9 @@ node factory/story.mjs <film> [--user coffee] [--force] [--dry] [--model us.anth
 - For each id, it skips the story if `stories/<id>.json` exists, its `key` matches `storyKey(facts)` and it passes
   `check`. Otherwise it calls Bedrock.
 - The call is `aws bedrock-runtime converse --cli-input-json file://…`, with the system prompt, the user message (facts,
-  catalogue, budgets, rules), `toolConfig` holding the one tool, and `toolChoice` forcing it. Going through the AWS CLI
-  means no SDK dependency, the same credentials as the rest of the showcase (`AWS_PROFILE`, `AWS_REGION`), and no key
-  in the repo.
+  catalogue, budgets, rules), `toolConfig` holding the one tool, and `toolChoice: auto` (forcing it is rejected for
+  opus-5.5). Going through the AWS CLI means no SDK dependency, the same credentials as the rest of the showcase
+  (`AWS_REGION`, plus `AWS_PROFILE` off an instance-role machine), and no key in the repo.
 - If `check` fails, the errors go back as a `toolResult` with `status: "error"` on the same conversation, and the model
   tries again, up to `--tries`. If the last attempt also fails, the step exits 1 and names the fields.
 - `--dry` prints the system prompt and the first user message, and calls nothing.
@@ -379,7 +381,8 @@ new batch, so nothing is rerun now.
 
 **Acceptance:**
 1. The page previews every variant of the four users.
-2. The default batch renders 12 MP4s that pass the loudness and ffprobe checks.
+2. The default batch renders the 6 MP4s in `manifest.json` (16x9 zh 15 s none for coffee and baby, 16x9 en 15 s launch
+   for camp and gamer, 1x1 zh 6 s 1111 for baby and gamer), and they pass the loudness and ffprobe checks.
 3. Every story was written by the model (`model` is not `draft`), in at most three attempts, and passes its checks.
 4. `npm test` passes.
 5. The film README is in Chinese, the showcase index has a row, and the factory README and skill document Level 3.
