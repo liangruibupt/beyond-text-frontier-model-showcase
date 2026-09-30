@@ -5,7 +5,7 @@ import { T, FONTS, money } from './copy.js';
 
 export const PROMO_T = {
   zh: { ribbon: '双11 狂欢价', deal: '到手价', was: '日常价', launch: '新品首发', gift: '首发赠 2 ml 随行装' },
-  en: { ribbon: '11.11 Global Shopping Festival', deal: 'Now', was: 'Was', launch: 'New Arrival', gift: 'Free 2 ml travel spray' },
+  en: { ribbon: 'Double 11 Deal', deal: 'Now', was: 'Was', launch: 'New Arrival', gift: 'Free 2 ml travel spray' },
 };
 export const RED = '#e1251b';
 

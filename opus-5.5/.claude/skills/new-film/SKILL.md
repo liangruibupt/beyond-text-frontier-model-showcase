@@ -109,7 +109,7 @@ Use this when the copy should differ for each value of an axis and come from dat
 
 - `score(v, built)` returns `{ notes, reverb }` using the voices in `factory/engine/audio.js`. Align notes to `built.hits`. A film with no `score` renders silent videos, and its voice-over is dropped too. So a narrated film needs a `score`, even if it is only a quiet bed. `{ notes: [] }` works while a variant has narration, but a mix that comes out completely silent (for example `vo: off` with no notes) fails the loudness step with `… is silent`.
 - `voLines(v)` returns `[]` when `v.vo === 'off'`. Its lines must not depend on `ar`, and an id must have the same text in every variant.
-- Voice choice. **Only voices in the deployed Kokoro Lambda work**: zh `zm_*` (e.g. `zm_yunjian`, `zm_yunxi`), en-US `am_*` (e.g. `am_michael`), en-UK `bm_*` (e.g. `bm_george`) — there is no `bf_*`/`af_*`/`zf_*`; picking one fails the Lambda call. See `ai-ml/aigc/audio_models/Kokoro/README.md` for the full list.
+- Voice choice. The deployed `kokoro-tts:live` Lambda has every Kokoro-82M voice; the pipeline is picked from the first letter (`a` US English, `b` UK English, `z` Chinese), so `zf_*`, `zm_*`, `af_*`, `am_*`, `bf_*`, `bm_*` all work. `ai-ml/aigc/audio_models/Kokoro/README.md` lists only the recommended ones.
   ```bash
   node factory/vo.mjs NN-name --audition   # every voice in film.audition reads the default lines → NN-name/out/audition/
   ```

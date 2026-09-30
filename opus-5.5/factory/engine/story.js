@@ -30,9 +30,12 @@ export function slotErrors(label, tpl, { required = [], optional = [] } = {}) {
   return errs;
 }
 
-// 中文里的"一"不查：一起、每一次、一年，太常见
-const ZH_NUM = /[〇零两二三四五六七八九十百千万亿]/g;
-const EN_NUM = /\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|billion|dozen|dozens)\b/gi;
+// 中文里的"一"不查：一起、每一次、一年，太常见。"双""几"也不查（双十一、双手、几乎）
+// 另查口语量词（俩、仨、廿、卅、半）和大写数字（壹贰叁…），模型用它们也能写出一个统计
+const ZH_NUM = /[〇零两二三四五六七八九十百千万亿俩仨廿卅半壹贰叁肆伍陆柒捌玖拾佰仟]/g;
+// 英文另查次数与倍数词：once、twice、half、a couple of、double、a pair of。
+// "first""second""single" 不查：first order、a single tap 太常见，也不构成统计
+const EN_NUM = /\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|billion|dozen|dozens|once|twice|thrice|half|halves|couple|double|triple|quadruple|pair)\b/gi;
 /** 模型自己写出来的数字（占位符以外）：阿拉伯数字、英文数词、中文数字。返回去重后的片段，空 = 没有 */
 export function writtenNumbers(s, lang) {
   const bare = s.replace(/\{\w+\}/g, ' ');

@@ -37,8 +37,8 @@ export function valuesFor(u, lang, story) {
 }
 
 // ── 配音 ──
-// 声音必须是已部署的 Kokoro（aws-is-how/.../Kokoro/README.md）里有的：zh 只有 zm_* 四个男声；en 有 am_*（美）/ bm_*（英）。
-// 没有 bf_*/af_*/zf_* 这些声音——用了会 Lambda 报错。README 推荐：zh=zm_yunjian（最自然），en=am_michael（美，沉稳）/ bm_george（英，播音腔）
+// 已部署的 kokoro-tts:live 装着 Kokoro-82M 的全部音色（按首字母 a 美英 / b 英英 / z 中文选管线）。
+// 04 用 Kokoro README 推荐的 zh=zm_yunjian（最自然）、en=am_michael（美，沉稳）；未做试听
 export const VOICE = { zh: 'zm_yunjian', en: 'am_michael' };
 export const AUDITION = { zh: ['zm_yunjian', 'zm_yunxi', 'zm_yunxia', 'zm_yunyang'], en: ['am_michael', 'am_fenrir', 'bm_george', 'bm_fable'] };
 export const SPEED = { zh: 1, en: 1 };

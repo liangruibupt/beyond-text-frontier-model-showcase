@@ -2,12 +2,25 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import film from '../film.js';
+import { PROMO_T } from '../promos.js';
 import { plannedLines, VO_LUFS, MAX_RATE } from '../../factory/vo.mjs';
 import { voPlan, fresh } from '../../factory/engine/audio.js';
 import { expandJobs } from '../../factory/engine/variant.js';
 
 const dir = new URL('../assets/vo/', import.meta.url), index = JSON.parse(fs.readFileSync(new URL('index.json', dir), 'utf8'));
 const lines = plannedLines(film), fix = 'run: node factory/vo.mjs 03-perfume';
+
+test('the lines: numbers are spelled out and Double 11 is read as 双十一 / Double Eleven', () => {
+  for (const l of lines) {
+    assert.ok(!/\d/.test(l.text), `${l.id}: "${l.text}" has digits; Kokoro reads them unevenly`);
+    if (/_1111$/.test(l.id)) assert.ok(/_zh_/.test(l.id) ? l.text.includes('双十一') : l.text.includes('Double Eleven'), `${l.id}: "${l.text}"`);
+  }
+});
+
+test('English on-screen Double 11 is written "Double 11", never "11.11"', () => {
+  assert.match(PROMO_T.en.ribbon, /Double 11/);
+  for (const s of Object.values(PROMO_T.en)) assert.ok(!/11\.11/.test(s), `"${s}" writes 11.11`);
+});
 
 test('every planned line has a clip made from its current text, voice and speed', () => {
   assert.equal(lines.length, 64);                                      // 4 香型 × 2 语言 ×（15 秒 hero、notes、3 种片尾 + 6 秒 3 种）

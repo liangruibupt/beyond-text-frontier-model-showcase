@@ -34,6 +34,14 @@ test('writtenNumbers catches numbers the model wrote itself, not placeholders or
   assert.deepEqual(writtenNumbers('{orders} orders this year', 'en'), []);
   assert.deepEqual(writtenNumbers('Someone ordered One hundred times', 'en'), ['one', 'hundred']);
   assert.deepEqual(writtenNumbers('Top 3 picks', 'en'), ['3']);
+  // 次数、倍数、口语量词、大写数字也是数字
+  assert.deepEqual(writtenNumbers('Back twice a week, half of it coffee', 'en'), ['twice', 'half']);
+  assert.deepEqual(writtenNumbers('a couple of orders, double the snacks', 'en'), ['couple', 'double']);
+  assert.deepEqual(writtenNumbers('咖啡买了俩月，半夜下单', 'zh'), ['俩', '半']);
+  assert.deepEqual(writtenNumbers('壹佰次', 'zh'), ['壹', '佰']);
+  // 不当数字：first order、双十一的"双"、几乎
+  assert.deepEqual(writtenNumbers('your first order', 'en'), []);
+  assert.deepEqual(writtenNumbers('双{deal}，几乎天天', 'zh'), []);
 });
 
 test('speechSec: close to Kokoro for 03 lines, longer for longer lines, pauses count', () => {
@@ -77,11 +85,40 @@ test('a rejected attempt goes back as an error tool result; the next good one is
   assert.match(tr.content[0].text, /longer than 6 characters/);
 });
 
-test('three rejected attempts fail with the problems; no tool call fails at once', async () => {
+test('three rejected attempts fail with the problems', async () => {
   let n = 0;
   await assert.rejects(runStory(STORY, 'u1', { call: async () => reply({ title: 'far too long a title' }, ++n) }), /no valid story after 3 attempts:\n {2}title "far too long a title"/);
   assert.equal(n, 3);
-  await assert.rejects(runStory(STORY, 'u1', { call: async () => ({ stopReason: 'end_turn', output: { message: { content: [{ text: 'hi' }] } } }) }), /did not call write_story/);
+});
+
+const text = t => ({ stopReason: 'end_turn', usage: { inputTokens: 50, outputTokens: 5 }, output: { message: { role: 'assistant', content: [{ text: t }] } } });
+
+test('a text reply instead of a tool call counts as an attempt: nudged, then the tool call is kept', async () => {
+  const seen = [];
+  const call = async req => { seen.push(structuredClone(req)); return seen.length === 1 ? text('Here is the story…') : reply({ title: '咖啡续命官' }, 2); };
+  const rec = await runStory(STORY, 'u1', { call, model: 'm' });
+  assert.equal(rec.tries, 2);
+  assert.deepEqual(rec.story, { title: '咖啡续命官' });
+  const second = seen[1].messages;                                   // prompt · the text reply · the nudge
+  assert.equal(second.length, 3);
+  assert.equal(second[1].role, 'assistant');
+  assert.match(second[2].content[0].text, /Call the write_story tool/);
+});
+
+test('text replies on every attempt fail after --tries, naming the missing tool call', async () => {
+  let n = 0;
+  await assert.rejects(runStory(STORY, 'u1', { call: async () => (++n, text('hi')) }), /no valid story after 3 attempts:\n {2}the model replied with text instead of calling write_story/);
+  assert.equal(n, 3);
+});
+
+test('every toolUse in a rejected reply gets its own toolResult', async () => {
+  const seen = [];
+  const two = { stopReason: 'tool_use', output: { message: { role: 'assistant', content: [
+    { toolUse: { toolUseId: 'a', name: TOOL, input: { title: 'far too long a title' } } },
+    { toolUse: { toolUseId: 'b', name: TOOL, input: { title: 'x' } } }] } } };
+  const call = async req => { seen.push(structuredClone(req)); return seen.length === 1 ? two : reply({ title: '咖啡续命官' }, 2); };
+  await runStory(STORY, 'u1', { call });
+  assert.deepEqual(seen[1].messages[2].content.map(c => c.toolResult.toolUseId), ['a', 'b']);
 });
 
 test('storyState: missing, draft, stale, failing, current', () => {

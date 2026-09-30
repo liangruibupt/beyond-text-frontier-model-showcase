@@ -49,13 +49,22 @@ export async function runStory(STORY, id, { call, model = MODEL, tries = 3, log 
   for (let n = 1; n <= tries; n++) {
     const res = await call(request(STORY, { model, messages }));
     usage.inputTokens += res.usage?.inputTokens ?? 0; usage.outputTokens += res.usage?.outputTokens ?? 0;
-    const msg = res.output?.message, use = msg?.content?.find(c => c.toolUse)?.toolUse;
-    if (!use) throw new Error(`${id}: the model did not call ${TOOL} (stopReason: ${res.stopReason})`);
+    const msg = res.output?.message, uses = (msg?.content ?? []).filter(c => c.toolUse).map(c => c.toolUse), use = uses[0];
+    if (!use) {
+      // toolChoice 是 auto（opus-5.5 不支持强制），模型可能只回一段话：记成一次失败，催它调工具再试
+      errors = [`the model replied with text instead of calling ${TOOL} (stopReason: ${res.stopReason})`];
+      log(`  ${id}: attempt ${n} did not call ${TOOL}`);
+      if (msg) messages.push(msg);
+      messages.push({ role: 'user', content: [{ text: `Do not answer in text. Call the ${TOOL} tool with the whole story.` }] });
+      continue;
+    }
     errors = STORY.check(id, use.input);
     if (!errors.length) return { id, key: storyKey(STORY.facts(id)), model, tries: n, usage, story: use.input };
     log(`  ${id}: attempt ${n} has ${errors.length} problem(s)\n    ${errors.join('\n    ')}`);
-    messages.push(msg, { role: 'user', content: [{ toolResult: { toolUseId: use.toolUseId, status: 'error',
-      content: [{ text: `The story was rejected. Fix every problem below and call ${TOOL} again with the whole story:\n- ${errors.join('\n- ')}` }] } }] });
+    // Converse 要求每个 toolUse 都有对应的 toolResult；第一个带上错误，其余的说明只看第一个
+    const feedback = `The story was rejected. Fix every problem below and call ${TOOL} again with the whole story:\n- ${errors.join('\n- ')}`;
+    messages.push(msg, { role: 'user', content: uses.map((u, i) => ({ toolResult: { toolUseId: u.toolUseId, status: 'error',
+      content: [{ text: i === 0 ? feedback : `Only the first ${TOOL} call is read; see the other result.` }] } })) });
   }
   throw new Error(`${id}: no valid story after ${tries} attempts:\n  ${errors.join('\n  ')}`);
 }
