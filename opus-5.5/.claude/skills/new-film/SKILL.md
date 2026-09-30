@@ -14,7 +14,7 @@ Run every command from `opus-5.5/`. Node 22 is required. Rendering needs Playwri
 ## Ground rules
 
 - **Don't change `factory/` for one film.** If the film needs something the engine lacks, stop and tell the user what is missing. An engine change is its own piece of work, with engine tests.
-- **Frames are pure functions of (variant, t).** Nothing a shot does per frame may call `Math.random`, `Date.now` or `performance.now`. Use `factory/engine/rng.js` for randomness and `particles.js` (`drift`) for particles. Put everything a shot mutates back in `reset(ctx)`, because a dissolve evaluates two shots in one frame and scrubbing visits shots in any order.
+- **Frames are pure functions of (variant, t).** Nothing a shot does per frame may call `Math.random`, `Date.now` or `performance.now`. Use `factory/engine/rng.js` for randomness and `particles.js` (`drift`) for particles. For physics that has no closed form (collisions, piling), bake it once in `setup` with `factory/engine/bake.js` and sample the table by t in shots. Put everything a shot mutates back in `reset(ctx)`, because a dissolve evaluates two shots in one frame and scrubbing visits shots in any order.
 - **Work in frame fractions, never pixels.** `ctx.W` and `ctx.H` are scaled down in the live preview.
 - **Brands:** use a fictional brand unless the user owns the real one, and say so in the film's README.
 - **Long commands** (`render.mjs`, `check.mjs` on a big film) run in the background. Poll their output; don't block on them.
