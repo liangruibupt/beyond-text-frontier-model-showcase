@@ -36,7 +36,7 @@
 
 ## 环境（这台机：EC2 上的 KiroCrew，用 Kiro 构建）
 
-- **凭证：** 用本机 EC2 实例角色（账号 747411437379，角色 `openclaw-bedrock-OpenClawInstanceRole`），`aws` 默认就走它。所有旧文档里的 `AWS_PROFILE=global_ruiliang` 都改成「用实例角色」，不再需要设 `AWS_PROFILE`。写操作若被 CLI guardrail 拦，走 boto3 SDK。
+- **凭证：** 用本机 EC2 实例角色（账号 <ACCOUNT_ID>，角色 `openclaw-bedrock-OpenClawInstanceRole`），`aws` 默认就走它。所有旧文档里的 `AWS_PROFILE=global_ruiliang` 都改成「用实例角色」，不再需要设 `AWS_PROFILE`。写操作若被 CLI guardrail 拦，走 boto3 SDK。
 - **构建用 Kiro：** 由 KiroCrew（Kiro）自己构建，不用为编码调 Bedrock。剩下的 05–10 都是视频 / 多模态工厂活（场景、镜头、配乐、出片），本身不需要调 Bedrock；只有 `factory/story.mjs` 那种「让模型写文案」的步骤才调（04 第 6 步已用 opus-5.5 跑完）。
 - **Kokoro 配音（第 7 步）：** `tts.sh` 已随并排检出的 `aws-is-how` 拉到 `ai-ml/aigc/audio_models/Kokoro/tts.sh`（`vo.mjs` 默认就找这里；也可用 `KOKORO_TTS` 指别处）。它是**远程** Kokoro——`aws lambda invoke kokoro-tts:live` 出音频再从 S3 下载，不用本地装模型。**但这个 Lambda 目前没部署在本账号**（us-east-1/us-west-2/ap-southeast-1 都没有 `kokoro-tts` 函数），要先按 `Kokoro/README.md` 的 `build.sh`+`deploy.sh` 部署（建 ~1GB ECR 镜像、6GB SnapStart Lambda≈$20+/月、S3、IAM 角色——花钱且要 Docker，动手前先跟用户确认）。声音：已部署的 Lambda 装着 Kokoro-82M 全部音色，按首字母选管线（a 美英、b 英英、z 中文），`zf_*`/`zm_*`/`af_*`/`am_*`/`bf_*`/`bm_*` 都能用；Kokoro README 只列了推荐的几个（2026-09-30 实测 `bf_emma`、`zf_xiaoxiao`、`af_heart` 都能出声）。用户在 EC2 上不方便试听，直接看最终网页效果，不再要求先 `--audition`。
 - `03-perfume/test/preview.test.mjs` 会起 Chromium，要 GPU 和网络；本机无 GPU（SwiftShader 软件渲染被 `browser.mjs` 拒绝），preview / check.mjs 的渲染测试失败不代表代码坏了，先看报错。`npm test` 现约 226 过 / 4 失（全是这些 preview 测试）/ 5 跳
@@ -54,8 +54,8 @@
 
 - [x] **第 5 步 配乐和音效：**（2026-09-29 完成：`js/score.js` 按镜头写、按剪辑表摆放，15 / 6 秒共用；`test/score.test.mjs` 10 条，混音两遍逐采样相同在无头 Chromium 里测，不要 GPU；四位顾客 × 两个剪辑过了 −14 LUFS / 真峰值 −1.6 dBTP）照 spec §10 写 `04-year-review/js/score.js`，在 `film.js` 里导出 `score`（参照 03）。D 大调 80 bpm；months 的柱子音高按每月订单数映到五声音阶，每位顾客的旋律不同。补 §12 的测试：每个命中点落在 0.75 s 网格上，同一混音渲两次样本一致。响度 −14 LUFS、真峰值 ≤ −1 dBTP（引擎已经管）
 - [x] **第 6 步 Bedrock 写文案：**（2026-09-29 完成：用本机实例角色 `AWS_REGION=us-east-1`、默认模型 `us.anthropic.claude-opus-5-5` 真调 Bedrock，四份 `stories/*.json` 的 `model` 从 `draft` 换成 opus-5.5，各一次尝试过 check；顺带修 `story.mjs` 的 `toolChoice`——opus-5.5 不支持强制 `tool`/`any`，改成 `auto`）先看 `--dry` 提示词；四份 `stories/*.json` 的 `model` 不再是 `draft`，每份最多三次尝试
-- [x] **第 7 步 配音（Kokoro，远程）：**（2026-09-29 完成：Kokoro 部署在账号 710299592439 的 `kokoro-tts:live`，用户授了跨账号 InvokeFunction + `s3://aicoding-ruiliang/tts-out/*` 读；本机 arm64 用 `ffmpeg-static`+`@ffprobe-installer/ffprobe` 提供 ffmpeg/ffprobe；声音 zh=`zm_yunjian`、en=`am_michael`；`node factory/vo.mjs 04-year-review` 生成全部 64 句，每句落在时段内，−20 LUFS，入库 `assets/vo/`）
-- [x] **第 8 步 出片和收尾：**（2026-09-29 完成：`opus55-render` 角色+实例配置文件已建、OpenClaw 角色获 PassRole/GetInstanceProfile；`cloud.mjs up` 在 747411437379 本账号启动 g5.2xlarge（A10G，g6/g5.4xl 无容量）→ `render 04-year-review` 全绿 → `pull` → `down` 已终止实例。交付清单 `manifest.json` 已改为 6 条（主片 coffee/baby、海外 camp/gamer、双11 baby/gamer）。成片在 `04-year-review/out/`（`out/` 按 .gitignore 不入库）。README 与根索引已写。剩：`gallery.html` 给用户审、factory README/skill 的 Level 3 说明核对）
+- [x] **第 7 步 配音（Kokoro，远程）：**（2026-09-29 完成：Kokoro 部署在账号 <ACCOUNT_ID> 的 `kokoro-tts:live`，用户授了跨账号 InvokeFunction + `s3://aicoding-ruiliang/tts-out/*` 读；本机 arm64 用 `ffmpeg-static`+`@ffprobe-installer/ffprobe` 提供 ffmpeg/ffprobe；声音 zh=`zm_yunjian`、en=`am_michael`；`node factory/vo.mjs 04-year-review` 生成全部 64 句，每句落在时段内，−20 LUFS，入库 `assets/vo/`）
+- [x] **第 8 步 出片和收尾：**（2026-09-29 完成：`opus55-render` 角色+实例配置文件已建、OpenClaw 角色获 PassRole/GetInstanceProfile；`cloud.mjs up` 在 <ACCOUNT_ID> 本账号启动 g5.2xlarge（A10G，g6/g5.4xl 无容量）→ `render 04-year-review` 全绿 → `pull` → `down` 已终止实例。交付清单 `manifest.json` 已改为 6 条（主片 coffee/baby、海外 camp/gamer、双11 baby/gamer）。成片在 `04-year-review/out/`（`out/` 按 .gitignore 不入库）。README 与根索引已写。剩：`gallery.html` 给用户审、factory README/skill 的 Level 3 说明核对）
 - [ ] 每做完一步就提交，告诉用户可以推送（本地的 `opus55-04-year-review` 分支和 master 的 cb798a2 一样，已经没用了）
 
 ## 2. 05–10：`factory/Video-Factory.md` 的场景 B–H 里剩下的
