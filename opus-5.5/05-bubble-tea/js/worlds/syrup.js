@@ -47,7 +47,7 @@ export function build(ctx) {
     },
     optics: { causticGain: 0.25 },
     liquid: { liquid: { color: '#4a2c1a', absorb: [40, 58, 80], scatter: 40 }, milk: '#9a7556' },                                  // 逆光的焦散会在杯前打出一块亮片，压到只剩一点
-    post: { exposure: 0.82, vignette: 0.42, grain: 0.05, saturation: 1.05, lift: [0.012, 0.006, 0], gamma: [1, 1, 1], gain: [1.02, 0.96, 0.88], bloom: { strength: 0.16, threshold: 0.9, radius: 0.5 } },
+    post: { exposure: 0.82, vignette: 0.42, grain: 0.015, saturation: 1.05, lift: [0.012, 0.006, 0], gamma: [1, 1, 1], gain: [1.02, 0.96, 0.88], bloom: { strength: 0.16, threshold: 0.9, radius: 0.5 } },
     update(s) { puffs.update(s.t); bokeh.update(s.t); puffs.mesh.material.uniforms.uTime.value = s.t; bokeh.mesh.material.uniforms.uTime.value = s.t; },
     reset() {},
     dispose() { wood.dispose(); },

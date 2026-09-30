@@ -16,7 +16,7 @@ export const STYLES = {
     },
     caption: { tracking: 0.14, box: 'rule', vertical: false, glow: 'rgba(255,170,80,0.55)', ink: '#f6dcb4', soft: '#c89a6a' },
     camera: { pitch: -4, yaw: 8, roll: 0, push: [0.93, 1] },
-    post: { exposure: 0.82, vignette: 0.42, grain: 0.05, saturation: 1.08, lift: [0.01, 0.005, 0], gain: [1.04, 0.98, 0.9], bloom: { strength: 0.35, threshold: 0.75 } },
+    post: { exposure: 0.82, vignette: 0.42, grain: 0.015, saturation: 1.08, lift: [0.01, 0.005, 0], gain: [1.04, 0.98, 0.9], bloom: { strength: 0.35, threshold: 0.75 } },
   },
   jasmine: {
     world: 'teatable',
