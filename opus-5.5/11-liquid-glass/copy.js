@@ -42,8 +42,9 @@ export const priceOf = lang => ({ deal: money(PRICE.deal[CURRENCY[lang]], lang),
 export const themeOf = v => THEMES[v.theme];
 
 // ── 配音 ──
-export const VOICE = { zh: 'zm_yunxi', en: 'bf_emma' };               // 默认音色，试听（node factory/vo.mjs 11-liquid-glass --audition）后再定
-export const AUDITION = { zh: ['zf_xiaoxiao', 'zf_xiaoyi', 'zm_yunjian', 'zm_yunxi'], en: ['af_heart', 'bf_emma', 'am_michael', 'bm_george'] };
+// 声音必须是已部署的 Kokoro 里有的：zh 只有 zm_*；en 有 am_*（美）/ bm_*（英）。没有 bf_*/af_*/zf_*（与 03 相同）
+export const VOICE = { zh: 'zm_yunxi', en: 'am_michael' };            // 试听（node factory/vo.mjs 11-liquid-glass --audition）后再定
+export const AUDITION = { zh: ['zm_yunjian', 'zm_yunxi', 'zm_yunxia', 'zm_yunyang'], en: ['am_michael', 'am_fenrir', 'bm_george', 'bm_fable'] };
 export const SPEED = { zh: 1, en: 1 };
 // 时段（成片秒）：[开始, 最长]。15 秒：透镜滑过时钟时报品牌，两滴相融时说「流动」，片尾一句；6 秒一句念完。每句在最后 0.3 秒的淡出之前念完
 export const SLOTS = { 15: { hero: [3.3, 2.6], flow: [6.4, 2.8], end: [12.3, 2.4] }, 6: { one: [0.5, 4.6] } };

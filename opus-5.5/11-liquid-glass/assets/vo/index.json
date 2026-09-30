@@ -1,146 +1,146 @@
 {
   "en_15_end_1111": {
     "text": "Double Eleven: just one dollar.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.799,
+    "dur": 2.042,
     "lufs": -20
   },
   "en_15_end_dawn_launch": {
     "text": "New from Liuguang: Dawn.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.612,
+    "dur": 1.654,
     "lufs": -20
   },
   "en_15_end_dawn_none": {
     "text": "Liuguang Dawn. Let your screen flow.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.108,
+    "dur": 2.342,
     "lufs": -20
   },
   "en_15_end_iris_launch": {
     "text": "New from Liuguang: Iris.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.811,
+    "lufs": -20
+  },
+  "en_15_end_iris_none": {
+    "text": "Liuguang Iris. Let your screen flow.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1.09,
+    "dur": 2.298,
+    "lufs": -20
+  },
+  "en_15_end_mint_launch": {
+    "text": "New from Liuguang: Mint.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.726,
+    "lufs": -20
+  },
+  "en_15_end_mint_none": {
+    "text": "Liuguang Mint. Let your screen flow.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.399,
+    "lufs": -20
+  },
+  "en_15_flow": {
+    "text": "Every drop of light, in motion.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.71,
+    "lufs": -20
+  },
+  "en_15_hero": {
+    "text": "Liquid glass, for your screen.",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
     "dur": 1.709,
     "lufs": -20
   },
-  "en_15_end_iris_none": {
-    "text": "Liuguang Iris. Let your screen flow.",
-    "voice": "bf_emma",
-    "speed": 1,
-    "rate": 1,
-    "dur": 2.221,
-    "lufs": -20
-  },
-  "en_15_end_mint_launch": {
-    "text": "New from Liuguang: Mint.",
-    "voice": "bf_emma",
-    "speed": 1,
-    "rate": 1,
-    "dur": 1.722,
-    "lufs": -20
-  },
-  "en_15_end_mint_none": {
-    "text": "Liuguang Mint. Let your screen flow.",
-    "voice": "bf_emma",
-    "speed": 1,
-    "rate": 1,
-    "dur": 2.216,
-    "lufs": -20
-  },
-  "en_15_flow": {
-    "text": "Every drop of light, in motion.",
-    "voice": "bf_emma",
-    "speed": 1,
-    "rate": 1,
-    "dur": 1.814,
-    "lufs": -20
-  },
-  "en_15_hero": {
-    "text": "Liquid glass, for your screen.",
-    "voice": "bf_emma",
-    "speed": 1,
-    "rate": 1,
-    "dur": 1.671,
-    "lufs": -20
-  },
   "en_6_one_dawn_1111": {
     "text": "Liuguang Dawn, Double Eleven, just one dollar.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.714,
+    "dur": 2.873,
     "lufs": -20
   },
   "en_6_one_dawn_launch": {
     "text": "New from Liuguang: Dawn. Out now.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.112,
+    "dur": 2.207,
     "lufs": -20
   },
   "en_6_one_dawn_none": {
     "text": "Liuguang Dawn: glass that flows.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.176,
+    "dur": 2.308,
     "lufs": -20
   },
   "en_6_one_iris_1111": {
     "text": "Liuguang Iris, Double Eleven, just one dollar.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.8,
+    "dur": 3.036,
     "lufs": -20
   },
   "en_6_one_iris_launch": {
     "text": "New from Liuguang: Iris. Out now.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.149,
+    "dur": 2.418,
     "lufs": -20
   },
   "en_6_one_iris_none": {
     "text": "Liuguang Iris: glass that flows.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.201,
+    "dur": 2.471,
     "lufs": -20
   },
   "en_6_one_mint_1111": {
     "text": "Liuguang Mint, Double Eleven, just one dollar.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.635,
+    "dur": 2.874,
     "lufs": -20
   },
   "en_6_one_mint_launch": {
     "text": "New from Liuguang: Mint. Out now.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.105,
+    "dur": 2.276,
     "lufs": -20
   },
   "en_6_one_mint_none": {
     "text": "Liuguang Mint: glass that flows.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.132,
+    "dur": 2.34,
     "lufs": -20
   },
   "zh_15_end_1111": {
