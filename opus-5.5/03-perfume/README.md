@@ -155,7 +155,7 @@ node factory/vo.mjs 03-perfume --audition   # 试听：每种语言四个候选�
 ├── js/
 │   ├── shots.js      六个镜头：相机意图、瓶子姿态、字幕、后期
 │   ├── bottle.js     瓶子：玻璃、液体与涟漪、颈圈、喷头、瓶盖；分解与部件锚点
-│   ├── glass.js      玻璃与液体的分层折射、焦散
+│   ├── glass.js      玻璃与液体的分层折射、焦散：瓶子的数据交给共享的 factory/engine/refract.js
 │   ├── drop.js       落进瓶里的那一滴
 │   ├── spray.js      喷雾粒子
 │   ├── score.js      配乐与音效
@@ -166,7 +166,7 @@ node factory/vo.mjs 03-perfume --audition   # 试听：每种语言四个候选�
 │       ├── osmanthus.js  桂花 · 金秋逆光
 │       ├── seasalt.js    海盐 · 海边的光
 │       └── rose.js       玫瑰 · 暗红丝绒
-└── test/             npm test：瓶子、数据与清单、水滴与喷雾、玻璃、构图、字幕尺寸、配乐、配音、世界
+└── test/             npm test：瓶子、数据与清单、水滴与喷雾、玻璃（含 fixtures/refract-03.json：折射着色器逐字节不变）、构图、字幕尺寸、配乐、配音、世界
 ```
 
 **渲染要点**
@@ -186,3 +186,4 @@ node factory/vo.mjs 03-perfume --audition   # 试听：每种语言四个候选�
 - Kokoro 的中文偶尔会读错字或断错句。每句都很短，也有缓存，发现问题就改写这一句重新生成。
 - 语言只有中英两种，长度只有 15 秒和 6 秒。加语言要加一套文案和字体；加长度要加一个剪辑表、一版编曲和一组配音时段。
 - 画面比例固定三种，由引擎决定（见 [factory/README.md](../factory/README.md#局限)）。
+)）。
