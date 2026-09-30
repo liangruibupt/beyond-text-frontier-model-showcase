@@ -32,6 +32,7 @@ factory/
 │   ├── framing.js          取景意图 + 画面比例 → 相机位置与 view offset
 │   ├── text.js             分词、折行（中文按字 + 避头尾，英文按词）、自动缩字、图层绘制
 │   ├── post.js             MSAA → 景深 → 泛光 → AgX + 调色 + 暗角 + 颗粒 + 闪白 / 叠化
+│   ├── refract.js · refract-shape.js   容器 + 液体的分层折射与地面焦散（凸棱柱 / 薄壁截锥），见「分层折射」
 │   ├── audio.js            合成音色、离线混音、配音排布与压低配乐、预览发声
 │   ├── mix.js · rng.js · ease.js · particles.js   纯函数工具：压低曲线、WAV、种子随机数、缓动、闭式漂移粒子
 │   ├── bake.js             烘焙模拟：固定步长跑一遍存表，按 t 插值取样（碰撞这类闭式写不出的物理）
@@ -551,6 +552,23 @@ sampleRange(ctx.pearls, s.lt, i * 6, 3, tmp);
 | `flashColor` | `[1, 0.98, 0.94]` | 闪白转场的颜色 |
 
 色调映射是 AgX。字幕在后期之后才叠上去，不受景深、颗粒影响。
+
+### 分层折射（engine/refract.js）
+
+透明容器装液体（香水瓶、奶茶杯）时用。`createRefraction(ctx, o)` 把容器壁和液体的材质换成分层折射着色器，加上三张 RGB 焦散网格和一个只投影的替身，返回 `{ render(target), uniforms, caustics }`；成片的 `render(ctx, target)` 每帧调 `render(target)`。它往同一张 HDR 目标里依次画：第 0 层（世界）→ `LAYER.contents`（可选，液体里的东西，比如冰块）→ `LAYER.liquid` → `LAYER.glass` → `LAYER.over`（挡在容器前面的半透明东西，成片自己把网格放进这一层）。每一遍都采样前面几遍解析好的颜色和深度。光在壁和液体里走的路程按形状解析求出，算的东西有：比尔–朗伯吸收、出口处的菲涅耳分光（全反射时连续过渡）、玻璃三色色散、按粗糙度的磨砂模糊，以及按走过的面分路、亮度取“出发面积 / 落地面积”的地面焦散。
+
+形状描述 `shape` 是容器本地坐标（原点在底面中心，y 向上，米）里的三个凸实体 `outer`（外形）、`cavity`（内腔）、`liquid`（液体）：
+
+| `kind` | 每个实体 | 构造函数 |
+|---|---|---|
+| `'prism'` 凸棱柱 | `{ planes: [[nx, nz, d], …], y: [y0, y1] }`，内部满足 nx·x + nz·z ≤ d；N 个法线按角度 0, 2π/N, … 均匀排开，三个实体 N 相同 | `prismShape({ outer, cavity, liquid })` |
+| `'frustum'` 竖轴截锥 | `{ r: [y0 处半径, y1 处半径], y: [y0, y1] }`，两个半径都 > 0 | `frustumShape({ rBottom, rTop, height, wall, base, fill, gap, open })`：壁厚垂直于斜壁量，内腔默认开口到杯口 |
+
+液面高度 = `liquid.y[1]`。`enter(shape, solid, p, d)` / `exit(shape, solid, p, d)` / `boundsOf(shape)` 是着色器求交的 JS 参考实现，和 GLSL 一个算法，可以在 Node 里测。
+
+`o` 必填：`shape`；`optics`（`glassIor`、`liquidIor`、`glassAbsorb[3]`、`dispersion`、`frostBlur`、`frostDiffuse`、`causticGrid`、`causticGain`、`interfaces`、`lowLod`，缺一个就报错）；`root`（容器的根，焦散和替身挂在它下面）；`glass`（壁的网格）；`liquid`（液体网格或组）；`liquidAbsorb[3]`（1/米）。可选：`name`（程序缓存键前缀）、`liquidMaterial`、`scatter`（乳浊液体的散射系数，1/米，走得越远越接近液体自己被照亮的颜色）、`contents: { object, absorb, thickness, ior }`、`ripple` + `age()`（焦散里的液面涟漪）、`neck: { wall }`（外形顶面以上当薄壁管）、`occluder: { y, r }`（焦散里挡光的竖直圆柱）、`aim`（焦散网格对准的盒子，默认外形包围盒）。`refractGLSL(o)` 只生成源码，测试用。完整的接法见 `03-perfume/js/glass.js`（八角瓶 + 瓶颈 + 瓶盖挡光 + 涟漪）。
+
+局限：只有凸实体，没有凹形、手柄、杯盖；液面在焦散里是平面加涟漪，折射遍里液面形状由液体网格自己给；`contents` 当作厚 `thickness` 的平板，不追冰块内部的光路，冰块之间也不互相折射；背后的画面是屏幕空间取的，光路出了画面就取糊开的世界；每多一层就多画一遍，焦散是 3 × `causticGrid`² 个顶点。
 
 ### 配乐
 
