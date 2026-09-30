@@ -34,6 +34,7 @@ factory/
 │   ├── post.js             MSAA → 景深 → 泛光 → AgX + 调色 + 暗角 + 颗粒 + 闪白 / 叠化
 │   ├── audio.js            合成音色、离线混音、配音排布与压低配乐、预览发声
 │   ├── mix.js · rng.js · ease.js · particles.js   纯函数工具：压低曲线、WAV、种子随机数、缓动、闭式漂移粒子
+│   ├── bake.js             烘焙模拟：固定步长跑一遍存表，按 t 插值取样（碰撞这类闭式写不出的物理）
 │   ├── say.js              配音里数字、年份、月份的读法
 │   ├── story.js            Level 3 文案的纯函数：数据指纹、占位符、查模型自己写的数字、估念多久
 │   ├── player.js · player.css   预览页的播放器
@@ -474,6 +475,25 @@ cuts: {
 - 拖动时间轴时，求值的顺序是任意的。
 
 check.mjs 的 `determinism` 项查的就是这一点。
+
+#### 烘焙模拟（bake.js）
+
+闭式写不出来的物理（珠子互相碰撞、落进杯里堆起来）不能每帧现算：拖动、倒放时结果会跟着求值顺序变。改在 `setup` 里按固定步长跑一遍，存成表，镜头每帧按 t 查表：
+
+```js
+import { bake, sampleRange } from '../factory/engine/bake.js';
+// setup：init(rng) 给扁平的初始状态，step(state, dt, rng, t) 原地推进一步
+ctx.pearls = bake({ seed: 7, dt: 1 / 240, t1: 2.5, stride: 1, init, step });
+// 镜头里：取第 i 颗珠子的 [x, y, z]，不分配内存
+sampleRange(ctx.pearls, s.lt, i * 6, 3, tmp);
+```
+
+- 表只由 `(seed, dt, t1, stride, init, step)` 决定，同样的参数烘两次逐字节相同。随机数只能用传进来的 `rng`（`rng.js` 的 `mulberry32(seed)`）。
+- 存 `ceil(ceil(t1/dt) / stride) + 1` 帧，第 j 帧是时刻 `j·stride·dt`；取样在相邻两帧之间线性插值，t 钳在 `[0, t1]`，落在存储帧上时逐位等于存的值。
+- `step` 拿到的是 `Float64Array`（双精度积分），表里存 `Float32Array`。
+- 每帧取值用 `sampleInto(table, t, out)` 或 `sampleRange(table, t, offset, n, out)`，都不分配内存；`sampleBake(table, t)` 每次新分配，只在 setup 或测试里用。
+- 表里的 `bakeMs` 是烘焙耗时。换 `sceneAxes` 里的轴会重跑 `setup`，`openFilm` 等页面最多 90 秒，所以一次烘焙控制在 1.5 秒以内（60 颗珠子、1/240 秒步长、2.5 秒约 60 ms）。
+- 能写成闭式的（抛物线下落、阻尼弹簧、`drift`）就别烘：闭式没有存表和烘焙的开销。
 
 ### 构图
 
