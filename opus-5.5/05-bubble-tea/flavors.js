@@ -32,9 +32,9 @@ export const FLAVORS = {
     pour: { zh: '果泥打底，鲜奶冲下', en: 'Berry base, fresh milk' },
     parts: { zh: ['鲜草莓', '鲜奶', '爆爆珠'], en: ['Fresh berries', 'Fresh milk', 'Popping boba'] },
     price: { CNY: 23, USD: 7 }, deal: { CNY: 16, USD: 5 },
-    liquid: { color: '#f2c6cf', absorb: [6, 30, 22], scatter: 70, band: 0.008 }, milk: '#fff4f4', syrup: '#c8203e', stripes: false,
+    liquid: { color: '#ef8fa3', absorb: [6, 46, 32], scatter: 55, band: 0.008 }, milk: '#fde4e8', syrup: '#c8203e', stripes: false,
     pearl: { color: '#e0304f', roughness: 0.06, clear: 0.45 },
-    bg: ['#fde8ec', '#f2a7b6'],
+    bg: ['#fbe3e8', '#e7889c'],
     palette: { ink: '#4a0f1d', soft: '#8a3a4c', accent: '#d8354f', cta: '#4a0f1d', ctaInk: '#fff1f3', shadow: 'rgba(255,250,251,0.6)' },
   },
   taro: {
@@ -43,9 +43,9 @@ export const FLAVORS = {
     pour: { zh: '芋泥抹壁，鲜奶冲下', en: 'Taro swirl, fresh milk' },
     parts: { zh: ['香芋', '鲜奶', '黑糖珍珠'], en: ['Taro', 'Fresh milk', 'Brown sugar boba'] },
     price: { CNY: 24, USD: 8 }, deal: { CNY: 17, USD: 5 },
-    liquid: { color: '#c8b3d9', absorb: [14, 24, 10], scatter: 85, band: 0.006 }, milk: '#f6f0fa', syrup: '#9a7ab8', stripes: false,
+    liquid: { color: '#ad8ccb', absorb: [22, 38, 12], scatter: 65, band: 0.006 }, milk: '#efe4f6', syrup: '#9a7ab8', stripes: false,
     pearl: { color: '#1b0d07', roughness: 0.18, clear: 0 },
-    bg: ['#f0e8f6', '#b89ccd'],
+    bg: ['#ece2f4', '#9f7fbd'],
     palette: { ink: '#2d1b40', soft: '#63507a', accent: '#8a6aae', cta: '#2d1b40', ctaInk: '#f8f3fc', shadow: 'rgba(255,252,255,0.6)' },
   },
 };
