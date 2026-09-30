@@ -21,9 +21,9 @@ export const FLAVORS = {
     pour: { zh: '清茶打底，鲜奶冲下', en: 'Green tea, fresh milk' },
     parts: { zh: ['茉莉绿茶', '鲜奶', '白玉珍珠'], en: ['Jasmine tea', 'Fresh milk', 'Pearl jelly'] },
     price: { CNY: 19, USD: 6 }, deal: { CNY: 13, USD: 4 },
-    liquid: { color: '#e4ead2', absorb: [9, 5, 16], scatter: 55, band: 0.012 }, milk: '#fbfaf2', syrup: null, stripes: false,
-    pearl: { color: '#eef0e2', roughness: 0.1, clear: 0.55 },
-    bg: ['#f2f6ea', '#b9d3a6'],
+    liquid: { color: '#c9dc9c', absorb: [26, 7, 34], scatter: 48, band: 0.012 }, milk: '#f4f7e4', syrup: null, stripes: false,
+    pearl: { color: '#f4f5ea', roughness: 0.1, clear: 0.55 },
+    bg: ['#e9f0dc', '#86ad73'],
     palette: { ink: '#1f3522', soft: '#557058', accent: '#5f9a5a', cta: '#1f3522', ctaInk: '#f4f9ee', shadow: 'rgba(255,255,250,0.6)' },
   },
   strawberry: {

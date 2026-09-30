@@ -15,11 +15,11 @@ export const rIn = y => rOut(y) - CUP.wall * SLANT;
 
 // ── 冷凝水珠（闭式）──
 // 杯壁上 N 颗水珠：高度在液面以下（冰茶把杯壁冷下来的那一段），方位角、半径都由 rand 定；半径随 t 从 0 长到 r（凝出来）
-export const DEW = { seed: 23, n: 180, r: [0.0003, 0.0016], grow: [0.2, 2.2], drip: { i: 0, at: 1.5, dur: 1.3, fall: 0.055 } };
+export const DEW = { seed: 23, n: 200, r: [0.0005, 0.0024], grow: [0.2, 2.2], drip: { i: 0, at: 1.5, dur: 1.3, fall: 0.055 } };
 /** 第 i 颗水珠在 hero 本地 t 秒的 [方位角, 高度, 半径]；drip 那颗在 drip.at 秒开始往下滑，边滑边拉长（半径不变） */
 export function dewAt(i, t, D = DEW) {
   const a = rand(D.seed, 3 * i) * Math.PI * 2, y0 = CUP.base + 0.006 + rand(D.seed, 3 * i + 1) * (CUP.fill - CUP.base - 0.012);
-  const r1 = lerp(D.r[0], D.r[1], rand(D.seed, 3 * i + 2) ** 2.4), g = ss(D.grow[0] * (0.6 + rand(D.seed, 7000 + i) * 0.8), D.grow[1], t);
+  const r1 = lerp(D.r[0], D.r[1], rand(D.seed, 3 * i + 2) ** 2), g = ss(D.grow[0] * (0.6 + rand(D.seed, 7000 + i) * 0.8), D.grow[1], t);
   if (i !== D.drip.i) return [a, y0, r1 * g];
   const top = CUP.fill - 0.004, k = easeOut(clamp((t - D.drip.at) / D.drip.dur)) ** 1.4;   // 滑落那颗放在正面偏上，个头最大
   return [-0.35, top - D.drip.fall * k, D.r[1] * 1.25 * g];
@@ -116,7 +116,7 @@ export function buildCup(ctx, flavor, pearls, { art = null } = {}) {
 
   // 冷凝水珠：一个 InstancedMesh，半球贴在外壁上
   // 水珠：几乎全透明，只剩高光和一点折射的暗边（白色半透明的点看起来像涂上去的斑）
-  const dewMat = new THREE.MeshPhysicalMaterial({ color: '#ffffff', roughness: 0.0, metalness: 0, transmission: 1, thickness: 0.0015, ior: 1.33, specularIntensity: 1, envMapIntensity: 1.4, transparent: true, opacity: 0.55, depthWrite: false });
+  const dewMat = new THREE.MeshPhysicalMaterial({ color: '#ffffff', roughness: 0.0, metalness: 0, transmission: 1, thickness: 0.0015, ior: 1.33, specularIntensity: 1, envMapIntensity: 2.2, transparent: true, opacity: 0.8, depthWrite: false });
   const dew = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 14, 10, 0, Math.PI * 2, 0, Math.PI / 2), dewMat, DEW.n);
   dew.frustumCulled = false;
 
@@ -177,7 +177,7 @@ export function buildCup(ctx, flavor, pearls, { art = null } = {}) {
         const dt = Math.max(dewT, 0), [a, y, rr] = dewAt(i, dt), R = rOut(y), stretch = i === DEW.drip.i ? 1 + 0.8 * ss(DEW.drip.at, DEW.drip.at + 0.3, dt) : 1;
         N.set(Math.cos(a), -K, Math.sin(a)).normalize(); Q.setFromUnitVectors(UP, N);
         P.set(Math.cos(a) * R, y, Math.sin(a) * R);
-        S.set(rr, rr * 0.38, rr * stretch);                                  // 扁：贴在壁上的水珠只鼓起来一点
+        S.set(rr, rr * 0.55, rr * stretch);                                  // 扁：贴在壁上的水珠只鼓起来一点
         M.compose(P, Q, S); dew.setMatrixAt(i, M);
       }
       dew.instanceMatrix.needsUpdate = true;
