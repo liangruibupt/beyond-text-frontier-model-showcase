@@ -4,7 +4,7 @@
 
 | 模型 | 目录 | 案例 |
 |---|---|---|
-| Claude Opus 5.5 | [opus-5.5/](opus-5.5/README.md) | 01 临《兰亭集序》（Canvas 2D 网页动画）· 02 大力神合体（Three.js 实时 3D）· 03 香水商品视频工厂（批量出片）· 04 年度购物报告（数据驱动盘点视频，模型写文案 + Kokoro 配音） |
+| Claude Opus 5.5 | [opus-5.5/](opus-5.5/README.md) | 01 临《兰亭集序》（Canvas 2D 网页动画）· 02 大力神合体（Three.js 实时 3D）· 03 香水商品视频工厂（批量出片）· 04 年度购物报告（数据驱动盘点视频，模型写文案 + Kokoro 配音）· 11 琉光液态玻璃主题视频工厂（批量出片） |
 | GPT-6 Astra | [gpt-6-astra/](gpt-6-astra/README.md) | 中国古建筑（三维外观与结构剖面）· 清明上河图（原画局部动画与展卷） |
 | Claude Fable 5 | [fable5/](fable5/README.md) | 太阳系课堂动画（轨道、导览、行星竞速与开普勒演示） |
 
