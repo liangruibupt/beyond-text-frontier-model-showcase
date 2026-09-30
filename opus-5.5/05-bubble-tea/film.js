@@ -4,7 +4,11 @@ import { FLAVORS } from './flavors.js';
 import { LAYOUTS } from './layouts.js';
 import { fontsFor } from './captions.js';
 import { FONTS, voLines, AUDITION } from './copy.js';
-import { build as buildWorld } from './js/world.js';
+import { STYLES } from './styles.js';
+import * as syrup from './js/worlds/syrup.js';
+import * as teatable from './js/worlds/teatable.js';
+import * as pop from './js/worlds/pop.js';
+import * as cloud from './js/worlds/cloud.js';
 import { buildCup, lidArt } from './js/cup.js';
 import { bakePearls } from './js/pearls.js';
 import { createTea } from './js/tea.js';
@@ -13,17 +17,21 @@ import { SHOTS } from './js/shots.js';
 import { score } from './js/score.js';
 import { envMap } from '../03-perfume/js/worlds/common.js';
 
+// 四款口味各一个世界（styles.js 的 world）
+export const WORLDS = { syrup, teatable, pop, cloud };
+
 export default {
   ...META,
   layouts: LAYOUTS,
   fonts: fontsFor,
   async setup(ctx) {
     const flavor = FLAVORS[ctx.variant.flavor];
-    ctx.world = buildWorld(ctx, flavor);
+    ctx.world = WORLDS[STYLES[ctx.variant.flavor].world].build(ctx, flavor);
     ctx.scene.environment = envMap(ctx.renderer, ctx.world.env);     // 世界只描述反射环境，这里才生成
     ctx.postDefaults = ctx.world.post ?? {};
-    await Promise.all([document.fonts.load(`${FONTS.zh.display.weight} 64px "${FONTS.zh.display.family}"`, '啵茶'), document.fonts.load(`${FONTS.brand.weight} 64px "${FONTS.brand.family}"`, 'BOCHA')]);
-    const pearls = bakePearls(), cup = buildCup(ctx, flavor, pearls, { art: lidArt(FONTS, flavor.palette) });
+    const SF = STYLES[ctx.variant.flavor].fonts;                    // 封膜上的圆章用这款口味的字
+    await Promise.all([document.fonts.load(`${SF.zh.display.weight} 64px "${SF.zh.display.family}"`, '啵茶'), document.fonts.load(`${SF.brand.weight} 64px "${SF.brand.family}"`, 'BOCHA')]);
+    const pearls = bakePearls(), cup = buildCup(ctx, flavor, pearls, { art: lidArt(SF, flavor.palette) });
     ctx.scene.add(cup.root);
     const tea = createTea(ctx, cup, flavor);
     ctx.subjects = { cup, pearls, tea, milk: attachMilk(cup.parts.body.material, flavor) };   // createTea 已把茶汤换成折射材质，奶纹接在它后面

@@ -50,6 +50,18 @@ export const VIEW = {
 };
 const D = Math.PI / 180;
 export const viewDir = (pitch, yaw) => [Math.sin(yaw * D) * Math.cos(pitch * D), Math.sin(pitch * D), Math.cos(yaw * D) * Math.cos(pitch * D)];
+/** 相机的 up：绕视线滚转 roll 度（荷兰角）。dir = 从主体指向相机 */
+export function upFor(dir, roll = 0) {
+  if (!roll) return [0, 1, 0];
+  const [x, , z] = dir, n = Math.hypot(x, z) || 1, r = [z / n, 0, -x / n], c = Math.cos(roll * D), s = Math.sin(roll * D);
+  return [s * r[0], c, s * r[2]];
+}
+/** 口味风格 cam（styles.js 的 camera）叠在 VIEW 上之后，镜头进度 u 时的机位：{ box, dir, up, fov, scale }；shots.js 与 layouts 测试共用 */
+export function viewAt(name, cam, u) {
+  const V = VIEW[name], e = u * u * (3 - 2 * u), k = cam.orbit ?? 1, yaw = cam.yaw + V.yaw[0] * k + (V.yaw[1] - V.yaw[0]) * k * e;
+  const pitch = Math.max(2, V.pitch + cam.pitch), dir = viewDir(pitch, yaw), push = cam.push ?? [1, 1];
+  return { box: V.box, dir, up: upFor(dir, cam.roll ?? 0), fov: V.fov, scale: push[0] + (push[1] - push[0]) * e };
+}
 
 export const META = {
   id: '05-bubble-tea',

@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import { LAYOUTS } from '../layouts.js';
-import { META, CUTS, VIEW, BOX, viewDir } from '../meta.js';
+import { META, CUTS, VIEW, BOX, viewAt } from '../meta.js';
+import { STYLES } from '../styles.js';
 import { layersFor } from '../captions.js';
 import { ASPECTS, UNSAFE, MARGIN, expandJobs } from '../../factory/engine/variant.js';
 import { solvePose, applyPose, project } from '../../factory/engine/framing.js';
@@ -12,12 +13,12 @@ const inside = r => r[0] >= MARGIN - 1e-9 && r[1] >= MARGIN - 1e-9 && r[0] + r[2
 const box3 = ([a, b]) => new THREE.Box3(new THREE.Vector3(...a), new THREE.Vector3(...b));
 const DELIVERED = ['16x9', '1x1'];                                     // 9:16 只是粗排，不交付
 
-/** 该比例下镜头 shot 的主体投影矩形 [x, y, w, h]；yaw 取镜头机位范围内的 5 个值 */
-function subjectRects(ar, shot) {
-  const [W, H] = ASPECTS[ar], V = VIEW[shot], row = LAYOUTS[ar][shot], cam = new THREE.PerspectiveCamera();
-  return [0, 0.25, 0.5, 0.75, 1].map(k => {
-    const yaw = V.yaw[0] + (V.yaw[1] - V.yaw[0]) * k;
-    applyPose(cam, solvePose({ type: 'fit', box: box3(BOX[V.box]), dir: viewDir(V.pitch, yaw), fov: V.fov }, row, W / H), W, H);
+/** 该比例、该口味风格下镜头 shot 的主体投影矩形 [x, y, w, h]；取镜头进度上的 5 个点（机位、荷兰角、推拉都跟着变） */
+function subjectRects(ar, shot, flavor) {
+  const [W, H] = ASPECTS[ar], row = LAYOUTS[ar][shot], cam = new THREE.PerspectiveCamera();
+  return [0, 0.25, 0.5, 0.75, 1].map(u => {
+    const V = viewAt(shot, STYLES[flavor].camera, u);
+    applyPose(cam, solvePose({ type: 'fit', box: box3(BOX[V.box]), dir: V.dir, up: V.up, fov: V.fov, scale: V.scale }, row, W / H), W, H);
     const p = project(cam, box3(BOX[V.box]));
     return [p.minX, p.minY, p.maxX - p.minX, p.maxY - p.minY];
   });
@@ -45,11 +46,11 @@ test('every zone a caption asks for exists', () => {
 });
 
 test('in the delivered ratios the cup stays in the safe frame and clear of the text zones', () => {
-  for (const ar of DELIVERED) for (const shot of Object.keys(VIEW)) {
+  for (const flavor of META.axes.flavor) for (const ar of DELIVERED) for (const shot of Object.keys(VIEW)) {
     const row = LAYOUTS[ar][shot];
-    for (const r of subjectRects(ar, shot)) {
-      assert.ok(inside(r), `${ar}.${shot} cup crosses the margin: ${r.map(x => x.toFixed(3))}`);
-      for (const [z, zr] of Object.entries(row.zones ?? {})) assert.ok(!hit(r, zr), `${ar}.${shot} cup overlaps ${z}: ${r.map(x => x.toFixed(3))} vs ${zr}`);
+    for (const r of subjectRects(ar, shot, flavor)) {
+      assert.ok(inside(r), `${flavor} ${ar}.${shot} cup crosses the margin: ${r.map(x => x.toFixed(3))}`);
+      for (const [z, zr] of Object.entries(row.zones ?? {})) assert.ok(!hit(r, zr), `${flavor} ${ar}.${shot} cup overlaps ${z}: ${r.map(x => x.toFixed(3))} vs ${zr}`);
     }
   }
 });

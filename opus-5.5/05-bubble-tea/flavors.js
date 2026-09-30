@@ -13,7 +13,7 @@ export const FLAVORS = {
     liquid: { color: '#c79a6b', absorb: [18, 34, 60], scatter: 90, band: 0.006 }, milk: '#f3e6d4', syrup: '#3a1a0a', stripes: true,
     pearl: { color: '#1b0d07', roughness: 0.18, clear: 0 },
     bg: ['#f1e2cf', '#c79a6b'],
-    palette: { ink: '#2b140a', soft: '#6a4630', accent: '#8a4a22', cta: '#2b140a', ctaInk: '#fbf2e6', shadow: 'rgba(255,248,238,0.55)' },
+    palette: { ink: '#f6dcb4', soft: '#c89a6a', accent: '#c9782f', cta: '#f0b060', ctaInk: '#2a1206', shadow: 'rgba(20,8,2,0.75)' },
   },
   jasmine: {
     name: { zh: '茉莉奶绿', en: 'Jasmine Milk Green' },
@@ -35,7 +35,7 @@ export const FLAVORS = {
     liquid: { color: '#ef8fa3', absorb: [6, 46, 32], scatter: 55, band: 0.008 }, milk: '#fde4e8', syrup: '#c8203e', stripes: false,
     pearl: { color: '#e0304f', roughness: 0.06, clear: 0.45 },
     bg: ['#fbe3e8', '#e7889c'],
-    palette: { ink: '#4a0f1d', soft: '#8a3a4c', accent: '#d8354f', cta: '#4a0f1d', ctaInk: '#fff1f3', shadow: 'rgba(255,250,251,0.6)' },
+    palette: { ink: '#5a0a1e', soft: '#8a1f38', accent: '#e8284a', cta: '#ffd23f', ctaInk: '#5a0a1e', shadow: 'rgba(255,255,255,0)' },
   },
   taro: {
     name: { zh: '芋泥波波', en: 'Taro Boba' },

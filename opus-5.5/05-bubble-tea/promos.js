@@ -11,9 +11,9 @@ export const PROMO_T = {
 export const RED = '#e1251b';
 
 /** a = 入场起点（镜头本地秒），pal = 口味配色 */
-export function promoLayers(v, { a = 0, align = 'center', pal }) {
-  const k = FLAVORS[v.flavor], L = v.lang, P = PROMO_T[L], F = FONTS[L], cur = T[L].currency;
-  const base = { lang: L, align, valign: 'middle', color: pal.ink, shadow: { color: pal.shadow, blur: 0.35 } };
+export function promoLayers(v, { a = 0, align = 'center', pal, fonts = FONTS, glow = { color: pal.shadow, blur: 0.35 } }) {
+  const k = FLAVORS[v.flavor], L = v.lang, P = PROMO_T[L], F = fonts[L], cur = T[L].currency;
+  const base = { lang: L, align, valign: 'middle', color: pal.ink, shadow: glow };
   const pill = (id, zone, text, t0, fill, ink) => ({ ...base, id, zone, text, font: F.display, size: 0.04, tracking: L === 'zh' ? 0.08 : 0.02, maxLines: 1, in: [t0, t0 + 0.5], box: { fill, color: ink, pad: 0.55, radius: 0.5 }, shadow: null });
   if (v.promo === '1111') return [
     { ...pill('ribbon', 'line1', P.ribbon, a, RED, '#ffffff'), size: 0.042, box: { fill: RED, color: '#ffffff', pad: 0.45, radius: 0.15 } },
