@@ -94,15 +94,15 @@ node factory/render.mjs 04-year-review         # 出片到 04-year-review/out/
 # 画廊：http://127.0.0.1:8765/factory/gallery.html?film=04-year-review（先 npm run serve）
 ```
 
-默认清单 `manifest.json` 出三类交付片，每位顾客各一条：
+默认清单 `manifest.json` 出三类交付片，每类指定两位顾客：
 
-| 内容 | 条数 |
-|---|---|
-| 四位 × 16:9，中文，15 秒，无活动 | 4 |
-| 四位 × 16:9，英文，15 秒，报告上线 | 4 |
-| 四位 × 1:1，中文，6 秒，双 11 | 4 |
+| 内容 | 顾客 | 条数 |
+|---|---|---|
+| 16:9，中文，15 秒，无活动（国内主片） | coffee 林一 · baby 陈安 | 2 |
+| 16:9，英文，15 秒，报告上线（海外版） | camp 周野 · gamer 许星 | 2 |
+| 1:1，中文，6 秒，双 11（信息流） | baby 陈安 · gamer 许星 | 2 |
 
-共 12 条。成片文件名是 `youji_<顾客>_<长度>s_<比例>_<语言>[_<活动>][_novo].mp4`，如 `youji_coffee_15s_16x9_zh.mp4`。
+共 6 条。其余顾客 / 比例 / 语言组合可用 `render.mjs` 的命令行轴单独出（如 `--user '*' --ar 9x16`），或 `--all` 出全部 144 变体。成片文件名是 `youji_<顾客>_<长度>s_<比例>_<语言>[_<活动>][_novo].mp4`，如 `youji_coffee_15s_16x9_zh.mp4`。
 
 ### 文案与配音
 
