@@ -161,12 +161,12 @@ node factory/story.mjs <film-dir> [--<axis> a,b] [--force] [--dry] [--model id] 
 
 - 给有 `story.js` 的成片用（约定见[文案（story.js）](#文案storyjs)）。对 `STORY.ids`（或 `--<STORY.axis>` 给出的几个）逐个处理：
   1. 代码先算好统计，连同每个字段的占位符和字数预算写进提示词；
-  2. Bedrock 上的 Claude 用强制的工具调用 `write_story` 交回一个对象；
+  2. Bedrock 上的 Claude 经工具调用 `write_story` 交回一个对象（`toolChoice=auto`，靠系统提示让模型自己调用——`us.anthropic.claude-opus-5-5` 的 Converse 不支持强制 `tool`/`any`，会报 ValidationException）；
   3. `STORY.check` 查过，才写进 `<film>/stories/<id>.json`（入库）。
 - 查不过时，错误作为工具结果（`status: error`）发回同一段对话让模型改，最多 `--tries` 次（默认 3）。还不过就报出最后一次的错误，这一个不写，最后以状态码 1 结束。
 - 已存的文案分五种状态：`current` 跳过（`--force` 才重写）；`draft`（手写的占位稿）、`stale`（统计变了）、`failing`（`check` 不过）、`missing` 都会重写。
 - `--dry`：列出每个的状态，打印系统提示、第一个要写的提示词和工具的输入 schema，不调用模型。
-- 模型默认是 `us.anthropic.claude-opus-5-5`，可用 `--model` 换。调用走 AWS CLI（`aws bedrock-runtime converse`），账号和区域用 `AWS_PROFILE`、`AWS_REGION`，如 `AWS_PROFILE=global_ruiliang AWS_REGION=us-east-1 node factory/story.mjs 04-year-review`。
+- 模型默认是 `us.anthropic.claude-opus-5-5`，可用 `--model` 换。调用走 AWS CLI（`aws bedrock-runtime converse`），账号和区域用 `AWS_PROFILE`、`AWS_REGION`；在带实例角色的机器上（如 EC2 上的 KiroCrew）不用设 `AWS_PROFILE`，直接 `AWS_REGION=us-east-1 node factory/story.mjs 04-year-review`。
 - 成片没有 `story.js` 时，打印用法并以状态码 2 退出。
 
 ### vo.mjs：配音
@@ -238,7 +238,7 @@ node factory/cloud.mjs status                                          实例、
 node factory/cloud.mjs down                                            终止实例
 ```
 
-账号和区域用 AWS CLI 自己的环境变量，如 `AWS_PROFILE=global_ruiliang AWS_REGION=us-east-1 node factory/cloud.mjs up`。本机要装 AWS CLI 和 [Session Manager 插件](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html)。
+账号和区域用 AWS CLI 自己的环境变量；在带实例角色的机器上（如 EC2 上的 KiroCrew）不用设 `AWS_PROFILE`，直接 `AWS_REGION=us-east-1 node factory/cloud.mjs up`。本机要装 AWS CLI 和 [Session Manager 插件](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html)。
 
 用到的资源都叫 `opus55-render`，都打了 `Project=opus55-showcase` 标签：
 
