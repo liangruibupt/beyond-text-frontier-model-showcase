@@ -6,6 +6,7 @@ import { CUP, STRAW, PEARL } from '../meta.js';
 import { rand } from '../../factory/engine/rng.js';
 import { clamp, ss, easeOut, lerp } from '../../factory/engine/ease.js';
 import { pearlAt } from './pearls.js';
+import { LAYER } from '../../factory/engine/refract.js';
 
 const K = (CUP.rTop - CUP.rBottom) / CUP.height, SLANT = Math.sqrt(1 + K * K);
 /** 外壁 y 处的半径 */
@@ -15,7 +16,7 @@ export const rIn = y => rOut(y) - CUP.wall * SLANT;
 
 // ── 冷凝水珠（闭式）──
 // 杯壁上 N 颗水珠：高度在液面以下（冰茶把杯壁冷下来的那一段），方位角、半径都由 rand 定；半径随 t 从 0 长到 r（凝出来）
-export const DEW = { seed: 23, n: 200, r: [0.0005, 0.0024], grow: [0.2, 2.2], drip: { i: 0, at: 1.5, dur: 1.3, fall: 0.055 } };
+export const DEW = { seed: 23, n: 200, r: [0.0004, 0.0019], grow: [0.2, 2.2], drip: { i: 0, at: 1.5, dur: 1.3, fall: 0.055 } };
 /** 第 i 颗水珠在 hero 本地 t 秒的 [方位角, 高度, 半径]；drip 那颗在 drip.at 秒开始往下滑，边滑边拉长（半径不变） */
 export function dewAt(i, t, D = DEW) {
   const a = rand(D.seed, 3 * i) * Math.PI * 2, y0 = CUP.base + 0.006 + rand(D.seed, 3 * i + 1) * (CUP.fill - CUP.base - 0.012);
@@ -115,10 +116,11 @@ export function buildCup(ctx, flavor, pearls, { art = null } = {}) {
   }
 
   // 冷凝水珠：一个 InstancedMesh，半球贴在外壁上
-  // 水珠：几乎全透明，只剩高光和一点折射的暗边（白色半透明的点看起来像涂上去的斑）
-  const dewMat = new THREE.MeshPhysicalMaterial({ color: '#ffffff', roughness: 0.0, metalness: 0, transmission: 1, thickness: 0.0015, ior: 1.33, specularIntensity: 1, envMapIntensity: 2.2, transparent: true, opacity: 0.8, depthWrite: false });
+  // 水珠：基本透明，靠清漆高光读出来。画在 over 层（玻璃之后），放第 0 层会被后画的茶汤和杯壁盖掉，一颗都看不见。
+  // 不用 transmission：over 那一遍里开 transmission 会让 three 多渲一遍整个场景
+  const dewMat = new THREE.MeshPhysicalMaterial({ color: '#ffffff', roughness: 0.04, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.02, specularIntensity: 1, envMapIntensity: 2.5, transparent: true, opacity: 0.1, depthWrite: false });
   const dew = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 14, 10, 0, Math.PI * 2, 0, Math.PI / 2), dewMat, DEW.n);
-  dew.frustumCulled = false;
+  dew.frustumCulled = false; dew.layers.set(LAYER.over);
 
   // 封膜 + 吸管
   const lidMat = new THREE.MeshPhysicalMaterial({ color: '#ffffff', map: art, roughness: 0.35, clearcoat: 0.6, side: THREE.DoubleSide });
@@ -177,7 +179,7 @@ export function buildCup(ctx, flavor, pearls, { art = null } = {}) {
         const dt = Math.max(dewT, 0), [a, y, rr] = dewAt(i, dt), R = rOut(y), stretch = i === DEW.drip.i ? 1 + 0.8 * ss(DEW.drip.at, DEW.drip.at + 0.3, dt) : 1;
         N.set(Math.cos(a), -K, Math.sin(a)).normalize(); Q.setFromUnitVectors(UP, N);
         P.set(Math.cos(a) * R, y, Math.sin(a) * R);
-        S.set(rr, rr * 0.55, rr * stretch);                                  // 扁：贴在壁上的水珠只鼓起来一点
+        S.set(rr, rr * 0.35, rr * stretch);                                  // 扁：贴在壁上的水珠只鼓起来一点
         M.compose(P, Q, S); dew.setMatrixAt(i, M);
       }
       dew.instanceMatrix.needsUpdate = true;
