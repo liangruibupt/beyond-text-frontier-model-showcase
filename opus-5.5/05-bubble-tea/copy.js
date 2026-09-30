@@ -31,7 +31,7 @@ const END = {
 };
 const ONE = {
   zh: { none: k => `啵茶${k.name.zh}，啵一口就上瘾。`, 1111: (k, d) => `啵茶${k.name.zh}，双十一到手${d}元。`, launch: k => `啵茶新品，${k.name.zh}首发。` },
-  en: { none: k => `Bocha ${k.name.en}. One sip, and you're hooked.`, 1111: (k, d) => `Bocha ${k.name.en}, Double Eleven, ${d} dollars.`, launch: k => `New from Bocha: ${k.name.en}.` },
+  en: { none: k => `Bocha ${k.name.en}. One sip, and you're hooked.`, 1111: (k, d) => `${k.name.en}, Double Eleven, ${d} dollars.`, launch: k => `New from Bocha: ${k.name.en}.` },
 };
 
 /** 变体 → 配音台词 [{ id, text, voice, speed, at, max }]；同一 id 在所有变体里文字相同 */

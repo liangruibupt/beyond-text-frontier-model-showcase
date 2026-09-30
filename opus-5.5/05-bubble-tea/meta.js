@@ -43,7 +43,7 @@ export const BOX = {
 export const VIEW = {
   pearls: { box: 'low', pitch: 38, yaw: [-10, -4], fov: 30 },
   pour: { box: 'cup', pitch: 14, yaw: [-6, 2], fov: 28 },
-  ice: { box: 'top', pitch: 24, yaw: [18, 12], fov: 30 },
+  ice: { box: 'top', pitch: 34, yaw: [18, 12], fov: 30 },
   hero: { box: 'cup', pitch: 8, yaw: [-28, 18], fov: 28 },
   straw: { box: 'straw', pitch: 16, yaw: [-14, -8], fov: 28 },
   end: { box: 'cup', pitch: 7, yaw: [10, 4], fov: 28 },

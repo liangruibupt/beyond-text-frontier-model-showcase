@@ -1,0 +1,514 @@
+{
+  "brownsugar_en_15_end_1111": {
+    "text": "Double Eleven: just five dollars.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.16,
+    "lufs": -20
+  },
+  "brownsugar_en_15_end_launch": {
+    "text": "New from Bocha: Brown Sugar Boba.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1.03,
+    "dur": 2.256,
+    "lufs": -20
+  },
+  "brownsugar_en_15_end_none": {
+    "text": "One sip, and you're hooked.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.344,
+    "lufs": -20
+  },
+  "brownsugar_en_15_hero": {
+    "text": "Bocha Brown Sugar Boba.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.512,
+    "lufs": -20
+  },
+  "brownsugar_en_15_hook": {
+    "text": "Slow-cooked sugar, fresh pearls.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.896,
+    "lufs": -20
+  },
+  "brownsugar_en_6_one_1111": {
+    "text": "Brown Sugar Boba, Double Eleven, five dollars.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3,
+    "lufs": -20
+  },
+  "brownsugar_en_6_one_launch": {
+    "text": "New from Bocha: Brown Sugar Boba.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.304,
+    "lufs": -20
+  },
+  "brownsugar_en_6_one_none": {
+    "text": "Bocha Brown Sugar Boba. One sip, and you're hooked.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.952,
+    "lufs": -20
+  },
+  "brownsugar_zh_15_end_1111": {
+    "text": "双十一，到手十五元。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.704,
+    "lufs": -20
+  },
+  "brownsugar_zh_15_end_launch": {
+    "text": "啵茶新品，黑糖珍珠首发。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.232,
+    "lufs": -20
+  },
+  "brownsugar_zh_15_end_none": {
+    "text": "啵一口，就上瘾。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.392,
+    "lufs": -20
+  },
+  "brownsugar_zh_15_hero": {
+    "text": "啵茶黑糖珍珠。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.392,
+    "lufs": -20
+  },
+  "brownsugar_zh_15_hook": {
+    "text": "黑糖慢炒，珍珠现煮。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.824,
+    "lufs": -20
+  },
+  "brownsugar_zh_6_one_1111": {
+    "text": "啵茶黑糖珍珠，双十一到手十五元。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.928,
+    "lufs": -20
+  },
+  "brownsugar_zh_6_one_launch": {
+    "text": "啵茶新品，黑糖珍珠首发。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.232,
+    "lufs": -20
+  },
+  "brownsugar_zh_6_one_none": {
+    "text": "啵茶黑糖珍珠，啵一口就上瘾。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.544,
+    "lufs": -20
+  },
+  "jasmine_en_15_end_1111": {
+    "text": "Double Eleven: just four dollars.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.016,
+    "lufs": -20
+  },
+  "jasmine_en_15_end_launch": {
+    "text": "New from Bocha: Jasmine Milk Green.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1.03,
+    "dur": 2.28,
+    "lufs": -20
+  },
+  "jasmine_en_15_end_none": {
+    "text": "One sip, and you're hooked.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.344,
+    "lufs": -20
+  },
+  "jasmine_en_15_hero": {
+    "text": "Bocha Jasmine Milk Green.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.536,
+    "lufs": -20
+  },
+  "jasmine_en_15_hook": {
+    "text": "Jasmine in bloom, light and clear.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.112,
+    "lufs": -20
+  },
+  "jasmine_en_6_one_1111": {
+    "text": "Jasmine Milk Green, Double Eleven, four dollars.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.976,
+    "lufs": -20
+  },
+  "jasmine_en_6_one_launch": {
+    "text": "New from Bocha: Jasmine Milk Green.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.304,
+    "lufs": -20
+  },
+  "jasmine_en_6_one_none": {
+    "text": "Bocha Jasmine Milk Green. One sip, and you're hooked.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.024,
+    "lufs": -20
+  },
+  "jasmine_zh_15_end_1111": {
+    "text": "双十一，到手十三元。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.776,
+    "lufs": -20
+  },
+  "jasmine_zh_15_end_launch": {
+    "text": "啵茶新品，茉莉奶绿首发。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.136,
+    "lufs": -20
+  },
+  "jasmine_zh_15_end_none": {
+    "text": "啵一口，就上瘾。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.392,
+    "lufs": -20
+  },
+  "jasmine_zh_15_hero": {
+    "text": "啵茶茉莉奶绿。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.2,
+    "lufs": -20
+  },
+  "jasmine_zh_15_hook": {
+    "text": "茉莉初开，奶香清透。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.776,
+    "lufs": -20
+  },
+  "jasmine_zh_6_one_1111": {
+    "text": "啵茶茉莉奶绿，双十一到手十三元。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.76,
+    "lufs": -20
+  },
+  "jasmine_zh_6_one_launch": {
+    "text": "啵茶新品，茉莉奶绿首发。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.136,
+    "lufs": -20
+  },
+  "jasmine_zh_6_one_none": {
+    "text": "啵茶茉莉奶绿，啵一口就上瘾。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.304,
+    "lufs": -20
+  },
+  "strawberry_en_15_end_1111": {
+    "text": "Double Eleven: just five dollars.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.16,
+    "lufs": -20
+  },
+  "strawberry_en_15_end_launch": {
+    "text": "New from Bocha: Strawberry Popping Boba.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1.14,
+    "dur": 2.256,
+    "lufs": -20
+  },
+  "strawberry_en_15_end_none": {
+    "text": "One sip, and you're hooked.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.344,
+    "lufs": -20
+  },
+  "strawberry_en_15_hero": {
+    "text": "Bocha Strawberry Popping Boba.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.728,
+    "lufs": -20
+  },
+  "strawberry_en_15_hook": {
+    "text": "Fresh strawberry, a pop in every sip.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.28,
+    "lufs": -20
+  },
+  "strawberry_en_6_one_1111": {
+    "text": "Strawberry Popping Boba, Double Eleven, five dollars.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.288,
+    "lufs": -20
+  },
+  "strawberry_en_6_one_launch": {
+    "text": "New from Bocha: Strawberry Popping Boba.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.544,
+    "lufs": -20
+  },
+  "strawberry_en_6_one_none": {
+    "text": "Bocha Strawberry Popping Boba. One sip, and you're hooked.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.192,
+    "lufs": -20
+  },
+  "strawberry_zh_15_end_1111": {
+    "text": "双十一，到手十六元。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.728,
+    "lufs": -20
+  },
+  "strawberry_zh_15_end_launch": {
+    "text": "啵茶新品，草莓啵啵首发。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.16,
+    "lufs": -20
+  },
+  "strawberry_zh_15_end_none": {
+    "text": "啵一口，就上瘾。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.392,
+    "lufs": -20
+  },
+  "strawberry_zh_15_hero": {
+    "text": "啵茶草莓啵啵。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.296,
+    "lufs": -20
+  },
+  "strawberry_zh_15_hook": {
+    "text": "草莓现捣，一口爆开。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.704,
+    "lufs": -20
+  },
+  "strawberry_zh_6_one_1111": {
+    "text": "啵茶草莓啵啵，双十一到手十六元。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.856,
+    "lufs": -20
+  },
+  "strawberry_zh_6_one_launch": {
+    "text": "啵茶新品，草莓啵啵首发。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.16,
+    "lufs": -20
+  },
+  "strawberry_zh_6_one_none": {
+    "text": "啵茶草莓啵啵，啵一口就上瘾。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.544,
+    "lufs": -20
+  },
+  "taro_en_15_end_1111": {
+    "text": "Double Eleven: just five dollars.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.16,
+    "lufs": -20
+  },
+  "taro_en_15_end_launch": {
+    "text": "New from Bocha: Taro Boba.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.896,
+    "lufs": -20
+  },
+  "taro_en_15_end_none": {
+    "text": "One sip, and you're hooked.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.344,
+    "lufs": -20
+  },
+  "taro_en_15_hero": {
+    "text": "Bocha Taro Boba.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.152,
+    "lufs": -20
+  },
+  "taro_en_15_hook": {
+    "text": "Hand-mashed taro, rich and smooth.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.968,
+    "lufs": -20
+  },
+  "taro_en_6_one_1111": {
+    "text": "Taro Boba, Double Eleven, five dollars.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.664,
+    "lufs": -20
+  },
+  "taro_en_6_one_launch": {
+    "text": "New from Bocha: Taro Boba.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.896,
+    "lufs": -20
+  },
+  "taro_en_6_one_none": {
+    "text": "Bocha Taro Boba. One sip, and you're hooked.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.64,
+    "lufs": -20
+  },
+  "taro_zh_15_end_1111": {
+    "text": "双十一，到手十七元。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.752,
+    "lufs": -20
+  },
+  "taro_zh_15_end_launch": {
+    "text": "啵茶新品，芋泥波波首发。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.088,
+    "lufs": -20
+  },
+  "taro_zh_15_end_none": {
+    "text": "啵一口，就上瘾。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.392,
+    "lufs": -20
+  },
+  "taro_zh_15_hero": {
+    "text": "啵茶芋泥波波。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.2,
+    "lufs": -20
+  },
+  "taro_zh_15_hook": {
+    "text": "手捣芋泥，绵密香浓。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.68,
+    "lufs": -20
+  },
+  "taro_zh_6_one_1111": {
+    "text": "啵茶芋泥波波，双十一到手十七元。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.76,
+    "lufs": -20
+  },
+  "taro_zh_6_one_launch": {
+    "text": "啵茶新品，芋泥波波首发。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.088,
+    "lufs": -20
+  },
+  "taro_zh_6_one_none": {
+    "text": "啵茶芋泥波波，啵一口就上瘾。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.4,
+    "lufs": -20
+  }
+}

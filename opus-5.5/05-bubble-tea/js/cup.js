@@ -26,6 +26,9 @@ export function dewAt(i, t, D = DEW) {
   return [-0.35, top - D.drip.fall * k, D.r[1] * 1.25 * g];
 }
 
+// 奶柱：在杯口偏左后方落下（让开镜头正面的奶纹），半径 3.5 mm，顶端在杯口上方 12 cm（出画）
+export const STREAM = { x: -0.012, z: -0.006, r: 0.0035, above: 0.12 };
+
 // ── 封膜：吸管从正上方压下去，封膜先凹成一个圆锥形的坑，press = 1 那一刻刺破成 FLAPS 瓣往下翻 ──
 export const LID = { flaps: 6, dent: 0.009, radius: 0.034 };
 /** 封膜离杯口平面往下凹的深度（米）：r 离中心的距离，press 0..1 压下的程度（刺破前）；是 r 的光滑单调函数 */
@@ -130,7 +133,11 @@ export function buildCup(ctx, flavor, pearls, { art = null } = {}) {
   straw.castShadow = true;
   const tip = new THREE.Mesh(new THREE.RingGeometry(STRAW.r * 0.85, STRAW.r, 40), straw.material); tip.rotation.x = Math.PI / 2; tip.position.y = STRAW.len / 2; straw.add(tip);
 
-  root.add(glass, lip, liquid, syrup, pearlMesh, ice, dew, lid.mesh, lid.flaps, straw, contactShadow());
+  // 注入的那一道奶：从画面上方落进杯里的细圆柱，画在 over 层（玻璃之后，挡在杯壁前面也不会被盖掉）；粗细由 pose 的 stream 定
+  const stream = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 24, 1, true), new THREE.MeshPhysicalMaterial({ color: flavor.milk, roughness: 0.3, clearcoat: 0.4 }));
+  stream.layers.set(LAYER.over); stream.position.set(STREAM.x, 0, STREAM.z); stream.frustumCulled = false;
+
+  root.add(glass, lip, liquid, syrup, pearlMesh, ice, dew, stream, lid.mesh, lid.flaps, straw, contactShadow());
 
   const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), S = new THREE.Vector3(), P = new THREE.Vector3(), q3 = [0, 0, 0], UP = new THREE.Vector3(0, 1, 0), N = new THREE.Vector3();
   const lp = lid.mesh.geometry.attributes.position;
@@ -142,14 +149,14 @@ export function buildCup(ctx, flavor, pearls, { art = null } = {}) {
   }
 
   const cup = {
-    root, parts: { glass, liquid, body, syrup, ice, pearls: pearlMesh, dew, lid: lid.mesh, straw }, posed: null,
+    root, parts: { glass, liquid, body, syrup, ice, pearls: pearlMesh, dew, stream, lid: lid.mesh, straw }, posed: null,
     /**
      * 完整姿态，没写的量回到默认：
      *   pearlsT 珍珠表的取样时刻（秒，默认烘焙末尾：已堆好）；fill 茶汤高度 0..1（0 = 空杯）；iceT 冰块落下后的秒数（< 0 = 没有冰）；
      *   dewT 冷凝长出来的秒数（< 0 = 没有）；press 吸管压封膜 0..1，punch 刺破后的秒数（< 0 = 没刺破）；straw 吸管插进去的深度 0..1（< 0 = 不显示）；
      *   lid 显示封膜；nudge 吸管搅动珍珠的秒数
      */
-    pose({ pearlsT = pearls.t1, fill = 1, iceT = -1, dewT = -1, press = 0, punch = -1, straw: sd = -1, lid: showLid = true, nudge = -1 } = {}) {
+    pose({ pearlsT = pearls.t1, fill = 1, iceT = -1, dewT = -1, press = 0, punch = -1, straw: sd = -1, lid: showLid = true, nudge = -1, stream: sw = 0 } = {}) {
       // 珍珠：插进去的吸管把附近的珍珠往外推一点
       const sx = 0.004, sz = 0.002;
       for (let i = 0; i < PEARL.count; i++) {
@@ -166,11 +173,14 @@ export function buildCup(ctx, flavor, pearls, { art = null } = {}) {
       liquid.visible = fill > 0.001;
       syrup.visible = fill > 0.001;
       body.scale.y = Math.max((top - CUP.pile) / (CUP.fill - CUP.pile), 1e-3); body.position.y = CUP.pile * (1 - body.scale.y);
+      // 奶柱：从杯口上方 STREAM.above 落到液面；sw 0..1 是粗细（0 = 没有）
+      stream.visible = sw > 0.001;
+      { const y1 = CUP.height + STREAM.above, rr = STREAM.r * clamp(sw); stream.scale.set(Math.max(rr, 1e-5), y1 - top, Math.max(rr, 1e-5)); stream.position.y = (y1 + top) / 2; }
       // 冰块：落下（阻尼的弹簧沉浮），第二块在 0.75 秒撞上第一块；iceT < 0 不显示
       ice.visible = iceT >= 0;
       ice.children.forEach((c, j) => {
         const [x, z, rot] = c.userData.rest, t = iceT - 0.12 * j, drop = Math.max(t, 0), y0 = top + 0.05;
-        const sink = top - 0.006 - 0.004 * j, y = t <= 0 ? y0 : t < 0.18 ? lerp(y0, sink, (t / 0.18) ** 2) : sink + 0.006 * Math.exp(-3.5 * (t - 0.18)) * Math.cos(9 * (t - 0.18));
+        const sink = top - 0.0015 - 0.001 * j, y = t <= 0 ? y0 : t < 0.18 ? lerp(y0, sink, (t / 0.18) ** 2) : sink + 0.006 * Math.exp(-3.5 * (t - 0.18)) * Math.cos(9 * (t - 0.18));
         c.position.set(x, y, z); c.rotation.set(0.3 * j + 0.4 * ss(0, 0.6, drop), rot, 0.2 * j);
       });
       // 冷凝：半球按杯壁的法线贴上去。看不见时也照样写（dewT 当 0：全是没长出来的零大小），否则会留着上一帧的矩阵
@@ -195,7 +205,7 @@ export function buildCup(ctx, flavor, pearls, { art = null } = {}) {
       straw.visible = sd >= 0;
       const tipY = hole ? lerp(CUP.height - lidDent(0, 1), CUP.base + 0.003, easeOut(clamp(sd))) : CUP.height - lidDent(0, clamp(press)) + 0.0004;
       straw.position.set(sx, tipY + STRAW.len / 2, sz); straw.rotation.set(0, 0, 0.05);
-      cup.posed = { pearlsT, fill, iceT, dewT, press, punch, straw: sd, lid: showLid, nudge, top };
+      cup.posed = { pearlsT, fill, iceT, dewT, press, punch, straw: sd, lid: showLid, nudge, stream: sw, top };
       root.updateMatrixWorld(true);
     },
     /** 静止液面的世界 y */
