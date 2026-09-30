@@ -10,14 +10,14 @@ export function build(ctx) {
   scene.fog = new THREE.Fog('#150a05', 0.6, 2.6);
   // 吧台：一块宽木板（地面），后面是深色的墙弯
   const wood = woodTexture(11, { light: '#6a3a1c', dark: '#26120a', repeat: [3, 1.2] });
-  const counter = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.7), new THREE.MeshPhysicalMaterial({ map: wood, roughness: 0.42, clearcoat: 0.55, clearcoatRoughness: 0.25 }));
+  const counter = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.7), new THREE.MeshPhysicalMaterial({ map: wood, roughness: 0.8, clearcoat: 0.08, clearcoatRoughness: 0.6 }));
   counter.rotation.x = -Math.PI / 2; counter.position.set(0, 0, -0.05); counter.receiveShadow = true;
   const wall = new THREE.Mesh(sweep(['#1a0d06', '#2a1409'], { floor: 0.4, R: 0.2, wall: 1.4, z0: -0.35 }), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, side: THREE.DoubleSide }));
   wall.position.y = -0.001;
   scene.add(counter, wall);
 
   // 主光：琥珀色，左后上方（逆光偏侧），硬一点的影子朝镜头这边拉长
-  const key = keyLight('#ffb35c', 3.2, [-0.5, 0.55, -0.55], { radius: 2 });
+  const key = keyLight('#ffb35c', 2.2, [-0.5, 0.55, -0.55], { radius: 2 });
   const fill = new THREE.DirectionalLight('#6a86b0', 0.25); fill.position.set(0.7, 0.3, 0.8);   // 窗外一点冷的街灯，让暗部不死黑
   const bounce = new THREE.PointLight('#ff8a3a', 0.25, 0.6, 2); bounce.position.set(0.05, 0.02, 0.12);  // 木台面反上来的暖光
   scene.add(key, key.target, fill, bounce, new THREE.HemisphereLight('#3a2010', '#120804', 0.35));
@@ -45,7 +45,9 @@ export function build(ctx) {
         add(10, 2, [0, -4, 4], B('#5a2e14', 0.8));                  // 木台面反上来的暖色
       },
     },
-    post: { exposure: 0.95, vignette: 0.42, grain: 0.05, saturation: 1.08, lift: [0.012, 0.006, 0], gamma: [1, 1, 1], gain: [1.04, 0.97, 0.88], bloom: { strength: 0.35, threshold: 0.75, radius: 0.6 } },
+    optics: { causticGain: 0.25 },
+    liquid: { liquid: { color: '#4a2c1a', absorb: [40, 58, 80], scatter: 40 }, milk: '#9a7556' },                                  // 逆光的焦散会在杯前打出一块亮片，压到只剩一点
+    post: { exposure: 0.82, vignette: 0.42, grain: 0.05, saturation: 1.05, lift: [0.012, 0.006, 0], gamma: [1, 1, 1], gain: [1.02, 0.96, 0.88], bloom: { strength: 0.16, threshold: 0.9, radius: 0.5 } },
     update(s) { puffs.update(s.t); bokeh.update(s.t); puffs.mesh.material.uniforms.uTime.value = s.t; bokeh.mesh.material.uniforms.uTime.value = s.t; },
     reset() {},
     dispose() { wood.dispose(); },

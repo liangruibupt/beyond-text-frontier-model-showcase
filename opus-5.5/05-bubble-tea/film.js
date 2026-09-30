@@ -25,8 +25,10 @@ export default {
   layouts: LAYOUTS,
   fonts: fontsFor,
   async setup(ctx) {
-    const flavor = FLAVORS[ctx.variant.flavor];
-    ctx.world = WORLDS[STYLES[ctx.variant.flavor].world].build(ctx, flavor);
+    const base = FLAVORS[ctx.variant.flavor];
+    ctx.world = WORLDS[STYLES[ctx.variant.flavor].world].build(ctx, base);
+    // 世界可以改茶汤的样子（糖铺的琥珀逆光会把奶茶照成粉色，茶汤要压深）
+    const L = ctx.world.liquid, flavor = L ? { ...base, liquid: { ...base.liquid, ...L.liquid }, milk: L.milk ?? base.milk } : base;
     ctx.scene.environment = envMap(ctx.renderer, ctx.world.env);     // 世界只描述反射环境，这里才生成
     ctx.postDefaults = ctx.world.post ?? {};
     const SF = STYLES[ctx.variant.flavor].fonts;                    // 封膜上的圆章用这款口味的字

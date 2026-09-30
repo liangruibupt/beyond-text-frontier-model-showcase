@@ -13,7 +13,7 @@ export const FLAVORS = {
     liquid: { color: '#c79a6b', absorb: [18, 34, 60], scatter: 90, band: 0.006 }, milk: '#f3e6d4', syrup: '#3a1a0a', stripes: true,
     pearl: { color: '#1b0d07', roughness: 0.18, clear: 0 },
     bg: ['#f1e2cf', '#c79a6b'],
-    palette: { ink: '#f6dcb4', soft: '#c89a6a', accent: '#c9782f', cta: '#f0b060', ctaInk: '#2a1206', shadow: 'rgba(20,8,2,0.75)' },
+    palette: { ink: '#f6dcb4', soft: '#f2c890', accent: '#c9782f', cta: '#f0b060', ctaInk: '#2a1206', shadow: 'rgba(20,8,2,0.75)' },
   },
   jasmine: {
     name: { zh: '茉莉奶绿', en: 'Jasmine Milk Green' },

@@ -16,7 +16,7 @@ export const STYLES = {
     },
     caption: { tracking: 0.14, box: 'rule', vertical: false, glow: 'rgba(255,170,80,0.55)', ink: '#f6dcb4', soft: '#c89a6a' },
     camera: { pitch: -4, yaw: 8, roll: 0, push: [0.93, 1] },
-    post: { exposure: 0.95, vignette: 0.42, grain: 0.05, saturation: 1.08, lift: [0.01, 0.005, 0], gain: [1.04, 0.98, 0.9], bloom: { strength: 0.35, threshold: 0.75 } },
+    post: { exposure: 0.82, vignette: 0.42, grain: 0.05, saturation: 1.08, lift: [0.01, 0.005, 0], gain: [1.04, 0.98, 0.9], bloom: { strength: 0.35, threshold: 0.75 } },
   },
   jasmine: {
     world: 'teatable',
@@ -27,7 +27,7 @@ export const STYLES = {
     },
     caption: { tracking: 0.2, box: null, vertical: true, glow: 'rgba(255,255,248,0.7)', ink: '#24402a', soft: '#5f7f62' },
     camera: { pitch: 10, yaw: -10, roll: 0, push: [1, 0.96] },
-    post: { exposure: 1.12, vignette: 0.1, grain: 0.015, saturation: 0.96, lift: [0.02, 0.025, 0.02], gain: [0.98, 1.0, 0.97], bloom: { strength: 0.28, threshold: 0.82 } },
+    post: { exposure: 0.98, vignette: 0.14, grain: 0.015, saturation: 0.96, lift: [0.02, 0.025, 0.02], gain: [0.98, 1.0, 0.97], bloom: { strength: 0.28, threshold: 0.82 } },
   },
   strawberry: {
     world: 'pop',
@@ -49,7 +49,7 @@ export const STYLES = {
     },
     caption: { tracking: 0.32, box: null, vertical: false, glow: 'rgba(255,240,255,0.9)', ink: '#3a2754', soft: '#7a64a0', fadeOut: true },
     camera: { pitch: 6, yaw: -22, roll: 0, push: [0.94, 1], orbit: 1.8 },
-    post: { exposure: 1.1, vignette: 0.18, grain: 0.01, saturation: 1.05, lift: [0.03, 0.02, 0.05], gain: [1.0, 0.97, 1.04], bloom: { strength: 0.55, threshold: 0.7, radius: 0.8 }, aperture: 0.25, maxBlur: 0.006 },
+    post: { exposure: 0.98, vignette: 0.2, grain: 0.01, saturation: 1.12, lift: [0.02, 0.01, 0.04], gain: [1.0, 0.97, 1.04], bloom: { strength: 0.35, threshold: 0.78, radius: 0.8 }, aperture: 0.12, maxBlur: 0.004 },
   },
 };
 

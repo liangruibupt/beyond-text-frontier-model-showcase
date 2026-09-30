@@ -5,7 +5,7 @@ import { sweep, softSprites, dotTexture, driftField, puffAtlas, keyLight } from 
 
 /** 芋头丁：圆角小方块，淡紫里带几道白色的细纹（顶点色按位置取噪声） */
 function taroGeometry() {
-  const g = new THREE.BoxGeometry(0.012, 0.012, 0.012, 4, 4, 4), p = g.attributes.position, col = new Float32Array(p.count * 3), a = new THREE.Color('#b596d6'), b = new THREE.Color('#f2eaf8'), c = new THREE.Color();
+  const g = new THREE.BoxGeometry(0.012, 0.012, 0.012, 4, 4, 4), p = g.attributes.position, col = new Float32Array(p.count * 3), a = new THREE.Color('#8a5cbf'), b = new THREE.Color('#e8dcf4'), c = new THREE.Color();
   for (let i = 0; i < p.count; i++) {
     const v = new THREE.Vector3().fromBufferAttribute(p, i), n = v.clone().normalize().multiplyScalar(0.0062); p.setXYZ(i, ...v.lerp(n, 0.35).toArray());
     const k = 0.5 + 0.5 * Math.sin(v.x * 900 + v.y * 600 + v.z * 1300);
@@ -17,9 +17,9 @@ function taroGeometry() {
 
 export function build(ctx) {
   const { scene } = ctx;
-  scene.background = new THREE.Color('#d9ccef');
-  scene.fog = new THREE.FogExp2('#dccff0', 1.6);
-  const floor = new THREE.Mesh(sweep(['#e8def7', '#cdbbe8'], { floor: 0.6, R: 0.4, wall: 1.4, z0: 0.4, mid: 0.2 }), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, side: THREE.DoubleSide }));
+  scene.background = new THREE.Color('#cdbbe9');
+  scene.fog = new THREE.FogExp2('#d6c6ef', 0.45);
+  const floor = new THREE.Mesh(sweep(['#ddd0f2', '#b9a2e0'], { floor: 0.6, R: 0.4, wall: 1.4, z0: 0.4, mid: 0.2 }), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, side: THREE.DoubleSide }));
   floor.receiveShadow = true; scene.add(floor);
 
   const key = keyLight('#fff6ff', 1.8, [0.1, 1.0, 0.3], { radius: 12, size: 0.3 });          // 很软的顶光：影子几乎化开
@@ -31,12 +31,12 @@ export function build(ctx) {
   const atlas = puffAtlas(91);
   const low = driftField({
     geometry: new THREE.PlaneGeometry(1, 1), count: 30, seed: 91, fade: 'alpha',
-    material: softSprites({ map: atlas, color: '#fbf6ff', opacity: 0.55, atlas: true }),
+    material: softSprites({ map: atlas, color: '#fbf6ff', opacity: 0.4, atlas: true }),
     box: [-0.35, 0.0, -0.25, 0.35, 0.03, 0.2], vel: [0.012, 0.002, 0], sway: 0.01, swayHz: 0.15, size: [0.08, 0.16], spin: 0,
   });
   const far = driftField({
     geometry: new THREE.PlaneGeometry(1, 1), count: 12, seed: 92, fade: 'alpha',
-    material: softSprites({ map: atlas, color: '#efe4fb', opacity: 0.45, atlas: true }),
+    material: softSprites({ map: atlas, color: '#efe4fb', opacity: 0.3, atlas: true }),
     box: [-0.8, 0.05, -1.0, 0.8, 0.45, -0.5], vel: [0.01, 0.003, 0], sway: 0.02, swayHz: 0.1, size: [0.35, 0.6], spin: 0,
   });
   const orbs = driftField({
@@ -47,7 +47,7 @@ export function build(ctx) {
   const taro = driftField({
     geometry: taroGeometry(), count: 10, seed: 94, fade: 'scale',
     material: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.6, sheen: 0.6, sheenColor: new THREE.Color('#ffffff') }),
-    box: [-0.17, 0.03, -0.12, 0.17, 0.2, 0.1], vel: [0.004, 0.006, 0], sway: 0.01, swayHz: 0.2, size: [0.7, 1.3], spin: 0.3,
+    box: [-0.18, 0.03, -0.16, 0.18, 0.2, 0.02], vel: [0.004, 0.006, 0], sway: 0.01, swayHz: 0.2, size: [0.7, 1.3], spin: 0.3,
   });
   scene.add(far.mesh, low.mesh, orbs.mesh, taro.mesh);
 
@@ -60,7 +60,7 @@ export function build(ctx) {
         add(4, 6, [8, 2, -6], B('#b0d0ff', 1.6));
       },
     },
-    post: { exposure: 1.1, vignette: 0.18, grain: 0.01, saturation: 1.05, lift: [0.03, 0.02, 0.05], gamma: [1, 1, 1], gain: [1.0, 0.97, 1.04], bloom: { strength: 0.55, threshold: 0.7, radius: 0.8 }, aperture: 0.22, maxBlur: 0.005 },
+    post: { exposure: 0.98, vignette: 0.2, grain: 0.01, saturation: 1.12, lift: [0.02, 0.01, 0.04], gamma: [1, 1, 1], gain: [1.0, 0.97, 1.04], bloom: { strength: 0.35, threshold: 0.78, radius: 0.8 }, aperture: 0.12, maxBlur: 0.004 },
     update(s) {
       for (const f of [low, far, orbs, taro]) f.update(s.t);
       orbs.mesh.material.uniforms.uTime.value = s.t;

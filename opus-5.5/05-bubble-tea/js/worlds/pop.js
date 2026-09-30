@@ -31,7 +31,7 @@ export function build(ctx) {
   // 几何色块：贴在背墙前面一点（z ≈ −0.2），平涂不受光
   const flat = c => new THREE.MeshBasicMaterial({ color: c });
   const disc = new THREE.Mesh(new THREE.CircleGeometry(0.11, 64), flat('#ff3a5c')); disc.position.set(0.16, 0.2, -0.26);
-  const half = new THREE.Mesh(new THREE.CircleGeometry(0.07, 48, 0, Math.PI), flat('#ffd23f')); half.position.set(-0.2, 0.05, -0.24); half.rotation.z = 0.4;
+  const half = new THREE.Mesh(new THREE.CircleGeometry(0.07, 48, 0, Math.PI), flat('#ffe25a')); half.position.set(-0.2, 0.05, -0.24); half.rotation.z = 0.4;
   const stripe = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.028), flat('#fff4f6')); stripe.position.set(0, 0.16, -0.27); stripe.rotation.z = -0.45;
   const ring = new THREE.Mesh(new THREE.RingGeometry(0.035, 0.045, 48), flat('#ffffff')); ring.position.set(-0.13, 0.24, -0.25);
   scene.add(disc, half, stripe, ring);
@@ -42,9 +42,9 @@ export function build(ctx) {
 
   // 飞进来的草莓切片（绕杯子外圈，慢慢自转）+ 彩色圆点
   const slices = driftField({
-    geometry: sliceGeometry(), count: 9, seed: 31, fade: 'scale',
+    geometry: sliceGeometry(), count: 7, seed: 31, fade: 'scale',
     material: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.25, clearcoat: 0.8 }),
-    box: [-0.2, 0.02, -0.1, 0.2, 0.22, 0.12], vel: [0.03, 0.012, 0], sway: 0.02, swayHz: 0.4, size: [0.8, 1.3], spin: 1.2,
+    box: [-0.22, 0.02, -0.16, 0.22, 0.22, 0.03], vel: [0.03, 0.012, 0], sway: 0.02, swayHz: 0.4, size: [0.8, 1.3], spin: 1.2,
   });
   slices.mesh.castShadow = true;
   const dots = driftField({

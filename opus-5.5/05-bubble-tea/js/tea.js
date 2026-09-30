@@ -12,7 +12,7 @@ export const SHAPE = frustumShape({ rBottom: CUP.rBottom, rTop: CUP.rTop, height
 export function createTea(ctx, cup, flavor) {
   const { glass, liquid, ice } = cup.parts;
   return createRefraction(ctx, {
-    name: 'bocha', shape: SHAPE, optics: OPTICS,
+    name: 'bocha', shape: SHAPE, optics: { ...OPTICS, ...(ctx.world?.optics ?? {}) },   // 世界可以改焦散强弱（逆光的糖铺要压下去）
     root: cup.root, glass, liquid, liquidAbsorb: flavor.liquid.absorb,
     scatter: flavor.liquid.scatter, liquidMaterial: { color: flavor.liquid.color, roughness: 0.25 },
     contents: { object: ice, absorb: [0.6, 0.35, 0.25], thickness: 0.016, ior: 1.31 },

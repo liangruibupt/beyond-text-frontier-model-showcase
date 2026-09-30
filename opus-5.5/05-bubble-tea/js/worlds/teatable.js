@@ -36,31 +36,32 @@ export function build(ctx) {
   const { scene } = ctx;
   scene.background = new THREE.Color('#eef2e6');
   const linen = linenTexture(21, { color: '#ece6d6', repeat: [10, 5] });
-  const table = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.8), new THREE.MeshStandardMaterial({ color: '#d9d2bf', roughness: 0.85 }));
+  const table = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.8), new THREE.MeshStandardMaterial({ color: '#c9c0a8', roughness: 0.85 }));
   table.rotation.x = -Math.PI / 2; table.position.z = -0.1; table.receiveShadow = true;
   const runner = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.8), new THREE.MeshStandardMaterial({ map: linen, roughness: 0.95 }));
   runner.rotation.x = -Math.PI / 2; runner.position.set(0.02, 0.0005, -0.1); runner.receiveShadow = true;
-  const wall = new THREE.Mesh(sweep(['#f4f6ee', '#dfe6d2'], { floor: 0.3, R: 0.2, wall: 1.2, z0: -0.45 }), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, side: THREE.DoubleSide }));
+  const wall = new THREE.Mesh(sweep(['#e9eee0', '#cdd6bd'], { floor: 0.3, R: 0.2, wall: 1.2, z0: -0.45 }), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, side: THREE.DoubleSide }));
   wall.receiveShadow = true;
   scene.add(table, runner, wall);
 
   // 主光：清晨的太阳从右上方斜进来，微暖；窗格挡在它前面
   const key = keyLight('#fff6e2', 2.6, [0.55, 0.7, 0.25], { radius: 3, size: 0.35 });
   const win = mullions(); win.position.set(0.3, 0.4, 0.14); win.lookAt(0, 0.05, -0.1);
-  const sky = new THREE.HemisphereLight('#f2f8ff', '#cfd6bf', 1.0);
+  const sky = new THREE.HemisphereLight('#f2f8ff', '#b9c2a6', 0.7);
   scene.add(key, key.target, win, sky);
 
   // 前景左下的茉莉枝（焦外）+ 身后右边一枝（清楚些）
-  const front = sprig(3); front.position.set(-0.13, 0.0, 0.13); front.rotation.y = 0.5; front.scale.setScalar(1.3);
-  const back = sprig(4); back.position.set(0.1, 0.0, -0.14); back.rotation.y = 2.4;
-  scene.add(front, back);
+  // 茉莉枝放在杯子两侧后方、贴着茶席（前景那枝会整块挡住杯子，去掉了）
+  const back = sprig(4); back.position.set(0.09, 0.0, -0.12); back.rotation.y = 2.4; back.scale.setScalar(0.8);
+  const side = sprig(5); side.position.set(-0.16, 0.0, -0.05); side.rotation.y = -0.6; side.scale.setScalar(0.7);
+  scene.add(back, side);
 
   // 飘落的花瓣
   const petalGeo = new THREE.CircleGeometry(0.005, 8); petalGeo.scale(1, 1.6, 1);
   const petals = driftField({
     geometry: petalGeo, count: 18, seed: 51, fade: 'scale',
     material: new THREE.MeshStandardMaterial({ color: '#fcfcf6', roughness: 0.6, side: THREE.DoubleSide }),
-    box: [-0.2, 0.0, -0.16, 0.2, 0.26, 0.1], vel: [0.004, -0.018, 0], sway: 0.012, swayHz: 0.35, size: [0.7, 1.2], spin: 0.8,
+    box: [-0.2, 0.0, -0.18, 0.2, 0.26, -0.03], vel: [0.004, -0.018, 0], sway: 0.012, swayHz: 0.35, size: [0.7, 1.2], spin: 0.8,
   });
   // 窗外的亮：几颗很淡的焦外光斑
   const glints = driftField({
@@ -79,7 +80,7 @@ export function build(ctx) {
         add(10, 2, [0, -4, 5], B('#d8dcc8', 0.8));
       },
     },
-    post: { exposure: 1.12, vignette: 0.1, grain: 0.015, saturation: 0.96, lift: [0.02, 0.026, 0.018], gamma: [1, 1, 1], gain: [0.99, 1.0, 0.96], bloom: { strength: 0.28, threshold: 0.82, radius: 0.5 } },
+    post: { exposure: 0.98, vignette: 0.14, grain: 0.015, saturation: 0.96, lift: [0.02, 0.026, 0.018], gamma: [1, 1, 1], gain: [0.99, 1.0, 0.96], bloom: { strength: 0.28, threshold: 0.82, radius: 0.5 } },
     update(s) { petals.update(s.t); glints.update(s.t); glints.mesh.material.uniforms.uTime.value = s.t; },
     reset() {},
     dispose() { linen.dispose(); },
