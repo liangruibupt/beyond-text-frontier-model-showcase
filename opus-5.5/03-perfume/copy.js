@@ -18,15 +18,16 @@ export const money = (n, lang) => (lang === 'zh' ? `¥${n}` : `$${n}`);
 export { sayNum };
 
 // ── 配音 ──
-export const VOICE = { zh: 'zm_yunxi', en: 'bf_emma' };               // 试听（node factory/vo.mjs 03-perfume --audition）后选定
-export const AUDITION = { zh: ['zf_xiaoxiao', 'zf_xiaoyi', 'zm_yunjian', 'zm_yunxi'], en: ['af_heart', 'bf_emma', 'am_michael', 'bm_george'] };
+// 声音必须是已部署的 Kokoro（aws-is-how/.../Kokoro/README.md）里有的：zh 只有 zm_*；en 有 am_*（美）/ bm_*（英）。没有 bf_*/af_*/zf_*
+export const VOICE = { zh: 'zm_yunxi', en: 'am_michael' };            // 试听（node factory/vo.mjs 03-perfume --audition）后选定
+export const AUDITION = { zh: ['zm_yunjian', 'zm_yunxi', 'zm_yunxia', 'zm_yunyang'], en: ['am_michael', 'am_fenrir', 'bm_george', 'bm_fable'] };
 export const SPEED = { zh: 1, en: 1 };
 // 时段（成片秒）：[开始, 最长]；每句在成片最后 0.3 秒的淡出之前念完
 export const SLOTS = { 15: { hero: [4.6, 2.8], notes: [7.7, 2.6], end: [12.3, 2.4] }, 6: { one: [1.1, 3.7] } };
 
 const END = {
   zh: { none: (k, d) => `闻境${k.name.zh}，闻香入境。`, 1111: (k, d) => `双十一，到手${d}元。`, launch: k => `闻境新品，${k.name.zh}首发。` },
-  en: { none: k => `Wenjing ${k.name.en}. Breathe in.`, 1111: (k, d) => `Eleven-eleven: ${d} dollars.`, launch: k => `New from Wenjing: ${k.name.en}.` },
+  en: { none: k => `Wenjing ${k.name.en}. Breathe in.`, 1111: (k, d) => `Just ${d} dollars.`, launch: k => `New from Wenjing: ${k.name.en}.` },
 };
 const ONE = {
   zh: { none: k => `闻境${k.name.zh}，${k.image.zh}。`, 1111: (k, d) => `闻境${k.name.zh}，双十一到手${d}元。`, launch: k => `闻境新品，${k.name.zh}首发。` },

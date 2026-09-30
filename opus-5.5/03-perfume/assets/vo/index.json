@@ -1,66 +1,66 @@
 {
   "osmanthus_en_15_end_1111": {
-    "text": "Eleven-eleven: sixty-nine dollars.",
-    "voice": "bf_emma",
+    "text": "Just sixty-nine dollars.",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.03,
+    "dur": 1.728,
     "lufs": -20
   },
   "osmanthus_en_15_end_launch": {
     "text": "New from Wenjing: Osmanthus.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.878,
+    "dur": 2.112,
     "lufs": -20
   },
   "osmanthus_en_15_end_none": {
     "text": "Wenjing Osmanthus. Breathe in.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.923,
+    "dur": 2.136,
     "lufs": -20
   },
   "osmanthus_en_15_hero": {
     "text": "Golden blossom, autumn air.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.85,
+    "dur": 1.824,
     "lufs": -20
   },
   "osmanthus_en_15_notes": {
     "text": "Apricot, Osmanthus, Sandalwood.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.972,
+    "dur": 2.136,
     "lufs": -20
   },
   "osmanthus_en_6_one_1111": {
     "text": "Wenjing Osmanthus, now sixty-nine dollars.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.501,
+    "dur": 3.192,
     "lufs": -20
   },
   "osmanthus_en_6_one_launch": {
     "text": "New from Wenjing: Osmanthus.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.878,
+    "dur": 2.112,
     "lufs": -20
   },
   "osmanthus_en_6_one_none": {
     "text": "Wenjing Osmanthus. Golden blossom, autumn air.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 3.029,
+    "dur": 3.456,
     "lufs": -20
   },
   "osmanthus_zh_15_end_1111": {
@@ -128,67 +128,67 @@
     "lufs": -20
   },
   "rose_en_15_end_1111": {
-    "text": "Eleven-eleven: seventy-nine dollars.",
-    "voice": "bf_emma",
+    "text": "Just seventy-nine dollars.",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.1,
+    "dur": 1.824,
     "lufs": -20
   },
   "rose_en_15_end_launch": {
     "text": "New from Wenjing: Rose.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.631,
+    "dur": 1.728,
     "lufs": -20
   },
   "rose_en_15_end_none": {
     "text": "Wenjing Rose. Breathe in.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.596,
+    "dur": 1.656,
     "lufs": -20
   },
   "rose_en_15_hero": {
     "text": "One petal, deep as velvet.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.766,
+    "dur": 1.824,
     "lufs": -20
   },
   "rose_en_15_notes": {
     "text": "Blackcurrant, Rose, Patchouli.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.774,
+    "dur": 1.728,
     "lufs": -20
   },
   "rose_en_6_one_1111": {
     "text": "Wenjing Rose, now seventy-nine dollars.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.352,
+    "dur": 2.832,
     "lufs": -20
   },
   "rose_en_6_one_launch": {
     "text": "New from Wenjing: Rose.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.631,
+    "dur": 1.728,
     "lufs": -20
   },
   "rose_en_6_one_none": {
     "text": "Wenjing Rose. One petal, deep as velvet.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.55,
+    "dur": 2.976,
     "lufs": -20
   },
   "rose_zh_15_end_1111": {
@@ -256,67 +256,67 @@
     "lufs": -20
   },
   "seasalt_en_15_end_1111": {
-    "text": "Eleven-eleven: sixty-five dollars.",
-    "voice": "bf_emma",
+    "text": "Just sixty-five dollars.",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.079,
+    "dur": 1.68,
     "lufs": -20
   },
   "seasalt_en_15_end_launch": {
     "text": "New from Wenjing: Sea Salt.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.822,
+    "dur": 1.824,
     "lufs": -20
   },
   "seasalt_en_15_end_none": {
     "text": "Wenjing Sea Salt. Breathe in.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.979,
+    "dur": 2.016,
     "lufs": -20
   },
   "seasalt_en_15_hero": {
     "text": "Sea breeze, clear blue light.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.714,
+    "dur": 1.608,
     "lufs": -20
   },
   "seasalt_en_15_notes": {
     "text": "Sea Salt, Sage, Amberwood.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.706,
+    "dur": 1.704,
     "lufs": -20
   },
   "seasalt_en_6_one_1111": {
     "text": "Wenjing Sea Salt, now sixty-five dollars.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.603,
+    "dur": 3,
     "lufs": -20
   },
   "seasalt_en_6_one_launch": {
     "text": "New from Wenjing: Sea Salt.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.822,
+    "dur": 1.824,
     "lufs": -20
   },
   "seasalt_en_6_one_none": {
     "text": "Wenjing Sea Salt. Sea breeze, clear blue light.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.922,
+    "dur": 3.192,
     "lufs": -20
   },
   "seasalt_zh_15_end_1111": {
@@ -384,67 +384,67 @@
     "lufs": -20
   },
   "whitetea_en_15_end_1111": {
-    "text": "Eleven-eleven: sixty-nine dollars.",
-    "voice": "bf_emma",
+    "text": "Just sixty-nine dollars.",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.029,
+    "dur": 1.728,
     "lufs": -20
   },
   "whitetea_en_15_end_launch": {
     "text": "New from Wenjing: White Tea.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.764,
+    "dur": 1.8,
     "lufs": -20
   },
   "whitetea_en_15_end_none": {
     "text": "Wenjing White Tea. Breathe in.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.82,
+    "dur": 2.016,
     "lufs": -20
   },
   "whitetea_en_15_hero": {
     "text": "Morning dew on the tea hills.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.588,
+    "dur": 1.8,
     "lufs": -20
   },
   "whitetea_en_15_notes": {
     "text": "Bergamot, White Tea, White Musk.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.994,
+    "dur": 2.016,
     "lufs": -20
   },
   "whitetea_en_6_one_1111": {
     "text": "Wenjing White Tea, now sixty-nine dollars.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.458,
+    "dur": 2.976,
     "lufs": -20
   },
   "whitetea_en_6_one_launch": {
     "text": "New from Wenjing: White Tea.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.765,
+    "dur": 1.8,
     "lufs": -20
   },
   "whitetea_en_6_one_none": {
     "text": "Wenjing White Tea. Morning dew on the tea hills.",
-    "voice": "bf_emma",
+    "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.835,
+    "dur": 3.096,
     "lufs": -20
   },
   "whitetea_zh_15_end_1111": {
