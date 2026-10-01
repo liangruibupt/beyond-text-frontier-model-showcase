@@ -7,6 +7,7 @@
     "serve": "node factory/lib/serve.mjs 8765"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "2.6.2",
     "playwright": "1.57.0",
     "three": "0.170.0"
   }
