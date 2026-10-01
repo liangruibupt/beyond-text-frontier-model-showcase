@@ -36,6 +36,7 @@ factory/
 │   ├── audio.js            合成音色、离线混音、配音排布与压低配乐、预览发声
 │   ├── mix.js · rng.js · ease.js · particles.js   纯函数工具：压低曲线、WAV、种子随机数、缓动、闭式漂移粒子
 │   ├── bake.js             烘焙模拟：固定步长跑一遍存表，按 t 插值取样（碰撞这类闭式写不出的物理）
+│   ├── cloth.js            布料：方格布建在 bake.js 上（位置型约束、限拉伸、风、可动的固定点、球 / 胶囊 / 圆柱 / 地面碰撞）
 │   ├── say.js              配音里数字、年份、月份的读法
 │   ├── story.js            Level 3 文案的纯函数：数据指纹、占位符、查模型自己写的数字、估念多久
 │   ├── player.js · player.css   预览页的播放器
@@ -496,6 +497,28 @@ sampleRange(ctx.pearls, s.lt, i * 6, 3, tmp);
 - 每帧取值用 `sampleInto(table, t, out)` 或 `sampleRange(table, t, offset, n, out)`，都不分配内存；`sampleBake(table, t)` 每次新分配，只在 setup 或测试里用。
 - 表里的 `bakeMs` 是烘焙耗时。换 `sceneAxes` 里的轴会重跑 `setup`，`openFilm` 等页面最多 90 秒，所以一次烘焙控制在 1.5 秒以内（60 颗珠子、1/240 秒步长、2.5 秒约 60 ms）。
 - 能写成闭式的（抛物线下落、阻尼弹簧、`drift`）就别烘：闭式没有存表和烘焙的开销。
+
+
+#### 布料（cloth.js）
+
+建在 `bake.js` 上：在 `setup` 里把一张方格布烘成表，镜头每帧按 t 取顶点，写进自己的 `BufferGeometry`。
+
+```js
+import { bakeCloth, clothAt, clothIndex } from '../factory/engine/cloth.js';
+const scarf = bakeCloth({
+  nx: 40, ny: 40, size: [0.7, 0.7], origin: [0, 1.2, 0], t1: 2.5, seed: 7,
+  wind: (x, y, z, t, out, gust) => { out[0] = 2 + Math.sin(3 * t + 6 * gust[0]); out[1] = 0; out[2] = 0.5; },
+  pins: [{ i: 0, j: 0, pos: t => [-0.35, 1.2, -0.35], until: 1.2 }],      // 一角先固定，1.2 秒松开
+  colliders: [{ type: 'capsule', a: [-0.18, 1.0, 0], b: [0.18, 1.0, 0], r: 0.06 }, { type: 'ground', y: 0 }],
+});
+geo.setIndex(clothIndex(40, 40));
+clothAt(scarf, s.lt, geo.attributes.position.array); geo.attributes.position.needsUpdate = true; geo.computeVertexNormals();
+```
+
+- 解法：每 1/1200 秒一个子步，积分（重力、风按法向投影、阻尼）→ 两遍结构 / 剪切 / 弯曲约束 → 限拉伸（结构边最多伸长 `strain`，默认 2%）→ 推出碰撞体 → 固定点归位。每 1/60 秒存一帧，帧间线性插值。
+- 碰撞体的 `c` / `a` / `b` 可以是函数 `t => [x, y, z]`（会动的东西）；`pins` 的 `pos(t)` 也是脚本，可以提起、扇动，`until` 之后松开。
+- 不做布的自碰撞：垂下来的褶子可能互相穿过，靠厚度（`thickness`）和落点安排避开。
+- 40 × 40、2.5 秒约 1.1 秒烘完（`table.bakeMs`）；`maxStretch(cloth, P)` 给测试和自检看拉伸。
 
 ### 构图
 
