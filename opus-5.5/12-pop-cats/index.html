@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>12 · 六只绒毛波普猫猫</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5/900.css">
+<style>
+  html, body { margin: 0; background: #f3efe6; color: #111; font-family: 'Noto Sans SC', 'PingFang SC', sans-serif; }
+  #g { display: grid; grid-template-columns: repeat(3, 306px); gap: 34px 30px; padding: 40px 44px 48px; width: max-content; }
+  #g > div svg { display: block; width: 306px; height: 386px; }
+  @media (max-width: 1100px) { #g { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); width: auto; } #g > div svg { width: 100%; height: auto; } }
+</style>
+</head>
+<body>
+<div id="g"></div>
+<script type="module">
+  import { cats, catSVG } from './cats.js';
+  const g = document.getElementById('g');
+  g.innerHTML = cats.map((c, i) => `<div style="transform:rotate(${c.rot}deg)">${catSVG(c, i)}</div>`).join('');
+  document.fonts.ready.then(() => { window.__ready = true; });
+</script>
+</body>
+</html>
