@@ -24,6 +24,7 @@ export function layersFor(v, s) {
     case 'sort': return cap(CAP.sort[L]);
     case 'lastmile': return cap(CAP.lastmile[L]);
     case 'door': return [
+      { ...base, id: 'card', zone: 'card', text: '', font: F.display, size: 0.04, shadow: null, panel: { fill: '#fbf5ea', alpha: 0.93, radius: 0.08, shadow: 'rgba(0,0,0,0.35)' }, in: [a + 0.0, a + 0.4] },
       { ...base, id: 'logo', zone: 'logo', lang: 'zh', text: '有集', font: FONTS.zh.display, size: 0.1, tracking: 0.2, color: '#2b2016', shadow: { color: 'rgba(0,0,0,0.2)', blur: 0.3 }, lineHeight: 1.05, maxLines: 1, in: [a + 0.2, a + 0.7] },
       { ...base, id: 'brand', zone: 'brand', lang: 'en', text: 'Youji', font: FONTS.brand, size: 0.036, tracking: 0.4, color: '#8a7a66', shadow: null, maxLines: 1, in: [a + 0.4, a + 0.9] },
       ...promoLayers(v, { a: a + 0.5, align }),
