@@ -15,6 +15,8 @@ function make(scarf) {
   const k = SCARVES[scarf];
   ctx.world = buildWorld(ctx, scarf, k);
   const scarfMesh = buildScarf(k), b = bust(), gb = new THREE.Group(); gb.userData.floor = 0.888;
+  gb.userData.lid = 0; gb.userData.closeLid = x => { gb.userData.lid = x; };
+  const reveal = scarfMesh.setReveal; scarfMesh.reveal = 1; scarfMesh.setReveal = r => { scarfMesh.reveal = r; reveal(r); };   // 记下织出进度，状态里比
   ctx.subjects = { scarf: scarfMesh, sims: bakeFor(scarf), world: ctx.world, bust: b.group, giftBox: gb };
   return ctx;
 }
@@ -23,11 +25,11 @@ function state(ctx, built, t) {
   film.reset(ctx);
   const o = film.shots[r.shot](ctx, { name: r.shot, lt: r.lt, dur: r.dur, u: r.u, from: 0, t, row: {} });
   const { scarf, bust: b, giftBox } = ctx.subjects;
-  return [Array.from(scarf.positions).map(x => x.toFixed(6)).join(','), b.visible, giftBox.visible, JSON.stringify(o.camera.dir)].join('|');
+  return [Array.from(scarf.positions).map(x => x.toFixed(6)).join(','), b.visible, giftBox.visible, giftBox.userData.lid.toFixed(4), scarf.reveal.toFixed(4), JSON.stringify(o.camera.dir)].join('|');
 }
 
-test('dunhuang frames depend only on t (both cuts): in order, reversed and shuffled agree', () => {
-  const ctx = make('dunhuang');
+for (const scarf of ['dunhuang', 'songjin']) test(`${scarf} frames depend only on t (both cuts): in order, reversed and shuffled agree`, () => {
+  const ctx = make(scarf);
   for (const cut of [15, 6]) {
     ctx.variant.cut = cut;
     const b = buildCut(cutOf(META, ctx.variant)), ts = Array.from({ length: 20 }, (_, i) => (i + 0.31) * (b.duration / 20));
@@ -48,4 +50,15 @@ test('the dunhuang scarf ends up on the bust shoulders (drape) and every vertex 
   let top = -1;
   for (let k = 0; k < P.length; k += 3) { assert.ok(Number.isFinite(P[k]) && Number.isFinite(P[k + 1])); top = Math.max(top, P[k + 1]); }
   assert.ok(top > 1.38 && top < 1.6, `top of the scarf at ${top.toFixed(3)} m`);
+});
+
+test('songjin: the weave reveals the pattern row by row, finishes woven, and the box lid closes', () => {
+  const ctx = make('songjin'), b = buildCut(cutOf(META, ctx.variant)), at = id => b.entries.find(x => x.shot === id);
+  const rv = t => { state(ctx, b, t); return ctx.subjects.scarf.reveal; };
+  const w = at('sj_warp'), v = at('sj_weave'), x = at('sj_box');
+  assert.ok(rv(w.start + 0.1) < 0.05, 'warp starts bare');
+  assert.ok(rv(w.start + 1.5) > rv(w.start + 0.8), 'reveal advances');
+  assert.equal(rv(v.end - 0.05), 1, 'woven by the end of sj_weave');
+  state(ctx, b, x.end - 0.01); assert.ok(ctx.subjects.giftBox.userData.lid > 0.99, 'lid shut');
+  state(ctx, b, x.start + 0.1); assert.ok(ctx.subjects.giftBox.userData.lid < 0.01, 'lid open at the drop');
 });

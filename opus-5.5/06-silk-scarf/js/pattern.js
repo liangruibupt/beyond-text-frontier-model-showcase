@@ -85,7 +85,7 @@ function badayun(g, S, [lan, jin, hong, di, lv], rng, reveal) {
   g.globalAlpha = 0.08; g.fillStyle = di;
   for (let y = 0; y < S; y += 4) g.fillRect(0, y, S, 1);
   g.globalAlpha = 1;
-  if (reveal < 1) { g.fillStyle = di; g.fillRect(0, S * reveal, S, S * (1 - reveal)); }   // 还没织到的部分：素地
+  if (reveal < 1) g.clearRect(0, S * reveal, S, S * (1 - reveal));   // 还没织到的部分：透明（材质 alphaTest 把它裁掉，露出下面的经线）
 }
 
 // ── 青花缠枝莲：白地，一条主枝绕方巾一圈，枝上长卷叶和莲花；reveal = 主枝画出的比例 ──

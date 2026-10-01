@@ -35,7 +35,22 @@ function dhDrape() {
   });
 }
 
-export const SIMS = { dunhuang: { drape: dhDrape }, songjin: {}, qinghua: {}, yunhe: {} };   // 飞天的飘带改成闭式（ribbon.js）：模拟里怎么握都不像飘带
+export const SIMS = { dunhuang: { drape: dhDrape }, songjin: { lift: sjLift }, qinghua: {}, yunhe: {} };   // 飞天的飘带改成闭式（ribbon.js）：模拟里怎么握都不像飘带
+
+/** 宋锦 lift：织好的丝巾平铺在织机上（y = 0.92，j = 0 是远边），远边两角被提起，往上、往镜头这边带，整块离机挂成一幅；
+ *  机面是一块地面碰撞体（布先躺在上面，被一点点揭起来）；挂起后最下沿离机面还有 ~10 cm */
+export const SJ_LIFT = { y: 0.92, top: 1.95, z: 0.05, t1: 3.0 };
+function sjLift() {
+  const { y, top, z, t1 } = SJ_LIFT;
+  const rest = (i, j) => [(i / (N - 1) - 0.5) * S, y + 0.004, (j / (N - 1) - 0.5) * S];
+  const hand = t => { const k = ss(0.1, 2.4, t); return [0, (top - y) * k + 0.02 * Math.sin(Math.PI * k), (z + S / 2) * ss(0.4, 2.6, t)]; };
+  return bakeCloth({
+    nx: N, ny: N, rest, t1, seed: 21, damping: 1.6, bend: 0.08, friction: 0.4, thickness: 0.004, drag: 1.2,
+    pins: [...grip(0, 0, hand, rest), ...grip(N - 2, 0, hand, rest)],
+    wind: (x, yy, zz, t, o, g) => { o[0] = 0.25 * Math.sin(1.7 * t + 6 * g[0]); o[1] = 0; o[2] = 0.35 * Math.sin(1.1 * t + 3 * yy + 5 * g[2]); },
+    colliders: [{ type: 'ground', y }],
+  });
+}
 
 /** 颈后折边去波纹：沿折边方向（i+1, j-1）做 Taubin 平滑（λ / μ 交替，不收缩，不会把布拉进人台），只作用在折边两侧 band 行内、离折边越远越弱。
  *  32 格的模拟在折边上留下 4 mm 上下（最大 13 mm）的波纹；纯取帧后的处理，确定性不变 */

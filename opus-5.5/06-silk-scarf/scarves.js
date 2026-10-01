@@ -30,7 +30,7 @@ export const SCARVES = {
       sj_box: { zh: '宋锦 · 八达晕', en: 'Song Brocade' },
     },
     hook: { zh: '一梭一线，织出宋锦。', en: 'Thread by thread, a Song brocade.' },
-    palette: { ink: '#1f2a44', soft: '#5a6478', accent: '#1f3a68', cta: '#1f3a68', ctaInk: '#f6efe0', shadow: 'rgba(250,246,236,0.6)' },
+    palette: { ink: '#f3e9d2', soft: '#c9b98f', accent: '#1f3a68', cta: '#c9a24a', ctaInk: '#141a2e', shadow: 'rgba(6,10,24,0.85)' },   // 夜织房：深底浅字（影棚占位时的深字在暗背景里看不见）
   },
   qinghua: {
     name: { zh: '青花 · 缠枝莲', en: 'Blue Lotus Scroll', say: { zh: '青花缠枝莲', en: 'Blue Lotus Scroll' } },

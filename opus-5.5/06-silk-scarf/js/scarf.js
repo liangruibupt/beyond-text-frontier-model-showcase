@@ -62,7 +62,7 @@ export function buildScarf(k, { n = SCARF.n, R = 3 } = {}) {
   const pat = patternTexture(k), S = k.silk;
   const mat = new THREE.MeshPhysicalMaterial({
     map: pat.texture, color: S.color, roughness: S.roughness, sheen: S.sheen, sheenColor: new THREE.Color(S.sheenColor), sheenRoughness: S.sheenRoughness,
-    anisotropy: S.anisotropy, anisotropyRotation: 0, specularIntensity: 0.6, side: THREE.DoubleSide,
+    anisotropy: S.anisotropy, anisotropyRotation: 0, specularIntensity: 0.6, side: THREE.DoubleSide, alphaTest: 0.5,   // alphaTest：宋锦没织到的部分（纹理透明）不画，投影也跟着裁
   });
   const mesh = new THREE.Mesh(geo, mat); mesh.castShadow = true; mesh.receiveShadow = true; mesh.frustumCulled = false;
   return {

@@ -67,22 +67,69 @@ const dunhuang = {
   },
 };
 
+// ── 宋锦「织」 ──
+// 时间线（15 s 剪辑）：warp 0–3（光梭从远边织起，织到 45%）→ weave 3–5.25（织完，光梭熄）→ lift 5.25–8.25 → fold 8.25–10.5 → box 10.5–12
+// reveal 是 lt 的函数，各镜头自己算，不依赖上一个镜头；6 s 剪辑从 weave 的 0.75 起
+const SJ_R = { warp: [0.0, 0.45], weave: [0.45, 1] };
+const sjWeave = (ctx, s, [r0, r1], { lead = 0.25, tail = 0.5 } = {}) => {
+  const { scarf, world } = ctx.subjects, L = world.props.loom;
+  const r = lerp(r0, r1, ss(lead, s.dur - tail, s.lt));
+  scarf.flat([0, L.y, 0]); scarf.commit(); scarf.setReveal(r);
+  world.props.shuttle(r, r < 1 ? 1 : 1 - ss(s.dur - tail, s.dur - tail + 0.35, s.lt));
+  return r;
+};
+const songjin = {
+  /** 开场：夜里的织机，只有金色经线；光梭亮起，从远边一行行把八达晕织出来。低角度贴着机面，慢慢推近 */
+  sj_warp(ctx, s) {
+    const r = sjWeave(ctx, s, SJ_R.warp, { lead: 0.6, tail: 0 }), L = ctx.subjects.world.props.loom;
+    const zf = L.z0 + (L.z1 - L.z0) * r;
+    return { camera: fit(box([-0.42, L.y - 0.02, zf - 0.35], [0.42, L.y + 0.06, zf + 0.15]), s, [22, 28], [-34, -20], { fov: 30, scale: lerp(1.0, 1.1, s.u) }), text: text(ctx, s), post: { aperture: 0.2, maxBlur: 0.005 } };
+  },
+  /** 织成：相机升到机面正上方偏后，光梭推到近边、织完熄灭，整幅纹样亮出来 */
+  sj_weave(ctx, s) {
+    sjWeave(ctx, s, SJ_R.weave, { lead: 0, tail: 0.6 });
+    const L = ctx.subjects.world.props.loom;
+    return { camera: fit(box([-0.47, L.y - 0.02, -0.47], [0.47, L.y + 0.02, 0.47]), s, [48, 66], [-18, -4], { fov: 32 }), text: text(ctx, s) };
+  },
+  /** 提起离机：远边两角被提起，丝巾从机面上揭起来，挂成一幅；相机跟着抬起 */
+  sj_lift(ctx, s) {
+    fromSim(ctx, 'lift', s.lt);
+    const B = scarfBox(ctx.subjects.scarf).expandByScalar(0.06);
+    return { camera: fit(B, s, [14, 4], [-26, -10], { fov: 32 }), text: text(ctx, s) };
+  },
+  /** 空中三折：挂着的一幅落平（转成水平），在空中对折、再对折、再对折，叠成一方；暗背景里只有它 */
+  sj_fold(ctx, s) {
+    const { scarf } = ctx.subjects, u = ss(0.2, s.dur - 0.15, s.lt), y = 1.25;
+    foldInto(scarf.positions, scarf.n, u, { y0: y, c: [0, 0, 0] });
+    // 叠的时候整块慢慢转、轻轻起伏（还在空中）
+    const rot = lerp(0.5, 0.05, easeInOut(s.u)), cs = Math.cos(rot), sn = Math.sin(rot), P = scarf.positions;
+    for (let k = 0; k < P.length; k += 3) { const x = P[k], z = P[k + 2]; P[k] = x * cs - z * sn; P[k + 2] = x * sn + z * cs; P[k + 1] += 0.012 * Math.sin(2.2 * s.lt + x * 4); }
+    scarf.commit();
+    const B = scarfBox(scarf).expandByScalar(0.05);   // 跟着叠起来的那一方取景（固定框时开头出画、后来缩到角上）
+    return { camera: fit(B, s, [42, 52], [-14, 6], { fov: 30 }), text: text(ctx, s) };
+  },
+  /** 落盒合盖：叠好的一方落进礼盒，盖子合上 */
+  sj_box(ctx, s) {
+    const { scarf, giftBox } = ctx.subjects, G = giftBox.userData, drop = easeInOut(ss(0, 0.6, s.lt));
+    foldInto(scarf.positions, scarf.n, 1, { c: [0.1125, 0, 0.2325], y0: lerp(G.floor + 0.25, G.floor, drop) });
+    scarf.commit();
+    giftBox.visible = true; G.closeLid?.(ss(0.55, 1.3, s.lt));
+    giftBox.rotation.y = scarf.mesh.rotation.y = -0.3;
+    return { camera: fit(box([-0.2, G.floor - 0.05, -0.32], [0.2, G.floor + 0.2, 0.3]), s, [34, 40], [-20, -12], { fov: 28 }), text: text(ctx, s) };
+  },
+};
+
 // ── 占位：平铺（u 越大越往下转）或叠好的丝巾 ──
 const flatShot = (ctx, s, y = 0.9) => {
   const { scarf } = ctx.subjects; scarf.flat([0, y, 0], 0.3 * s.u); scarf.commit();
   return { camera: fit(box([-0.48, y - 0.05, -0.48], [0.48, y + 0.05, 0.48]), s, [55, 50], [-15, 10], { fov: 32 }), text: text(ctx, s) };
 };
-const foldShot = (ctx, s) => {
-  const { scarf } = ctx.subjects; foldInto(scarf.positions, scarf.n, s.u, { y0: 0.9 }); scarf.commit();
-  return { camera: fit(box([-0.48, 0.85, -0.48], [0.48, 1.1, 0.48]), s, [40, 35], [-10, 5], { fov: 32 }), text: text(ctx, s) };
-};
-const placeholders = Object.fromEntries(['sj_warp', 'sj_weave', 'sj_lift', 'qh_paint', 'qh_bloom', 'qh_slip', 'qh_pool', 'qh_hero', 'yh_dusk', 'yh_crane', 'yh_glide', 'yh_land', 'yh_hero'].map(id => [id, flatShot]));
-placeholders.sj_fold = foldShot;
-placeholders.sj_box = foldShot;
+const placeholders = Object.fromEntries(['qh_paint', 'qh_bloom', 'qh_slip', 'qh_pool', 'qh_hero', 'yh_dusk', 'yh_crane', 'yh_glide', 'yh_land', 'yh_hero'].map(id => [id, flatShot]));
 
 export const SHOTS = {
   ...placeholders,
   ...dunhuang,
+  ...songjin,
   /** 片尾：叠好的丝巾（22.5 × 43.5 cm）摆在礼盒里，盒盖靠在后面；整组慢慢转 */
   end(ctx, s) {
     const { scarf, giftBox } = ctx.subjects, G = giftBox.userData;
