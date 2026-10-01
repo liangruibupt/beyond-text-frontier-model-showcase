@@ -7,6 +7,7 @@ import { BUST, SCARF } from '../meta.js';
 import { clothAt } from '../../factory/engine/cloth.js';
 import { foldInto } from './fold.js';
 import { ribbonInto } from './ribbon.js';
+import { smoothFold } from './sims.js';
 import { lerp, easeInOut, ss } from '../../factory/engine/ease.js';
 
 const D = Math.PI / 180;
@@ -20,7 +21,7 @@ const fit = (B, s, [p0, p1], [y0, y1], { fov = 30, scale = 1, up = [0, 1, 0] } =
 const text = (ctx, s) => layersFor(ctx.variant, s);
 /** 丝巾网格的包围盒（当前顶点）：fly 这种整块在动的镜头直接框它 */
 function scarfBox(sc) { sc.mesh.geometry.computeBoundingBox(); return sc.mesh.geometry.boundingBox.clone(); }
-const fromSim = (ctx, name, t) => { const { scarf, sims } = ctx.subjects; clothAt(sims[name], t, scarf.positions); scarf.commit(); };
+const fromSim = (ctx, name, t, post) => { const { scarf, sims } = ctx.subjects; clothAt(sims[name], t, scarf.positions); post?.(scarf.positions, scarf.n); scarf.commit(); };
 const BUST_BOX = box([-0.26, BUST.base + 0.05, -0.2], [0.26, BUST.top + 0.06, 0.2]);
 
 // ── 敦煌「飞天」 ──
@@ -52,15 +53,15 @@ const dunhuang = {
     scarf.commit();
     return { camera: fit(box([-0.62, y - 0.02, -0.72], [0.62, y + 0.32, 0.52]), s, [-58, -86], [0, 0], { fov: 38, scale: lerp(0.92, 1, e) }), text: text(ctx, s) };
   },
-  /** 落人台肩：烘好的 drape 表 */
+  /** 落人台肩：烘好的 drape 表（颈后折边去波纹） */
   dh_drape(ctx, s) {
-    fromSim(ctx, 'drape', s.lt);
+    fromSim(ctx, 'drape', s.lt, smoothFold);
     ctx.subjects.bust.visible = true;
     return { camera: fit(BUST_BOX, s, [12, 8], [-26, -14], { fov: 30 }), text: text(ctx, s) };
   },
   /** 环绕：垂定的最后一帧，相机绕人台 40° */
   dh_hero(ctx, s) {
-    fromSim(ctx, 'drape', 3);
+    fromSim(ctx, 'drape', 3, smoothFold);
     ctx.subjects.bust.visible = true;
     return { camera: fit(BUST_BOX, s, [8, 10], [-14, 26], { fov: 28 }), text: text(ctx, s) };
   },

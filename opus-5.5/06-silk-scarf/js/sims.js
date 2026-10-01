@@ -36,4 +36,29 @@ function dhDrape() {
 }
 
 export const SIMS = { dunhuang: { drape: dhDrape }, songjin: {}, qinghua: {}, yunhe: {} };   // 飞天的飘带改成闭式（ribbon.js）：模拟里怎么握都不像飘带
+
+/** 颈后折边去波纹：沿折边方向（i+1, j-1）做 Taubin 平滑（λ / μ 交替，不收缩，不会把布拉进人台），只作用在折边两侧 band 行内、离折边越远越弱。
+ *  32 格的模拟在折边上留下 4 mm 上下（最大 13 mm）的波纹；纯取帧后的处理，确定性不变 */
+export function smoothFold(pos, n = N, { band = 5, iters = 40, lambda = 0.5, mu = -0.53 } = {}) {
+  const tmp = new Float32Array(pos.length);
+  for (let it = 0; it < iters * 2; it++) {
+    const f = it & 1 ? mu : lambda; tmp.set(pos);
+    for (let j = 0; j < n; j++) for (let i = 1; i < n - 1; i++) {
+      const off = i + j - (n - 1); if (Math.abs(off) > band || j < 1 || j > n - 2) continue;
+      const w = f * (1 - Math.abs(off) / (band + 1)), k = (j * n + i) * 3, a = (j * n + n + i - 1) * 3, b = (j * n - n + i + 1) * 3;
+      for (let q = 0; q < 3; q++) pos[k + q] = tmp[k + q] + w * ((tmp[a + q] + tmp[b + q]) / 2 - tmp[k + q]);
+    }
+  }
+  // 再把折边上的长波（3–6 格的起伏）抹掉：只平滑高度 y（沿折边做 σ = 2.5 格的高斯），x / z 不动，布不会被拉进脖子
+  const sig = 2.5, R = 6, gw = Array.from({ length: 2 * R + 1 }, (_, q) => Math.exp(-((q - R) ** 2) / (2 * sig * sig)));
+  tmp.set(pos);
+  for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
+    const off = i + j - (n - 1); if (Math.abs(off) > band) continue;
+    let s = 0, ws = 0;
+    for (let d = -R; d <= R; d++) { const ii = i + d, jj = j - d; if (ii < 0 || ii >= n || jj < 0 || jj >= n) continue; s += gw[d + R] * tmp[(jj * n + ii) * 3 + 1]; ws += gw[d + R]; }
+    const k = (j * n + i) * 3 + 1, w = (1 - Math.abs(off) / (band + 1)) * Math.min(1, Math.max(0, (tmp[k] - (BUST.top - 0.1)) / 0.06));   // 只在颈后、肩上那段（两头垂到胸前的折边是真形状，不动）
+    pos[k] = Math.max(tmp[k], tmp[k] + w * (s / ws - tmp[k]));                                                                          // 只填低谷不削峰：不会压进脖子和肩
+  }
+  return pos;
+}
 export function bakeFor(scarf) { return Object.fromEntries(Object.entries(SIMS[scarf]).map(([k, f]) => [k, f()])); }

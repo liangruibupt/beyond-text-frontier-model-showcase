@@ -1,5 +1,5 @@
 // scarf.js — 丝巾网格：模拟用 n × n 的控制网格（cloth.js 的表或闭式姿态写进 positions），
-// 渲染用细 R 倍的网格：每个渲染顶点按 Catmull–Rom 双三次插值控制网格（过每个控制点、一阶导连续），折痕和垂坠是圆滑的曲线而不是折角；
+// 渲染用细 R 倍的网格：每个渲染顶点按均匀三次 B 样条逼近控制网格（二阶导连续，不过冲），折痕和垂坠是圆滑的曲线而不是折角；
 // 法线在细网格上算（computeVertexNormals 再做一遍邻域平均），高光不会沿控制网格的边断开
 // 材质：MeshPhysicalMaterial 的 sheen（丝的绒光）+ anisotropy（沿经线方向拉长的高光），两面都画
 import * as THREE from 'three';
@@ -23,10 +23,12 @@ export function patternTexture(k, S = 1024) {
   return { texture: tex, setReveal };
 }
 
-/** Catmull–Rom 的四个权重（t ∈ [0, 1]，作用于 p[-1], p0, p1, p2） */
+/** 均匀三次 B 样条的四个权重（t ∈ [0, 1]，作用于 p[-1], p0, p1, p2）。
+ *  不用 Catmull–Rom：它必须穿过每个控制点，在对折的发夹弯（两层隔 4 mm、格距 2.9 cm）上会冲出折线，每格一个小唇边 → 折边一串扇形波纹。
+ *  B 样条落在控制点的凸包里，不会冲出去；边界按镜像外推（p[-1] = 2p0 − p1）时，在边上正好等于控制点，四条边不缩 */
 function crW(t) {
-  const t2 = t * t, t3 = t2 * t;
-  return [0.5 * (-t3 + 2 * t2 - t), 0.5 * (3 * t3 - 5 * t2 + 2), 0.5 * (-3 * t3 + 4 * t2 + t), 0.5 * (t3 - t2)];
+  const t2 = t * t, t3 = t2 * t, s = 1 - t;
+  return [s * s * s / 6, (3 * t3 - 6 * t2 + 4) / 6, (-3 * t3 + 3 * t2 + 3 * t + 1) / 6, t3 / 6];
 }
 /** 控制网格 n × n → 细网格 m × m（m = (n-1)·R + 1）的插值表：每个细顶点 16 个 (控制点下标, 权重)。边界按镜像外推（p[-1] = 2p0 - p1） */
 function upsampler(n, R) {
