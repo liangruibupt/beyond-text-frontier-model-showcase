@@ -20,7 +20,7 @@ export default {
     // 换商品要重跑机器人路径规划（目标货架跟着商品换）；种子由商品决定，确定
     const plan = planCrowd({ seed: seedOf(`08-${item.id}`) });
     ctx.world = buildWorld(ctx, item, plan);
-    ctx.scene.environment = null;
+    // scene.environment 由世界建（PMREM 环境反射）；没有可用渲染器时世界里会退回 null
     ctx.postDefaults = ctx.world.post ?? {};
     ctx.subjects = { plan };                                  // 规划统计放这里，测试和 README 用
   },
