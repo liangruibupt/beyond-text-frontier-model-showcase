@@ -3,7 +3,7 @@
 export const BAR = 3.0, GRID = 0.75;
 
 // 丝巾（米）：90 cm 方巾；人台肩宽约 36 cm
-export const SCARF = { size: 0.9, n: 40 };
+export const SCARF = { size: 0.9, n: 32 };
 export const BUST = { shoulder: 0.18, neck: 0.055, top: 1.42, base: 0.95 };
 
 const end = (dur = 3.0) => ({ shot: 'end', dur, transition: { type: 'dissolve', dur: 0.4 } });

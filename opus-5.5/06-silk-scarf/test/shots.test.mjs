@@ -1,0 +1,51 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import * as THREE from 'three';
+import film from '../film.js';
+import { META } from '../meta.js';
+import { SCARVES } from '../scarves.js';
+import { buildWorld, bust } from '../js/worlds.js';
+import { buildScarf } from '../js/scarf.js';
+import { bakeFor } from '../js/sims.js';
+import { buildCut, cutOf, resolve } from '../../factory/engine/timeline.js';
+
+// 在 Node 里按引擎的方式求帧（reset → 镜头函数），比较丝巾顶点、人台 / 礼盒可见性与相机意图；顺序、倒序、乱序必须一致
+function make(scarf) {
+  const ctx = { variant: { scarf, lang: 'zh', cut: 15, promo: 'none', ar: '16x9', vo: 'on' }, scene: new THREE.Scene(), renderer: null };
+  const k = SCARVES[scarf];
+  ctx.world = buildWorld(ctx, scarf, k);
+  const scarfMesh = buildScarf(k), b = bust();
+  ctx.subjects = { scarf: scarfMesh, sims: bakeFor(scarf), world: ctx.world, bust: b.group, giftBox: new THREE.Group() };
+  return ctx;
+}
+function state(ctx, built, t) {
+  const r = resolve(built, t);
+  film.reset(ctx);
+  const o = film.shots[r.shot](ctx, { name: r.shot, lt: r.lt, dur: r.dur, u: r.u, from: 0, t, row: {} });
+  const { scarf, bust: b, giftBox } = ctx.subjects;
+  return [Array.from(scarf.positions).map(x => x.toFixed(6)).join(','), b.visible, giftBox.visible, JSON.stringify(o.camera.dir)].join('|');
+}
+
+test('dunhuang frames depend only on t (both cuts): in order, reversed and shuffled agree', () => {
+  const ctx = make('dunhuang');
+  for (const cut of [15, 6]) {
+    ctx.variant.cut = cut;
+    const b = buildCut(cutOf(META, ctx.variant)), ts = Array.from({ length: 20 }, (_, i) => (i + 0.31) * (b.duration / 20));
+    const fwd = ts.map(t => state(ctx, b, t)), rev = [...ts].reverse().map(t => state(ctx, b, t)).reverse();
+    const mix = [];
+    for (const i of ts.map((_, i) => (i * 7) % ts.length)) mix[i] = state(ctx, b, ts[i]);
+    fwd.forEach((s, i) => {
+      assert.equal(rev[i], s, `${cut}s t=${ts[i].toFixed(2)} reversed`);
+      assert.equal(mix[i], s, `${cut}s t=${ts[i].toFixed(2)} shuffled`);
+    });
+  }
+});
+
+test('the dunhuang scarf ends up on the bust shoulders (drape) and every vertex is finite', () => {
+  const ctx = make('dunhuang'), b = buildCut(cutOf(META, ctx.variant)), e = b.entries.find(x => x.shot === 'dh_drape');
+  state(ctx, b, e.end - 0.01);
+  const P = ctx.subjects.scarf.positions;
+  let top = -1;
+  for (let k = 0; k < P.length; k += 3) { assert.ok(Number.isFinite(P[k]) && Number.isFinite(P[k + 1])); top = Math.max(top, P[k + 1]); }
+  assert.ok(top > 1.38 && top < 1.6, `top of the scarf at ${top.toFixed(3)} m`);
+});
