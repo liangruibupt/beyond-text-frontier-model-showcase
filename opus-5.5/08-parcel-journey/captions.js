@@ -18,7 +18,7 @@ const INK = '#f4efe6', SOFT = '#d8c6a8';       // 仓库 / 夜色里的浅字
 export function layersFor(v, s) {
   const L = v.lang, F = FONTS[L], a = s.from ?? 0, align = s.row?.align ?? 'center';
   const base = { lang: L, align, valign: 'top', color: INK, shadow: { color: 'rgba(0,0,0,0.55)', blur: 0.5 } };
-  const cap = (text) => [{ ...base, id: 'cap', zone: 'cap', text, font: F.display, size: L === 'zh' ? 0.05 : 0.046, tracking: L === 'zh' ? 0.06 : 0.01, lineHeight: 1.3, maxLines: 2, in: [a + 0.3, a + 0.9] }];
+  const cap = (text) => [{ ...base, id: 'cap', zone: 'cap', text, font: F.display, size: L === 'zh' ? 0.05 : 0.046, tracking: L === 'zh' ? 0.06 : 0.01, lineHeight: 1.3, maxLines: 2, in: [a + 0.3, a + 0.9], box: { fill: 'rgba(18,22,30,0.62)', color: INK, pad: 0.55, radius: 0.35 } }];   // 半透明深色底条：浅色水泥地、黎明的天上都看得清
   switch (s.name) {
     case 'robots': return cap(CAP.robots[L]);
     case 'sort': return cap(CAP.sort[L]);

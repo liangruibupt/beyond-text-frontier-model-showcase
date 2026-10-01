@@ -43,17 +43,28 @@ function buildAgv(m) {
 function buildParcel(size, m) {
   const [w, h, d] = size, g = new THREE.Group();
   g.add(box(w, h, d, m.box, [0, h / 2, 0]));
-  g.add(box(w * 1.002, 0.012, d * 0.18, m.tape, [0, h - 0.004, 0]));                    // 封箱胶带
   const t = 0.006;
+  // 盖片沿箱口的四条边往外摊平（rotation 0 = 敞开）；closeParcel 把它们翻过来盖上：先两片长的，再两片短的（短的垫高一点叠在上面）
   const flap = (sx, sz, px, pz, axis) => {
-    const piv = new THREE.Group(); piv.position.set(px, h, pz);
+    const piv = new THREE.Group(); piv.position.set(px, h + (axis === 'z' ? t * 1.2 : 0), pz);
     piv.add(box(sx, t, sz, m.box, [axis === 'x' ? Math.sign(px) * sx / 2 : 0, 0, axis === 'z' ? Math.sign(pz) * sz / 2 : 0]));
     g.add(piv); return piv;
   };
   g.userData.flaps = [flap(w / 2, d, -w / 2, 0, 'x'), flap(w / 2, d, w / 2, 0, 'x'), flap(w, d / 2, 0, -d / 2, 'z'), flap(w, d / 2, 0, d / 2, 'z')];
-  const label = box(w * 0.5, 0.004, d * 0.4, m.label, [0, h + 0.008, d * 0.12]); label.visible = false;
+  const tape = box(w * 1.004, 0.004, d * 0.16, m.tape, [0, h + t * 2.2, 0]); g.add(tape); g.userData.tape = tape;   // 封箱胶带
+  const label = box(w * 0.5, 0.004, d * 0.4, m.label, [0, h + t * 2.4, d * 0.2]); label.visible = false;
   g.add(label); g.userData.label = label;
+  closeParcel(g, 1);
   return g;
+}
+/** 盖片合上的程度 k（0 = 敞开、略微竖起；1 = 全盖上）；四片错开先后，胶带在全盖上以后才有 */
+function closeParcel(g, k, stagger = 0) {
+  const [a, b, c, d] = g.userData.flaps, open = 0.38;                            // 敞开时也竖起 0.38·π，像刚折好的箱子
+  const at = i => (stagger ? easeInOut(clamp((k - i * stagger) / (1 - 3 * stagger))) : k);
+  const ang = i => Math.PI * (open + (1 - open) * at(i));
+  a.rotation.set(0, 0, -ang(0)); b.rotation.set(0, 0, ang(1));
+  c.rotation.set(ang(2), 0, 0); d.rotation.set(-ang(3), 0, 0);
+  g.userData.tape.visible = k >= 1;
 }
 /** 低多边形快递员：身子 + 头盔 + 两腿两臂（各绕肩 / 胯转），手里可以抱一只小箱 */
 function buildCourier(m) {
@@ -263,10 +274,10 @@ export function build(ctx, item, plan) {
     const inside = box(0.22, 0.34, 0.01, glow('#ffc978', 0.0), [0, 0.17, -0.07]); porch.add(inside);
     porch.add(box(0.04, 0.03, 0.03, M.bulb, [0.18, 0.36, -0.05]));                       // 门灯
     const warm = new THREE.PointLight('#ffcf8a', 0, 1.4, 1.5); warm.position.set(0, 0.22, 0.08); porch.add(warm);
-    const parcel = buildParcel(item.box, M); parcel.scale.setScalar(0.7); parcel.position.set(0.15, 0.03, 0.06); parcel.userData.label.visible = true; porch.add(parcel);
+    const parcel = buildParcel(item.box, M); parcel.scale.setScalar(0.45); parcel.position.set(0.16, 0.03, 0.07); parcel.userData.label.visible = true; porch.add(parcel);
     root.add(porch);
     const trike = buildTrike(M); trike.rotation.y = TH; root.add(trike);
-    const courier = buildCourier(M); root.add(courier);
+    const courier = buildCourier(M); courier.scale.setScalar(0.78); root.add(courier);   // 比门矮一截
     parts.door = { porch, doorPivot, inside, warm, parcel, courier, trike };
   }
 
@@ -338,12 +349,11 @@ function updateAgvs(wh, cells, lt) {
   wh.armBase.rotation.z = 0.9 * easeInOut(ss(EV.pick - 0.3, EV.pick + 0.4, lt));
 }
 function updatePack(pack, lt) {
-  pack.parcel.userData.flaps.forEach((f, i) => {
-    const k = easeInOut(ss(0.2 + i * 0.18, 1.0 + i * 0.18, lt)), sign = i % 2 === 0 ? 1 : -1;
-    f.rotation.set(0, 0, 0);
-    if (i < 2) f.rotation.z = sign * (Math.PI / 2) * k; else f.rotation.x = sign * (Math.PI / 2) * k;
-  });
+  // 0.15–1.1 s 商品落进箱子、四片盖错开合上，1.1–1.3 s 胶带封上，1.5 s 面单弹出
+  closeParcel(pack.parcel, clamp((lt - 0.35) / 0.75), 0.15);
+  const tape = pack.parcel.userData.tape; tape.visible = lt >= 1.1; tape.scale.x = Math.max(1e-3, easeOut(ss(1.1, 1.3, lt)));
   pack.prod.visible = lt < 0.9;
+  pack.prod.position.y = 0.11 + 0.12 * (1 - easeInOut(ss(0.0, 0.4, lt)));   // 从上面放进去
   const lab = pack.parcel.userData.label; lab.visible = lt >= EV.label;
   lab.scale.setScalar(Math.max(1e-3, easeOut(ss(EV.label, EV.label + 0.3, lt))));
 }
