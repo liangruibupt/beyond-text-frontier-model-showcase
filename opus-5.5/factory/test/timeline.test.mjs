@@ -74,3 +74,13 @@ test('resolve is pure: any call order gives the same answers', () => {
   const c = [...ts].reverse().map(t => resolve(b, t)).reverse();
   assert.deepEqual(a, c);
 });
+
+test('cutOf: cuts[v.cut] by default, cutFor(v) when the film has one (a storyboard per product)', async () => {
+  const { cutOf } = await import('../engine/timeline.js');
+  const a = { shots: [{ shot: 'x', dur: 15 }] }, b = { shots: [{ shot: 'y', dur: 15 }] };
+  assert.equal(cutOf({ cuts: { 15: a } }, { cut: 15 }), a);
+  const m = { cuts: { 15: a }, cutFor: v => (v.sku === 'b' ? b : a) };
+  assert.equal(cutOf(m, { cut: 15, sku: 'b' }), b);
+  assert.equal(cutOf(m, { cut: 15, sku: 'a' }), a);
+  assert.throws(() => cutOf({ cuts: {} }, { cut: 6 }), /no edit list for cut 6/);
+});

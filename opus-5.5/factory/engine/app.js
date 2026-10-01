@@ -2,7 +2,7 @@
 // 页面里有两张画布：WebGL 画 3D 与后期，2D 画布把它拷过来再叠字幕；导出和截图都取 2D 画布
 import * as THREE from 'three';
 import { parseVariant, ASPECTS, MIN_TEXT } from './variant.js';
-import { buildCut, resolve } from './timeline.js';
+import { buildCut, resolve, cutOf } from './timeline.js';
 import { solvePose, applyPose, projectPoint } from './framing.js';
 import { prepareLayer, drawLayer, canvasMeasure, fontStr } from './text.js';
 import { createPost, mergePost, focusOn } from './post.js';
@@ -82,7 +82,7 @@ export function createApp(film, { params = new URLSearchParams(), root = documen
 
   async function load(v) {
     drawable = false;                                              // 换变体期间主循环不画：场景可能拆了一半、字体还没到
-    ctx.variant = v; ctx.ar = v.ar; ctx.built = buildCut(film.cuts[v.cut]);
+    ctx.variant = v; ctx.ar = v.ar; ctx.built = buildCut(cutOf(film, v));
     size();
     const fontsP = loadFonts(v), key = film.sceneAxes.map(k => v[k]).join('|');
     if (key !== sceneKey) {
