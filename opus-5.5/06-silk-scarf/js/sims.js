@@ -1,7 +1,7 @@
 // sims.js — 每款要烘的布料：setup 时按款烘好，镜头按镜头本地时间取（clothAt）
-// 烘焙用 32 × 32 的网格（40 × 40 两段要 4 秒多，超过 setup 的预算）；渲染网格同一分辨率
-// 敦煌：fly（一角被看不见的手握着沿螺旋往上带，整块 90 cm 在上升的风里拖成飘带）
-//       drape（方巾先沿对角线对折成三角，折边横在颈后；两只手把两端从肩外侧带到胸前放下 → 披肩）
+// sims.js — 每款要烘的布料：setup 时按款烘好，镜头按镜头本地时间取（clothAt）
+// 烘焙用 32 × 32 的控制网格（40 × 40 两段要 4 秒多，超过 setup 的预算）；渲染时 scarf.js 把它细分 3 倍、插值成曲面
+// 敦煌：drape（方巾先沿对角线对折成三角，折边横在颈后；两只手把两端从肩外侧带到胸前放下 → 披肩）。飞天的飘带是闭式的（ribbon.js）
 // 其余款做到对应镜头时在这里加
 import { bakeCloth } from '../../factory/engine/cloth.js';
 import { SCARF, BUST } from '../meta.js';
@@ -9,27 +9,12 @@ import { BUST_COLLIDERS } from './bust.js';
 import { ss, lerp } from '../../factory/engine/ease.js';
 
 export const N = SCARF.n;
-const S = SCARF.size, E = S / (N - 1), R2 = Math.SQRT2;
+const S = SCARF.size, R2 = Math.SQRT2;
 /** 握住 (i, j) 周围 2 × 2 个顶点，跟着 hand(t) 平移（一个点会把相邻的边拉长）；rest 是布的静止位置函数 */
 const grip = (i0, j0, hand, rest, until) => [[0, 0], [1, 0], [0, 1], [1, 1]].map(([di, dj]) => {
   const i = Math.min(i0 + di, N - 1) - (i0 === N - 1 ? di : 0), j = Math.min(j0 + dj, N - 1) - (j0 === N - 1 ? dj : 0), r = rest(i, j), h0 = hand(0);
   return { i, j, until, pos: t => { const h = hand(t); return [r[0] + h[0] - h0[0], r[1] + h[1] - h0[1], r[2] + h[2] - h0[2]]; } };
 });
-
-/** 敦煌 fly：上沿两角（像飞天的两只手）沿螺旋上升（半径 0.4、每秒升 0.32 米），风往上、往左吹，下面三边在风里飘。
- *  只握一角时布会缩成一条（主平面两个尺度 0.53 × 0.2 m）；握两角保持展开（0.53 × 0.5 m），拉伸也从 10% 降到 5% */
-export const DH_HAND = t => [Math.cos(1.5 * t) * 0.4, 0.95 + 0.32 * t, Math.sin(1.5 * t) * 0.4 - 0.2];
-function dhFly() {
-  const rest = (i, j) => { const p = DH_HAND(0); return [p[0] + (i / (N - 1)) * S, p[1] - (j / (N - 1)) * S * 0.6, p[2] - (j / (N - 1)) * S * 0.8]; };
-  return bakeCloth({
-    nx: N, ny: N, rest, t1: 3.2, seed: 11, damping: 1.4, bend: 0.06, drag: 1.8, pins: [...grip(0, 0, DH_HAND, rest), ...grip(N - 2, 0, DH_HAND, rest)],
-    wind: (x, y, z, t, o, g) => {
-      // 阵风 + 沿布面往上走的一道道"波"（相位随 y 推进），布面才会起伏而不是整块平移
-      const wave = Math.sin(9 * y - 6 * t + 7 * g[0]) * Math.cos(5 * x + 3 * t);
-      o[0] = -2 + 0.9 * Math.sin(2.1 * t + 7 * g[0] + y * 3) + 1.4 * wave; o[1] = 1 + 0.9 * Math.sin(1.3 * t + 5 * g[1] + x * 2); o[2] = 0.8 * Math.cos(1.7 * t + x * 4 + 6 * g[2]) + 2.2 * wave;
-    },
-  });
-}
 
 /** 敦煌 drape：沿对角线 A(0,0)–C(N-1,N-1) 对折成三角（上面一层抬高 4 mm，折痕由弯曲约束记住），折边沿 x 横在颈后 10 cm；
  *  A、C 两端被带着从肩外侧绕到胸前、往下放，1.9 秒松手；三角的尖垂在背后 */
@@ -50,5 +35,5 @@ function dhDrape() {
   });
 }
 
-export const SIMS = { dunhuang: { fly: dhFly, drape: dhDrape }, songjin: {}, qinghua: {}, yunhe: {} };
+export const SIMS = { dunhuang: { drape: dhDrape }, songjin: {}, qinghua: {}, yunhe: {} };   // 飞天的飘带改成闭式（ribbon.js）：模拟里怎么握都不像飘带
 export function bakeFor(scarf) { return Object.fromEntries(Object.entries(SIMS[scarf]).map(([k, f]) => [k, f()])); }

@@ -1,11 +1,12 @@
 // shots.js — 21 个镜头（四款各五个 + 共用片尾）：每个镜头只由镜头本地时间 s.lt 决定丝巾的形状、相机、字幕与后期
+// shots.js — 21 个镜头（四款各五个 + 共用片尾）：每个镜头只由镜头本地时间 s.lt 决定丝巾的形状、相机、字幕与后期
 // 敦煌五个镜头做完整；宋锦 / 青花 / 云鹤先是占位（平铺或叠好的丝巾 + 字幕），做到时逐个替换
 import * as THREE from 'three';
 import { layersFor } from '../captions.js';
 import { BUST, SCARF } from '../meta.js';
 import { clothAt } from '../../factory/engine/cloth.js';
 import { foldInto } from './fold.js';
-import { DH_HAND } from './sims.js';
+import { ribbonInto } from './ribbon.js';
 import { lerp, easeInOut, ss } from '../../factory/engine/ease.js';
 
 const D = Math.PI / 180;
@@ -36,11 +37,12 @@ const dunhuang = {
     const B = box([c[0] - 0.3, P.top - 0.02, c[2] - 0.5], [c[0] + 0.05, P.top + 0.2, c[2] + 0.05]);
     return { camera: fit(B, s, [34, 26], [-28, -16], { fov: 30, scale: lerp(1.0, 1.08, s.u) }), text: text(ctx, s), post: { aperture: 0.25, maxBlur: 0.006 } };
   },
-  /** 飘带般盘旋上升：烘好的 fly 表；相机仰着跟，框住整块丝巾，荷兰角 8° */
+  /** 飘带般盘旋上升：闭式飘带（ribbon.js），丝巾沿手走过的螺旋拖在后面、截面卷成弧、沿长拧转；相机仰着跟，荷兰角 8° */
   dh_fly(ctx, s) {
-    fromSim(ctx, 'fly', s.lt);
-    const B = scarfBox(ctx.subjects.scarf).expandByScalar(0.08);
-    return { camera: fit(B, s, [-4, 8], [-24, 18], { fov: 34, up: [Math.sin(8 * D), Math.cos(8 * D), 0] }), text: text(ctx, s) };
+    const { scarf } = ctx.subjects;
+    ribbonInto(scarf.positions, scarf.n, s.lt); scarf.commit();
+    const B = scarfBox(scarf).expandByScalar(0.08);
+    return { camera: fit(B, s, [-2, 10], [-24, 18], { fov: 34, up: [Math.sin(8 * D), Math.cos(8 * D), 0] }), text: text(ctx, s) };
   },
   /** 仰拍：丝巾在藻井下 30 cm 铺开（平铺，从斜着慢慢转到和藻井对齐），镜头从斜着仰到正对；藻井在它后面露出一圈 */
   dh_ceiling(ctx, s) {
@@ -80,12 +82,13 @@ placeholders.sj_box = foldShot;
 export const SHOTS = {
   ...placeholders,
   ...dunhuang,
-  /** 片尾：叠好的丝巾放在礼盒里（盒子在 film.js 建），慢慢转 */
+  /** 片尾：叠好的丝巾（22.5 × 43.5 cm）摆在礼盒里，盒盖靠在后面；整组慢慢转 */
   end(ctx, s) {
-    const { scarf, giftBox } = ctx.subjects;
-    foldInto(scarf.positions, scarf.n, 1, { c: [0.1125, 0, 0.2325], y0: 0.92 }); scarf.commit();
-    giftBox.visible = true; giftBox.rotation.y = scarf.mesh.rotation.y = lerp(-0.25, 0.2, easeInOut(s.u));
-    return { camera: fit(box([-0.22, 0.86, -0.18], [0.22, 0.98, 0.18]), s, [32, 28], [12, 4], { fov: 28 }), text: text(ctx, s) };
+    const { scarf, giftBox } = ctx.subjects, G = giftBox.userData;
+    foldInto(scarf.positions, scarf.n, 1, { c: [0.1125, 0, 0.2325], y0: G.floor });   // 叠好后在 x ∈ [-0.225, 0]、z ∈ [-0.45, 0]：平移到盒子中心
+    scarf.commit();
+    giftBox.visible = true; giftBox.rotation.y = scarf.mesh.rotation.y = lerp(-0.35, -0.1, easeInOut(s.u));
+    return { camera: fit(box([-0.2, G.floor - 0.05, -0.3], [0.2, G.floor + 0.2, 0.3]), s, [36, 30], [18, 8], { fov: 28 }), text: text(ctx, s) };
   },
 };
 export { SCARF };

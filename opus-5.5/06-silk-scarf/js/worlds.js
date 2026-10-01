@@ -1,4 +1,5 @@
 // worlds.js — 四款丝巾各一个场景（setup 时按 scarf 建一个）：背景、地面、光、反射环境、后期
+// worlds.js — 四款丝巾各一个场景（setup 时按 scarf 建一个）：背景、地面、光、反射环境、后期
 // 每个场景返回 { env, post, props, update(s), reset(), dispose() }；props 是镜头要用的东西（人台、石台、瓷瓶……）
 // 目前：dunhuang 洞窟做完整；其余三款先是同一套中性影棚（占位），各自的镜头做到时再替换
 import * as THREE from 'three';
@@ -46,8 +47,8 @@ const WORLDS = {
     return {
       env: { base: '#120a05', strip: '#ffd2a0', k: 2, fill(add, B) { add(3, 6, [-10, 6, 5], B('#ffb060', 3)); add(6, 2, [6, 3, -8], B('#ffcf8a', 1)); } },
       post: { exposure: 1.12, vignette: 0.32, grain: 0.015, saturation: 1.08, lift: [0.014, 0.008, 0.002], gain: [1.03, 0.98, 0.9], bloom: { strength: 0.2, threshold: 0.82, radius: 0.5 } },
-      props: { plinth: { top: 0.9, c: [-0.6, 0.9, -0.3] }, ceiling: { y: 2.5 } },
-      update(s) { dust.update(s.t); dust.mesh.material.uniforms.uTime.value = s.t; },
+      props: { plinth: { top: 0.9, c: [-0.6, 0.9, -0.3], mesh: plinth }, ceiling: { y: 2.5 } },
+      update(s) { dust.update(s.t); dust.mesh.material.uniforms.uTime.value = s.t; plinth.visible = s.shot === 'dh_cave'; },   // 石台只在开场：之后的镜头里它会挡人台、割画面
       reset() {}, dispose() { ceilTex.dispose(); },
     };
   },
