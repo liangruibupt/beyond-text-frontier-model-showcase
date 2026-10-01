@@ -79,6 +79,14 @@ export function drawLayer(ctx, L, measure) {
   const pad = r.pad, xOf = w => (L.align === 'center' ? zx + (zw - w) / 2 : L.align === 'right' ? zx + zw - w - pad : zx + pad);   // 左 / 右对齐时底色块的边贴着区的边
   const rev = L.reveal ?? 1, a = L.alpha ?? 1;
   ctx.save();
+  if (L.panel && rev > 0) {                                                // 底板：铺满整个区的圆角卡片（片尾卡压在场景上时托住文字）
+    const P = L.panel, short = Math.min(zw, zh);
+    ctx.globalAlpha = a * smooth(rev) * (P.alpha ?? 1); ctx.fillStyle = P.fill;
+    if (P.shadow) { ctx.shadowColor = P.shadow; ctx.shadowBlur = 0.12 * short; ctx.shadowOffsetY = 0.03 * short; }
+    roundRect(ctx, zx, zy, zw, zh, (P.radius ?? 0.08) * short); ctx.fill();
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+    if (!L.text) { ctx.restore(); return r; }
+  }
   if (L.box && rev > 0) {                                                  // 角标底色块
     const x = xOf(r.width) - pad;
     ctx.globalAlpha = a * smooth(rev * 2); ctx.fillStyle = L.box.fill;

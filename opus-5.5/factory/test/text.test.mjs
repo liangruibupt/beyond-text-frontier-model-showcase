@@ -84,3 +84,17 @@ test('a boxed layer fits its text and padding in the zone width; left or right, 
     assert.equal(text, L.text); near(tx, x + r.pad, 1e-6);                        // 字在块里，两边各留 pad
   }
 });
+
+test('a panel layer fills its whole zone with a rounded card and draws no text when it has none', () => {
+  const { ctx, calls } = rec();
+  drawLayer(ctx, { text: '', lang: 'zh', font: F, zone: [40, 60, 300, 200], size: 20, panel: { fill: '#fbf5ea', radius: 0.1 } }, M);
+  const arcs = calls.filter(c => c[0] === 'arcTo');
+  assert.equal(arcs.length, 4);
+  near(arcs[0][1], 340); near(arcs[0][4], 260); near(arcs[3][1], 40); near(arcs[3][2], 60);   // 右下角、左上角正好是区的边
+  near(arcs[0][5], 20);                                                                        // 圆角 = 0.1 × 短边
+  assert.ok(calls.some(c => c[0] === 'fill'));
+  assert.ok(!calls.some(c => c[0] === 'fillText'));
+  const { ctx: c2, calls: k2 } = rec();                                                        // 还没入场就什么都不画
+  drawLayer(c2, { text: '', lang: 'zh', font: F, zone: [0, 0, 100, 100], size: 20, reveal: 0, panel: { fill: '#fff' } }, M);
+  assert.ok(!k2.some(c => c[0] === 'fill'));
+});

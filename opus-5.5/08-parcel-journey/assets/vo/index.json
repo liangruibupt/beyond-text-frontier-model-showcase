@@ -1,0 +1,482 @@
+{
+  "beans_en_15_door": {
+    "text": "and at your door by sunrise.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.728,
+    "lufs": -20
+  },
+  "beans_en_15_end_1111": {
+    "text": "Youji. Tomorrow, every time.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.776,
+    "lufs": -20
+  },
+  "beans_en_15_end_launch": {
+    "text": "Youji Next Day is here.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.44,
+    "lufs": -20
+  },
+  "beans_en_15_end_none": {
+    "text": "Youji. Tomorrow, every time.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.776,
+    "lufs": -20
+  },
+  "beans_en_15_hook": {
+    "text": "The second you tap order,",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.488,
+    "lufs": -20
+  },
+  "beans_en_15_robots": {
+    "text": "dozens of robots get moving.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.824,
+    "lufs": -20
+  },
+  "beans_en_15_route": {
+    "text": "Packed, sorted, out overnight,",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.728,
+    "lufs": -20
+  },
+  "beans_en_6_one_1111": {
+    "text": "Double Eleven: Geisha beans, nineteen dollars, here tomorrow.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1.11,
+    "dur": 3.576,
+    "lufs": -20
+  },
+  "beans_en_6_one_launch": {
+    "text": "Double Eleven: Geisha beans, nineteen dollars, here tomorrow.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1.11,
+    "dur": 3.576,
+    "lufs": -20
+  },
+  "beans_en_6_one_none": {
+    "text": "Double Eleven: Geisha beans, nineteen dollars, here tomorrow.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1.11,
+    "dur": 3.576,
+    "lufs": -20
+  },
+  "beans_zh_15_door": {
+    "text": "天一亮，就到你家门口。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.992,
+    "lufs": -20
+  },
+  "beans_zh_15_end_1111": {
+    "text": "有集，次次都次日达。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1.07,
+    "dur": 1.8,
+    "lufs": -20
+  },
+  "beans_zh_15_end_launch": {
+    "text": "有集次日达，上新了。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.8,
+    "lufs": -20
+  },
+  "beans_zh_15_end_none": {
+    "text": "有集，次次都次日达。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1.07,
+    "dur": 1.8,
+    "lufs": -20
+  },
+  "beans_zh_15_hook": {
+    "text": "你点下单的那一秒，",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.68,
+    "lufs": -20
+  },
+  "beans_zh_15_robots": {
+    "text": "几十台机器人就动了起来。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.232,
+    "lufs": -20
+  },
+  "beans_zh_15_route": {
+    "text": "打包、分拣，连夜出发，",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.8,
+    "lufs": -20
+  },
+  "beans_zh_6_one_1111": {
+    "text": "双十一，瑰夏咖啡豆一百二十九元，明天就到。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1.08,
+    "dur": 3.576,
+    "lufs": -20
+  },
+  "beans_zh_6_one_launch": {
+    "text": "双十一，瑰夏咖啡豆一百二十九元，明天就到。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1.08,
+    "dur": 3.576,
+    "lufs": -20
+  },
+  "beans_zh_6_one_none": {
+    "text": "双十一，瑰夏咖啡豆一百二十九元，明天就到。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1.08,
+    "dur": 3.576,
+    "lufs": -20
+  },
+  "headset_en_15_door": {
+    "text": "and at your door by sunrise.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.728,
+    "lufs": -20
+  },
+  "headset_en_15_end_1111": {
+    "text": "Youji. Tomorrow, every time.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.776,
+    "lufs": -20
+  },
+  "headset_en_15_end_launch": {
+    "text": "Youji Next Day is here.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.44,
+    "lufs": -20
+  },
+  "headset_en_15_end_none": {
+    "text": "Youji. Tomorrow, every time.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.776,
+    "lufs": -20
+  },
+  "headset_en_15_hook": {
+    "text": "The second you tap order,",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.464,
+    "lufs": -20
+  },
+  "headset_en_15_robots": {
+    "text": "dozens of robots get moving.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.824,
+    "lufs": -20
+  },
+  "headset_en_15_route": {
+    "text": "Packed, sorted, out overnight,",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.728,
+    "lufs": -20
+  },
+  "headset_en_6_one_1111": {
+    "text": "Double Eleven: headset, fifty-five dollars, here tomorrow.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1.11,
+    "dur": 3.504,
+    "lufs": -20
+  },
+  "headset_en_6_one_launch": {
+    "text": "Double Eleven: headset, fifty-five dollars, here tomorrow.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1.11,
+    "dur": 3.504,
+    "lufs": -20
+  },
+  "headset_en_6_one_none": {
+    "text": "Double Eleven: headset, fifty-five dollars, here tomorrow.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1.11,
+    "dur": 3.504,
+    "lufs": -20
+  },
+  "headset_zh_15_door": {
+    "text": "天一亮，就到你家门口。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.992,
+    "lufs": -20
+  },
+  "headset_zh_15_end_1111": {
+    "text": "有集，次次都次日达。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1.07,
+    "dur": 1.8,
+    "lufs": -20
+  },
+  "headset_zh_15_end_launch": {
+    "text": "有集次日达，上新了。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.8,
+    "lufs": -20
+  },
+  "headset_zh_15_end_none": {
+    "text": "有集，次次都次日达。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1.07,
+    "dur": 1.8,
+    "lufs": -20
+  },
+  "headset_zh_15_hook": {
+    "text": "你点下单的那一秒，",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.68,
+    "lufs": -20
+  },
+  "headset_zh_15_robots": {
+    "text": "几十台机器人就动了起来。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.232,
+    "lufs": -20
+  },
+  "headset_zh_15_route": {
+    "text": "打包、分拣，连夜出发，",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.8,
+    "lufs": -20
+  },
+  "headset_zh_6_one_1111": {
+    "text": "双十一，耳机三百五十九元，明天就到。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.192,
+    "lufs": -20
+  },
+  "headset_zh_6_one_launch": {
+    "text": "双十一，耳机三百五十九元，明天就到。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.216,
+    "lufs": -20
+  },
+  "headset_zh_6_one_none": {
+    "text": "双十一，耳机三百五十九元，明天就到。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.216,
+    "lufs": -20
+  },
+  "lantern_en_15_door": {
+    "text": "and at your door by sunrise.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.728,
+    "lufs": -20
+  },
+  "lantern_en_15_end_1111": {
+    "text": "Youji. Tomorrow, every time.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.776,
+    "lufs": -20
+  },
+  "lantern_en_15_end_launch": {
+    "text": "Youji Next Day is here.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.44,
+    "lufs": -20
+  },
+  "lantern_en_15_end_none": {
+    "text": "Youji. Tomorrow, every time.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.776,
+    "lufs": -20
+  },
+  "lantern_en_15_hook": {
+    "text": "The second you tap order,",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.464,
+    "lufs": -20
+  },
+  "lantern_en_15_robots": {
+    "text": "dozens of robots get moving.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.824,
+    "lufs": -20
+  },
+  "lantern_en_15_route": {
+    "text": "Packed, sorted, out overnight,",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.728,
+    "lufs": -20
+  },
+  "lantern_en_6_one_1111": {
+    "text": "Double Eleven: lantern, nineteen dollars, here tomorrow.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1.05,
+    "dur": 3.48,
+    "lufs": -20
+  },
+  "lantern_en_6_one_launch": {
+    "text": "Double Eleven: lantern, nineteen dollars, here tomorrow.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1.05,
+    "dur": 3.48,
+    "lufs": -20
+  },
+  "lantern_en_6_one_none": {
+    "text": "Double Eleven: lantern, nineteen dollars, here tomorrow.",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1.05,
+    "dur": 3.48,
+    "lufs": -20
+  },
+  "lantern_zh_15_door": {
+    "text": "天一亮，就到你家门口。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.992,
+    "lufs": -20
+  },
+  "lantern_zh_15_end_1111": {
+    "text": "有集，次次都次日达。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1.07,
+    "dur": 1.8,
+    "lufs": -20
+  },
+  "lantern_zh_15_end_launch": {
+    "text": "有集次日达，上新了。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.8,
+    "lufs": -20
+  },
+  "lantern_zh_15_end_none": {
+    "text": "有集，次次都次日达。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1.07,
+    "dur": 1.8,
+    "lufs": -20
+  },
+  "lantern_zh_15_hook": {
+    "text": "你点下单的那一秒，",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.68,
+    "lufs": -20
+  },
+  "lantern_zh_15_robots": {
+    "text": "几十台机器人就动了起来。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.232,
+    "lufs": -20
+  },
+  "lantern_zh_15_route": {
+    "text": "打包、分拣，连夜出发，",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.8,
+    "lufs": -20
+  },
+  "lantern_zh_6_one_1111": {
+    "text": "双十一，营地灯一百二十九元，明天就到。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.336,
+    "lufs": -20
+  },
+  "lantern_zh_6_one_launch": {
+    "text": "双十一，营地灯一百二十九元，明天就到。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.36,
+    "lufs": -20
+  },
+  "lantern_zh_6_one_none": {
+    "text": "双十一，营地灯一百二十九元，明天就到。",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.336,
+    "lufs": -20
+  }
+}
