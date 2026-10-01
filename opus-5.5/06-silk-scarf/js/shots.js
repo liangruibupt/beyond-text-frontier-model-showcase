@@ -24,27 +24,31 @@ const BUST_BOX = box([-0.26, BUST.base + 0.05, -0.2], [0.26, BUST.top + 0.06, 0.
 
 // ── 敦煌「飞天」 ──
 const dunhuang = {
-  /** 石台上叠着的丝巾，1.5 秒一阵风把它掀起来（这一段只是 fly 开头之前的预备：叠放 → 被风掀起一角） */
+  /** 石台上叠着的丝巾：近景；1.2 秒起风，叠好的最上一层慢慢翻开、掀起来（折叠进度往回走） */
   dh_cave(ctx, s) {
     const { scarf, world } = ctx.subjects, P = world.props.plinth;
-    const lift = ss(1.2, 2.25, s.lt);
-    foldInto(scarf.positions, scarf.n, 1 - 0.55 * lift, { c: [P.c[0] + 0.05, 0, P.c[2] + 0.11], y0: P.top + 0.004 });
+    const lift = easeInOut(ss(1.0, 2.25, s.lt));
+    const c = [P.c[0] + 0.11, 0, P.c[2] + 0.12];
+    foldInto(scarf.positions, scarf.n, 1 - 0.34 * lift, { c, y0: P.top + 0.004 });
+    // 风：掀起来的那一层边缘轻轻起伏（只动离石台高的顶点）
+    for (let k = 1; k < scarf.positions.length; k += 3) { const h = scarf.positions[k] - P.top; if (h > 0.01) scarf.positions[k] += 0.012 * lift * Math.sin(scarf.positions[k - 1] * 30 + s.lt * 7); }
     scarf.commit();
-    return { camera: fit(box([P.c[0] - 0.3, P.top - 0.12, P.c[2] - 0.25], [P.c[0] + 0.3, P.top + 0.18, P.c[2] + 0.3]), s, [30, 22], [-22, -12], { fov: 32 }), text: text(ctx, s), post: { aperture: 0.25, maxBlur: 0.006 } };
+    const B = box([c[0] - 0.3, P.top - 0.02, c[2] - 0.5], [c[0] + 0.05, P.top + 0.2, c[2] + 0.05]);
+    return { camera: fit(B, s, [34, 26], [-28, -16], { fov: 30, scale: lerp(1.0, 1.08, s.u) }), text: text(ctx, s), post: { aperture: 0.25, maxBlur: 0.006 } };
   },
-  /** 飘带般盘旋上升：烘好的 fly 表；相机仰着追，荷兰角 8° */
+  /** 飘带般盘旋上升：烘好的 fly 表；相机仰着跟，框住整块丝巾，荷兰角 8° */
   dh_fly(ctx, s) {
     fromSim(ctx, 'fly', s.lt);
-    const h = DH_HAND(s.lt), B = scarfBox(ctx.subjects.scarf).expandByScalar(0.05);
-    return { camera: fit(B, s, [-6, 6], [-30 + h[0] * 20, 20], { fov: 34, up: [Math.sin(8 * D), Math.cos(8 * D), 0] }), text: text(ctx, s) };
+    const B = scarfBox(ctx.subjects.scarf).expandByScalar(0.08);
+    return { camera: fit(B, s, [-4, 8], [-24, 18], { fov: 34, up: [Math.sin(8 * D), Math.cos(8 * D), 0] }), text: text(ctx, s) };
   },
-  /** 仰拍：丝巾在藻井下铺开（平铺、慢慢转），镜头从斜着仰到正对 */
+  /** 仰拍：丝巾在藻井下 30 cm 铺开（平铺，从斜着慢慢转到和藻井对齐），镜头从斜着仰到正对；藻井在它后面露出一圈 */
   dh_ceiling(ctx, s) {
-    const { scarf } = ctx.subjects;
-    scarf.flat([0, 1.9, -0.1], lerp(-0.5, 0, easeInOut(s.u)));
-    for (let k = 1; k < scarf.positions.length; k += 3) { const x = scarf.positions[k - 1], z = scarf.positions[k + 1]; scarf.positions[k] += 0.02 * Math.sin(x * 9 + s.lt * 2.2) * Math.cos(z * 7 - s.lt * 1.7); }   // 轻轻起伏
+    const { scarf, world } = ctx.subjects, y = world.props.ceiling.y - 0.3, e = easeInOut(s.u);
+    scarf.flat([0, y, -0.1], lerp(-0.6, 0, e));
+    for (let k = 1; k < scarf.positions.length; k += 3) { const x = scarf.positions[k - 1], z = scarf.positions[k + 1]; scarf.positions[k] += 0.018 * (1 - e * 0.7) * Math.sin(x * 9 + s.lt * 2.2) * Math.cos(z * 7 - s.lt * 1.7); }   // 轻轻起伏，对齐时渐平
     scarf.commit();
-    return { camera: fit(box([-0.48, 1.86, -0.58], [0.48, 1.94, 0.38]), s, [-62, -88], [0, 0], { fov: 36, scale: lerp(0.9, 1, s.u) }), text: text(ctx, s) };
+    return { camera: fit(box([-0.62, y - 0.02, -0.72], [0.62, y + 0.32, 0.52]), s, [-58, -86], [0, 0], { fov: 38, scale: lerp(0.92, 1, e) }), text: text(ctx, s) };
   },
   /** 落人台肩：烘好的 drape 表 */
   dh_drape(ctx, s) {

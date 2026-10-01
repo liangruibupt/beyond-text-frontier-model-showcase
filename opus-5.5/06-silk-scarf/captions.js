@@ -16,8 +16,8 @@ export function layersFor(v, s) {
     case 'open': return [{ ...base, id: 'cap', zone: 'cap', text: cap, font: F.display, size: L === 'zh' ? 0.07 : 0.06, tracking: zt, lineHeight: 1.25, maxLines: 2, in: [a + 0.35, a + 1.05] }];
     case 'line': return cap ? [{ ...base, id: 'cap', zone: 'cap', text: cap, font: F.body, size: L === 'zh' ? 0.044 : 0.046, tracking: zt * 0.7, lineHeight: 1.25, maxLines: 2, in: [a + 0.3, a + 0.9] }] : [];
     case 'title': return [
-      { ...base, id: 'title', zone: 'title', text: k.name[L], font: F.display, size: L === 'zh' ? 0.085 : 0.075, tracking: zt * 1.2, lineHeight: 1.15, maxLines: 2, in: [a + 0.2, a + 0.8] },
-      { ...base, id: 'sub', zone: 'sub', lang: 'en', text: 'JINSHI', font: FONTS.brand, size: 0.036, tracking: 0.4, color: pal.soft, maxLines: 1, in: [a + 0.5, a + 1.1] },
+      { ...base, id: 'title', zone: 'title', text: k.name[L], font: F.display, size: L === 'zh' ? 0.085 : 0.075, tracking: zt * 1.2, lineHeight: 1.15, maxLines: 2, in: [a + 0.1, a + 0.6] },
+      { ...base, id: 'sub', zone: 'sub', lang: 'en', text: 'JINSHI', font: FONTS.brand, size: 0.042, tracking: 0.4, color: pal.ink, shadow: { color: pal.shadow, blur: 0.25 }, maxLines: 1, in: [a + 0.3, a + 0.7] },
     ];
     case 'end': return [
       { ...base, id: 'logo', zone: 'logo', lang: 'zh', text: '锦时', font: FONTS.zh.display, size: 0.1, tracking: 0.3, lineHeight: 1.05, maxLines: 1, in: [a, a + 0.5] },

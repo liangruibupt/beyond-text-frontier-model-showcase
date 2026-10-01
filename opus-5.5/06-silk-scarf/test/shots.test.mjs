@@ -14,8 +14,8 @@ function make(scarf) {
   const ctx = { variant: { scarf, lang: 'zh', cut: 15, promo: 'none', ar: '16x9', vo: 'on' }, scene: new THREE.Scene(), renderer: null };
   const k = SCARVES[scarf];
   ctx.world = buildWorld(ctx, scarf, k);
-  const scarfMesh = buildScarf(k), b = bust();
-  ctx.subjects = { scarf: scarfMesh, sims: bakeFor(scarf), world: ctx.world, bust: b.group, giftBox: new THREE.Group() };
+  const scarfMesh = buildScarf(k), b = bust(), gb = new THREE.Group(); gb.userData.floor = 0.888;
+  ctx.subjects = { scarf: scarfMesh, sims: bakeFor(scarf), world: ctx.world, bust: b.group, giftBox: gb };
   return ctx;
 }
 function state(ctx, built, t) {

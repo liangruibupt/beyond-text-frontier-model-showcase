@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { sweep, dotTexture, softSprites, driftField, puffAtlas, keyLight } from '../../05-bubble-tea/js/worlds/common.js';
 import { BUST } from '../meta.js';
 import { BUST_COLLIDERS, CHEST } from './bust.js';
+import { patternTexture } from './scarf.js';
 
 /** 人台：躯干 + 肩 + 颈，碰撞体和网格同一组尺寸（布料的 colliders 从这里取） */
 export function bust(color = '#e9e2d6') {
@@ -20,17 +21,22 @@ export function bust(color = '#e9e2d6') {
 }
 
 const WORLDS = {
-  // 敦煌：烛光洞窟。土黄的窟壁（弯成穹顶的背景），石台，侧面一盏暖烛光，空气里浮着尘
-  dunhuang(ctx) {
+  // 敦煌：烛光洞窟。土黄的窟壁（弯成穹顶的背景），石台，侧面一盏暖烛光，空气里浮着尘；头顶一方藻井（ceiling 镜头仰拍）
+  dunhuang(ctx, k) {
     const { scene } = ctx;
-    scene.background = new THREE.Color('#1b0f08'); scene.fog = new THREE.Fog('#24140a', 1.2, 4.5);
-    const wall = new THREE.Mesh(sweep(['#5a3a22', '#2a180c'], { width: 5, floor: 2, R: 0.8, wall: 3, z0: -1.4 }), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, side: THREE.DoubleSide }));
+    scene.background = new THREE.Color('#1b0f08'); scene.fog = new THREE.Fog('#24140a', 1.6, 6);
+    const wall = new THREE.Mesh(sweep(['#6a4628', '#2e1b0e'], { width: 5, floor: 2, R: 0.8, wall: 3, z0: -1.4 }), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, side: THREE.DoubleSide }));
     wall.receiveShadow = true;
-    const plinth = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.9, 0.5), new THREE.MeshStandardMaterial({ color: '#6b5440', roughness: 0.9 }));
+    const plinth = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.9, 0.5), new THREE.MeshStandardMaterial({ color: '#7a6048', roughness: 0.9 }));
     plinth.position.set(-0.6, 0.45, -0.3); plinth.castShadow = plinth.receiveShadow = true;
-    const key = keyLight('#ffb062', 2.4, [-1.4, 2.2, 1.0], { radius: 3, size: 1.2 });
-    const rim = new THREE.DirectionalLight('#ffcf8a', 0.9); rim.position.set(1.2, 1.8, -1.6);
-    scene.add(wall, plinth, key, key.target, rim, new THREE.HemisphereLight('#4a3220', '#120a05', 0.5));
+    // 藻井：画成和丝巾同一套纹样的天花（大一圈、更暗），丝巾在它下面铺开时纹样对上
+    const ceilTex = patternTexture({ pattern: k.pattern }, 1024).texture;
+    const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 1.6), new THREE.MeshStandardMaterial({ map: ceilTex, color: '#8a7a68', roughness: 0.95 }));
+    ceiling.rotation.x = Math.PI / 2; ceiling.position.set(0, 2.5, -0.1);
+    const key = keyLight('#ffb062', 2.8, [-1.4, 2.2, 1.0], { radius: 3, size: 1.2 });
+    const rim = new THREE.DirectionalLight('#ffd49a', 1.6); rim.position.set(1.4, 1.6, -1.8);           // 侧逆光：丝的光泽
+    const up = new THREE.SpotLight('#ffc27a', 2.2, 1.6, 1.25, 1, 1.2); up.position.set(0, 1.95, 0.3); up.target.position.set(0, 2.5, -0.1);   // 往上照藻井和仰拍的丝巾：角度开大、边缘全软，不出亮斑；放在人台头顶以上
+    scene.add(wall, plinth, ceiling, key, key.target, rim, up, up.target, new THREE.HemisphereLight('#6a4a30', '#160c06', 0.7));
     const dust = driftField({
       geometry: new THREE.PlaneGeometry(1, 1), count: 60, seed: 61, fade: 'alpha',
       material: softSprites({ map: dotTexture(), color: '#ffd9a0', opacity: 0.5, additive: true, twinkle: 0.4 }),
@@ -39,10 +45,10 @@ const WORLDS = {
     scene.add(dust.mesh);
     return {
       env: { base: '#120a05', strip: '#ffd2a0', k: 2, fill(add, B) { add(3, 6, [-10, 6, 5], B('#ffb060', 3)); add(6, 2, [6, 3, -8], B('#ffcf8a', 1)); } },
-      post: { exposure: 0.92, vignette: 0.38, grain: 0.015, saturation: 1.06, lift: [0.01, 0.005, 0], gain: [1.03, 0.98, 0.9], bloom: { strength: 0.18, threshold: 0.85, radius: 0.5 } },
-      props: { plinth: { top: 0.9, c: [-0.6, 0.9, -0.3] } },
+      post: { exposure: 1.12, vignette: 0.32, grain: 0.015, saturation: 1.08, lift: [0.014, 0.008, 0.002], gain: [1.03, 0.98, 0.9], bloom: { strength: 0.2, threshold: 0.82, radius: 0.5 } },
+      props: { plinth: { top: 0.9, c: [-0.6, 0.9, -0.3] }, ceiling: { y: 2.5 } },
       update(s) { dust.update(s.t); dust.mesh.material.uniforms.uTime.value = s.t; },
-      reset() {}, dispose() {},
+      reset() {}, dispose() { ceilTex.dispose(); },
     };
   },
 };

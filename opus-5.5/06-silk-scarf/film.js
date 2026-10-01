@@ -12,17 +12,22 @@ import { SHOTS } from './js/shots.js';
 import { score } from './js/score.js';
 import { envMap } from '../03-perfume/js/worlds/common.js';
 
-/** 礼盒：一只浅口的方盒（盒底 + 四壁），里面铺一层衬纸；片尾用 */
+/** 礼盒：一只浅口的长方盒（装得下叠好的 22.5 × 43.5 cm 丝巾，四周各留 1.5 cm），衬纸，盒盖斜靠在后面；放在一个圆台上 */
 function giftBox(k) {
-  const g = new THREE.Group(), w = 0.26, d = 0.26, h = 0.05, t = 0.004, y = 0.88;
-  const m = new THREE.MeshPhysicalMaterial({ color: k.palette.accent, roughness: 0.55, sheen: 0.4 }), lining = new THREE.MeshStandardMaterial({ color: '#f3ece0', roughness: 0.9 });
-  const add = (geo, mat, x, yy, z) => { const s = new THREE.Mesh(geo, mat); s.position.set(x, yy, z); s.castShadow = s.receiveShadow = true; g.add(s); };
-  add(new THREE.BoxGeometry(w, t, d), m, 0, y, 0);
+  const g = new THREE.Group(), w = 0.255, d = 0.465, h = 0.045, t = 0.005, y = 0.88;
+  const m = new THREE.MeshPhysicalMaterial({ color: k.palette.accent, roughness: 0.5, sheen: 0.5, sheenColor: new THREE.Color('#ffffff') }), lining = new THREE.MeshStandardMaterial({ color: '#f3ece0', roughness: 0.9 });
+  const add = (geo, mat, x, yy, z, p = g) => { const s = new THREE.Mesh(geo, mat); s.position.set(x, yy, z); s.castShadow = s.receiveShadow = true; p.add(s); return s; };
+  add(new THREE.BoxGeometry(w, t, d), m, 0, y + t / 2, 0);
   add(new THREE.BoxGeometry(w, h, t), m, 0, y + h / 2, -d / 2); add(new THREE.BoxGeometry(w, h, t), m, 0, y + h / 2, d / 2);
   add(new THREE.BoxGeometry(t, h, d), m, -w / 2, y + h / 2, 0); add(new THREE.BoxGeometry(t, h, d), m, w / 2, y + h / 2, 0);
-  add(new THREE.BoxGeometry(w - 2 * t, 0.002, d - 2 * t), lining, 0, y + t, 0);
-  const stage = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.42, y, 64), new THREE.MeshStandardMaterial({ color: '#2a1d16', roughness: 0.6 }));
+  add(new THREE.BoxGeometry(w - 2 * t, 0.002, d - 2 * t), lining, 0, y + t + 0.001, 0);
+  // 盒盖：同尺寸略大一圈，竖着斜靠在盒子后面，盖面朝镜头，烫一道金色缎带
+  const lid = new THREE.Group(); lid.position.set(0, y, -d / 2 - 0.03); lid.rotation.x = -0.32; g.add(lid);
+  add(new THREE.BoxGeometry(w + 0.01, d + 0.01, 0.012), m, 0, (d + 0.01) / 2, 0, lid);
+  add(new THREE.BoxGeometry(0.03, d + 0.012, 0.014), new THREE.MeshStandardMaterial({ color: '#c99a3b', metalness: 0.6, roughness: 0.35 }), 0, (d + 0.01) / 2, 0, lid);
+  const stage = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.44, y, 64), new THREE.MeshStandardMaterial({ color: '#2a1d16', roughness: 0.6 }));
   stage.position.y = y / 2; stage.receiveShadow = true; g.add(stage);
+  g.userData.floor = y + t + 0.003;                                    // 丝巾放在衬纸上
   return g;
 }
 
