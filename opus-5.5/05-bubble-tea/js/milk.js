@@ -4,6 +4,7 @@
 // 颜色只由（本地坐标, uMilk, 口味常数）决定，镜头每帧只设 uMilk：跳着看和顺序播放同一帧
 import * as THREE from 'three';
 import { CUP } from '../meta.js';
+import { STREAM } from './cup.js';
 
 const NOISE = /* glsl */`
 float mHash(vec3 p) { p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
@@ -23,7 +24,7 @@ export function attachMilk(material, flavor) {
   const U = {
     uMilk: { value: 1 }, uTea: { value: new THREE.Color(flavor.liquid.color).multiplyScalar(0.72) }, uMilkC: { value: new THREE.Color(flavor.milk) },
     uMix: { value: new THREE.Color(flavor.liquid.color) }, uSyrup: { value: new THREE.Color(flavor.syrup ?? flavor.liquid.color) },
-    uBand: { value: flavor.liquid.band }, uFill: { value: CUP.fill }, uBase: { value: CUP.pile }, uStripes: { value: flavor.stripes ? 1 : 0 },
+    uBand: { value: flavor.liquid.band }, uFill: { value: CUP.fill }, uBase: { value: CUP.pile }, uStripes: { value: flavor.stripes ? 1 : 0 }, uImpact: { value: new THREE.Vector2(STREAM.x, STREAM.z) },
   };
   const prev = material.onBeforeCompile;
   material.onBeforeCompile = sh => {
@@ -33,7 +34,7 @@ export function attachMilk(material, flavor) {
       .replace('#include <begin_vertex>', '#include <begin_vertex>\nvLocal = position;');
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
 varying vec3 vLocal;
-uniform float uMilk, uBand, uFill, uBase, uStripes; uniform vec3 uTea, uMilkC, uMix, uSyrup;
+uniform float uMilk, uBand, uFill, uBase, uStripes; uniform vec3 uTea, uMilkC, uMix, uSyrup; uniform vec2 uImpact;
 ${NOISE}`).replace('#include <color_fragment>', `#include <color_fragment>
 {
   vec3 p = vLocal;
@@ -41,7 +42,8 @@ ${NOISE}`).replace('#include <color_fragment>', `#include <color_fragment>
   vec3 w = p * 70.0 + vec3(0.0, uMilk * 2.5, 0.0);
   vec3 q = w + 1.6 * vec3(mFbm(w + 3.1), mFbm(w + 7.7), mFbm(w + 1.9));  // 域扭曲：奶在茶里卷开
   float front = 1.0 - uMilk * 1.25;                                     // 奶的前沿从液面（h = 1）往下推，uMilk = 0.8 左右到底
-  float swirl = smoothstep(front - 0.18, front + 0.18, h + 0.35 * (mFbm(q) - 0.5));
+  float plume = 0.55 * (1.0 - smoothstep(0.004, 0.03, length(p.xz - uImpact)));   // 奶从落点往下钻：落点下面先变白
+  float swirl = smoothstep(front - 0.18, front + 0.18, h + plume + 0.35 * (mFbm(q) - 0.5));
   float marble = smoothstep(0.35, 0.65, mFbm(q * 1.7));
   vec3 c = mix(uTea, mix(uMix, uMilkC, 0.55 * marble), swirl);
   c = mix(c, uMix, smoothstep(0.75, 1.0, uMilk) * 0.7);                 // 冲完以后渐渐混匀，只留一点纹

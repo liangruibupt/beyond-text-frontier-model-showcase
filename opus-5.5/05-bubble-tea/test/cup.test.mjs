@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
-import { buildCup, dewAt, lidDent, rOut, DEW, LID } from '../js/cup.js';
+import { buildCup, dewAt, lidDent, rOut, DEW, LID, STREAM, surfaceDisp, streamAt } from '../js/cup.js';
 import { bakePearls } from '../js/pearls.js';
 import { SHOTS } from '../js/shots.js';
 import { FLAVORS } from '../flavors.js';
@@ -21,7 +21,7 @@ function frame(ctx, b, t) {
   SHOTS[e.shot](ctx, { name: e.shot, lt, dur, u: Math.min(1, lt / dur), from: e.from, t, row: {} });
   const P = cup.parts;
   return [P.pearls.instanceMatrix.array, P.dew.instanceMatrix.array, P.lid.geometry.attributes.position.array, P.straw.position.toArray(), [P.straw.visible, P.lid.visible, P.ice.visible, P.dew.visible, cup.root.rotation.y],
-    P.ice.children.flatMap(c => [...c.position.toArray(), ...c.rotation.toArray().slice(0, 3)]), [P.body.scale.y, P.body.position.y]].map(a => Array.from(a).join(',')).join('|');
+    P.ice.children.flatMap(c => [...c.position.toArray(), ...c.rotation.toArray().slice(0, 3)]), [P.body.scale.y, P.body.position.y], P.surface.geometry.attributes.position.array, P.foam.instanceMatrix.array, P.splash.instanceMatrix.array, P.stream.geometry.attributes.position.array, [P.stream.visible]].map(a => Array.from(a).join(',')).join('|');
 }
 
 test('every frame depends only on t: in order, shuffled and reversed give the same state (both cuts, all flavours)', () => {
@@ -70,4 +70,14 @@ test('everything visible stays inside the framing boxes', () => {
   assert.ok(box(BOX.cup).containsBox(B), `cup parts ${B.min.toArray()} ${B.max.toArray()}`);
   const S = new THREE.Box3().setFromObject(cup.parts.straw);
   assert.ok(S.min.y >= 0 && S.max.y > CUP.height, 'the straw sticks out above the lid');
+});
+
+test('pouring: the surface dips under the stream, is flat before the pour and at the wall, and the stream lands on it', () => {
+  const R = 0.04;
+  assert.equal(surfaceDisp(STREAM.x, STREAM.z, -1, R), 0);
+  assert.ok(surfaceDisp(STREAM.x, STREAM.z, 0.8, R) < -0.002, 'a crater where the milk lands');
+  for (let a = 0; a < 6.3; a += 0.3) assert.ok(Math.abs(surfaceDisp(Math.cos(a) * R, Math.sin(a) * R, 0.8, R)) < 1e-9, 'still at the wall');
+  assert.ok(Math.abs(surfaceDisp(0.01, 0.01, 4, R)) < 2e-4, 'settles after the pour');
+  const top = 0.07, c = streamAt(1, top, 0.5); assert.ok(Math.abs(c[1] - top) < 1e-12);
+  assert.ok(Math.abs(c[0] - STREAM.x) < 0.002 && Math.abs(c[2] - STREAM.z) < 0.002);
 });

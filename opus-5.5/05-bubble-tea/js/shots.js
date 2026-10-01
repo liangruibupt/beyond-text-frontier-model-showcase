@@ -27,9 +27,8 @@ export const SHOTS = {
   },
   /** 注茶、冲奶：茶汤从杯底涨到满杯，0.75 秒奶花在茶里绽开（tea.js 的奶纹由 cup.posed.fill 推进） */
   pour(ctx, s) {
-    const fill = easeInOut(ss(0.0, 2.0, s.lt));
-    const sw = ss(0.0, 0.2, s.lt) * (1 - ss(1.75, 2.1, s.lt));           // 奶柱 0.2 秒内冲下来，涨满前收掉
-    ctx.subjects.cup.pose({ ...DONE, fill, iceT: -1, lid: false, stream: sw });
+    const fill = ss(0.14, 1.85, s.lt);                                   // 奶头落到液面（0.16 秒）开始涨，停倒后奶尾落完就满
+    ctx.subjects.cup.pose({ ...DONE, fill, iceT: -1, lid: false, pourT: s.lt });   // 奶柱、液面的坑和波纹、奶泡、奶滴都由 pourT 定
     ctx.subjects.milk?.(ss(EV.bloom - 0.35, 2.2, s.lt));                // 奶在 bloom 命中点前后冲进来，前沿一路往下
     return { camera: fit('pour', s, {}, ctx), text: text(ctx, s) };
   },
