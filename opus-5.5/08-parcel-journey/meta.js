@@ -60,11 +60,13 @@ export const MOTION = {
   trike: lt => S_OF.road + (S_OF.door - 0.15 - S_OF.road) * (1 - (1 - sm(0, 1.4, lt)) ** 2),
 };
 
-// 等距方向（长焦冒充正交）：相机从这个方向看向取景点
-export const ISO_DIR = [0.9, 0.78, 1.0];
-export const FOV = 10;
+// 看向取景点的方向（写实焦段，贴地的 3/4 视角——不再是长焦俯瞰的沙盘）：
+// y 分量压得很低（相机只比看点高一点点，像蹲在地面上拍），往 +z（朝相机）和 +x（沿路）各偏一些。
+// fov ≈ 35°（约等效 50 mm），配上很近的机位距离，前景被浅景深化开、远处纵深压缩，像真的在现场。
+export const ISO_DIR = [0.72, 0.34, 1.0];
+export const FOV = 35;
 
-/** 取景点 c + 等距方向 × 距离 dist 得到机位（vertical fov 10°：画面高 ≈ 0.175·dist 米） */
+/** 取景点 c + 方向 × 距离 dist 得到机位（vertical fov 35°：画面高 ≈ 2·tan(17.5°)·dist ≈ 0.631·dist 米） */
 function poseAt(c, dist) {
   const n = Math.hypot(...ISO_DIR), u = ISO_DIR.map(x => x / n);
   return { position: [c[0] + u[0] * dist, c[1] + u[1] * dist, c[2] + u[2] * dist], target: [...c] };
@@ -75,13 +77,13 @@ function poseAt(c, dist) {
 // at 返回世界坐标的看点；卡车 / 三轮车的看点跟着 MOTION 走。push：hold 期间缓慢推近的比例。
 const P = (k, dy = 0, dq = 0, ds = 0) => () => { const c = STATIONS[k], o = lane(ds, dq, dy); return [c[0] + o[0], o[1], c[2] + o[2]]; };
 export const RIG = {
-  order: { at: P('phone', 0.03), dist: 4.6, push: 0.1, move: [0.7, 1.0] },
-  robots: { at: P('warehouse', 0.05), dist: 8.2, push: 0.08, move: [0.8, 1.0] },
-  pack: { at: P('pack', 0.2), dist: 4.2, push: 0.1, move: [0.8, 1.0] },
-  sort: { at: P('sorter', 0.12, 0.05, 0.05), dist: 4.8, push: 0.06, move: [0.75, 1.0] },
-  truck: { at: lt => lane(Math.min(MOTION.truck(lt) + 0.1, S_OF.road), 0.0, 0.18), dist: 5.6, push: 0, move: [0.85, 1.0] },
-  lastmile: { at: lt => lane(MOTION.trike(lt), 0.05, 0.14), dist: 4.6, push: 0, move: [0.9, 1.0] },
-  door: { at: P('door', 0.2, 0.2, -0.1), dist: 5.0, push: 0.06, move: [2, 2] },
+  order: { at: P('phone', 0.06), dist: 1.5, push: 0.12, move: [0.7, 1.0] },
+  robots: { at: P('warehouse', 0.14), dist: 3.4, push: 0.1, move: [0.8, 1.0] },
+  pack: { at: P('pack', 0.14), dist: 1.5, push: 0.12, move: [0.8, 1.0] },
+  sort: { at: P('sorter', 0.12, 0.05, 0.05), dist: 1.9, push: 0.08, move: [0.75, 1.0] },
+  truck: { at: lt => lane(Math.min(MOTION.truck(lt) + 0.1, S_OF.road), 0.0, 0.26), dist: 2.4, push: 0, move: [0.85, 1.0] },
+  lastmile: { at: lt => lane(MOTION.trike(lt), 0.16, 0.1), dist: 2.0, push: 0, move: [0.9, 1.0] },
+  door: { at: P('door', 0.22, 0.14, -0.06), dist: 2.0, push: 0.08, move: [2, 2] },
 };
 const NEXT = { order: 'robots', robots: 'pack', pack: 'sort', sort: 'truck', truck: 'lastmile', lastmile: 'door' };
 // 各镜头的天然时长（15 秒版剪辑表）：镜头本地时间按这个算进度，跟哪一版剪辑无关
