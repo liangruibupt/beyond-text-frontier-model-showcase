@@ -58,10 +58,10 @@ function songjin(ctx, k) {
   });
   scene.add(dust.mesh);
   /** 光梭位置：r = 已织比例（0 在 z0 边），on = 亮度 0..1 */
-  const shuttle = (r, on) => { const z = z0 + (z1 - z0) * r; bar.position.set(0, y + 0.006, z); glow.position.set(0, y + 0.08, z); bar.visible = on > 0.01; glow.intensity = 0.7 * on; bar.material.color.set('#ffd98a').multiplyScalar(2.2 * on + 0.001); };
+  const shuttle = (r, on) => { const z = z0 + (z1 - z0) * r; bar.position.set(0, y + 0.006, z); glow.position.set(0, y + 0.08, z); bar.visible = on > 0.01; glow.intensity = 0.3 * on; bar.material.color.set('#ffd98a').multiplyScalar(1.1 * on + 0.001); };   // 用户：光梭再暗些（2.2 / 0.7 时仍盖住纹样）
   return {
     env: { base: '#0a0d18', strip: '#ffe0b0', k: 2, fill(add, B) { add(3, 6, [-10, 6, 5], B('#ffd8a0', 2.5)); add(6, 2, [6, 3, -8], B('#8aa0ff', 1)); } },
-    post: { exposure: 1.1, vignette: 0.34, grain: 0.012, saturation: 1.05, lift: [0.004, 0.006, 0.014], gain: [1.02, 0.99, 0.96], bloom: { strength: 0.35, threshold: 0.8, radius: 0.5 } },
+    post: { exposure: 1.1, vignette: 0.34, grain: 0.012, saturation: 1.05, lift: [0.004, 0.006, 0.014], gain: [1.02, 0.99, 0.96], bloom: { strength: 0.18, threshold: 0.88, radius: 0.4 } },
     props: { loom: { ...LOOM, group: loom }, shuttle },
     update(s) { dust.update(s.t); dust.mesh.material.uniforms.uTime.value = s.t; loom.visible = s.name === 'sj_warp' || s.name === 'sj_weave' || s.name === 'sj_lift'; },
     reset() { shuttle(0, 0); }, dispose() { warpTex?.dispose(); },

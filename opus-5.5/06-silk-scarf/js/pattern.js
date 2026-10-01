@@ -61,28 +61,97 @@ function zaojing(g, S, [qing, hong, jin, di, mo], rng) {
   }
 }
 
-// ── 宋锦八达晕：方格里套八角，八角之间连十字；reveal 控制从上往下织出的行数 ──
+// ── 宋锦八达晕：照宋锦的程式画——方格的经纬线（"路"）在每个交点向八个方向放射，交点上是方胜（菱形小窠），
+//    格心是八角大窠，窠里一朵宝相花（如意头花瓣，红 → 赭 → 金一层层"晕"开，瓣间夹绿叶，花心联珠）；
+//    地子是细密的锦地纹；四边是金边夹红地回纹。reveal 控制从上往下织出的行数 ──
 function badayun(g, S, [lan, jin, hong, di, lv], rng, reveal) {
-  border(g, S, jin, lan, 0.035);
-  const n = 6, cell = (S * 0.93) / n, o = S * 0.035;
-  for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
-    const x = o + (i + 0.5) * cell, y = o + (j + 0.5) * cell, r = cell * 0.42;
-    g.save(); g.translate(x, y);
-    g.strokeStyle = jin; g.lineWidth = cell * 0.035;
+  const n = 4, b = S * 0.08, cell = (S - 2 * b) / n, deep = '#13284c', zhe = '#b45a3a', TAU8 = TAU / 8;
+  // 地：靛蓝 + 斜方格锦地（细线）
+  g.fillStyle = lan; g.fillRect(0, 0, S, S);
+  g.save(); g.beginPath(); g.rect(b, b, S - 2 * b, S - 2 * b); g.clip();
+  g.strokeStyle = '#2c4c86'; g.lineWidth = 1.2;
+  for (let k = -S; k < S; k += 14) { g.beginPath(); g.moveTo(k, 0); g.lineTo(k + S, S); g.moveTo(k + S, 0); g.lineTo(k, S); g.stroke(); }
+  // 八达：每个交点向对角放射的金色双线
+  const node = i => b + i * cell, ctr = i => b + (i + 0.5) * cell, bw = cell * 0.075;
+  g.strokeStyle = jin; g.lineWidth = 2;
+  for (let k = -n; k <= n; k++) for (const sgn of [1, -1]) for (const o of [-bw * 0.35, bw * 0.35]) {
     g.beginPath();
-    for (let k = 0; k < 8; k++) { const a = (k / 8) * TAU + TAU / 16; g.lineTo(Math.cos(a) * r, Math.sin(a) * r); }
-    g.closePath(); g.stroke();
-    g.fillStyle = (i + j) % 2 ? hong : lv; g.beginPath(); g.arc(0, 0, r * 0.45, 0, TAU); g.fill();
-    petals(g, 0, 0, r * 0.38, 4, jin, Math.PI / 4, 0.45);
-    g.fillStyle = di; g.beginPath(); g.arc(0, 0, r * 0.1, 0, TAU); g.fill();
-    g.restore();
-    // 格角的十字
-    g.fillStyle = jin;
-    g.fillRect(o + i * cell - cell * 0.12, o + j * cell - cell * 0.02, cell * 0.24, cell * 0.04);
-    g.fillRect(o + i * cell - cell * 0.02, o + j * cell - cell * 0.12, cell * 0.04, cell * 0.24);
+    if (sgn > 0) { g.moveTo(node(0) + k * cell + o, node(0)); g.lineTo(node(n) + k * cell + o, node(n)); } else { g.moveTo(node(n) + k * cell + o, node(0)); g.lineTo(node(0) + k * cell + o, node(n)); }
+    g.stroke();
   }
-  // 细密的经纬：每 4 px 一条半透明的线，像织物
-  g.globalAlpha = 0.08; g.fillStyle = di;
+  // 经纬两向的"路"：红地金边，中间一串联珠
+  const road = (x0, y0, x1, y1) => {
+    const horiz = y0 === y1, L = horiz ? x1 - x0 : y1 - y0;
+    g.fillStyle = hong; horiz ? g.fillRect(x0, y0 - bw / 2, L, bw) : g.fillRect(x0 - bw / 2, y0, bw, L);
+    g.fillStyle = jin; for (const o of [-bw / 2, bw / 2 - 2]) horiz ? g.fillRect(x0, y0 + o, L, 2) : g.fillRect(x0 + o, y0, 2, L);
+    g.fillStyle = di; for (let s = bw; s < L; s += bw * 1.15) { g.beginPath(); g.arc(horiz ? x0 + s : x0, horiz ? y0 : y0 + s, bw * 0.2, 0, TAU); g.fill(); }
+  };
+  for (let i = 0; i <= n; i++) { road(node(0), node(i), node(n), node(i)); road(node(i), node(0), node(i), node(n)); }
+  // 如意头花瓣（朝 +x，从 r0 到 r1，半宽 w）：先描金边再填色，内部的描边被填色盖住
+  const ruyi = (r0, r1, w, fill, edge, e) => {
+    const parts = p => {
+      g.beginPath(); g.moveTo(r0, 0); g.quadraticCurveTo(r0 + (r1 - r0) * 0.35, -w, r1 - w * 0.5, -w * 0.85); g.lineTo(r1 - w * 0.5, w * 0.85); g.quadraticCurveTo(r0 + (r1 - r0) * 0.35, w, r0, 0); p();
+      for (const [cx, cy, rr] of [[r1 - w * 0.55, -w * 0.5, w * 0.5], [r1 - w * 0.55, w * 0.5, w * 0.5], [r1 - w * 0.3, 0, w * 0.42]]) { g.beginPath(); g.arc(cx, cy, rr, 0, TAU); p(); }
+    };
+    if (e) { g.strokeStyle = edge; g.lineWidth = e * 2; parts(() => g.stroke()); }
+    g.fillStyle = fill; parts(() => g.fill());
+  };
+  const leaf = (r0, r1, w, fill, edge) => {
+    const m = (r0 + r1) / 2; g.beginPath(); g.moveTo(r0, 0); g.quadraticCurveTo(m, -w, r1, 0); g.quadraticCurveTo(m, w, r0, 0);
+    g.fillStyle = fill; g.fill(); g.strokeStyle = edge; g.lineWidth = 1.5; g.stroke();
+    g.beginPath(); g.moveTo(r0 + (r1 - r0) * 0.15, 0); g.lineTo(r1 - (r1 - r0) * 0.15, 0); g.stroke();   // 叶脉
+  };
+  const ring = (k, off, f) => { for (let q = 0; q < k; q++) { g.save(); g.rotate(off + (q / k) * TAU); f(); g.restore(); } };
+  // 格心：八角大窠 + 宝相花
+  const R = cell * 0.4;
+  for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
+    g.save(); g.translate(ctr(i), ctr(j));
+    const oct = r => { g.beginPath(); for (let k = 0; k < 8; k++) { const a = (k + 0.5) * TAU8; g.lineTo(Math.cos(a) * r, Math.sin(a) * r); } g.closePath(); };
+    const gr = g.createRadialGradient ? g.createRadialGradient(0, 0, R * 0.2, 0, 0, R) : null;
+    if (gr) { gr.addColorStop(0, '#22437a'); gr.addColorStop(1, deep); }
+    oct(R); g.fillStyle = gr ?? deep; g.fill(); g.strokeStyle = jin; g.lineWidth = cell * 0.03; g.stroke();
+    oct(R * 0.9); g.lineWidth = 1.5; g.stroke();
+    ring(8, TAU / 16, () => leaf(cell * 0.2, cell * 0.37, cell * 0.04, lv, jin));                         // 瓣间绿叶
+    ring(8, 0, () => ruyi(cell * 0.07, cell * 0.34, cell * 0.08, hong, jin, 2));                             // 外层如意瓣：红
+    ring(8, 0, () => ruyi(cell * 0.09, cell * 0.27, cell * 0.055, zhe, zhe, 0));                             // 晕：赭
+    ring(8, 0, () => ruyi(cell * 0.1, cell * 0.2, cell * 0.032, jin, jin, 0));                               // 晕：金
+    g.fillStyle = hong; g.beginPath(); g.arc(0, 0, cell * 0.09, 0, TAU); g.fill(); g.strokeStyle = jin; g.lineWidth = 2; g.stroke();
+    g.fillStyle = di; ring(12, 0, () => { g.beginPath(); g.arc(cell * 0.068, 0, cell * 0.011, 0, TAU); g.fill(); });   // 花心联珠
+    g.fillStyle = jin; g.beginPath(); g.arc(0, 0, cell * 0.04, 0, TAU); g.fill();
+    ring(4, TAU8, () => ruyi(cell * 0.004, cell * 0.036, cell * 0.012, hong, hong, 0));
+    g.restore();
+  }
+  // 交点：方胜（菱形小窠）里一朵四瓣小花；"路"的中点：一朵金团花
+  for (let j = 0; j <= n; j++) for (let i = 0; i <= n; i++) {
+    g.save(); g.translate(node(i), node(j));
+    const hd = cell * 0.15;
+    g.beginPath(); g.moveTo(0, -hd); g.lineTo(hd, 0); g.lineTo(0, hd); g.lineTo(-hd, 0); g.closePath();
+    g.fillStyle = lv; g.fill(); g.strokeStyle = jin; g.lineWidth = 3; g.stroke();
+    g.beginPath(); g.moveTo(0, -hd * 0.75); g.lineTo(hd * 0.75, 0); g.lineTo(0, hd * 0.75); g.lineTo(-hd * 0.75, 0); g.closePath(); g.lineWidth = 1.2; g.stroke();
+    ring(4, TAU8, () => ruyi(cell * 0.015, cell * 0.095, cell * 0.032, hong, jin, 1.5));
+    g.fillStyle = jin; g.beginPath(); g.arc(0, 0, cell * 0.022, 0, TAU); g.fill();
+    g.restore();
+    for (const [x, y] of [[ctr(i), node(j)], [node(i), ctr(j)]]) {
+      if (x > S - b || y > S - b) continue;
+      g.save(); g.translate(x, y); ring(6, 0, () => ruyi(cell * 0.008, cell * 0.05, cell * 0.018, jin, deep, 1)); g.fillStyle = hong; g.beginPath(); g.arc(0, 0, cell * 0.012, 0, TAU); g.fill(); g.restore();
+    }
+  }
+  g.restore();
+  // 边：外圈金边 → 红地金回纹 → 一道金线
+  const e0 = S * 0.028, e1 = S * 0.074;
+  g.fillStyle = jin; g.fillRect(0, 0, S, e0); g.fillRect(0, S - e0, S, e0); g.fillRect(0, 0, e0, S); g.fillRect(S - e0, 0, e0, S);
+  g.fillStyle = hong; g.fillRect(e0, e0, S - 2 * e0, e1 - e0); g.fillRect(e0, S - e1, S - 2 * e0, e1 - e0); g.fillRect(e0, e0, e1 - e0, S - 2 * e0); g.fillRect(S - e1, e0, e1 - e0, S - 2 * e0);
+  const u = (e1 - e0) * 0.66, count = Math.floor((S - 2 * e1) / u), x0 = (S - count * u) / 2, y0 = e0 + ((e1 - e0) - u) / 2;
+  const hui = [[0, 1], [0, 0], [1, 0], [1, 0.78], [0.24, 0.78], [0.24, 0.24], [0.76, 0.24], [0.76, 0.52], [0.48, 0.52]];   // 一个回字
+  g.strokeStyle = jin; g.lineWidth = u * 0.1; g.lineCap = 'square';
+  for (let side = 0; side < 4; side++) {
+    g.save(); g.translate(S / 2, S / 2); g.rotate(side * TAU / 4); g.translate(-S / 2, -S / 2);
+    for (let q = 0; q < count; q++) { const ox = x0 + q * u, s = u * 0.82; g.beginPath(); hui.forEach(([a, c], z) => (z ? g.lineTo : g.moveTo).call(g, ox + a * s, y0 + c * s)); g.stroke(); g.beginPath(); g.moveTo(ox, y0 + s); g.lineTo(ox + u, y0 + s); g.stroke(); }
+    g.restore();
+  }
+  g.fillStyle = jin; g.fillRect(e1, e1, S - 2 * e1, 3); g.fillRect(e1, S - e1 - 3, S - 2 * e1, 3); g.fillRect(e1, e1, 3, S - 2 * e1); g.fillRect(S - e1 - 3, e1, 3, S - 2 * e1);
+  // 细密的纬线：每 4 px 一条半透明的线，像织物
+  g.globalAlpha = 0.07; g.fillStyle = '#000';
   for (let y = 0; y < S; y += 4) g.fillRect(0, y, S, 1);
   g.globalAlpha = 1;
   if (reveal < 1) g.clearRect(0, S * reveal, S, S * (1 - reveal));   // 还没织到的部分：透明（材质 alphaTest 把它裁掉，露出下面的经线）

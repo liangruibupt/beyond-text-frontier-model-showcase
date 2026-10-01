@@ -25,12 +25,31 @@ function giftBox(k) {
   const lid = new THREE.Group(); lid.position.set(0, y, -d / 2 - 0.03); lid.rotation.x = -0.32; g.add(lid);
   add(new THREE.BoxGeometry(w + 0.01, d + 0.01, 0.012), m, 0, (d + 0.01) / 2, 0, lid);
   add(new THREE.BoxGeometry(0.03, d + 0.012, 0.014), new THREE.MeshStandardMaterial({ color: '#c99a3b', metalness: 0.6, roughness: 0.35 }), 0, (d + 0.01) / 2, 0, lid);
+  // 盖面烫金「锦时」+ JINSHI：竖排在缎带右侧（透明底，叠在盖面上 0.5 mm）。字体是异步加载的：等它到了再画一次
+  if (typeof document !== 'undefined') {
+    const c = document.createElement('canvas'); c.width = 256; c.height = 512;
+    const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+    const draw = () => {
+      const q = c.getContext('2d'); q.clearRect(0, 0, 256, 512); q.fillStyle = '#e2bf6a'; q.textAlign = 'center'; q.textBaseline = 'middle';
+      q.font = '900 92px "Noto Serif SC", serif'; q.fillText('锦', 128, 150); q.fillText('时', 128, 262);
+      q.font = '600 30px "Cormorant Garamond", serif'; q.save(); q.translate(128, 380); q.fillText('J I N S H I', 0, 0); q.restore();
+      q.fillRect(78, 330, 100, 3); tex.needsUpdate = true;
+    };
+    draw(); document.fonts?.load('900 150px "Noto Serif SC"', '锦时').then(draw, () => {}); document.fonts?.ready.then(draw);
+    const label = new THREE.Mesh(new THREE.PlaneGeometry(0.085, 0.17), new THREE.MeshStandardMaterial({ map: tex, transparent: true, metalness: 0.5, roughness: 0.35, emissive: '#ffffff', emissiveMap: tex, emissiveIntensity: 0.35 }));   // 第一版 7.5 × 15 cm、纯金属：在暗处几乎看不见；缎带右边留 1.5–12.75 cm，字放在这段中间
+    label.position.set(0.071, (d + 0.01) * 0.6, 0.0065); lid.add(label);
+  }
   const stage = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.44, y, 64), new THREE.MeshStandardMaterial({ color: '#2a1d16', roughness: 0.6 }));
   stage.position.y = y / 2; stage.receiveShadow = true; g.add(stage);
   g.userData.floor = y + t + 0.003;                                    // 丝巾放在衬纸上
-  // 合盖（宋锦 sj_box）：盖子绕盒子后沿上口的铰链往前翻，k = 0 斜靠在后面，k = 1 平盖在盒口上（远边朝 +z）。reset 每帧调 closeLid(0)
-  const open = { p: lid.position.clone(), r: lid.rotation.x }, shut = { p: new THREE.Vector3(0, y + h + 0.006, -d / 2 - 0.005), r: Math.PI / 2 };
-  g.userData.closeLid = k => { const e = k * k * (3 - 2 * k); lid.position.lerpVectors(open.p, shut.p, Math.min(1, e * 1.6)); lid.rotation.x = THREE.MathUtils.lerp(open.r, shut.r, e); };
+  // 合盖（宋锦 sj_box）：k = 0 斜靠在后面（盖面 +z 朝镜头）；k = 1 平盖在盒口上，盖面朝上。
+  // rotation.x = −π/2 时盖子的 +y 指向 −z，所以合上时铰链（盖子原点）放在盒子前沿 +d/2，盖子往后铺满盒口
+  const open = { p: lid.position.clone(), r: lid.rotation.x }, shut = { p: new THREE.Vector3(0, y + h + 0.006, d / 2 + 0.005), r: -Math.PI / 2 };
+  g.userData.closeLid = k => {
+    const e = k * k * (3 - 2 * k), a = Math.min(1, e * 1.6);
+    lid.position.lerpVectors(open.p, shut.p, a); lid.position.y += 0.07 * Math.sin(Math.PI * a);   // 铰链端沿弧线越过盒口（直线插值会从盒壁里穿过去）
+    lid.rotation.x = THREE.MathUtils.lerp(open.r, shut.r, e);
+  };
   return g;
 }
 
