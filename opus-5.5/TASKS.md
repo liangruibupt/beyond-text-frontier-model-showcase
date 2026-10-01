@@ -55,8 +55,8 @@
 - [x] **第 5 步 配乐和音效：**（2026-09-29 完成：`js/score.js` 按镜头写、按剪辑表摆放，15 / 6 秒共用；`test/score.test.mjs` 10 条，混音两遍逐采样相同在无头 Chromium 里测，不要 GPU；四位顾客 × 两个剪辑过了 −14 LUFS / 真峰值 −1.6 dBTP）照 spec §10 写 `04-year-review/js/score.js`，在 `film.js` 里导出 `score`（参照 03）。D 大调 80 bpm；months 的柱子音高按每月订单数映到五声音阶，每位顾客的旋律不同。补 §12 的测试：每个命中点落在 0.75 s 网格上，同一混音渲两次样本一致。响度 −14 LUFS、真峰值 ≤ −1 dBTP（引擎已经管）
 - [x] **第 6 步 Bedrock 写文案：**（2026-09-29 完成：用本机实例角色 `AWS_REGION=us-east-1`、默认模型 `us.anthropic.claude-opus-5-5` 真调 Bedrock，四份 `stories/*.json` 的 `model` 从 `draft` 换成 opus-5.5，各一次尝试过 check；顺带修 `story.mjs` 的 `toolChoice`——opus-5.5 不支持强制 `tool`/`any`，改成 `auto`）先看 `--dry` 提示词；四份 `stories/*.json` 的 `model` 不再是 `draft`，每份最多三次尝试
 - [x] **第 7 步 配音（Kokoro，远程）：**（2026-09-29 完成：Kokoro 部署在账号 <ACCOUNT_ID> 的 `kokoro-tts:live`，用户授了跨账号 InvokeFunction + `s3://aicoding-ruiliang/tts-out/*` 读；本机 arm64 用 `ffmpeg-static`+`@ffprobe-installer/ffprobe` 提供 ffmpeg/ffprobe；声音 zh=`zm_yunjian`、en=`am_michael`；`node factory/vo.mjs 04-year-review` 生成全部 64 句，每句落在时段内，−20 LUFS，入库 `assets/vo/`）
-- [x] **第 8 步 出片和收尾：**（2026-09-29 完成：`opus55-render` 角色+实例配置文件已建、OpenClaw 角色获 PassRole/GetInstanceProfile；`cloud.mjs up` 在 <ACCOUNT_ID> 本账号启动 g5.2xlarge（A10G，g6/g5.4xl 无容量）→ `render 04-year-review` 全绿 → `pull` → `down` 已终止实例。交付清单 `manifest.json` 已改为 6 条（主片 coffee/baby、海外 camp/gamer、双11 baby/gamer）。成片在 `04-year-review/out/`（`out/` 按 .gitignore 不入库）。README 与根索引已写。剩：`gallery.html` 给用户审、factory README/skill 的 Level 3 说明核对）
-- [ ] 每做完一步就提交，告诉用户可以推送（本地的 `opus55-04-year-review` 分支和 master 的 cb798a2 一样，已经没用了）
+- [x] **第 8 步 出片和收尾：**（2026-09-29 完成：`opus55-render` 角色+实例配置文件已建、OpenClaw 角色获 PassRole/GetInstanceProfile；`cloud.mjs up` 在 <ACCOUNT_ID> 本账号启动 g5.2xlarge（A10G，g6/g5.4xl 无容量）→ `render 04-year-review` 全绿 → `pull` → `down` 已终止实例。交付清单 `manifest.json` 已改为 6 条（主片 coffee/baby、海外 camp/gamer、双11 baby/gamer）。成片在 `04-year-review/out/`（`out/` 按 .gitignore 不入库）。README 与根索引已写。Level 3 说明已核对（PR #3）；2026-09-30 用户看过成片，验收通过）
+- [x] 每做完一步就提交，告诉用户可以推送（全部经 PR #1–#5 合入；本地的 `opus55-04-year-review` 分支和 master 一样，已经没用了）
 
 ## 2. 05–10：`factory/Video-Factory.md` 的场景 B–H 里剩下的
 
@@ -68,10 +68,10 @@
 | 06 | D 丝巾 | `bake.js`（布料） |
 | 07 | E 开箱 ASMR | `audio.js` 加拟音（胶带、纸） |
 | 08 | F 一个包裹的旅程 | `bake.js`（机器人群路径） |
-| 09 | G 双11 零点大屏 | 见下面的地图问题 |
+| 09 | G 双11 零点大屏 | 「订单星座」布局（不画地理边界） |
 | 10 | H 直播间秒杀 motion pack | — |
 
-**G 的地图还没定：** 用户提过用自然资源部的标准地图（带审图号）再叠城市灯光和弧线。按 2025 年的规定，标准地图只有原样使用才不用送审，叠加、缩放、裁剪、改色都算修改，要重新送审（只能法人申请，约 20 个工作日）。我建议 G 改用不画地理边界的"订单星座"布局。做 09 的分镜之前要用户拍板。
+**G 的地图已定（2026-09-30）：** 用户拍板改用不画地理边界的「订单星座」布局，不用标准地图。背景：用户提过用自然资源部的标准地图（带审图号）再叠城市灯光和弧线。按 2025 年的规定，标准地图只有原样使用才不用送审，叠加、缩放、裁剪、改色都算修改，要重新送审（只能法人申请，约 20 个工作日）。所以不走标准地图。
 
 ### 05 奶茶广告（2026-09-30 分镜已批）
 
@@ -83,14 +83,14 @@
 
 分镜草案（镜头表、剪辑表、配音台词、效果的确定性做法、风险与简化方案）在 2026-09-30 由 Opus 5.5 起草，要点：15 秒 = pearls 2.25 · pour 2.25 · ice 1.5 · hero 3 · straw 3（刺破 9.75）· end 3；6 秒 = ice · straw（from 0.75）· end，只出 1:1 双11；清单 4 款 × 3 = 12 条。奶花若做成烟雾感，退回「奶层带波浪界面往下沉」。
 
-- [ ] 引擎 1：`factory/engine/bake.js`（定步长模拟烘成表，按 t 插值取样；确定、可乱序取样、烘焙 < 1.5 s）
-- [ ] 引擎 2：03 的分层折射抽成共用模块，支持凸棱柱（03）和薄壁圆台（05 的杯子）；03 生成的 GLSL 逐字节不变，云 GPU 上 `check.mjs 03-perfume` 全过
-- [ ] 05 成片
+- [x] 引擎 1（PR #7 已合）：`factory/engine/bake.js`（定步长模拟烘成表，按 t 插值取样；确定、可乱序取样、烘焙 < 1.5 s）
+- [x] 引擎 2（PR #8 已合，03 像素不变）：03 的分层折射抽成共用模块，支持凸棱柱（03）和薄壁圆台（05 的杯子）；03 生成的 GLSL 逐字节不变，云 GPU 上 `check.mjs 03-perfume` 全过
+- [x] 05 成片（2026-09-30：用户批了画面方向；第二阶段加了奶柱、冰块浮起、冷凝画到 over 层、四款口味加对比、完整配乐、64 句 Kokoro 配音；云 GPU `check.mjs` 全过，12 条出片 −14 LUFS）
 
 ## 3. 03 香水的遗留
 
-- [ ] 用户还没听过 03 的 Kokoro 配音片段（`03-perfume/assets/vo/`），只做过响度测量。提醒用户听，有读错的就改词重生成那一条（生成前先问）
-- [ ] 最终评审暂缓的小问题，都没修：
+- [x] 03 的 Kokoro 配音片段（`03-perfume/assets/vo/`）：2026-09-30 用户验收通过
+- [x] 最终评审暂缓的小问题（2026-09-30 用户评审通过，按现状关闭，不修）：
   - M1：本地 dev server（`factory/lib/serve.mjs`）会被构造的 URL 弄崩，有开放重定向，读文件出错没处理
   - M3：`vo.mjs` 中途中断，新片段可能配上旧片段的时长和响度；"缩短这几句"的提示可能点名一句重生成就放得下的
   - M4：`--workers`、`--fps` 没校验，`--workers abc` 直接崩而不是打印用法

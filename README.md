@@ -8,6 +8,7 @@
 | [Claude Opus 5.5](opus-5.5/README.md) | 02 [大力神 · 挖地虎合体](opus-5.5/02-devastator/) | 实时 3D 动画 | Three.js（WebGL 2）· GLSL · Web Audio | 六台工程车依次变形、对接，合成 G1 大力神；模型、PBR 材质、音效和进行曲配乐全部由代码生成 |
 | [Claude Opus 5.5](opus-5.5/README.md) | 03 [闻境 · 香水产品视频工厂](opus-5.5/03-perfume/) | 商品视频工厂 | Three.js（WebGL 2）· GLSL · Canvas 2D · Web Audio · Node + Playwright + ffmpeg | 程序建模的八角玻璃瓶，玻璃与液体分层折射、带焦散；四款香型各有场景和配乐，配 Kokoro 配音，按比例、语言、长度、活动批量出片 |
 | [Claude Opus 5.5](opus-5.5/README.md) | 04 [有集 · 年度购物报告](opus-5.5/04-year-review/) | 数据驱动盘点视频工厂 | Three.js（WebGL 2）· GLSL · Canvas 2D · Web Audio · Node + Playwright + ffmpeg | 按每位顾客的订单数据生成年度盘点视频；数字由代码算出，人设标题和旁白由模型按数据写成，配 Kokoro 配音 |
+| [Claude Opus 5.5](opus-5.5/README.md) | 05 [啵茶 BOCHA · 奶茶广告](opus-5.5/05-bubble-tea/) | 商品视频工厂 | Three.js（WebGL 2）· GLSL · Canvas 2D · Web Audio · Node + Playwright + ffmpeg | 珍珠落杯用定步长模拟烘成表，薄壁 PP 杯分层折射，奶柱冲出大理石奶纹、冰块碰撞、杯壁凝水、吸管刺破封膜；四款口味四种风格批量出片，配 Kokoro 配音 |
 | [Claude Opus 5.5](opus-5.5/README.md) | 11 [琉光 · 液态玻璃主题视频工厂](opus-5.5/11-liquid-glass/) | 商品视频工厂 | GLSL 全屏着色器（WebGL 2，经 Three.js）· Canvas 2D · Web Audio · Node + Playwright + ffmpeg | 弥散渐变壁纸上的磨砂小组件和数字时钟，液态玻璃滑过、折射、相融；三款主题各有配色和配乐，配 Kokoro 配音，批量出片 |
 | [GPT-6 Astra](gpt-6-astra/README.md) | [中国古建筑](gpt-6-astra/chinese-architecture/index.html) | 交互式 3D 可视化 | Three.js（WebGL 2）· SVG | 六座木构的三维外观、材质、光照、结构剖面与分层拆解 |
 | [GPT-6 Astra](gpt-6-astra/README.md) | [清明上河图](gpt-6-astra/qingming-scroll/index.html) | 原画动画 | WebGL 1 · GLSL | 原画人物、轿子、动物、树木与水面的局部动态，完整展卷和图片导出 |
