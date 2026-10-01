@@ -21,7 +21,7 @@ export function createExporter(app) {
     },
     /** 封面 JPEG → { t, overflow, url } */
     cover(q = 0.92) {
-      const t = app.film.cuts[app.ctx.variant.cut].cover, d = app.draw(t);
+      const t = app.ctx.built.cover, d = app.draw(t);
       return { t, overflow: d.overflow, url: app.jpeg(q) };
     },
     /** 整段混音 → 32 位浮点 WAV 的 data URL → { url, sr, duration, peak }；成片没有 score 就返回 null（无声出片） */

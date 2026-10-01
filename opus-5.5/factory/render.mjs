@@ -4,6 +4,7 @@
 // 命令行写了轴就只出这些轴的网格（没写的轴取第一个值；和 --all 合用时没写的轴取全部）；
 // 已做完（.mp4 与 .json 都在，且输入指纹没变：成片目录、factory/engine、factory/lib、本文件与 --fps）的跳过，除非 --force；有一条失败就以状态码 1 结束
 import fs from 'node:fs'; import os from 'node:os'; import path from 'node:path'; import { pathToFileURL } from 'node:url';
+import { cutOf } from './engine/timeline.js';
 import { serve, ROOT } from './lib/serve.mjs';
 import { launch, openFilm } from './lib/browser.mjs';
 import { parseArgs } from './lib/args.mjs';
@@ -18,7 +19,7 @@ const axes = allAxes(META), fps = +(o.fps ?? 30), workers = +(o.workers ?? 2), o
 const rel = f => (path.relative(ROOT, f).startsWith('..') ? f : path.relative(ROOT, f));
 let jobs;
 try { jobs = pickJobs(META, o, path.join(ROOT, film, 'manifest.json')); } catch (e) { console.error(e.message); process.exit(2); }
-const frames = v => Math.round(META.cuts[v.cut].shots.reduce((s, e) => s + e.dur, 0) * fps);
+const frames = v => Math.round(cutOf(META, v).shots.reduce((s, e) => s + e.dur, 0) * fps);
 const total = jobs.reduce((s, v) => s + frames(v), 0);
 console.log(`${film}: ${jobs.length} videos, ${total} frames at ${fps} fps, ${workers} workers → ${rel(outDir)}`);
 if (o.dry) { for (const v of jobs) console.log(`  ${META.fileName(v)}  (${frames(v)} frames)`); process.exit(0); }

@@ -4,6 +4,13 @@ import { clamp, smooth } from './ease.js';
 
 const TYPES = ['cut', 'flash', 'dissolve'];
 
+/** 变体 v 用的剪辑表：成片写了 cutFor(v) 就按它取（比如每款产品一套分镜），否则 cuts[v.cut]。m = film 或 META */
+export function cutOf(m, v) {
+  const c = m.cutFor ? m.cutFor(v) : m.cuts?.[v.cut];
+  if (!c) throw new Error(`cut: no edit list for cut ${v.cut}`);
+  return c;
+}
+
 export function buildCut(cut) {
   if (!cut?.shots?.length) throw new Error('cut: empty edit list');
   let start = 0;
