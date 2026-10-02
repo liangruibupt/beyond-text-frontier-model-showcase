@@ -4,7 +4,7 @@
 // 材质：MeshPhysicalMaterial 的 sheen（丝的绒光）+ anisotropy（沿经线方向拉长的高光），两面都画
 import * as THREE from 'three';
 import { clothIndex } from '../../factory/engine/cloth.js';
-import { drawPattern } from './pattern.js';
+import { drawPattern, drawVase } from './pattern.js';
 import { SCARF } from '../meta.js';
 
 /** 纹样画成 CanvasTexture；reveal < 1 时每次重画（宋锦逐行织出、青花逐笔画出）。返回 { texture, setReveal(r) } */
@@ -19,6 +19,17 @@ export function patternTexture(k, S = 1024) {
     const g = c.getContext('2d'); g.clearRect(0, 0, S, S); drawPattern(g, S, k.pattern, { seed: 3, reveal: q });
     tex.needsUpdate = true; shown = q;
   };
+  setReveal(1);
+  return { texture: tex, setReveal };
+}
+
+/** 梅瓶的青花纹理（drawVase，2048 × 1024：u 绕一圈、v 是高度）；setReveal(r) 逐笔画出 */
+export function vaseTexture(W = 2048, H = 1024) {
+  if (typeof document === 'undefined') return { texture: new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1), setReveal() {} };
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8; tex.wrapS = THREE.RepeatWrapping;
+  let shown = NaN;
+  const setReveal = r => { const q = Math.round(Math.min(Math.max(r, 0), 1) * 240) / 240; if (q === shown) return; drawVase(c.getContext('2d'), W, H, q); tex.needsUpdate = true; shown = q; };
   setReveal(1);
   return { texture: tex, setReveal };
 }

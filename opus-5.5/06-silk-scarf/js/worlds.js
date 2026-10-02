@@ -4,9 +4,9 @@
 // 目前：dunhuang 洞窟做完整；其余三款先是同一套中性影棚（占位），各自的镜头做到时再替换
 import * as THREE from 'three';
 import { sweep, dotTexture, softSprites, driftField, puffAtlas, keyLight } from '../../05-bubble-tea/js/worlds/common.js';
-import { BUST } from '../meta.js';
+import { BUST, VASE } from '../meta.js';
 import { BUST_COLLIDERS, CHEST } from './bust.js';
-import { patternTexture } from './scarf.js';
+import { patternTexture, vaseTexture } from './scarf.js';
 
 /** 人台：躯干 + 肩 + 颈，碰撞体和网格同一组尺寸（布料的 colliders 从这里取） */
 export function bust(color = '#e9e2d6') {
@@ -68,8 +68,40 @@ function songjin(ctx, k) {
   };
 }
 
+// 青花：白瓷影棚。冷白的无缝背景（底部一抹淡青），一张浅色木案，案上一只梅瓶（车床旋出来的轮廓，白釉，尺寸见 meta.js 的 VASE）；
+// 瓶身的青花是同一张缠枝莲纹理（qh_paint 里逐笔画出），丝巾在瓶口上方松开、裹着瓶身滑下去落在案上
+function qinghua(ctx, k) {
+  const { scene } = ctx, T = VASE.table;
+  scene.background = new THREE.Color('#e9eef4'); scene.fog = new THREE.Fog('#e9eef4', 2.5, 7);
+  const wall = new THREE.Mesh(sweep(['#f4f7fa', '#d6e0ea'], { width: 6, floor: 2.4, R: 0.9, wall: 3, z0: -1.6 }), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, side: THREE.DoubleSide }));
+  wall.receiveShadow = true;
+  const table = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.04, 0.9), new THREE.MeshStandardMaterial({ color: '#e4d8c6', roughness: 0.6 }));
+  table.position.set(0, T - 0.02, 0); table.castShadow = table.receiveShadow = true;
+  const legs = new THREE.Group();
+  for (const x of [-0.74, 0.74]) for (const z of [-0.38, 0.38]) { const l = new THREE.Mesh(new THREE.BoxGeometry(0.04, T - 0.04, 0.04), table.material); l.position.set(x, (T - 0.04) / 2, z); l.castShadow = true; legs.add(l); }
+  // 梅瓶：轮廓旋成 LatheGeometry；uv 的 v 沿轮廓（0 足、1 口），u 绕一圈——纹理只取方巾中间一圈（见 vaseUV），瓶身看到的是缠枝
+  const pts = VASE.profile.map(([y, r]) => new THREE.Vector2(r, y));
+  const geo = new THREE.LatheGeometry(pts, 96);
+  { const p = geo.attributes.position, uv = geo.attributes.uv; for (let q = 0; q < p.count; q++) uv.setY(q, p.getY(q) / VASE.h); uv.needsUpdate = true; }   // v = 高度 / 瓶高（Lathe 默认按轮廓弧长，口沿、云肩的环带会错位）
+  geo.computeVertexNormals();
+  const pat = vaseTexture(), porcelain = new THREE.MeshPhysicalMaterial({ color: '#ffffff', map: pat.texture, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05, sheen: 0, side: THREE.DoubleSide });
+  const vase = new THREE.Mesh(geo, porcelain); vase.position.set(VASE.x, T, VASE.z); vase.castShadow = vase.receiveShadow = true;
+  const key = keyLight('#ffffff', 2.4, [-1.3, 2.4, 1.3], { radius: 4, size: 1.0 });
+  const rim = new THREE.DirectionalLight('#cfe0ff', 1.0); rim.position.set(1.4, 1.6, -1.6);
+  const fill = new THREE.DirectionalLight('#fff4e8', 0.5); fill.position.set(1.5, 1.0, 1.5);
+  scene.add(wall, table, legs, vase, key, key.target, rim, fill, new THREE.HemisphereLight('#ffffff', '#b8c4d4', 0.7));
+  return {
+    env: { base: '#dfe6ee', strip: '#ffffff', k: 2.5, fill(add, B) { add(3, 6, [-10, 6, 5], B('#ffffff', 3)); add(6, 2, [6, 3, -8], B('#d8e6ff', 1.2)); } },
+    post: { exposure: 1.0, vignette: 0.22, grain: 0.01, saturation: 1.0, lift: [0.004, 0.006, 0.01], gain: [0.99, 1.0, 1.02], bloom: { strength: 0.12, threshold: 0.92, radius: 0.4 } },
+    props: { vase: { ...VASE, mesh: vase, setReveal: r => { vase.userData.reveal = r; pat.setReveal(r); } }, table },
+    update(s) {},
+    reset() { vase.userData.reveal = 1; pat.setReveal(1); vase.rotation.y = 0; }, dispose() { pat.texture.dispose(); },
+  };
+}
+
 const WORLDS = {
   songjin,
+  qinghua,
   // 敦煌：烛光洞窟。土黄的窟壁（弯成穹顶的背景），石台，侧面一盏暖烛光，空气里浮着尘；头顶一方藻井（ceiling 镜头仰拍）
   dunhuang(ctx, k) {
     const { scene } = ctx;

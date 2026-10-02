@@ -4,7 +4,7 @@
 // 敦煌：drape（方巾先沿对角线对折成三角，折边横在颈后；两只手把两端从肩外侧带到胸前放下 → 披肩）。飞天的飘带是闭式的（ribbon.js）
 // 其余款做到对应镜头时在这里加
 import { bakeCloth } from '../../factory/engine/cloth.js';
-import { SCARF, BUST } from '../meta.js';
+import { SCARF, BUST, VASE } from '../meta.js';
 import { BUST_COLLIDERS } from './bust.js';
 import { ss, lerp } from '../../factory/engine/ease.js';
 
@@ -35,7 +35,27 @@ function dhDrape() {
   });
 }
 
-export const SIMS = { dunhuang: { drape: dhDrape }, songjin: { lift: sjLift }, qinghua: {}, yunhe: {} };   // 飞天的飘带改成闭式（ribbon.js）：模拟里怎么握都不像飘带
+export const SIMS = { dunhuang: { drape: dhDrape }, songjin: { lift: sjLift }, qinghua: { slip: qhSlip }, yunhe: {} };   // 飞天的飘带改成闭式（ribbon.js）：模拟里怎么握都不像飘带
+
+/** 青花 slip：方巾平展在梅瓶口上方 6 cm，略斜（一角朝镜头），松手落下：先搭在瓶口、瓶肩上，四边顺着瓶身滑下去，下摆堆在案面上。
+ *  瓶身碰撞体：轮廓每段一个竖直实心圆柱（取段内较大的半径，台阶很小）；案面是地面 */
+export function vaseColliders(V) {
+  const out = [];
+  for (let q = 0; q + 1 < V.profile.length; q++) {
+    const [y0, r0] = V.profile[q], [y1, r1] = V.profile[q + 1];
+    out.push({ type: 'cylinder', c: [V.x, 0, V.z], r: Math.max(r0, r1), y0: V.table + y0, y1: V.table + y1 });
+  }
+  return [...out, { type: 'ground', y: V.table }];
+}
+function qhSlip() {
+  const V = VASE, y = V.table + V.h + 0.06, rot = 0.6, cs = Math.cos(rot), sn = Math.sin(rot);
+  const rest = (i, j) => { const x = (i / (N - 1) - 0.5) * S, z = (j / (N - 1) - 0.5) * S; return [V.x + x * cs - z * sn, y + 0.03 * Math.sin(3 * x) * Math.cos(2 * z), V.z + x * sn + z * cs]; };
+  return bakeCloth({
+    nx: N, ny: N, rest, t1: 3.0, seed: 31, damping: 1.4, bend: 0.12, friction: 0.25, thickness: 0.005, drag: 1.0,   // 1.5 s 就落定了：烘到 3 s（3.75 s 要 2 秒，超预算），镜头在 3 s 后取最后一帧
+    wind: (x, yy, z, t, o, g) => { o[0] = 0.12 * Math.sin(1.3 * t + 5 * g[0]); o[1] = 0; o[2] = 0.12 * Math.cos(1.1 * t + 4 * g[2]); },
+    colliders: vaseColliders(V),
+  });
+}
 
 /** 宋锦 lift：织好的丝巾平铺在织机上（y = 0.92，j = 0 是远边），远边两角被提起，往上、往镜头这边带，整块离机挂成一幅；
  *  机面是一块地面碰撞体（布先躺在上面，被一点点揭起来）；挂起后最下沿离机面还有 ~10 cm */

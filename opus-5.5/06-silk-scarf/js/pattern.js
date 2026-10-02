@@ -157,20 +157,146 @@ function badayun(g, S, [lan, jin, hong, di, lv], rng, reveal) {
   if (reveal < 1) g.clearRect(0, S * reveal, S, S * (1 - reveal));   // 还没织到的部分：透明（材质 alphaTest 把它裁掉，露出下面的经线）
 }
 
-// ── 青花缠枝莲：白地，一条主枝绕方巾一圈，枝上长卷叶和莲花；reveal = 主枝画出的比例 ──
-function chanzhi(g, S, [bai, qing, shen, dan], rng, reveal) {
-  border(g, S, qing, bai, 0.04);
-  g.strokeStyle = qing; g.lineWidth = S * 0.006; g.strokeRect(S * 0.06, S * 0.06, S * 0.88, S * 0.88);
-  const c = S / 2, N = 360, end = Math.max(1, Math.floor(N * reveal));
-  const path = k => { const t = k / N, a = t * TAU * 3, r = S * (0.12 + 0.28 * t); return [c + Math.cos(a) * r, c + Math.sin(a) * r, a]; };
-  g.lineCap = 'round'; g.strokeStyle = shen; g.lineWidth = S * 0.007;
-  g.beginPath(); for (let k = 0; k <= end; k++) { const [x, y] = path(k); k ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke();
-  for (let k = 12; k <= end; k += 12) {
-    const [x, y, a] = path(k), side = (k / 12) % 2 ? 1 : -1, la = a + side * 1.2;
-    g.fillStyle = dan; g.beginPath(); g.ellipse(x + Math.cos(la) * S * 0.025, y + Math.sin(la) * S * 0.025, S * 0.026, S * 0.011, la, 0, TAU); g.fill();
-    g.strokeStyle = shen; g.lineWidth = S * 0.003; g.beginPath(); g.arc(x + Math.cos(la) * S * 0.04, y + Math.sin(la) * S * 0.04, S * 0.012, la, la + 4); g.stroke();
-    if (k % 48 === 0) { petals(g, x, y, S * 0.05, 7, qing, a, 0.55); g.fillStyle = bai; g.beginPath(); g.arc(x, y, S * 0.012, 0, TAU); g.fill(); }
+// ── 青花：明代青花的程式——白地钴蓝，先用深青勾线、再用淡青"分水"平涂（两层青）；
+//    方巾：外沿回纹带 → 莲瓣纹带 → 主区缠枝莲（一条连绵的主藤绕中心一圈，四个对角上是侧开的大莲花，藤上卷叶、卷须、花苞）→ 中心一朵俯视团莲 ──
+const QH = { di: '#f5f3ec', line: '#162a66', wash: '#2a4f9e', pale: '#8ea6d4' };
+/** 勾线 + 分水：path 是一个只描路径的函数 */
+function qhShape(g, path, { fill = QH.wash, lw = 2.2, alpha = 1 } = {}) {
+  g.save(); g.globalAlpha = alpha; path(); g.fillStyle = fill; g.fill(); g.restore();
+  path(); g.strokeStyle = QH.line; g.lineWidth = lw; g.lineJoin = 'round'; g.stroke();
+}
+/** 尖叶，叶尖往一侧卷（缠枝莲的卷叶）：从 (x, y) 沿 ang 长 len */
+function qhLeaf(g, x, y, len, ang, curl = 1, lw = 2) {
+  g.save(); g.translate(x, y); g.rotate(ang);
+  const w = len * 0.28;
+  qhShape(g, () => { g.beginPath(); g.moveTo(0, 0); g.bezierCurveTo(len * 0.3, -w * 1.2, len * 0.75, -w * 0.9 * curl, len, -w * 0.2 * curl); g.bezierCurveTo(len * 0.8, w * 0.2, len * 0.35, w * 0.9, 0, 0); }, { fill: QH.pale, lw });
+  g.beginPath(); g.moveTo(len * 0.08, 0); g.quadraticCurveTo(len * 0.5, -w * 0.15, len * 0.9, -w * 0.25 * curl); g.strokeStyle = QH.line; g.lineWidth = lw * 0.6; g.stroke();
+  g.restore();
+}
+/** 侧开的莲花（五瓣：中间高、两侧一对外翻），s 是花高 */
+function qhLotus(g, x, y, s, ang = 0, lw = 2.4) {
+  g.save(); g.translate(x, y); g.rotate(ang);
+  const petal = (ox, rot, h, w) => qhShape(g, () => { g.beginPath(); g.save(); g.translate(ox, 0); g.rotate(rot); g.moveTo(-w, 0); g.bezierCurveTo(-w * 1.15, -h * 0.55, -w * 0.35, -h * 0.9, 0, -h); g.bezierCurveTo(w * 0.35, -h * 0.9, w * 1.15, -h * 0.55, w, 0); g.closePath(); g.restore(); }, { lw });
+  petal(-s * 0.3, -0.75, s * 0.62, s * 0.2); petal(s * 0.3, 0.75, s * 0.62, s * 0.2);      // 外翻的一对
+  petal(-s * 0.16, -0.32, s * 0.85, s * 0.2); petal(s * 0.16, 0.32, s * 0.85, s * 0.2);    // 里面一对
+  petal(0, 0, s, s * 0.22);                                                                // 正中
+  // 花托与莲蓬：一道弧 + 几个点
+  qhShape(g, () => { g.beginPath(); g.ellipse(0, s * 0.04, s * 0.34, s * 0.11, 0, 0, TAU); }, { fill: QH.wash, lw });
+  g.fillStyle = QH.di; for (const k of [-2, -1, 0, 1, 2]) { g.beginPath(); g.arc(k * s * 0.11, s * 0.035, s * 0.025, 0, TAU); g.fill(); }
+  // 瓣上的脉：每瓣两道细线
+  g.strokeStyle = QH.line; g.lineWidth = lw * 0.5;
+  for (const [ox, rot, h] of [[0, 0, s], [-s * 0.16, -0.32, s * 0.85], [s * 0.16, 0.32, s * 0.85]]) { g.save(); g.translate(ox, 0); g.rotate(rot); for (const d of [-0.07, 0.07]) { g.beginPath(); g.moveTo(d * s, -h * 0.12); g.quadraticCurveTo(d * s * 1.4, -h * 0.5, d * s * 0.3, -h * 0.8); g.stroke(); } g.restore(); }
+  g.restore();
+}
+/** 俯视团莲：两圈各 8 瓣 + 莲蓬 */
+function qhRosette(g, x, y, r, lw = 2.4) {
+  g.save(); g.translate(x, y);
+  for (const [rr, off, w] of [[r, 0, 0.42], [r * 0.68, TAU / 16, 0.4]]) for (let q = 0; q < 8; q++) {
+    g.save(); g.rotate(off + (q / 8) * TAU);
+    qhShape(g, () => { g.beginPath(); g.moveTo(0, -rr * 0.28); g.bezierCurveTo(-rr * w, -rr * 0.45, -rr * w * 0.7, -rr * 0.95, 0, -rr); g.bezierCurveTo(rr * w * 0.7, -rr * 0.95, rr * w, -rr * 0.45, 0, -rr * 0.28); }, { fill: rr === r ? QH.wash : QH.pale, lw });
+    g.restore();
   }
+  qhShape(g, () => { g.beginPath(); g.arc(0, 0, r * 0.3, 0, TAU); }, { fill: QH.wash, lw });
+  g.fillStyle = QH.di; for (let q = 0; q < 7; q++) { const a = (q / 7) * TAU; g.beginPath(); g.arc(Math.cos(a) * r * 0.17, Math.sin(a) * r * 0.17, r * 0.045, 0, TAU); g.fill(); } g.beginPath(); g.arc(0, 0, r * 0.045, 0, TAU); g.fill();
+  g.restore();
+}
+/** 卷须：一小段螺旋 */
+function qhTendril(g, x, y, r, ang, dir = 1, lw = 1.6) {
+  g.beginPath(); g.strokeStyle = QH.line; g.lineWidth = lw;
+  for (let q = 0; q <= 40; q++) { const t = q / 40, a = ang + dir * t * TAU * 1.3, rr = r * (1 - t * 0.85); const px = x + Math.cos(ang) * r * t * 1.2 + Math.cos(a) * rr * t, py = y + Math.sin(ang) * r * t * 1.2 + Math.sin(a) * rr * t; q ? g.lineTo(px, py) : g.moveTo(px, py); }
+  g.stroke();
+}
+/** 回纹带：沿 (x0, y0) 往 +x 排 count 个回字，每个边长 u */
+function qhHui(g, x0, y0, u, count, lw) {
+  const hui = [[0, 1], [0, 0], [1, 0], [1, 0.78], [0.24, 0.78], [0.24, 0.24], [0.76, 0.24], [0.76, 0.52], [0.48, 0.52]];
+  g.strokeStyle = QH.line; g.lineWidth = lw; g.lineCap = 'square';
+  for (let q = 0; q < count; q++) { const ox = x0 + q * u, s = u * 0.82; g.beginPath(); hui.forEach(([a, c], z) => (z ? g.lineTo : g.moveTo).call(g, ox + a * s, y0 + c * s)); g.stroke(); g.beginPath(); g.moveTo(ox, y0 + s); g.lineTo(ox + u, y0 + s); g.stroke(); }
+}
+/** 莲瓣纹带：一排拱形的瓣，瓣里双勾一道、填淡青，瓣心一点如意 */
+function qhPanels(g, x0, y0, w, h, count, up = true, lw = 2) {
+  const pw = w / count;
+  for (let q = 0; q < count; q++) {
+    const cx = x0 + (q + 0.5) * pw, base = up ? y0 + h : y0, tip = up ? y0 : y0 + h, sg = up ? -1 : 1;
+    const arch = k => () => { g.beginPath(); g.moveTo(cx - pw * 0.46 * k, base); g.bezierCurveTo(cx - pw * 0.5 * k, base + sg * h * 0.7 * k, cx - pw * 0.12 * k, tip + (base - tip) * (1 - k), cx, tip + (base - tip) * (1 - k) * 0.4); g.bezierCurveTo(cx + pw * 0.12 * k, tip + (base - tip) * (1 - k), cx + pw * 0.5 * k, base + sg * h * 0.7 * k, cx + pw * 0.46 * k, base); };
+    qhShape(g, arch(1), { fill: QH.di, lw });
+    qhShape(g, arch(0.72), { fill: QH.pale, lw: lw * 0.7 });
+    qhShape(g, () => { g.beginPath(); g.arc(cx, base + sg * h * 0.35, pw * 0.09, 0, TAU); }, { fill: QH.wash, lw: lw * 0.6 });
+  }
+}
+function chanzhi(g, S, colors, rng) {
+  g.fillStyle = QH.di; g.fillRect(0, 0, S, S);
+  const lw = S / 420;
+  // 外沿：一道深青边，回纹带，再一道细线
+  g.fillStyle = QH.line; g.fillRect(0, 0, S, S * 0.012); g.fillRect(0, S * 0.988, S, S * 0.012); g.fillRect(0, 0, S * 0.012, S); g.fillRect(S * 0.988, 0, S * 0.012, S);
+  const e0 = S * 0.022, e1 = S * 0.066, u = (e1 - e0) * 0.8, count = Math.floor((S - 2 * e1) / u), hx = (S - count * u) / 2;
+  for (let side = 0; side < 4; side++) {
+    g.save(); g.translate(S / 2, S / 2); g.rotate(side * TAU / 4); g.translate(-S / 2, -S / 2);
+    qhHui(g, hx, e0 + ((e1 - e0) - u) / 2, u, count, lw * 1.1);
+    g.fillStyle = QH.line; g.fillRect(e0, e1 + S * 0.004, S - 2 * e0, lw * 1.4);
+    // 莲瓣带（瓣尖朝里）
+    qhPanels(g, S * 0.1, e1 + S * 0.012, S * 0.8, S * 0.07, 14, false, lw);
+    g.fillRect(S * 0.1, e1 + S * 0.088, S * 0.8, lw * 1.2);
+    g.restore();
+  }
+  // 四角：一朵团莲（莲瓣带在角上断开的地方）
+  for (const [x, y] of [[0.1, 0.1], [0.9, 0.1], [0.9, 0.9], [0.1, 0.9]]) qhRosette(g, S * (x - 0.012 * Math.sign(x - 0.5)), S * (y - 0.012 * Math.sign(y - 0.5)), S * 0.036, lw);
+  // 主藤：绕中心一圈，半径随角度起伏（四个对角最外、四个正方向最里），画成一条粗细变化的深青线
+  const c = S / 2, R0 = S * 0.26, vine = a => { const r = R0 * (1 + 0.16 * Math.cos(4 * (a - Math.PI / 4))) + S * 0.012 * Math.sin(12 * a); return [c + Math.cos(a) * r, c + Math.sin(a) * r]; };
+  g.strokeStyle = QH.line; g.lineCap = 'round';
+  for (let q = 0; q < 720; q++) { const a0 = (q / 720) * TAU, a1 = ((q + 1) / 720) * TAU, [x0, y0] = vine(a0), [x1, y1] = vine(a1); g.lineWidth = lw * (2.4 + 0.8 * Math.sin(8 * a0)); g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke(); }
+  // 藤上的卷叶与卷须：每 1/16 圈一片叶，交替朝外 / 朝里；叶旁一根卷须
+  for (let q = 0; q < 32; q++) {
+    const a = (q / 32) * TAU + 0.08, [x, y] = vine(a), out = q % 2 ? 1 : -1, nrm = a + (out > 0 ? 0 : Math.PI);
+    if (q % 8 === 3 || q % 8 === 4) continue;                                   // 对角处让给大莲花
+    qhLeaf(g, x, y, S * (0.06 + 0.012 * rng()), nrm + out * 0.5 + 0.25 * (rng() - 0.5), out, lw);
+    if (q % 4 === 1) qhTendril(g, x, y, S * 0.025, nrm - out * 0.8, out, lw * 0.8);
+  }
+  // 四个对角：侧开大莲花，花梗从藤上分出来；四个正方向：花苞
+  for (let q = 0; q < 4; q++) {
+    const a = Math.PI / 4 + (q / 4) * TAU, [x, y] = vine(a), outward = a + Math.PI / 2;
+    const fx = x + Math.cos(a) * S * 0.06, fy = y + Math.sin(a) * S * 0.06;
+    g.strokeStyle = QH.line; g.lineWidth = lw * 2; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + Math.cos(a + 0.5) * S * 0.04, y + Math.sin(a + 0.5) * S * 0.04, fx, fy); g.stroke();
+    qhLeaf(g, fx, fy, S * 0.075, a + 1.9, 1, lw); qhLeaf(g, fx, fy, S * 0.075, a - 1.9, -1, lw);
+    qhLotus(g, fx, fy, S * 0.11, outward, lw * 1.1);
+    const b = (q / 4) * TAU, [bx, by] = vine(b);
+    qhShape(g, () => { g.save(); g.translate(bx, by); g.rotate(b + Math.PI / 2); g.beginPath(); g.moveTo(-S * 0.018, 0); g.bezierCurveTo(-S * 0.03, -S * 0.04, -S * 0.006, -S * 0.06, 0, -S * 0.066); g.bezierCurveTo(S * 0.006, -S * 0.06, S * 0.03, -S * 0.04, S * 0.018, 0); g.closePath(); g.restore(); }, { lw });
+  }
+  // 中心：双圈 + 团莲 + 一圈小叶
+  for (const [r, w] of [[S * 0.14, lw * 2.2], [S * 0.128, lw]]) { g.beginPath(); g.arc(c, c, r, 0, TAU); g.strokeStyle = QH.line; g.lineWidth = w; g.stroke(); }
+  for (let q = 0; q < 12; q++) { const a = (q / 12) * TAU; qhLeaf(g, c + Math.cos(a) * S * 0.08, c + Math.sin(a) * S * 0.08, S * 0.04, a + 0.6, 1, lw * 0.9); }
+  qhRosette(g, c, c, S * 0.075, lw * 1.1);
+}
+
+/** 梅瓶的青花（车床网格的 uv：u 绕瓶一圈，v = 高度 / 瓶高）：口沿回纹 → 肩上如意云肩 → 腹部缠枝莲（绕瓶三组）→ 胫部莲瓣。
+ *  W × H 的画布，v 从下往上（画布 y 从上往下 = 1 − v）。reveal：0..0.25 画口沿和云肩，0.25..0.85 腹部的缠枝沿 u 一笔笔画过去，0.85..1 莲瓣 */
+export function drawVase(g, W, H, reveal = 1) {
+  const y = v => (1 - v) * H, lw = H / 300, rng = mulberry32(5);
+  g.fillStyle = QH.di; g.fillRect(0, 0, W, H);
+  const band = (v0, v1, k, draw) => { if (reveal <= k[0]) return; g.save(); g.beginPath(); g.rect(0, y(v1), W * Math.min(1, (reveal - k[0]) / (k[1] - k[0])), y(v0) - y(v1)); g.clip(); draw(); g.restore(); };
+  const line = v => { g.fillStyle = QH.line; g.fillRect(0, y(v) - lw, W, lw * 2); };
+  // 口沿：回纹（v 0.9–0.98）
+  band(0.86, 1, [0, 0.12], () => { line(0.98); line(0.9); const u = (y(0.9) - y(0.98)) * 0.86; qhHui(g, 0, y(0.98) + (y(0.9) - y(0.98) - u) / 2, u, Math.ceil(W / u), lw * 1.2); });
+  // 肩：如意云肩（四个下垂的如意头，里面一朵团莲），v 0.66–0.88
+  band(0.64, 0.9, [0.12, 0.25], () => {
+    line(0.88);
+    for (let q = 0; q < 4; q++) {
+      const cx = (q + 0.5) * W / 4, hw = W / 8 * 0.9, top = y(0.88), bot = y(0.66);
+      qhShape(g, () => { g.beginPath(); g.moveTo(cx - hw, top); g.bezierCurveTo(cx - hw, top + (bot - top) * 0.5, cx - hw * 0.5, bot - (bot - top) * 0.15, cx - hw * 0.25, bot - (bot - top) * 0.1); g.arc(cx, bot - (bot - top) * 0.12, hw * 0.25, Math.PI, 0, true); g.bezierCurveTo(cx + hw * 0.5, bot - (bot - top) * 0.15, cx + hw, top + (bot - top) * 0.5, cx + hw, top); g.closePath(); }, { fill: QH.pale, lw: lw * 1.4 });
+      qhRosette(g, cx, top + (bot - top) * 0.45, (bot - top) * 0.28, lw);
+      for (const sg of [-1, 1]) qhLeaf(g, cx + sg * hw * 0.55, top + (bot - top) * 0.35, (bot - top) * 0.3, sg > 0 ? -0.6 : Math.PI + 0.6, sg, lw);
+    }
+  });
+  // 腹：缠枝莲，主藤沿 u 起伏，三朵大莲花
+  band(0.18, 0.64, [0.25, 0.85], () => {
+    line(0.62); line(0.2);
+    const vy = u => y(0.41 + 0.12 * Math.sin(u * TAU * 3));
+    g.strokeStyle = QH.line; g.lineCap = 'round';
+    for (let q = 0; q < 600; q++) { const u0 = q / 600, u1 = (q + 1) / 600; g.lineWidth = lw * (2.6 + 0.8 * Math.sin(u0 * TAU * 9)); g.beginPath(); g.moveTo(u0 * W, vy(u0)); g.lineTo(u1 * W, vy(u1)); g.stroke(); }
+    for (let q = 0; q < 24; q++) { const u = (q + 0.5) / 24; if (q % 8 === 1) continue; const up = q % 2 ? 1 : -1; qhLeaf(g, u * W, vy(u), H * (0.07 + 0.015 * rng()), up > 0 ? -1.1 : 1.1, up, lw); if (q % 4 === 3) qhTendril(g, u * W, vy(u), H * 0.03, up > 0 ? 0.8 : -0.8, up, lw * 0.8); }
+    for (let q = 0; q < 3; q++) { const u = (q + 0.5 / 3 + 0.083) / 3, top = q % 2 === 0; const fx = u * W, fy = vy(u) + (top ? -1 : 1) * H * 0.02; qhLeaf(g, fx, fy, H * 0.09, 2.6, 1, lw); qhLeaf(g, fx, fy, H * 0.09, 0.5, -1, lw); qhLotus(g, fx, fy + H * 0.03, H * 0.15, 0, lw * 1.2); }
+  });
+  // 胫：莲瓣（瓣尖朝上），v 0.03–0.17
+  band(0, 0.18, [0.85, 1], () => { line(0.17); line(0.02); qhPanels(g, 0, y(0.16), W, y(0.03) - y(0.16), 12, true, lw * 1.2); });
 }
 
 // ── 云鹤：朱红地，月白云纹（一组组如意云头）和四只飞鹤 ──

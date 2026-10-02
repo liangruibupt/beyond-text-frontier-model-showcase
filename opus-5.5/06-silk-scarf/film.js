@@ -70,7 +70,7 @@ export default {
   /** 每次求值镜头前复位所有逐帧可变的状态：跳着看和顺序播放得到同一帧 */
   reset(ctx) {
     const { scarf, bust, giftBox } = ctx.subjects;
-    scarf.mesh.rotation.set(0, 0, 0); scarf.setReveal(1);
+    scarf.mesh.rotation.set(0, 0, 0); scarf.mesh.visible = true; scarf.setReveal(1);
     bust.visible = false; giftBox.visible = false; giftBox.rotation.set(0, 0, 0); giftBox.userData.closeLid?.(0);
     ctx.world.reset?.();
   },

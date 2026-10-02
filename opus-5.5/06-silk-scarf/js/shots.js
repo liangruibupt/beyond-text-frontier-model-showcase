@@ -119,17 +119,62 @@ const songjin = {
   },
 };
 
+// ── 青花「瓷」 ──
+// 时间线（15 s）：paint 0–3（一支看不见的笔在梅瓶上画出缠枝，主枝画到 70%）→ bloom 3–4.5（画完，钴蓝晕开、瓶转半圈）
+// → slip 4.5–8.25（瓶上的青花褪成素白，丝巾在瓶口上方显出、落下、裹着瓶身滑到案上）→ pool 8.25–10.5（下摆堆在案面的褶子，微距）
+// → hero 10.5–12（相机升到正上方俯看：瓶口、一圈丝巾）
+const qhVase = (ctx, r, spin = 0) => {
+  const V = ctx.subjects.world.props.vase, { scarf } = ctx.subjects; V.setReveal(r); V.mesh.rotation.y = spin;
+  scarf.flat([0, -1, 0]); scarf.mesh.visible = false;   // 藏起来也要写一遍顶点：否则它停在上一个镜头的形状，帧就依赖于播放顺序
+  return V;
+};
+const VASE_BOX = (V, pad = 0.04) => box([V.x - 0.15 - pad, V.table - 0.01, V.z - 0.15 - pad], [V.x + 0.15 + pad, V.table + V.h + pad, V.z + 0.15 + pad]);
+const qinghua = {
+  /** 开场：素白的梅瓶，缠枝从瓶肩开始一笔笔画出来；镜头贴近瓶身、从侧面慢慢绕 */
+  qh_paint(ctx, s) {
+    const V = qhVase(ctx, lerp(0.02, 0.7, ss(0.3, s.dur, s.lt)), -0.3 + 0.25 * s.u);
+    const B = box([V.x - 0.14, V.table + 0.14, V.z - 0.14], [V.x + 0.14, V.table + 0.38, V.z + 0.14]);
+    return { camera: fit(B, s, [8, 12], [-30, -16], { fov: 28 }), text: text(ctx, s), post: { aperture: 0.2, maxBlur: 0.005 } };
+  },
+  /** 缠枝不断：画完，瓶转半圈，相机拉开见全瓶 */
+  qh_bloom(ctx, s) {
+    const V = qhVase(ctx, lerp(0.7, 1, ss(0, 0.8, s.lt)), -0.05 + 1.2 * easeInOut(s.u));
+    return { camera: fit(VASE_BOX(V), s, [14, 10], [-14, 4], { fov: 30, scale: lerp(1.1, 1, easeInOut(s.u)) }), text: text(ctx, s) };
+  },
+  /** 从瓷上来，落在身上：瓶上的青花 0.5 秒里褪成素白，丝巾同时在瓶口上方显出，落下、裹着瓶身滑到案上 */
+  qh_slip(ctx, s) {
+    const V = qhVase(ctx, 1, 1.15), fade = ss(0, 0.5, s.lt);
+    V.setReveal(1 - fade);
+    fromSim(ctx, 'slip', Math.min(s.lt, 3)); ctx.subjects.scarf.mesh.visible = true;
+    const B = VASE_BOX(V, 0.3).union(scarfBox(ctx.subjects.scarf));
+    return { camera: fit(B, s, [18, 22], [-20, -8], { fov: 30 }), text: text(ctx, s) };
+  },
+  /** 褶子微距：下摆在案面上的一角，浅景深，镜头横移 */
+  qh_pool(ctx, s) {
+    const V = qhVase(ctx, 0, 1.15); fromSim(ctx, 'slip', 3); ctx.subjects.scarf.mesh.visible = true;
+    const x0 = lerp(-0.34, -0.22, s.u), B = box([x0 - 0.12, V.table, 0.12], [x0 + 0.12, V.table + 0.12, 0.34]);
+    return { camera: fit(B, s, [20, 16], [-38, -26], { fov: 26 }), text: text(ctx, s), post: { aperture: 0.6, maxBlur: 0.012 } };
+  },
+  /** 升起俯看：从斜上方升到正上方，瓶口居中，一圈青花丝巾铺开 */
+  qh_hero(ctx, s) {
+    const V = qhVase(ctx, 0, 1.15); fromSim(ctx, 'slip', 3); ctx.subjects.scarf.mesh.visible = true;
+    const B = scarfBox(ctx.subjects.scarf).expandByScalar(0.03);
+    return { camera: fit(B, s, [58, 84], [-10, 0], { fov: 30, up: [0, 0, -1] }), text: text(ctx, s) };
+  },
+};
+
 // ── 占位：平铺（u 越大越往下转）或叠好的丝巾 ──
 const flatShot = (ctx, s, y = 0.9) => {
   const { scarf } = ctx.subjects; scarf.flat([0, y, 0], 0.3 * s.u); scarf.commit();
   return { camera: fit(box([-0.48, y - 0.05, -0.48], [0.48, y + 0.05, 0.48]), s, [55, 50], [-15, 10], { fov: 32 }), text: text(ctx, s) };
 };
-const placeholders = Object.fromEntries(['qh_paint', 'qh_bloom', 'qh_slip', 'qh_pool', 'qh_hero', 'yh_dusk', 'yh_crane', 'yh_glide', 'yh_land', 'yh_hero'].map(id => [id, flatShot]));
+const placeholders = Object.fromEntries(['yh_dusk', 'yh_crane', 'yh_glide', 'yh_land', 'yh_hero'].map(id => [id, flatShot]));
 
 export const SHOTS = {
   ...placeholders,
   ...dunhuang,
   ...songjin,
+  ...qinghua,
   /** 片尾：叠好的丝巾（22.5 × 43.5 cm）摆在礼盒里，盒盖靠在后面；整组慢慢转 */
   end(ctx, s) {
     const { scarf, giftBox } = ctx.subjects, G = giftBox.userData;

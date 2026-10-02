@@ -5,6 +5,8 @@ export const BAR = 3.0, GRID = 0.75;
 // 丝巾（米）：90 cm 方巾；人台肩宽约 36 cm
 export const SCARF = { size: 0.9, n: 32 };
 export const BUST = { shoulder: 0.18, neck: 0.055, top: 1.42, base: 0.95 };
+/** 青花的梅瓶：轮廓 [y（从案面算起）, 半径]（米）——小口、丰肩、收腹、微撇的足。瓶的网格（worlds.js）和丝巾滑落的碰撞体（sims.js）用同一组数 */
+export const VASE = { x: 0, z: 0, table: 0.78, h: 0.42, profile: [[0, 0.06], [0.01, 0.07], [0.06, 0.075], [0.16, 0.1], [0.26, 0.135], [0.32, 0.14], [0.36, 0.12], [0.39, 0.06], [0.405, 0.035], [0.42, 0.038]] };
 
 const end = (dur = 3.0) => ({ shot: 'end', dur, transition: { type: 'dissolve', dur: 0.4 } });
 const dis = d => ({ transition: { type: 'dissolve', dur: d } });
