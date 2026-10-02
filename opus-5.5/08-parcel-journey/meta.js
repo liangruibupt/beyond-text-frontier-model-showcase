@@ -63,7 +63,7 @@ export const MOTION = {
 // 看向取景点的方向（写实焦段，贴地的 3/4 视角——不再是长焦俯瞰的沙盘）：
 // y 分量压得很低（相机只比看点高一点点，像蹲在地面上拍），往 +z（朝相机）和 +x（沿路）各偏一些。
 // fov ≈ 35°（约等效 50 mm），配上很近的机位距离，前景被浅景深化开、远处纵深压缩，像真的在现场。
-export const ISO_DIR = [0.72, 0.34, 1.0];
+export const ISO_DIR = [0.72, 0.24, 1.0];
 export const FOV = 35;
 
 /** 取景点 c + 方向 × 距离 dist 得到机位（vertical fov 35°：画面高 ≈ 2·tan(17.5°)·dist ≈ 0.631·dist 米） */
@@ -78,11 +78,11 @@ function poseAt(c, dist) {
 const P = (k, dy = 0, dq = 0, ds = 0) => () => { const c = STATIONS[k], o = lane(ds, dq, dy); return [c[0] + o[0], o[1], c[2] + o[2]]; };
 export const RIG = {
   order: { at: P('phone', 0.06), dist: 1.5, push: 0.12, move: [0.7, 1.0] },
-  robots: { at: P('warehouse', 0.14), dist: 3.4, push: 0.1, move: [0.8, 1.0] },
+  robots: { at: P('warehouse', 0.06), dist: 1.35, push: 0.1, move: [0.8, 1.0] },
   pack: { at: P('pack', 0.14), dist: 1.5, push: 0.12, move: [0.8, 1.0] },
   sort: { at: P('sorter', 0.12, 0.05, 0.05), dist: 1.9, push: 0.08, move: [0.75, 1.0] },
-  truck: { at: lt => lane(Math.min(MOTION.truck(lt) + 0.1, S_OF.road), 0.0, 0.26), dist: 2.4, push: 0, move: [0.85, 1.0] },
-  lastmile: { at: lt => lane(MOTION.trike(lt), 0.16, 0.1), dist: 2.0, push: 0, move: [0.9, 1.0] },
+  truck: { at: lt => lane(Math.min(MOTION.truck(lt) + 0.1, S_OF.road), 0.0, 0.2), dist: 1.6, push: 0, move: [0.85, 1.0] },
+  lastmile: { at: lt => lane(MOTION.trike(lt), 0.12, 0.1), dist: 1.35, push: 0, move: [0.9, 1.0] },
   door: { at: P('door', 0.22, 0.14, -0.06), dist: 2.0, push: 0.08, move: [2, 2] },
 };
 const NEXT = { order: 'robots', robots: 'pack', pack: 'sort', sort: 'truck', truck: 'lastmile', lastmile: 'door' };

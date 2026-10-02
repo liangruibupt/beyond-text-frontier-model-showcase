@@ -22,10 +22,11 @@ const TH = LANE.theta;                          // 沿对角线摆放的件绕 y
 // 故事时间 t 里某个镜头的本地秒（夹在镜头的天然时长里）
 const localT = (name, t) => clamp(t - STORY0[name], 0, NATURAL[name]);
 
-const mat = (c, o = {}) => clay({ color: c, ...o });
+const mat = (c, o = {}) => clay({ color: c, clearcoat: 0, roughness: 0.7, ...o });   // 默认不要 04 黏土那层清漆（玩具感的来源之一），要亮面的件自己写 clearcoat
 const glow = (c, k = 1) => new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: k, roughness: 0.6 });
 /** 给材质贴上程序贴图（Node 里 tex 为 null 就退回纯色，不报错）。可同时当粗糙度图用。 */
-const withTex = (m, tex, { rough = false } = {}) => { if (tex) { m.map = tex; if (rough) m.roughnessMap = tex; m.needsUpdate = true; } return m; };
+const withTex = (m, tex, { rough = false } = {}) => { if (tex) { m.map = tex; m.color.set('#ffffff');   // 贴图本身已带底色：再乘一次同色会把颜色平方（纸箱变橙块的原因）
+    if (rough) m.roughnessMap = tex; m.needsUpdate = true; } return m; };
 const box = (w, h, d, m, at = [0, 0, 0]) => { const g = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); g.position.set(...at); g.castShadow = g.receiveShadow = true; return g; };
 /** 倒角方块（RoundedBox）：真实物件的圆边。r 自动夹在最小半边长内。 */
 const rbox = (w, h, d, m, at = [0, 0, 0], r = 0.01) => { const rr = Math.min(r, w / 2 - 1e-3, h / 2 - 1e-3, d / 2 - 1e-3); const g = new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 2, Math.max(0.002, rr)), m); g.position.set(...at); g.castShadow = g.receiveShadow = true; return g; };
@@ -53,9 +54,18 @@ function buildAgv(m) {
   const chassis = rbox(0.082, 0.03, 0.092, m.agv, [0, 0.018, 0], 0.012); g.add(chassis);
   g.add(box(0.086, 0.004, 0.096, m.band, [0, 0.033, 0]));                             // 状态灯带
   g.add(cyl(0.012, 0.012, 0.008, m.dark, [0, 0.038, 0.028], 10));                      // 激光雷达顶盖
-  const pod = new THREE.Group(); pod.position.y = 0.04;                                // 货架 pod（随 moving 轻颠的那层）
-  pod.add(rbox(0.07, 0.075, 0.08, m.shelf, [0, 0.0375, 0], 0.006));
-  for (const sy of [0.02, 0.055]) for (const sx of [-0.018, 0.018]) pod.add(box(0.028, 0.026, 0.004, m.rackBox[(Math.abs(sx * 1e3 | 0) + (sy * 1e3 | 0)) % 4], [sx, sy, 0.041]));
+  // 货架 pod：真 Kiva 的货架比机器人高好几倍——四根深色立柱 + 四层隔板 + 每层四面都插着布收纳箱（贯穿的长箱一次露出前后 / 左右两面）
+  const pod = new THREE.Group(); pod.position.y = 0.036;
+  const PW = 0.084, PH = 0.17, rows = 4, rh = PH / rows, bins = [];
+  pod.add(box(PW - 0.012, PH - 0.01, PW - 0.012, m.dark, [0, PH / 2, 0]));             // 内芯（箱缝里露出的暗部）
+  for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) pod.add(box(0.005, PH, 0.005, m.rack, [x * PW / 2, PH / 2, z * PW / 2]));
+  for (let r = 0; r <= rows; r++) pod.add(box(PW + 0.002, 0.003, PW + 0.002, m.rack, [0, r * rh, 0]));
+  for (let r = 0; r < rows; r++) for (const sx of [-0.021, 0.021]) {
+    const k = (r * 3 + (sx > 0 ? 1 : 0)) % 4, y = r * rh + rh / 2 + 0.001;
+    const a = rbox(0.038, rh - 0.006, PW - 0.004, m.rackBox[k], [sx, y, 0], 0.003); pod.add(a); bins.push(a);
+    const b = rbox(PW - 0.004, rh - 0.006, 0.038, m.rackBox[(k + 2) % 4], [0, y, sx], 0.003); pod.add(b); bins.push(b);
+  }
+  pod.userData.bins = bins;
   g.add(pod); g.userData.pod = pod;
   return g;
 }
@@ -117,13 +127,30 @@ function buildTrike(m) {
   g.add(cyl(0.012, 0.012, 0.1, m.dark, [0.13, 0.13, 0], 8));                            // 车把立柱
   g.add(box(0.012, 0.012, 0.09, m.dark, [0.14, 0.175, 0]));                             // 车把
   g.add(cyl(0.014, 0.014, 0.01, m.bulb, [0.155, 0.09, 0], 10));                         // 前灯
-  const wheel = (x, z, r) => { const w = new THREE.Group(); w.position.set(x, r, z); const t = lathe([[r * 0.55, -0.012], [r, -0.012], [r, 0.012], [r * 0.55, 0.012]], m.tyre, [0, 0, 0], 16); t.rotation.z = Math.PI / 2; w.add(t); w.add(cyl(r * 0.5, r * 0.5, 0.026, m.chrome, [0, 0, 0], 10)); w.children[1].rotation.x = Math.PI / 2; g.add(w); return w; };
+  const wheel = (x, z, r) => { const w = new THREE.Group(); w.position.set(x, r, z); const t = cyl(r, r, 0.022, m.tyre, [0, 0, 0], 20); t.rotation.x = Math.PI / 2; w.add(t); w.add(cyl(r * 0.5, r * 0.5, 0.024, m.chrome, [0, 0, 0], 12)); w.children[1].rotation.x = Math.PI / 2; g.add(w); return w; };
   wheel(0.13, 0, 0.04); wheel(-0.1, 0.075, 0.038); wheel(-0.1, -0.075, 0.038);
   const cargo = rbox(0.09, 0.085, 0.09, m.box, [-0.06, 0.14, 0], 0.008); g.add(cargo);  // 厢里的小箱：上车时在，下车抱走
   g.userData.cargo = cargo;
   return g;
 }
-const tree = (m, h) => { const g = new THREE.Group(); g.add(cyl(0.012, 0.016, h * 0.4, m.trunk, [0, h * 0.2, 0], 6)); const c = new THREE.Mesh(new THREE.ConeGeometry(h * 0.28, h * 0.75, 7), m.leaf); c.position.y = h * 0.62; c.castShadow = true; g.add(c); return g; };
+/** 一棵阔叶树：微弯的锥形树干 + 两根分叉 + 五六团起伏的树冠（二十面体按位置做确定性起伏，接缝不裂），两种叶色 */
+const blobGeo = (r, seed) => {
+  const g = new THREE.IcosahedronGeometry(r, 2), p = g.attributes.position, v = new THREE.Vector3();
+  for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i); const n = Math.sin(v.x * 61 + seed) * Math.sin(v.y * 53 + seed * 1.7) * Math.sin(v.z * 47 + seed * 0.3); v.multiplyScalar(1 + 0.16 * n); p.setXYZ(i, v.x, v.y, v.z); }
+  g.computeVertexNormals(); return g;
+};
+const tree = (m, h) => {
+  const g = new THREE.Group(), R = mulberry32(Math.floor(h * 1e5));
+  g.add(cyl(0.007, 0.013, h * 0.5, m.trunk, [0, h * 0.25, 0], 8));
+  for (const sx of [-1, 1]) { const b = cyl(0.004, 0.006, h * 0.22, m.trunk, [sx * h * 0.05, h * 0.5, 0], 6); b.rotation.z = -sx * 0.6; g.add(b); }
+  const n = 5 + Math.floor(R() * 2);
+  for (let k = 0; k < n; k++) {
+    const a = (k / n) * Math.PI * 2 + R(), rr = h * (0.15 + R() * 0.07), d = k === 0 ? 0 : h * 0.13;
+    const c = new THREE.Mesh(blobGeo(rr, k * 3.1 + h * 40), R() < 0.5 ? m.leaf : m.leaf2);
+    c.position.set(Math.cos(a) * d, h * (0.68 + (k === 0 ? 0.12 : R() * 0.1)), Math.sin(a) * d); c.castShadow = c.receiveShadow = true; g.add(c);
+  }
+  return g;
+};
 
 /** 建整座世界。plan 由 crowd 规划好。返回世界句柄（build/update/reset/dispose 约定见 factory/README） */
 export function build(ctx, item, plan) {
@@ -132,21 +159,22 @@ export function build(ctx, item, plan) {
   const M = {
     agv: mat(ORANGE, { roughness: 0.45, metalness: 0.1, clearcoat: 0.2 }), shelf: mat('#5b6b7a', { roughness: 0.7 }), rack: mat('#55606c', { roughness: 0.8, metalness: 0.3 }),
     rackBox: [withTex(mat('#c79a5e', { roughness: 0.9 }), TX.fabric('#c79a5e')), withTex(mat('#b5854b', { roughness: 0.9 }), TX.fabric('#b5854b')), withTex(mat('#d8b27a', { roughness: 0.9 }), TX.fabric('#d8b27a')), withTex(mat('#8fa3b5', { roughness: 0.9 }), TX.fabric('#8fa3b5'))],
-    concrete: withTex(mat('#b3b8bd', { roughness: 0.95, clearcoat: 0 }), TX.concrete(), { rough: true }),
-    gridFloor: withTex(mat('#9ca3aa', { roughness: 0.9, clearcoat: 0 }), TX.qrFloor()), lineY: mat('#f2c230', { roughness: 0.85, emissive: '#5a4300', emissiveIntensity: 0.1 }),
+    concrete: withTex(mat('#8f949a', { roughness: 0.95, clearcoat: 0 }), TX.concrete('#8f949a'), { rough: true }),
+    gridFloor: withTex(mat('#7f868d', { roughness: 0.9, clearcoat: 0 }), TX.qrFloor('#8b9198')), lineY: mat('#f2c230', { roughness: 0.85, emissive: '#5a4300', emissiveIntensity: 0.1 }),
     wallIn: withTex(mat('#7f8a96', { roughness: 0.92 }), TX.concrete('#7f8a96'), { rough: true }), band: mat(ORANGE, { roughness: 0.7 }),
     belt: mat('#2d343d', { roughness: 0.7 }), roller: mat('#7a838d', { metalness: 0.6, roughness: 0.35 }), steel: mat('#9aa3ad', { metalness: 0.7, roughness: 0.35 }),
-    box: withTex(mat('#c79a5e', { roughness: 0.9, clearcoat: 0 }), TX.cardboard(), { rough: false }), tape: mat('#d9b98a', { roughness: 0.4, clearcoat: 0.3 }),
+    box: withTex(mat('#c79a5e', { roughness: 0.9, clearcoat: 0 }), TX.cardboard('#b8946c'), { rough: false }), tape: mat('#d9b98a', { roughness: 0.4, clearcoat: 0.3 }),
     label: withTex(mat('#f5f0e8', { roughness: 0.6 }), TX.waybill()), labelOrange: mat(ORANGE),
     truck: mat('#eee8dc', { roughness: 0.4, metalness: 0.2, clearcoat: 0.4 }), tyre: withTex(mat('#20242a', { roughness: 0.9 }), TX.asphalt('#20242a')), chrome: mat('#c8ccd2', { metalness: 0.95, roughness: 0.15 }),
     courier: mat(S.trim, { roughness: 0.7 }), helmet: mat(ORANGE, { roughness: 0.3, clearcoat: 0.5 }), skin: mat('#e6b98f', { roughness: 0.6, clearcoat: 0 }), glove: mat('#2b3038', { roughness: 0.8 }), dark: mat('#2b3038', { roughness: 0.6 }),
-    wall: withTex(mat(S.wall, { roughness: 0.9 }), TX.brick(S.wall), { rough: false }), door: withTex(mat(S.door, { roughness: 0.6 }), TX.wood(S.door)), ground: withTex(mat(S.ground, { roughness: 0.95, clearcoat: 0 }), TX.concrete(S.ground), { rough: true }),
+    wall: withTex(mat(S.wall, { roughness: 0.9 }), TX.brick(S.wall), { rough: false }), door: withTex(mat(S.door, { roughness: 0.6 }), TX.wood(S.door)), ground: item.scene !== 'suburb' ? withTex(mat(S.ground, { roughness: 0.95, clearcoat: 0 }), TX.concrete(S.ground), { rough: true }) : withTex(mat('#55693f', { roughness: 1, clearcoat: 0 }), TX.grass('#55693f'), { rough: true }),
     porch: withTex(mat(S.porch, { roughness: 0.8 }), TX.wood(S.porch)), trim: mat(S.trim, { roughness: 0.6 }),
     road: withTex(mat('#3a3e45', { roughness: 0.95, clearcoat: 0 }), TX.asphalt(), { rough: true }), walk: withTex(mat('#c9c2b6', { roughness: 0.95, clearcoat: 0 }), TX.concrete('#c9c2b6'), { rough: true }), dash: mat('#ece6d8', { roughness: 0.8 }),
-    desk: withTex(mat('#9a7350', { roughness: 0.6 }), TX.wood()), homeWall: mat('#d9cdb8', { roughness: 0.95 }), mug: mat('#f4efe6', { roughness: 0.3, clearcoat: 0.4 }), pot: mat('#c4673c', { roughness: 0.6 }), leaf: mat('#4f8a4b', { roughness: 0.8 }), trunk: withTex(mat('#6b4a2e', { roughness: 0.9 }), TX.wood('#6b4a2e')),
-    tent: mat('#d9733a', { roughness: 0.85 }), tentDark: mat('#8a4a28', { roughness: 0.85 }),
-    phone: mat('#1b1f26', { roughness: 0.3, metalness: 0.5, clearcoat: 0.6 }), screen: glow('#f3f6fa', 0.5), hi: glow('#f2b233', 0.6),
-    roof: withTex(mat('#8a4b3a', { roughness: 0.9 }), TX.brick('#8a4b3a', '#6b3a2c')), roofCity: mat('#5d6670', { roughness: 0.8 }),
+    desk: withTex(mat('#9a7350', { roughness: 0.6 }), TX.wood()), homeWall: mat('#d9cdb8', { roughness: 0.95 }), mug: mat('#f4efe6', { roughness: 0.3, clearcoat: 0.4 }), pot: mat('#c4673c', { roughness: 0.6 }), leaf: withTex(mat('#4a7a3c', { roughness: 0.9 }), TX.grass('#4a7a3c')), leaf2: withTex(mat('#5f8e45', { roughness: 0.9 }), TX.grass('#5f8e45')), trunk: withTex(mat('#6b4a2e', { roughness: 0.9 }), TX.wood('#6b4a2e')),
+    tent: withTex(mat('#e07a2e', { roughness: 0.8, emissive: '#ff8a3a', emissiveIntensity: 0.18 }), TX.ripstop('#e07a2e')), tentDark: mat('#3a2a22', { roughness: 0.85 }),
+    grass: withTex(mat('#3f5233', { roughness: 1, clearcoat: 0 }), TX.grass(), { rough: true }), pole: mat('#2a2d33', { roughness: 0.5, metalness: 0.4 }),
+    phone: mat('#1b1f26', { roughness: 0.3, metalness: 0.5, clearcoat: 0.6 }), screen: glow('#f3f6fa', 0.5), hi: glow('#f2b233', 0.6), binHi: withTex(mat('#f0a020', { roughness: 0.85, emissive: '#f08a10', emissiveIntensity: 0.35 }), TX.fabric('#f0a020')),
+    roof: withTex(mat('#8a4b3a', { roughness: 0.9 }), TX.brick('#8a4b3a', '#6b3a2c')), roofCity: mat('#5d6670', { roughness: 0.8 }), livery: withTex(mat('#ffffff', { roughness: 0.45, clearcoat: 0.3 }), TX.truckLivery()), glass: new THREE.MeshPhysicalMaterial({ color: '#1c2632', roughness: 0.08, metalness: 0.2, clearcoat: 1 }), trim2: mat('#f3efe6', { roughness: 0.6 }), roofIn: mat('#3a4048', { roughness: 0.8, metalness: 0.3 }),
     win: glow('#ffcf80', 1.2), winNight: glow('#22345e', 0.6), bulb: glow('#ffe2a8', 2.0), highbay: glow('#f4f8ff', 1.4), scan: glow('#ff3b3b', 1.4),
     shadow: new THREE.MeshBasicMaterial({ color: '#000', transparent: true, opacity: 0.28, depthWrite: false }),
     vol: new THREE.MeshBasicMaterial({ color: '#eaf2ff', transparent: true, opacity: 0.06, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false, toneMapped: false }),
@@ -157,18 +185,30 @@ export function build(ctx, item, plan) {
 
   // ═════ 地面：书桌 → 仓库 → 室外，三段接成一整条 ═════
   const S_IN = 0.95, S_OUT = 6.35;                          // 书桌 / 仓库、仓库 / 室外的分界（lane s）
-  root.add(laneSlab(-3, S_IN, -1.6, 3, M.desk));
+  root.add(laneSlab(-3, S_IN, -1.6, 3, M.grass));
   root.add(laneSlab(S_IN, S_OUT, -1.6, 3, M.concrete));
   root.add(laneSlab(S_OUT, 16, -2.4, 3, M.ground));
   // 夜里的露营地：帐篷在手机旁边（§二 shot 1），一盏小营地灯透出暖光，一块防潮垫，几样小物
   {
-    // 帐篷：山形两坡（倒角的两面斜板）+ 两端三角门帘，立在手机后侧
-    const tent = laneGroup(-0.35, -0.5); tent.position.y = 0; tent.scale.setScalar(1);
-    const side = (sign) => { const p = rbox(0.62, 0.012, 0.42, M.tent, [0, 0, 0], 0.01); p.position.set(sign * 0.145, 0.17, 0); p.rotation.z = sign * (Math.PI / 2 - 0.62); p.castShadow = p.receiveShadow = true; return p; };
-    tent.add(side(1), side(-1));
-    tent.add(cyl(0.006, 0.006, 0.34, M.tentDark, [0, 0.17, 0.21], 6));                   // 前端立杆
-    tent.add(cyl(0.006, 0.006, 0.34, M.tentDark, [0, 0.17, -0.21], 6));
-    const flap = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.34, 3, 1, true), M.tentDark); flap.position.set(0, 0.17, 0.212); flap.rotation.x = Math.PI / 2; flap.scale.set(0.85, 1, 1); flap.castShadow = true; tent.add(flap);
+    // 圆顶帐篷：半球外帐（ripstop 布纹，里头有灯，透出一点暖光）+ 两根交叉弧形帐杆 + 正面拉链门（深色、半掀开）+ 地钉拉绳
+    const tent = laneGroup(-0.3, -0.55);
+    const R0 = 0.3, dome = new THREE.Mesh(new THREE.SphereGeometry(R0, 40, 16, 0, Math.PI * 2, 0, Math.PI / 2), M.tent);
+    dome.scale.set(1.25, 1.0, 1.0); dome.castShadow = dome.receiveShadow = true; tent.add(dome);
+    const door = new THREE.Mesh(new THREE.SphereGeometry(R0 * 1.004, 20, 10, Math.PI / 2 - 0.42, 0.84, Math.PI * 0.2, Math.PI * 0.3), M.tentDark);
+    door.scale.copy(dome.scale); tent.add(door);
+    const inner = new THREE.Mesh(new THREE.SphereGeometry(R0 * 1.006, 20, 10, Math.PI / 2 - 0.3, 0.6, Math.PI * 0.3, Math.PI * 0.2), glow('#ffb45a', 1.1));
+    inner.scale.copy(dome.scale); tent.add(inner);                                       // 门缝里漏出的帐内暖光
+    for (const a of [Math.PI / 4, -Math.PI / 4]) {
+      const pole = new THREE.Mesh(new THREE.TorusGeometry(R0 * 1.01, 0.0035, 6, 48, Math.PI), M.pole);
+      pole.rotation.y = a; pole.scale.set(1.25, 1, 1); tent.add(pole);
+    }
+    for (const [x, z] of [[-0.5, 0.32], [0.5, 0.32], [-0.5, -0.32], [0.5, -0.32]]) {     // 拉绳 + 地钉
+      const p0 = new THREE.Vector3(x * 0.55, 0.2, z * 0.6), p1 = new THREE.Vector3(x, 0.002, z);
+      const L = p0.distanceTo(p1), rope = cyl(0.0012, 0.0012, L, mat('#d8d2c4', { roughness: 0.8 }), [0, 0, 0], 4);
+      rope.position.copy(p0).lerp(p1, 0.5); rope.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), p1.clone().sub(p0).normalize()); tent.add(rope);
+    }
+    const tentLight = new THREE.PointLight('#ffb060', 0.5, 0.9, 1.6); tentLight.position.set(0, 0.12, 0); tent.add(tentLight);
+    tent.add(contactShadow(0.42, M.shadow, [0, 0, 0]));
     root.add(tent);
     // 营地灯（暖光源）+ 防潮垫 + 保温杯
     const camp = laneGroup(0.0, 0.0); camp.position.set(...STATIONS.phone);
@@ -186,9 +226,12 @@ export function build(ctx, item, plan) {
   // 仓库：后墙（橙色腰线 + 高窗）+ 墙前一排高货架 + 地上的黄色安全线
   {
     const wall = laneGroup((S_IN + S_OUT) / 2, -1.3); const L = S_OUT - S_IN;
-    wall.add(box(L, 0.8, 0.06, M.wallIn, [0, 0.4, 0])); wall.add(box(L, 0.05, 0.065, M.band, [0, 0.28, 0.002]));
+    wall.add(box(L, 1.6, 0.06, M.wallIn, [0, 0.8, 0])); wall.add(box(L, 0.05, 0.065, M.band, [0, 0.28, 0.002]));
     for (let x = -L / 2 + 0.3; x < L / 2 - 0.2; x += 0.45) wall.add(box(0.3, 0.12, 0.01, M.winNight, [x, 0.62, 0.035]));
     root.add(wall);
+    // 屋顶：深色钢屋面 + 一排排工字钢梁，挡住仓库上方的天（贴地机位往上看时不再露出夜空）
+    root.add(laneSlab(S_IN - 0.05, S_OUT - 0.5, -1.35, 0.95, M.roofIn, 0.74, 0.02));
+    for (let s = S_IN + 0.1; s < S_OUT - 0.5; s += 0.35) root.add(laneSlab(s, s + 0.03, -1.3, 0.92, M.rack, 0.7, 0.04));
     for (let s = S_IN + 0.15; s < S_OUT - 0.2; s += 0.2) {
       const r = laneGroup(s, -1.08);
       r.add(extrude([[-0.08, 0], [0.08, 0], [0.08, 0.42], [-0.08, 0.42]], 0.14, M.rack, [0, 0, -0.07]));   // 拉伸的货架立柱
@@ -217,6 +260,8 @@ export function build(ctx, item, plan) {
       for (let r = 0; r < rows; r++) for (let x = -hw / 2 + 0.11; x < hw / 2 - 0.08; x += 0.17) {
         if (nearDoor && r === 0 && Math.abs(x) < 0.2) continue;                         // 门的位置不开窗
         g.add(box(0.08, 0.08, 0.01, R() < 0.6 ? M.win : M.winNight, [x, 0.14 + r * 0.16, 0.355]));
+        g.add(box(0.096, 0.096, 0.008, M.trim2, [x, 0.14 + r * 0.16, 0.351])); g.add(box(0.1, 0.008, 0.02, M.trim2, [x, 0.096 + r * 0.16, 0.36]));   // 窗框 + 窗台
+        g.add(box(0.004, 0.08, 0.004, M.trim2, [x, 0.14 + r * 0.16, 0.361])); g.add(box(0.08, 0.004, 0.004, M.trim2, [x, 0.14 + r * 0.16, 0.361]));   // 十字窗棂
       }
       root.add(g);
     };
@@ -232,7 +277,8 @@ export function build(ctx, item, plan) {
     house(S_OF.door, 0.7, city ? 0.62 : 0.42, true);
     row(S_OF.door + 0.43, 15.5);
     nightGlows.push({ m: M.win, k: 1.2 }, { m: M.winNight, k: 0.6 });
-    for (let s = S_OUT + 0.4; s < 15.5; s += 0.5 + R() * 0.4) { const t = tree(M, 0.22 + R() * 0.12); t.position.set(...lane(s, 0.95 + R() * 0.6)); root.add(t); }   // 路这边的树离路远一点、矮一点，不挡车
+    // 路这边（朝相机）不种树：贴地机位离路很近，树一进前景就挡住三轮车和字幕。照样抽随机数，后面的件位置不动
+    for (let s = S_OUT + 0.4; s < 15.5; s += 0.5 + R() * 0.4) { R(); R(); }   // 路这边的树离路远一点、矮一点，不挡车
     for (let s = S_OUT + 0.9; s < 15.5; s += 1.15) {
       const p = laneGroup(s, -0.33); p.add(cyl(0.008, 0.01, 0.42, M.dark, [0, 0.21, 0], 6)); p.add(box(0.012, 0.012, 0.09, M.dark, [0, 0.42, 0.045]));   // 路灯立在人行道上，灯头伸向路面
       p.add(box(0.035, 0.018, 0.035, M.bulb, [0, 0.41, 0.09])); root.add(p);
@@ -250,7 +296,8 @@ export function build(ctx, item, plan) {
   {
     const g = atStation('phone');
     g.add(rbox(0.44, 0.016, 0.22, M.phone, [0, 0.008, 0], 0.02));                        // 机身（倒角）
-    g.add(box(0.4, 0.004, 0.18, M.screen, [0, 0.018, 0]));                               // 屏幕（商品页）
+    { const tx = TX.phoneUI(), m = new THREE.MeshStandardMaterial({ color: tx ? '#ffffff' : '#26303d', map: tx, emissive: '#ffffff', emissiveMap: tx, emissiveIntensity: tx ? 0.55 : 0.2, roughness: 0.15 });
+      const scr = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.18), m); scr.rotation.x = -Math.PI / 2; scr.position.set(0, 0.0165, 0); g.add(scr); }   // 屏幕（深色商品页，贴在机身顶面）
     const prod = buildProduct({ kind: item.model, colors: item.colors }); prod.scale.setScalar(0.16); prod.position.set(0.05, 0.02, 0); g.add(prod);
     const btn = rbox(0.05, 0.008, 0.15, M.agv, [-0.15, 0.022, 0], 0.004); g.add(btn);    // 「立即下单」橙按钮
     const check = cyl(0.022, 0.022, 0.006, M.screen, [-0.15, 0.027, 0], 16); g.add(check);  // 下单成功的对勾圈
@@ -276,13 +323,11 @@ export function build(ctx, item, plan) {
     armBase.add(cyl(0.03, 0.028, 0.02, M.dark, [0, 0.001, 0], 10)); g.add(armBase);
     const agvs = [];
     for (let i = 0; i < COUNT; i++) { const a = buildAgv(M); g.add(a); agvs.push(a); }
-    agvs[0].userData.pod.children[0].material = M.hi;                                      // 目标那台的货架 pod 高亮
-    // 高棚灯：一排挂在高处的灯具（发光面 + 灯箱）+ 假体积光柱（朝下的加色锥，越往下越淡）
+    for (const b of agvs[0].userData.pod.userData.bins) b.material = M.binHi;                                      // 目标那台的货架 pod 高亮
+    // 高棚灯：一排挂在高处的灯具（灯箱 + 发光面）。不画假体积光柱——加色锥在画面里读成一排白色半透明金字塔
     for (let s = -0.5; s <= 0.5; s += 0.5) for (const q of [-0.3, 0.3]) {
       g.add(box(0.14, 0.03, 0.1, M.steel, [s, 0.62, q]));
       g.add(box(0.12, 0.006, 0.08, M.highbay, [s, 0.603, q]));
-      const shaft = new THREE.Mesh(new THREE.ConeGeometry(0.26, 0.56, 16, 1, true), M.vol);
-      shaft.position.set(s, 0.32, q); shaft.rotation.x = Math.PI; shaft.renderOrder = 2; g.add(shaft);
     }
     root.add(g); parts.warehouse = { g, agvs, armBase };
   }
@@ -302,6 +347,20 @@ export function build(ctx, item, plan) {
     sealer.add(cyl(0.03, 0.03, 0.04, M.tape, [0, 0.2, -0.16], 12)); g.add(sealer);
     const applicator = new THREE.Group(); applicator.position.set(0.0, 0, -0.3);
     applicator.add(rbox(0.2, 0.22, 0.14, M.steel, [0, 0.11, 0], 0.012)); applicator.add(box(0.12, 0.02, 0.01, M.label, [0, 0.17, 0.072])); g.add(applicator);
+    // 工业细节：立箱机顶上的有集橙面板 + 操作屏立杆、黄黑警示条；输送线两侧护栏；封箱机头（橙色机头 + 胶带卷）；
+    // 身后两托盘码好的纸箱，让打包区像真的在一个忙着的库里
+    erector.add(box(0.224, 0.03, 0.404, M.band, [0, 0.245, 0]));
+    erector.add(cyl(0.006, 0.006, 0.16, M.steel, [-0.06, 0.34, 0.16], 6)); erector.add(rbox(0.1, 0.07, 0.012, M.dark, [-0.06, 0.43, 0.16], 0.004)); erector.add(box(0.085, 0.055, 0.002, M.screen, [-0.06, 0.43, 0.167]));
+    for (let k = 0; k < 6; k++) erector.add(box(0.03, 0.02, 0.002, k % 2 ? M.dark : M.lineY, [-0.09 + k * 0.03, 0.03, 0.201]));
+    for (const z of [-0.2, 0.2]) { g.add(box(0.84, 0.012, 0.012, M.steel, [0, 0.14, z])); for (let x = -0.38; x <= 0.38; x += 0.19) g.add(box(0.008, 0.04, 0.008, M.steel, [x, 0.12, z])); }
+    sealer.add(rbox(0.12, 0.06, 0.3, M.band, [0, 0.22, 0], 0.01)); sealer.add(cyl(0.035, 0.035, 0.03, M.tape, [0.0, 0.22, 0.17], 16).rotateX(Math.PI / 2));
+    for (const [px, pz] of [[-0.2, -0.62], [0.32, -0.66]]) {
+      const pal = new THREE.Group(); pal.position.set(px, 0, pz); pal.rotation.y = (R() - 0.5) * 0.2;
+      pal.add(box(0.36, 0.03, 0.3, M.desk, [0, 0.015, 0]));
+      for (let ly = 0; ly < 3; ly++) for (let ix = 0; ix < 3; ix++) for (let iz = 0; iz < 2; iz++) if (ly < 2 || R() < 0.6) pal.add(rbox(0.11, 0.09, 0.14, M.box, [-0.12 + ix * 0.12, 0.08 + ly * 0.095, -0.072 + iz * 0.145], 0.004));
+      pal.add(box(0.37, 0.006, 0.006, M.tape, [0, 0.27, 0.15]));
+      g.add(pal);
+    }
     const parcel = buildParcel(item.box, M); parcel.position.set(0, 0.11, 0); g.add(parcel);
     const prod = buildProduct({ kind: item.model, colors: item.colors }); prod.scale.setScalar(0.12); prod.position.set(0, 0.11, 0); g.add(prod);
     g.add(contactShadow(0.26, M.shadow, [0, 0.09, 0]));
@@ -321,7 +380,12 @@ export function build(ctx, item, plan) {
     const divert = rbox(0.12, 0.02, 0.15, M.agv, [0.12, 0.108, 0], 0.004); g.add(divert); // 摆轮
     const chute = box(0.17, 0.025, 0.38, M.steel, [0.22, 0.06, 0.26]); chute.rotation.x = 0.18; g.add(chute);
     const cageG = new THREE.Group(); cageG.position.set(0.22, 0, 0.5);                      // 笼车：框 + 网格 + 脚轮
-    cageG.add(extrude([[-0.09, 0], [0.09, 0], [0.09, 0.14], [-0.09, 0.14]], 0.16, M.rack, [0, 0.01, -0.08]));
+    // 笼车：钢丝网——底板 + 竖杆 + 三道横杆，三面围着、朝分拣线一面敞开；里头已经有几只箱子
+    cageG.add(box(0.18, 0.006, 0.16, M.steel, [0, 0.022, 0]));
+    for (let x = -0.09; x <= 0.091; x += 0.03) for (const z of [-0.08, 0.08]) cageG.add(box(0.0025, 0.2, 0.0025, M.steel, [x, 0.12, z]));
+    for (let z = -0.08; z <= 0.081; z += 0.032) cageG.add(box(0.0025, 0.2, 0.0025, M.steel, [-0.09, 0.12, z]));
+    for (const y of [0.06, 0.14, 0.22]) { for (const z of [-0.08, 0.08]) cageG.add(box(0.18, 0.003, 0.003, M.steel, [0, y, z])); cageG.add(box(0.003, 0.003, 0.16, M.steel, [-0.09, y, 0])); }
+    for (const [bx, by, bz, bw] of [[-0.03, 0.06, -0.02, 0.09], [0.04, 0.055, 0.03, 0.07], [-0.02, 0.12, 0.02, 0.08]]) cageG.add(rbox(bw, bw * 0.75, bw * 0.9, M.box, [bx, by, bz], 0.003));
     for (const [cx, cz] of [[-0.07, -0.06], [0.07, -0.06], [-0.07, 0.06], [0.07, 0.06]]) { const w = cyl(0.012, 0.012, 0.01, M.dark, [cx, 0.01, cz], 8); w.rotation.x = Math.PI / 2; cageG.add(w); }
     g.add(cageG);
     const boxes = [];
@@ -341,16 +405,19 @@ export function build(ctx, item, plan) {
     const truck = new THREE.Group(); truck.rotation.y = TH;
     const body = new THREE.Group(); body.scale.setScalar(1.5); truck.add(body);
     body.add(rbox(0.3, 0.17, 0.18, M.truck, [0, 0.145, 0], 0.01));                        // 厢体
-    body.add(box(0.302, 0.03, 0.182, M.band, [0, 0.1, 0]));                               // 腰线
-    body.add(rbox(0.1, 0.11, 0.182, M.truck, [0.2, 0.08, 0], 0.012));                     // 驾驶室
-    body.add(box(0.12, 0.13, 0.17, M.labelOrange, [0.0, 0.105, 0.0901]));                 // 厢侧有集 logo 面
+        body.add(rbox(0.1, 0.11, 0.182, M.truck, [0.2, 0.08, 0], 0.012));                     // 驾驶室
+    for (const sz of [1, -1]) { const lv = new THREE.Mesh(new THREE.PlaneGeometry(0.29, 0.16), M.livery); lv.position.set(0, 0.145, sz * 0.0905); if (sz < 0) lv.rotation.y = Math.PI; body.add(lv); }   // 厢侧涂装（贴花，贴平）
+    body.add(box(0.3, 0.012, 0.17, M.dark, [0, 0.052, 0]));                               // 底盘大梁
+    body.add(box(0.012, 0.02, 0.18, M.dark, [-0.153, 0.055, 0]));                         // 后保险杠
+    body.add(box(0.006, 0.03, 0.12, M.dark, [0.252, 0.06, 0]));                           // 进气格栅
+    for (const sz of [1, -1]) body.add(box(0.06, 0.045, 0.002, M.glass, [0.21, 0.105, sz * 0.0915]));   // 驾驶室侧窗
     body.add(box(0.006, 0.05, 0.14, glow('#aee0ff', 0.25), [0.252, 0.1, 0]));             // 风挡
     body.add(box(0.01, 0.025, 0.035, M.bulb, [0.253, 0.055, 0.065]), box(0.01, 0.025, 0.035, M.bulb, [0.253, 0.055, -0.065]));   // 前灯
     body.add(box(0.012, 0.03, 0.006, M.dark, [0.235, 0.11, 0.098]), box(0.012, 0.03, 0.006, M.dark, [0.235, 0.11, -0.098]));     // 后视镜
     const doorL = new THREE.Group(), doorR = new THREE.Group(); doorL.position.set(-0.152, 0, 0.09); doorR.position.set(-0.152, 0, -0.09);
     doorL.add(box(0.008, 0.16, 0.09, M.rack, [0, 0.145, -0.045])); doorR.add(box(0.008, 0.16, 0.09, M.rack, [0, 0.145, 0.045]));
     body.add(doorL, doorR);
-    for (const [dx, dz] of [[0.2, 0.092], [0.2, -0.092], [-0.08, 0.092], [-0.08, -0.092]]) { const w = new THREE.Group(); w.position.set(dx, 0.04, dz); const t = lathe([[0.022, -0.016], [0.04, -0.016], [0.04, 0.016], [0.022, 0.016]], M.tyre, [0, 0, 0], 14); t.rotation.x = Math.PI / 2; w.add(t); const hub = cyl(0.02, 0.02, 0.034, M.chrome, [0, 0, 0], 10); hub.rotation.x = Math.PI / 2; w.add(hub); body.add(w); }
+    for (const [dx, dz] of [[0.2, 0.092], [0.2, -0.092], [-0.08, 0.092], [-0.08, -0.092]]) { const w = new THREE.Group(); w.position.set(dx, 0.04, dz); const t = cyl(0.04, 0.04, 0.032, M.tyre, [0, 0, 0], 24); t.rotation.x = Math.PI / 2; w.add(t); const hub = cyl(0.022, 0.022, 0.034, M.chrome, [0, 0, 0], 16); hub.rotation.x = Math.PI / 2; w.add(hub); body.add(w); }
     root.add(truck); parts.truck = { truck, doorL, doorR };
   }
   // ── 7 + 8 三轮车、快递员、木门廊（门开出暖光，按 item 换配色） ──
@@ -453,7 +520,7 @@ function updateAgvs(wh, cells, lt) {
     const a = wh.agvs[i];
     a.position.set(wx, 0, wz);
     a.rotation.y = -o.heading;
-    a.userData.pod.position.y = 0.04 + 0.008 * o.moving * Math.abs(Math.sin(lt * 8 + i));
+    a.userData.pod.position.y = 0.036 + 0.002 * o.moving * Math.abs(Math.sin(lt * 8 + i));
   }
   wh.armBase.rotation.z = 0.9 * easeInOut(ss(EV.pick - 0.3, EV.pick + 0.4, lt));
 }
@@ -505,8 +572,8 @@ function updateCourier(d, t) {
   d.parcel.visible = placed;
   const open = easeInOut(ss(0.4, 1.4, dl));
   d.doorPivot.rotation.y = open * 1.25;
-  d.inside.material.emissiveIntensity = 1.4 * open;
-  d.warm.intensity = 1.6 * open;
+  d.inside.material.emissiveIntensity = 0.9 * open;                     // 门里暖光：亮但不过曝（之前整扇门口被 bloom 冲白）
+  d.warm.intensity = 0.9 * open;
 }
 const C = (h) => new THREE.Color(h);
 const SKY = { nightTop: C('#0b1430'), nightLow: C('#24356a'), dawnTop: C('#6f97d3'), dawnLow: C('#ffb27a'), midLow: C('#d77a7a') };
@@ -515,14 +582,16 @@ function updateLight(w, t, focus, sky, glows) {
   // out：从仓库出到室外（8.6–9.4 s 平滑过渡）；dawn：室外的夜 → 黎明（9.6–13.4 s）
   const out = ss(8.6, 9.4, t), dawn = ss(9.6, 13.4, t);
   const kIn = C('#e8efff'), kNight = C('#8ea6e0'), kDawn = C('#ffb87a');
-  w.key.color.copy(kIn).lerp(kNight, out).lerp(kDawn, dawn);
-  w.key.intensity = lerp(lerp(2.4, 1.1, out), 2.7, dawn);
-  w.amb.color.copy(C('#e8eeff')).lerp(C('#56679a'), out).lerp(C('#ffd9bf'), dawn);
-  w.amb.groundColor.copy(C('#4a4f57')).lerp(C('#1d2333'), out).lerp(C('#6a4a3a'), dawn);
-  w.amb.intensity = lerp(lerp(0.95, 0.6, out), 0.9, dawn);
-  // 主光从侧后方斜打（黎明时更低、更暖），阴影跟着取景点
+  // camp：开场露营地是夜里（月光冷蓝、环境光很暗，只靠营地灯和帐篷透光），进仓库前过渡到室内冷白
+  const camp = 1 - ss(STORY0.robots - 0.35, STORY0.robots + 0.15, t);
+  w.key.color.copy(kIn).lerp(kNight, out).lerp(kDawn, dawn).lerp(C('#7d94d6'), camp);
+  w.key.intensity = lerp(lerp(lerp(3.0, 1.1, out), 2.9, dawn), 0.7, camp);
+  w.amb.color.copy(C('#e8eeff')).lerp(C('#56679a'), out).lerp(C('#ffd9bf'), dawn).lerp(C('#4a5c8f'), camp);
+  w.amb.groundColor.copy(C('#4a4f57')).lerp(C('#1d2333'), out).lerp(C('#6a4a3a'), dawn).lerp(C('#141a14'), camp);
+  w.amb.intensity = lerp(lerp(lerp(0.42, 0.45, out), 0.6, dawn), 0.35, camp);
+  // 主光从侧后方斜打（机位在 +x +z，光从 +x −z 来：有明暗面和朝镜头的影子，不再是正面平光），黎明时更低、更暖
   const lowK = lerp(1, 0.55, dawn);
-  w.key.position.set(focus[0] + 2.5, 5.5 * lowK + 1.2, focus[2] + 3.2);
+  w.key.position.set(focus[0] + 3.2, 4.6 * lowK + 1.0, focus[2] - 2.6);
   w.key.target.position.set(focus[0], 0, focus[2]); w.key.target.updateMatrixWorld();
   // 天幕渐变：底色先变粉紫再变橙，顶色从深蓝到浅蓝
   const top = tmpA.copy(SKY.nightTop).lerp(SKY.dawnTop, dawn);
@@ -530,7 +599,7 @@ function updateLight(w, t, focus, sky, glows) {
   const pos = sky.geometry.attributes.position, col = sky.geometry.attributes.color, H = 3.2;
   for (let i = 0; i < pos.count; i++) { const k = clamp((pos.getY(i) + H / 2) / H); const c = tmpLow.copy(low).lerp(top, Math.pow(k, 0.7)); col.setXYZ(i, c.r, c.g, c.b); }
   col.needsUpdate = true;
-  w.scene.background.copy(low);
+  w.scene.background.copy(low).lerp(C('#30353c'), (1 - camp) * (1 - out));   // 仓库里看不到天：远处是昏暗的库内
   for (const g of glows) g.m.emissiveIntensity = g.k * (1 - 0.85 * dawn);
 }
 const tmpLow = new THREE.Color();

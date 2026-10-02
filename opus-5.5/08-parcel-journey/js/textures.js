@@ -33,9 +33,11 @@ const jitter = (rng, c, k) => { const r = parseInt(c.slice(1, 3), 16), g = parse
 
 // ── 瓦楞纸：底色 + 细楞纹（竖向明暗条）+ 稀疏斑点压痕 ──
 export const cardboard = (base = '#c79a5e') => make(`card-${base}`, (g, w, h, rng) => {
+  // 牛皮纸面：大块的轻微色斑 + 极细的纤维点；楞纹只在纸面下隐约透出（很淡的细横条），不是一道道竖条
   g.fillStyle = base; g.fillRect(0, 0, w, h);
-  for (let x = 0; x < w; x += 6) { g.fillStyle = jitter(rng, base, 10); g.fillRect(x, 0, 3, h); g.fillStyle = jitter(rng, base, 22); g.fillRect(x + 3, 0, 3, h); }
-  for (let i = 0; i < 240; i++) { g.globalAlpha = rng() * 0.12; g.fillStyle = rng() < 0.5 ? '#000' : '#fff'; const r = 1 + rng() * 2.5; g.beginPath(); g.arc(rng() * w, rng() * h, r, 0, 7); g.fill(); }
+  for (let i = 0; i < 40; i++) { g.globalAlpha = 0.04 + rng() * 0.05; g.fillStyle = rng() < 0.5 ? '#6b4a26' : '#e8c99a'; g.beginPath(); g.ellipse(rng() * w, rng() * h, 30 + rng() * 90, 20 + rng() * 60, rng() * 7, 0, 7); g.fill(); }
+  g.globalAlpha = 0.035; g.fillStyle = '#000'; for (let y = 0; y < h; y += 8) g.fillRect(0, y, w, 3);
+  for (let i = 0; i < 3000; i++) { g.globalAlpha = rng() * 0.12; g.fillStyle = rng() < 0.5 ? '#4a3218' : '#f3dcb4'; g.fillRect(rng() * w, rng() * h, 1, 1 + rng() * 2); }
   g.globalAlpha = 1;
 }, { repeat: [2, 2] });
 
@@ -70,6 +72,52 @@ export const concrete = (base = '#b3b8bd') => make(`concrete-${base}`, (g, w, h,
   for (let i = 0; i < 12; i++) { g.globalAlpha = 0.05 + rng() * 0.06; g.fillStyle = '#2a2d31'; g.beginPath(); g.ellipse(rng() * w, rng() * h, 20 + rng() * 60, 14 + rng() * 40, rng() * 7, 0, 7); g.fill(); }
   g.globalAlpha = 1;
 }, { repeat: [3, 3] });
+
+// ── 营地草地：墨绿底 + 密密的短草叶（深浅两色）+ 几块裸土 ──
+export const grass = (base = '#3f5233') => make(`grass-${base}`, (g, w, h, rng) => {
+  g.fillStyle = base; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 10; i++) { g.globalAlpha = 0.12 + rng() * 0.12; g.fillStyle = '#5a4a32'; g.beginPath(); g.ellipse(rng() * w, rng() * h, 20 + rng() * 50, 12 + rng() * 30, rng() * 7, 0, 7); g.fill(); }
+  g.lineCap = 'round';
+  for (let i = 0; i < 5000; i++) {
+    const x = rng() * w, y = rng() * h, L = 3 + rng() * 7, a = -Math.PI / 2 + (rng() - 0.5) * 0.9;
+    g.globalAlpha = 0.25 + rng() * 0.4; g.strokeStyle = rng() < 0.5 ? '#2b3a22' : (rng() < 0.6 ? '#62784a' : '#7d8f55'); g.lineWidth = 1 + rng();
+    g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * L, y + Math.sin(a) * L); g.stroke();
+  }
+  g.globalAlpha = 1;
+}, { repeat: [4, 4] });
+
+// ── 帐篷布：涤纶细格纹（ripstop）+ 轻微褶皱明暗 ──
+export const ripstop = (base = '#e07a2e') => make(`ripstop-${base}`, (g, w, h, rng) => {
+  g.fillStyle = base; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 14; i++) { const y = rng() * h; const grd = g.createLinearGradient(0, y - 30, 0, y + 30); grd.addColorStop(0, 'rgba(0,0,0,0)'); grd.addColorStop(0.5, rng() < 0.5 ? 'rgba(0,0,0,0.10)' : 'rgba(255,255,255,0.08)'); grd.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = grd; g.fillRect(0, y - 30, w, 60); }
+  g.globalAlpha = 0.18; g.strokeStyle = '#000'; g.lineWidth = 1;
+  for (let x = 0; x < w; x += 16) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); }
+  for (let y = 0; y < h; y += 16) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
+  g.globalAlpha = 1;
+}, { repeat: [3, 3] });
+
+// ── 手机屏（横放）：深色 App 商品页——顶栏「有集」、中间一张浅色商品卡（商品本身是立在屏上的 3D 小模型）、价格行、
+//    左端留给橙色「立即下单」实体按钮的深色底，屏边一圈细黑边。画面是横的：u 沿机身长边 ──
+export const phoneUI = (orange = '#f0820f') => make(`phoneui-${orange}`, (g, w, h) => {
+  g.fillStyle = '#0d1016'; g.fillRect(0, 0, w, h);
+  const x0 = w * 0.03, y0 = h * 0.06, W = w * 0.94, H = h * 0.88;
+  const grd = g.createLinearGradient(0, y0, 0, y0 + H); grd.addColorStop(0, '#26303d'); grd.addColorStop(1, '#161b23'); g.fillStyle = grd; g.fillRect(x0, y0, W, H);
+  g.fillStyle = '#e9e4da'; g.beginPath(); g.roundRect(w * 0.38, h * 0.14, w * 0.36, h * 0.72, 18); g.fill();   // 商品卡
+  g.fillStyle = orange; g.font = `bold ${h * 0.11}px sans-serif`; g.textBaseline = 'middle'; g.fillText('有集', w * 0.8, h * 0.2);
+  g.fillStyle = '#c9d1dc'; g.font = `${h * 0.065}px sans-serif`; g.fillText('次日达', w * 0.8, h * 0.33);
+  g.fillStyle = '#ff5a3d'; g.font = `bold ${h * 0.12}px sans-serif`; g.fillText('¥', w * 0.8, h * 0.55);
+  g.fillStyle = '#8a95a3'; for (let i = 0; i < 3; i++) g.fillRect(w * 0.8, h * (0.68 + i * 0.07), w * (0.14 - i * 0.03), h * 0.025);
+  g.fillStyle = '#3a2410'; g.beginPath(); g.roundRect(w * 0.07, h * 0.12, w * 0.12, h * 0.76, 14); g.fill();   // 按钮槽
+}, { w: 1024, h: 512 });
+
+// ── 货车厢侧涂装：白底 + 有集橙斜飘带 + 品牌字 ──
+export const truckLivery = (orange = '#f0820f') => make(`livery-${orange}`, (g, w, h) => {
+  g.fillStyle = '#f2efe8'; g.fillRect(0, 0, w, h);
+  g.fillStyle = orange; g.beginPath(); g.moveTo(0, h * 0.72); g.bezierCurveTo(w * 0.35, h * 0.55, w * 0.65, h * 0.95, w, h * 0.62); g.lineTo(w, h); g.lineTo(0, h); g.fill();
+  g.fillStyle = '#d96f08'; g.fillRect(0, h * 0.94, w, h * 0.06);
+  g.fillStyle = orange; g.font = `bold ${h * 0.24}px sans-serif`; g.textBaseline = 'middle'; g.fillText('有集', w * 0.08, h * 0.3);
+  g.fillStyle = '#2b3038'; g.font = `${h * 0.1}px sans-serif`; g.fillText('YOUJI · 次日达 NEXT-DAY', w * 0.08, h * 0.5);
+}, { w: 1024, h: 512 });
 
 // ── 沥青：深灰细颗粒 + 浅色碎石点 ──
 export const asphalt = (base = '#3a3e45') => make(`asphalt-${base}`, (g, w, h, rng) => {
