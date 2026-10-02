@@ -109,10 +109,27 @@ function empireState(cx,baseY,s){ s=s||1; const o=[]; const w=70*s;
 function tunnelArch(cx,cy,r,s){ s=s||1; return [arcPts(cx,cy,r,Math.PI,Math.PI*2,3), line(cx-r,cy,cx-r,cy+120*s,3), line(cx+r,cy,cx+r,cy+120*s,3)]; }
 function tokenGlyph(cx,cy,r){ return [circle(cx,cy,r,2.5),circle(cx,cy,r*0.5,2),poly([[cx-r*0.22,cy],[cx+r*0.22,cy]]),poly([[cx,cy-r*0.22],[cx,cy+r*0.22]])]; }
 function graffiti(x0,y0,n){ const o=[]; for(let i=0;i<n;i++){const x=x0+rnd(-10,10),y=y0+rnd(-8,8); o.push(bezier([x,y],[x+rnd(-30,30),y+rnd(-30,10)],[x+rnd(10,60),y+rnd(-10,20)],0.08));} return o; }
+/* MTA-style subway roundel: thick outer ring (double circle) + a route-letter badge disc below-right.
+   Returns {ring, letter} path sets; the ring draws in sand, the badge gets a coloured fill. */
+function subwayLogo(cx,cy,r){ const o=[];
+  o.push(circle(cx,cy,r,2)); o.push(circle(cx,cy,r-10,2)); o.push(circle(cx,cy,r-16,2)); // thick white ring
+  // the globe/route badge (small filled circle, lower-right of the ring)
+  const bx=cx+r*0.0, by=cy; const br=r*0.46;
+  o.push(circle(bx,by,br,2));
+  return {ring:o, bx,by,br}; }
+/* draw the letters "MTA" as sand strokes centered at (cx,cy), scale s */
+function lettersMTA(cx,cy,s){ s=s||1; const o=[]; const g=46*s;
+  // M
+  let x=cx-g*1.5; o.push(poly([[x-14*s,cy+20*s],[x-14*s,cy-20*s],[x,cy+2*s],[x+14*s,cy-20*s],[x+14*s,cy+20*s]],2));
+  // T
+  x=cx; o.push(line(x-16*s,cy-20*s,x+16*s,cy-20*s,2)); o.push(line(x,cy-20*s,x,cy+20*s,2));
+  // A
+  x=cx+g*1.5; o.push(poly([[x-14*s,cy+20*s],[x,cy-20*s],[x+14*s,cy+20*s]],2)); o.push(line(x-7*s,cy+2*s,x+7*s,cy+2*s,2));
+  return o; }
 
 /* ============ STORYBOARD — richer scenes, each a flat list of paths ============ */
 const S=[];
-function scene(year,cap,narr,buildFn){ S.push({year,cap,narr,buildFn}); }
+function scene(year,cap,narr,buildFn,opts){ S.push(Object.assign({year,cap,narr,buildFn}, opts||{})); }
 
 scene('1869 · 高架时代','蒸汽火车在高架轨道上轰鸣，煤烟笼罩街道，城市在地下酝酿更大的梦。',
  '一八六九年，纽约的交通还在高架之上。蒸汽火车在木制高架轨道上轰鸣穿行，煤烟笼罩着街道。但一个更大胆的梦，正在人们脚下的地底，悄悄酝酿。',
@@ -207,6 +224,12 @@ scene('今天 · 472 座车站','472 座车站、665 英里轨道、昼夜不息
    for(let i=0;i<6;i++){const a=i/6*Math.PI*2+0.3; colored.push({path:circle(cx+Math.cos(a)*230,cy+Math.sin(a)*120,16,2),col:cols[i]});}
    return {paths:p, colored}; });
 
+scene('纽约地铁','','',
+ ()=>{ const cx=640,cy=320,r=175;
+   const paths=[circle(cx,cy,r,2), circle(cx,cy,r-11,2), ...lettersMTA(cx,cy,1.9)];
+   return {paths}; },
+ {freeze:true});
+
 const scenes=S;
 window.__NARRATION = scenes.map((s,i)=>({i,year:s.year,narr:s.narr}));
 
@@ -250,6 +273,9 @@ function render(){
   } else if(local<holdEnd){
     if(!sc.__coloredDone&&sc.colored.length){ sc.colored.forEach(c=>colorPath(sctx,c.path,c.col)); sc.__coloredDone=true; }
     const p=sc.paths[Math.floor(rnd(0,sc.len))]; if(p&&p.length){const [x,y]=p[Math.floor(rnd(0,p.length))]; for(let k=0;k<8;k++) grain(hctx,x,y,2,rnd(.1,.35),SAND_HI);}
+  } else if(sc.freeze){
+    // FINAL LOGO: freeze on the drawn frame — no dissolve, no end card. Signal done once.
+    if(!window.__ANIM_DONE) window.__ANIM_DONE=true;
   } else {
     if(!sc.__particles){ sc.__particles=captureSandParticles(); clearSand(1); }
     const d=(local-holdEnd)/FADE_MS, e=d*d; clearSand(1); const wind=520*e;
