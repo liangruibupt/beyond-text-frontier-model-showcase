@@ -26,8 +26,15 @@ def dur_ms(path):
     return int(float(out)*1000)
 
 clips=[]; durations=[]
+LOGO_HOLD_MS = 5000   # the final freeze-logo scene: draw + hold, silent
 for s in narr:
     i=s['i']; mp3=os.path.join(AUD, f'scene_{i:02d}.mp3')
+    if not (s.get('narr') or '').strip():
+        # silent freeze scene (final logo): fixed-length silent clip, no TTS
+        subprocess.run([FF,'-y','-f','lavfi','-i','anullsrc=r=24000:cl=mono','-t',f'{LOGO_HOLD_MS/1000.0}','-q:a','9',mp3],check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+        clips.append((i,mp3,LOGO_HOLD_MS)); durations.append(LEAD_MS+LOGO_HOLD_MS+TAIL_MS)
+        print(f'scene {i:02d}: SILENT freeze logo -> body {durations[-1]}ms', file=sys.stderr)
+        continue
     resp = lam.invoke(FunctionName=FUNC, Payload=json.dumps({'text':s['narr'],'voice':VOICE,'format':'mp3'}))
     body = json.loads(resp['Payload'].read())
     if 'errorMessage' in body: raise RuntimeError(f"scene {i} TTS failed: {body['errorMessage']}")
