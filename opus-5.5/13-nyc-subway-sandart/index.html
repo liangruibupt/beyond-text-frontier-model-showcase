@@ -15,22 +15,19 @@
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E"); }
   #hud { position:absolute; left:0; right:0; bottom:0; padding:30px 60px 46px; z-index:5;
          background:linear-gradient(to top, rgba(10,7,3,.82), rgba(10,7,3,0)); }
-  #year { font-size:50px; font-weight:700; color:var(--sand-hi); letter-spacing:3px;
-          text-shadow:0 2px 18px rgba(0,0,0,.6); font-feature-settings:"tnum"; }
-  #cap  { font-size:30px; color:var(--ink); margin-top:12px; line-height:1.6; max-width:1120px;
-          text-shadow:0 1px 12px rgba(0,0,0,.8); opacity:.98; letter-spacing:.5px; }
+  #year { font-size:50px; font-weight:700; color:var(--sand-hi); letter-spacing:3px; text-shadow:0 2px 18px rgba(0,0,0,.6); }
+  #cap  { font-size:30px; color:var(--ink); margin-top:12px; line-height:1.6; max-width:1120px; text-shadow:0 1px 12px rgba(0,0,0,.8); opacity:.98; letter-spacing:.5px; }
   #bar { position:absolute; left:60px; right:60px; bottom:18px; height:3px; background:rgba(233,200,138,.18); border-radius:2px; z-index:6; }
   #barfill { height:100%; width:0%; background:linear-gradient(90deg,var(--sand),var(--sand-hi)); border-radius:2px; }
-  #title { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
-           z-index:7; text-align:center; color:var(--sand-hi); }
+  #title { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:7; text-align:center; color:var(--sand-hi); }
   #title h1 { font-size:64px; margin:0; letter-spacing:6px; text-shadow:0 3px 30px rgba(0,0,0,.7); }
   #title p  { font-size:26px; opacity:.82; margin:16px 0 0; letter-spacing:3px; }
 </style>
 </head>
 <body>
 <div id="wrap">
-  <canvas id="sand"  width="1280" height="720"></canvas>
-  <canvas id="hand"  width="1280" height="720"></canvas>
+  <canvas id="sand" width="1280" height="720"></canvas>
+  <canvas id="hand" width="1280" height="720"></canvas>
   <div id="grain"></div>
   <div id="title"><h1>纽约地铁 · 百年沙画</h1><p>从一节蒸汽车厢，到不眠的地下之城</p></div>
   <div id="hud"><div id="year"></div><div id="cap"></div></div>
@@ -42,222 +39,228 @@ const sand=document.getElementById('sand'), sctx=sand.getContext('2d');
 const hand=document.getElementById('hand'), hctx=hand.getContext('2d');
 const elYear=document.getElementById('year'), elCap=document.getElementById('cap');
 const elTitle=document.getElementById('title'), elBar=document.getElementById('barfill');
-
 const SAND='#e9c88a', SAND_HI='#fff2d4', SAND_LO='#b98f52';
-/* real MTA line colours (for the modern route dots) */
-const MTA={red:'#ee352e', blue:'#0039a6', yellow:'#fccc0a', green:'#00933c', orange:'#ff6319', purple:'#b933ad'};
+const MTA={red:'#ee352e',blue:'#0039a6',yellow:'#fccc0a',green:'#00933c',orange:'#ff6319',purple:'#b933ad'};
 function rnd(a,b){return a+Math.random()*(b-a);}
-/* (5) EASING */
-function easeInOut(t){ return t<.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
+function easeInOut(t){ return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2; }
+function grain(ctx,x,y,r,alpha,col){ ctx.globalAlpha=alpha; ctx.fillStyle=col; ctx.beginPath(); ctx.arc(x+rnd(-r,r),y+rnd(-r,r),rnd(.4,1.5),0,7); ctx.fill(); }
 
-function grain(ctx,x,y,r,alpha,col){ ctx.globalAlpha=alpha; ctx.fillStyle=col;
-  ctx.beginPath(); ctx.arc(x+rnd(-r,r),y+rnd(-r,r),rnd(.4,1.5),0,7); ctx.fill(); }
-
-/* (4) PRESSURE-SENSITIVE sand stroke: width tapers in at the start of a path and
-   out at the end (lighter touch at pen-down / pen-up), and the leading edge pours
-   denser sand (slower = heavier). col optional. */
-function sandStroke(ctx,pts,t,baseDensity,col){ col=col||SAND; const n=pts.length;
-  const upto=Math.floor(n*t);
-  for(let i=0;i<upto;i++){ const [x,y]=pts[i];
-    const u=i/n;                                   // position along path 0..1
-    const press=Math.sin(Math.min(1,u/0.12)*Math.PI/2) * Math.sin(Math.min(1,(1-u)/0.12)*Math.PI/2); // taper ends
-    const spread=0.7 + press*1.3;                  // line half-width from pressure
-    const dens=Math.max(1, Math.round(baseDensity*(0.5+press)));
-    for(let k=0;k<dens;k++) grain(ctx,x,y,spread,rnd(.25,.8),Math.random()<.25?SAND_HI:(Math.random()<.3?SAND_LO:col));
+/* draw a stroke up to fraction t with pressure taper; falling-grain pour at the leading edge.
+   newReveal = points newly revealed THIS frame (so we can rain sand only on fresh points -> gradual feel). */
+function sandStroke(ctx,pts,t,prevT,baseDensity,col){ col=col||SAND; const n=pts.length;
+  const upto=Math.floor(n*t), from=Math.floor(n*Math.max(0,prevT));
+  for(let i=0;i<upto;i++){ const [x,y]=pts[i]; const u=i/n;
+    const press=Math.sin(Math.min(1,u/0.1)*Math.PI/2)*Math.sin(Math.min(1,(1-u)/0.1)*Math.PI/2);
+    const spread=0.7+press*1.4; const dens=i>=from?Math.max(1,Math.round(baseDensity*(0.8+press))):0; // only re-rain fresh points lightly
+    const base=i>=from?dens:0;
+    for(let k=0;k<base;k++) grain(ctx,x,y,spread,rnd(.3,.85),Math.random()<.28?SAND_HI:(Math.random()<.3?SAND_LO:col));
   }
-  if(upto>0 && upto<n){ const [hx,hy]=pts[upto-1];   // pouring sparkle at the leading edge
-    for(let k=0;k<26;k++) grain(hctx,hx,hy-rnd(0,38),4,rnd(.2,.75),SAND_HI); }
+  // falling grains above the leading edge — the "sand pouring onto the board" cue
+  if(upto>0&&upto<n){ const [hx,hy]=pts[upto-1];
+    for(let k=0;k<30;k++){ const fy=hy-rnd(6,70)*(1-((k%6)/6)); grain(hctx,hx+rnd(-6,6),fy,3,rnd(.15,.7),SAND_HI); } }
 }
-/* colour tint for route dots: draw a path in an MTA colour at full fill */
-function colorPath(ctx,pts,col){ for(const [x,y] of pts) for(let k=0;k<3;k++) grain(ctx,x,y,1.4,rnd(.4,.85),col); }
+function colorPath(ctx,pts,col){ for(const [x,y] of pts) for(let k=0;k<4;k++) grain(ctx,x,y,1.5,rnd(.45,.9),col); }
 
-/* geometry helpers -> arrays of [x,y] */
-function line(x1,y1,x2,y2,step){step=step||3;const d=Math.hypot(x2-x1,y2-y1),m=Math.max(2,d/step),o=[];for(let i=0;i<=m;i++){const u=i/m;o.push([x1+(x2-x1)*u,y1+(y2-y1)*u]);}return o;}
-function poly(points,step){let o=[];for(let i=0;i<points.length-1;i++)o=o.concat(line(points[i][0],points[i][1],points[i+1][0],points[i+1][1],step));return o;}
-function arcPts(cx,cy,r,a0,a1,step){step=step||3;const m=Math.max(6,Math.abs(a1-a0)*r/step),o=[];for(let i=0;i<=m;i++){const a=a0+(a1-a0)*i/m;o.push([cx+Math.cos(a)*r,cy+Math.sin(a)*r]);}return o;}
-function circle(cx,cy,r,step){return arcPts(cx,cy,r,0,Math.PI*2,step);}
-function wavy(x1,x2,y,amp,wl,step){step=step||3;const o=[];for(let x=x1;x<=x2;x+=step)o.push([x,y+Math.sin(x/wl)*amp]);return o;}
-function bezier(p0,p1,p2,step){step=step||0.02;const o=[];for(let t=0;t<=1;t+=step){const u=1-t;o.push([u*u*p0[0]+2*u*t*p1[0]+t*t*p2[0], u*u*p0[1]+2*u*t*p1[1]+t*t*p2[1]]);}return o;}
+function line(x1,y1,x2,y2,st){st=st||3;const d=Math.hypot(x2-x1,y2-y1),m=Math.max(2,d/st),o=[];for(let i=0;i<=m;i++){const u=i/m;o.push([x1+(x2-x1)*u,y1+(y2-y1)*u]);}return o;}
+function poly(p,st){let o=[];for(let i=0;i<p.length-1;i++)o=o.concat(line(p[i][0],p[i][1],p[i+1][0],p[i+1][1],st));return o;}
+function arcPts(cx,cy,r,a0,a1,st){st=st||3;const m=Math.max(6,Math.abs(a1-a0)*r/st),o=[];for(let i=0;i<=m;i++){const a=a0+(a1-a0)*i/m;o.push([cx+Math.cos(a)*r,cy+Math.sin(a)*r]);}return o;}
+function circle(cx,cy,r,st){return arcPts(cx,cy,r,0,Math.PI*2,st);}
+function wavy(x1,x2,y,amp,wl,st){st=st||3;const o=[];for(let x=x1;x<=x2;x+=st)o.push([x,y+Math.sin(x/wl)*amp]);return o;}
+function bezier(p0,p1,p2,st){st=st||0.02;const o=[];for(let t=0;t<=1;t+=st){const u=1-t;o.push([u*u*p0[0]+2*u*t*p1[0]+t*t*p2[0],u*u*p0[1]+2*u*t*p1[1]+t*t*p2[1]]);}return o;}
 
-/* (3) RICHER GLYPHS */
-/* detailed subway car: body w/ rounded roof, bogies(转向架), doors, headlight, pantograph line */
-function subwayCar(cx,cy,s){ s=s||1; const w=190*s,h=66*s; const x=cx-w/2,y=cy-h/2; const o=[];
-  o.push(poly([[x,y+h],[x,y+12*s],[x+16*s,y],[x+w-16*s,y],[x+w,y+12*s],[x+w,y+h],[x,y+h]],3)); // body
-  for(let i=0;i<3;i++){const dx=x+28*s+i*52*s; o.push(poly([[dx,y+16*s],[dx,y+h-10*s],[dx+30*s,y+h-10*s],[dx+30*s,y+16*s],[dx,y+16*s]],3));} // doors
-  o.push(line(x+6*s,y+10*s,x+w-6*s,y+10*s,3));   // window band top
-  o.push(circle(x+34*s,y+h,10*s));                // bogie 1
-  o.push(circle(x+w-34*s,y+h,10*s));              // bogie 2
-  o.push(circle(x+10*s,y+6*s,4*s));               // headlight
-  o.push(line(x+w*0.5,y,x+w*0.5,y-14*s,3));       // roof pole
+/* ---- rich glyph library ---- */
+function subwayCar(cx,cy,s){ s=s||1; const w=200*s,h=70*s,x=cx-w/2,y=cy-h/2,o=[];
+  o.push(poly([[x,y+h],[x,y+12*s],[x+16*s,y],[x+w-16*s,y],[x+w,y+12*s],[x+w,y+h],[x,y+h]],3));
+  for(let i=0;i<3;i++){const dx=x+30*s+i*54*s; o.push(poly([[dx,y+16*s],[dx,y+h-12*s],[dx+32*s,y+h-12*s],[dx+32*s,y+16*s],[dx,y+16*s]],3));}
+  for(let i=0;i<3;i++){const dx=x+30*s+i*54*s; o.push(line(dx+16*s,y+16*s,dx+16*s,y+h-12*s,3));} // door split
+  o.push(line(x+6*s,y+11*s,x+w-6*s,y+11*s,3));
+  o.push(circle(x+36*s,y+h,11*s)); o.push(circle(x+36*s,y+h,4*s));
+  o.push(circle(x+w-36*s,y+h,11*s)); o.push(circle(x+w-36*s,y+h,4*s));
+  o.push(circle(x+11*s,y+6*s,4*s)); o.push(line(x+w*0.5,y,x+w*0.5,y-16*s,3));
   return o; }
-/* Brooklyn Bridge silhouette (two gothic towers + cables) */
-function brooklynBridge(cx,cy,s){ s=s||1; const o=[]; const span=460*s, y=cy, towerH=150*s;
-  const lx=cx-span/2, rx=cx+span/2;
-  for(const tx of [lx,rx]){ o.push(poly([[tx-18*s,y],[tx-18*s,y-towerH],[tx,y-towerH-18*s],[tx+18*s,y-towerH],[tx+18*s,y]],3));
-    o.push(poly([[tx-14*s,y-towerH*0.5],[tx+14*s,y-towerH*0.5]])); o.push(poly([[tx-14*s,y-towerH*0.72],[tx+14*s,y-towerH*0.72]])); }
-  o.push(bezier([lx,y-towerH],[cx,y-20*s],[rx,y-towerH],0.015));  // main cable sag
-  o.push(line(lx-120*s,y,lx,y-towerH,3)); o.push(line(rx,y-towerH,rx+120*s,y,3)); // side stays
-  o.push(line(lx-130*s,y,rx+130*s,y,3));  // deck
+function steamLoco(cx,cy,s){ s=s||1; const o=[]; const x=cx-90*s,y=cy;
+  o.push(poly([[x,y],[x,y-38*s],[x+120*s,y-38*s],[x+120*s,y]],3));      // boiler box
+  o.push(poly([[x+120*s,y],[x+120*s,y-56*s],[x+150*s,y-56*s],[x+150*s,y]],3)); // cab
+  o.push(poly([[x+24*s,y-38*s],[x+24*s,y-70*s],[x+44*s,y-70*s],[x+44*s,y-38*s]],3)); // chimney
+  for(const px of [x+20*s,x+56*s,x+96*s]) o.push(circle(px,y,13*s));    // wheels
+  for(let i=0;i<4;i++) o.push(line(x+30*s+i*6*s,y-78*s-i*8*s,x+34*s+i*6*s,y-86*s-i*8*s,2)); // smoke puffs
+  o.push(line(x-30*s,y,x+150*s,y,3));
   return o; }
-/* Empire State building silhouette */
+function elevatedTrack(y,s){ s=s||1; const o=[line(80,y,1200,y,3), line(80,y+10*s,1200,y+10*s,3)];
+  for(let gx=120;gx<1180;gx+=90) o.push(poly([[gx,y+10*s],[gx,y+70*s]],3)); // support columns
+  for(let gx=120;gx<1120;gx+=90) o.push(poly([[gx,y+70*s],[gx+90,y+10*s]],3)); // braces
+  return o; }
+function skylineRich(y){ const b=[]; let x=120; const tops=[70,150,100,200,130,250,110,290,140,220,95,175,120,240,100];
+  for(const t of tops){const w=rnd(40,66); b.push(...poly([[x,y],[x,y-t],[x+w,y-t],[x+w,y]],4));
+    for(let wy=y-18;wy>y-t+12;wy-=22){ for(let wx=x+8;wx<x+w-6;wx+=16) b.push(...circle(wx,wy,2,2)); } // lit windows
+    x+=w+rnd(8,16); if(x>1160)break;} return b; }
+function brooklynBridge(cx,cy,s){ s=s||1; const o=[]; const span=460*s,y=cy,tH=150*s,lx=cx-span/2,rx=cx+span/2;
+  for(const tx of [lx,rx]){ o.push(poly([[tx-18*s,y],[tx-18*s,y-tH],[tx,y-tH-18*s],[tx+18*s,y-tH],[tx+18*s,y]],3));
+    o.push(poly([[tx-14*s,y-tH*0.5],[tx+14*s,y-tH*0.5]])); o.push(poly([[tx-14*s,y-tH*0.72],[tx+14*s,y-tH*0.72]])); }
+  o.push(bezier([lx,y-tH],[cx,y-18*s],[rx,y-tH],0.012));
+  for(let hx=lx+20;hx<rx;hx+=28){ const u=(hx-lx)/(rx-lx); const sag=y-tH + (1-Math.pow(2*u-1,2))*(tH-18*s)*-1 + (tH-18*s); o.push(line(hx,y,hx,Math.min(y, y-18*s+(Math.pow(2*u-1,2))*(tH-18*s)),2)); } // vertical suspenders
+  o.push(line(lx-120*s,y,lx,y-tH,3)); o.push(line(rx,y-tH,rx+120*s,y,3)); o.push(line(lx-130*s,y,rx+130*s,y,3));
+  return o; }
 function empireState(cx,baseY,s){ s=s||1; const o=[]; const w=70*s;
   o.push(poly([[cx-w,baseY],[cx-w,baseY-200*s],[cx-w*0.6,baseY-200*s],[cx-w*0.6,baseY-320*s],[cx-w*0.28,baseY-320*s],[cx-w*0.28,baseY-380*s],[cx+w*0.28,baseY-380*s],[cx+w*0.28,baseY-320*s],[cx+w*0.6,baseY-320*s],[cx+w*0.6,baseY-200*s],[cx+w,baseY-200*s],[cx+w,baseY]],4));
-  o.push(line(cx,baseY-380*s,cx,baseY-430*s,2)); // antenna
+  for(let wy=baseY-20;wy>baseY-190;wy-=20) o.push(line(cx-w+6,wy,cx+w-6,wy,3)); // floor bands
+  o.push(line(cx,baseY-380*s,cx,baseY-430*s,2));
   return o; }
-function skyline(y){ const b=[]; let x=120; const tops=[80,160,110,210,140,260,120,300,150,230,100,180,130];
-  for(const t of tops){const w=rnd(42,70); b.push(...poly([[x,y],[x,y-t],[x+w,y-t],[x+w,y]],4)); x+=w+rnd(6,16); if(x>1160)break;} return [b]; }
-function tokenGlyph(cx,cy,r){ return [circle(cx,cy,r,2.5), circle(cx,cy,r*0.5,2), poly([[cx-r*0.22,cy],[cx+r*0.22,cy]])]; }
+function tunnelArch(cx,cy,r,s){ s=s||1; return [arcPts(cx,cy,r,Math.PI,Math.PI*2,3), line(cx-r,cy,cx-r,cy+120*s,3), line(cx+r,cy,cx+r,cy+120*s,3)]; }
+function tokenGlyph(cx,cy,r){ return [circle(cx,cy,r,2.5),circle(cx,cy,r*0.5,2),poly([[cx-r*0.22,cy],[cx+r*0.22,cy]]),poly([[cx,cy-r*0.22],[cx,cy+r*0.22]])]; }
+function graffiti(x0,y0,n){ const o=[]; for(let i=0;i<n;i++){const x=x0+rnd(-10,10),y=y0+rnd(-8,8); o.push(bezier([x,y],[x+rnd(-30,30),y+rnd(-30,10)],[x+rnd(10,60),y+rnd(-10,20)],0.08));} return o; }
 
-/* STORYBOARD (12 scenes). colored = array of {path, col} drawn after sand strokes. */
-const scenes=[
- { year:'1869 · 高架时代', cap:'蒸汽火车在高架轨道上轰鸣，城市却在地下酝酿一个更大的梦。',
-   narr:'一八六九年，纽约的交通还在高架上。蒸汽火车在木制轨道上轰鸣穿行，煤烟笼罩街道。但一个更大胆的梦，正在地下悄悄酝酿。',
-   build:()=>({paths:[wavy(120,1160,480,6,120), ...skyline(480), ...subwayCar(360,420,1.0)]}) },
+/* ============ STORYBOARD — richer scenes, each a flat list of paths ============ */
+const S=[];
+function scene(year,cap,narr,buildFn){ S.push({year,cap,narr,buildFn}); }
 
- { year:'1870 · 气动试验', cap:'发明家比奇偷偷挖出一条气动地铁，用风把车厢吹过街道底下。',
-   narr:'一八七零年，发明家阿尔弗雷德·比奇秘密挖掘了一段气动地铁。他用一台巨大的风机，把一节圆筒车厢沿着街道底下吹来吹去。这是纽约地下铁路最早的惊鸿一瞥。',
-   build:()=>{ const tube=poly([[200,330],[200,440],[1080,440],[1080,330]],3); const top=line(200,330,1080,330,3);
-     const car=poly([[520,352],[760,352],[772,396],[760,440],[520,440],[508,396],[520,352]],3);
-     return {paths:[tube,top,car, circle(1130,385,46,2.5), circle(1130,385,20,2),
-       ...[0,1,2,3,4,5].map(i=>line(1095,385,1075+Math.cos(i/6*6.28)*8,385+Math.sin(i/6*6.28)*8,2))]}; } },
+scene('1869 · 高架时代','蒸汽火车在高架轨道上轰鸣，煤烟笼罩街道，城市在地下酝酿更大的梦。',
+ '一八六九年，纽约的交通还在高架之上。蒸汽火车在木制高架轨道上轰鸣穿行，煤烟笼罩着街道。但一个更大胆的梦，正在人们脚下的地底，悄悄酝酿。',
+ ()=>{ let p=[]; p.push(...skylineRich(300).reduce((a,v,i)=>{if(i%1===0)a.push(v);return a;},[]).length?[skylineRich(300)]:[]);
+   p=[skylineRich(300), ...elevatedTrack(470,1), ...steamLoco(360,468,1.0)]; return p; });
 
- { year:'1904 · 地铁开通', cap:'10月27日，IRT 首条地铁通车，纽约第一次钻入地下。',
-   narr:'一九零四年十月二十七日，IRT 第一条地铁正式通车。市长麦克莱伦亲自驾驶首班列车，二十八分钟跑完全程。十五万纽约人涌入地下，只为花五分钱体验这趟奇迹般的旅程。',
-   build:()=>({paths:[wavy(100,1180,380,10,160), line(100,432,1180,432,3), line(100,456,1180,456,3),
-     ...subwayCar(640,404,1.15), circle(1030,540,34,3), circle(1030,540,15,2)]}) },
+scene('1870 · 气动试验','发明家比奇秘密挖出一条气动地铁，用巨大风机把圆筒车厢吹过街道底下。',
+ '一八七零年，发明家阿尔弗雷德·比奇秘密挖掘了一段气动地铁。他用一台巨大的风机，把一节圆筒形的车厢，沿着街道底下吹来又吹去。这是纽约地下铁路，最早的惊鸿一瞥。',
+ ()=>{ const p=[...tunnelArch(640,330,440,1)]; p.push(line(200,440,1080,440,3));
+   p.push(...[[520,350],[772,396],[520,440]].length?[poly([[520,352],[760,352],[776,396],[760,440],[520,440],[504,396],[520,352]],3)]:[]);
+   for(let i=0;i<3;i++) p.push(poly([[560+i*60,366],[600+i*60,366],[600+i*60,420],[560+i*60,420],[560+i*60,366]],3)); // windows
+   p.push(circle(1140,390,52,2.5)); p.push(circle(1140,390,22,2));
+   for(let i=0;i<8;i++){const a=i/8*6.28; p.push(line(1140,390,1140+Math.cos(a)*50,390+Math.sin(a)*50,2));} // fan blades
+   return p; });
 
- { year:'1913–1931 · 双合同扩张', cap:'“双合同”签订，两大公司竞相铺线，钢铁触手伸向四面八方。',
-   narr:'一九一三年，著名的“双合同”签订。IRT 与 BRT 两大公司竞相铺设线路，钢铁的触手伸向布鲁克林、皇后区和布朗克斯。地铁网络，从曼哈顿一路向外扩张。',
-   build:()=>{ const cx=640,cy=360; const paths=[...brooklynBridge(640,185,0.55)]; const dirs=[[-1,-.5],[1,-.5],[-1,.4],[1,.4],[-1,0],[1,0],[0,-1],[0,1]];
-     for(const [dx,dy] of dirs) paths.push(line(cx,cy,cx+dx*500,cy+dy*280,3));
-     for(const [dx,dy] of dirs) paths.push(circle(cx+dx*500,cy+dy*280,10)); paths.push(circle(cx,cy,16));
-     return {paths}; } },
+scene('1904 · 地铁开通','10月27日 IRT 首条地铁通车，市长亲自驾驶首班列车，十五万人涌入地下。',
+ '一九零四年十月二十七日，IRT 第一条地铁正式通车。市长麦克莱伦亲自驾驶首班列车，二十八分钟跑完全程。那一天，十五万纽约人涌入地下，只为花五分钱，体验这趟奇迹般的旅程。',
+ ()=>{ const p=[...tunnelArch(640,300,560,1)]; p.push(line(90,432,1190,432,3)); p.push(line(90,458,1190,458,3));
+   for(let tx=120;tx<1180;tx+=40) p.push(line(tx,432,tx,458,2)); // sleepers
+   p.push(...subwayCar(640,404,1.2));
+   p.push(circle(1050,560,36,3)); p.push(circle(1050,560,16,2)); // nickel
+   return p; });
 
- { year:'1918 · 马尔本街惨剧', cap:'一列失控列车在急弯脱轨，近百人罹难——至今最惨的地铁事故。',
-   narr:'一九一八年，布鲁克林马尔本街隧道口，一列由代班司机驾驶的列车在急弯处高速脱轨，近百人罹难。这是纽约地铁史上最惨烈的事故，也让安全规程被彻底改写。',
-   build:()=>{ const curve=arcPts(640,220,360,Math.PI*0.75,Math.PI*0.2,3); const paths=[curve, ...subwayCar(430,470,1.05)];
-     for(let i=0;i<7;i++){const x=rnd(360,500),y=rnd(430,510); paths.push(line(x,y,x+rnd(-34,34),y+rnd(-28,28),2));}
-     return {paths}; } },
+scene('1913–1931 · 双合同扩张','“双合同”签订，两大公司竞相铺线，钢铁触手越过布鲁克林桥伸向四面八方。',
+ '一九一三年，著名的“双合同”签订。IRT 与 BRT 两大公司竞相铺设线路，钢铁的触手越过布鲁克林大桥，伸向布鲁克林、皇后区和布朗克斯。地铁网络，从曼哈顿一路向外扩张。',
+ ()=>{ const cx=640,cy=380; const p=[...brooklynBridge(640,180,0.5)];
+   const dirs=[[-1,-.5],[1,-.5],[-1,.4],[1,.4],[-1,0],[1,0],[0,-1],[0,1]];
+   for(const [dx,dy] of dirs) p.push(line(cx,cy,cx+dx*500,cy+dy*250,3));
+   for(const [dx,dy] of dirs){ p.push(circle(cx+dx*500,cy+dy*250,11)); p.push(circle(cx+dx*500,cy+dy*250,5)); }
+   p.push(circle(cx,cy,17)); return p; });
 
- { year:'1932 · 市营自建线', cap:'IND 独立线由市政府自建自营，与两大私营公司三足鼎立。',
-   narr:'一九三二年，纽约市政府不再依赖私营公司，自己出资修建了独立地铁系统 IND。从此，IRT、BMT 与 IND 三大系统在地下三足鼎立。',
-   build:()=>{ const paths=[line(240,200,240,560,3),line(640,160,640,600,3),line(1040,200,1040,560,3)];
-     for(const x of [240,640,1040]) for(let i=0;i<4;i++) paths.push(circle(x,230+i*110,11));
-     return {paths}; } },
+scene('1918 · 马尔本街惨剧','一列由代班司机驾驶的列车在急弯高速脱轨，近百人罹难——至今最惨的地铁事故。',
+ '一九一八年，布鲁克林马尔本街隧道口，一列由代班司机驾驶的列车，在急弯处高速脱轨，近百人罹难。这是纽约地铁史上最惨烈的事故，也让此后的安全规程，被彻底改写。',
+ ()=>{ const p=[arcPts(640,180,380,Math.PI*0.78,Math.PI*0.18,3)];
+   p.push(...subwayCar(430,470,1.1));
+   for(let i=0;i<10;i++){const x=rnd(350,520),y=rnd(430,520); p.push(line(x,y,x+rnd(-36,36),y+rnd(-30,30),2));} // debris
+   p.push(...graffiti(500,470,3)); return p; });
 
- { year:'1940 · 三线统一', cap:'三大系统收归市营，一张网从此由纽约市统一运营。',
-   narr:'一九四零年，三大系统全部收归市政府统一运营。曾经各自为政的线路，终于汇成一张完整的地下之网，为千万纽约人服务。',
-   build:()=>({paths:[...empireState(1050,600,0.5), line(260,220,640,360,3),line(1020,220,640,360,3),line(640,560,640,360,3),
-     circle(640,360,70,2.5), poly([[200,260],[300,260]]),poly([[980,260],[1080,260]]),poly([[590,580],[690,580]])]}) },
+scene('1932 · 市营自建线','市政府不再依赖私营公司，自建独立系统 IND，与 IRT、BMT 三足鼎立。',
+ '一九三二年，纽约市政府不再依赖私营公司，自己出资修建了独立地铁系统，IND。从此，IRT、BMT 与 IND，三大系统在地下三足鼎立，各自延展。',
+ ()=>{ const p=[]; const xs=[240,640,1040];
+   for(const x of xs){ p.push(line(x,180,x,580,3)); for(let i=0;i<5;i++){ p.push(circle(x,210+i*90,12)); p.push(circle(x,210+i*90,5)); } }
+   p.push(line(240,300,640,300,3)); p.push(line(640,420,1040,420,3)); // interchanges
+   return p; });
 
- { year:'1948 · 投币与代币', cap:'票价涨到一角，黄铜代币登场，叮当作响投入闸机半个世纪。',
-   narr:'一九四八年，坚持了四十多年的五分钱票价终于上涨。黄铜打造的地铁代币随之登场，叮当一声投入闸机，陪伴了纽约人半个多世纪。',
-   build:()=>({paths:[poly([[520,260],[520,520],[560,520],[560,260]],3), line(560,400,700,400,3), ...tokenGlyph(850,360,60)]}) },
+scene('1940 · 三线统一','三大系统收归市营，一张网从此由纽约市统一运营，帝国大厦下车轮不息。',
+ '一九四零年，三大系统全部收归市政府，统一运营。曾经各自为政的线路，终于汇成一张完整的地下之网。在帝国大厦的注视下，为千万纽约人日夜服务。',
+ ()=>{ const p=[...empireState(1060,600,0.5)];
+   const cx=560,cy=360; p.push(circle(cx,cy,72,2.3));
+   for(const a of [[-1,-1],[1,-1],[0,1]]){ p.push(line(cx,cy,cx+a[0]*300,cy+a[1]*220,3)); p.push(circle(cx+a[0]*300,cy+a[1]*220,13)); }
+   p.push(line(cx,cy-72,cx,cy+72,3)); p.push(line(cx-72,cy,cx+72,cy,3)); return p; });
 
- { year:'1970s · 至暗低谷', cap:'财政危机、设备老化、涂鸦铺满车厢，地铁跌入最黑暗的岁月。',
-   narr:'到了七十年代，财政危机、设备老化、犯罪频发，涂鸦铺满了每一节车厢。那是纽约地铁最黑暗的岁月，人们一度把它称作“恐惧之城”的血管。',
-   build:()=>{ const paths=[...subwayCar(640,380,1.35)];
-     for(let i=0;i<12;i++){const x=rnd(560,730),y=rnd(360,400); paths.push(line(x,y,x+rnd(18,56),y+rnd(-16,16),2));}
-     paths.push(line(80,472,1200,472,3)); return {paths}; } },
+scene('1948 · 投币与代币','五分钱票价涨到一角，黄铜代币登场，叮当作响投入闸机，陪伴纽约半个世纪。',
+ '一九四八年，坚持了四十多年的五分钱票价，终于上涨。黄铜打造的地铁代币随之登场，叮当一声投入闸机，从此陪伴了纽约人，半个多世纪。',
+ ()=>{ const p=[];
+   p.push(poly([[480,240],[480,540],[540,540],[540,240]],3)); // turnstile post
+   p.push(poly([[540,540],[640,540],[640,240],[540,240]],3));
+   for(const a of [0,1,2]) p.push(line(540,360+a*0,540+100,360,3)); // arm
+   p.push(line(540,360,700,360,3));
+   p.push(...tokenGlyph(900,360,70));
+   for(let i=0;i<5;i++) p.push(circle(900,360-120-i*4,3)); // token dropping
+   return p; });
 
- { year:'1989 · 洁净车计划', cap:'“洁净车计划”彻底清除涂鸦，最后一节脏车退出运营。',
-   narr:'一九八九年，历时多年的“洁净车计划”画上句号。最后一节涂满涂鸦的车厢被清洗退役，地铁一节一节地被重新擦亮，秩序，终于回来了。',
-   build:()=>{ const paths=[...subwayCar(640,370,1.35)];
-     for(let i=0;i<6;i++) paths.push(line(540+i*44,318,564+i*44,344,2));
-     paths.push(line(80,460,1200,460,3)); return {paths}; } },
+scene('1970s · 至暗低谷','财政危机、设备老化、涂鸦铺满车厢，地铁跌入最黑暗的“恐惧之城”岁月。',
+ '到了七十年代，财政危机、设备老化、犯罪频发，涂鸦铺满了每一节车厢。那是纽约地铁最黑暗的岁月，人们一度把它，称作“恐惧之城”的血管。',
+ ()=>{ const p=[...subwayCar(640,370,1.4)];
+   for(let i=0;i<5;i++) p.push(...graffiti(560+i*35,360,2));
+   p.push(line(80,470,1200,470,3)); for(let i=0;i<4;i++) p.push(line(300+i*160,470,320+i*160,470,2)); // broken rail
+   return p; });
 
- { year:'2017 · 第二大道线', cap:'等待近百年的第二大道地铁终于通车，Q 线驶入新站台。',
-   narr:'二零一七年元旦，纽约人等待了将近一个世纪的第二大道地铁，终于通车。Q 线缓缓驶入崭新的站台，一个跨越百年的承诺，终于兑现。',
-   build:()=>{ const spine=line(640,120,640,600,3); const paths=[spine]; const colored=[];
-     for(let i=0;i<4;i++){const y=190+i*120; paths.push(circle(640,y,16)); paths.push(line(640,y,790,y,3));}
-     colored.push({path:circle(470,360,40,2), col:MTA.yellow}); // Q = yellow
-     return {paths, colored}; } },
+scene('1989 · 洁净车计划','历时多年的“洁净车计划”收官，最后一节涂鸦车退役，地铁被重新擦亮。',
+ '一九八九年，历时多年的“洁净车计划”，终于画上句号。最后一节涂满涂鸦的车厢被清洗退役，地铁一节一节地，被重新擦亮。秩序，终于回来了。',
+ ()=>{ const p=[...subwayCar(640,360,1.4)];
+   for(let i=0;i<7;i++) p.push(line(530+i*42,310,556+i*42,336,2)); // shine marks
+   p.push(line(80,460,1200,460,3));
+   for(let i=0;i<6;i++) p.push(circle(300+i*120,500,3)); // sparkle
+   return p; });
 
- { year:'今天 · 472 座车站', cap:'472 座车站，665 英里轨道，昼夜不息，驶向下一个百年。',
-   narr:'今天，纽约地铁拥有四百七十二座车站，六百六十五英里轨道，一年三百六十五天昼夜不息。沙粒散去，列车依旧，驶向下一个百年。',
-   build:()=>{ const cx=640,cy=360; const paths=[]; const colored=[]; const cols=[MTA.red,MTA.blue,MTA.yellow,MTA.green,MTA.orange,MTA.purple];
-     for(let i=0;i<10;i++){const a=i/10*Math.PI*2; paths.push(line(cx,cy,cx+Math.cos(a)*480,cy+Math.sin(a)*240,3));}
-     paths.push(circle(cx,cy,130,2.5)); paths.push(circle(cx,cy,240,3)); paths.push(circle(cx,cy,350,3.2));
-     paths.push(...subwayCar(cx,cy,0.95));
-     for(let i=0;i<6;i++){const a=i/6*Math.PI*2; colored.push({path:circle(cx+Math.cos(a)*240,cy+Math.sin(a)*120,15,2), col:cols[i]});}
-     return {paths, colored}; } },
-];
+scene('2017 · 第二大道线','等待近百年的第二大道地铁通车，黄色 Q 线缓缓驶入崭新站台。',
+ '二零一七年元旦，纽约人等待了将近一个世纪的第二大道地铁，终于通车。黄色的 Q 线，缓缓驶入崭新的站台。一个跨越百年的承诺，终于兑现。',
+ ()=>{ const p=[line(640,110,640,610,3)];
+   const colored=[]; for(let i=0;i<4;i++){const y=180+i*120; p.push(circle(640,y,16)); p.push(circle(640,y,7)); p.push(line(640,y,800,y,3)); p.push(poly([[800,y-24],[870,y-24],[870,y+24],[800,y+24]],3));}
+   p.push(...subwayCar(400,360,0.9));
+   const q={path:circle(400,250,34,2),col:MTA.yellow}; return {paths:p, colored:[q]}; });
 
-window.__NARRATION = scenes.map((s,i)=>({i, year:s.year, narr:s.narr}));
+scene('今天 · 472 座车站','472 座车站、665 英里轨道、昼夜不息，列车依旧驶向下一个百年。',
+ '今天，纽约地铁拥有四百七十二座车站，六百六十五英里轨道，一年三百六十五天，昼夜不息。沙粒散去，列车依旧，驶向下一个百年。',
+ ()=>{ const cx=640,cy=360; const p=[]; const cols=[MTA.red,MTA.blue,MTA.yellow,MTA.green,MTA.orange,MTA.purple]; const colored=[];
+   for(let i=0;i<12;i++){const a=i/12*Math.PI*2; p.push(line(cx,cy,cx+Math.cos(a)*500,cy+Math.sin(a)*250,3));}
+   p.push(circle(cx,cy,120,2.3)); p.push(circle(cx,cy,230,2.6)); p.push(circle(cx,cy,350,3));
+   p.push(...subwayCar(cx,cy,0.9));
+   for(let i=0;i<6;i++){const a=i/6*Math.PI*2+0.3; colored.push({path:circle(cx+Math.cos(a)*230,cy+Math.sin(a)*120,16,2),col:cols[i]});}
+   return {paths:p, colored}; });
 
-const FPS=25, MS_PER_FRAME=1000/FPS, TITLE_MS=2600, FADE_MS=1000;
-let DUR = scenes.map(()=>12000);
+const scenes=S;
+window.__NARRATION = scenes.map((s,i)=>({i,year:s.year,narr:s.narr}));
+
+const FPS=25, MS_PER_FRAME=1000/FPS, TITLE_MS=3000, FADE_MS=1200;
+let DUR = scenes.map(()=>14000);
 if (Array.isArray(window.DURATIONS) && window.DURATIONS.length===scenes.length) DUR = window.DURATIONS.slice();
 function sceneTotal(i){ return DUR[i]+FADE_MS; }
-function drawMs(i){ return Math.min(5200, DUR[i]*0.6); }
+/* draw fills ~88% of the SPOKEN body so sand keeps falling almost the whole narration; last bit holds */
+function drawMs(i){ return DUR[i]*0.88; }
 let TOTAL = TITLE_MS + scenes.reduce((a,_,i)=>a+sceneTotal(i),0);
 window.__ANIM_TOTAL_MS = TOTAL;
 
-function isPath(p){ return Array.isArray(p) && p.length>0 && Array.isArray(p[0]) && p[0].length===2; }
-scenes.forEach(s=>{ const b=s.build(); s.paths=(b.paths||[]).filter(isPath); s.colored=(b.colored||[]).filter(c=>isPath(c.path)); s.len=s.paths.length; });
+function isPath(p){ return Array.isArray(p)&&p.length>0&&Array.isArray(p[0])&&p[0].length===2; }
+scenes.forEach(s=>{ const b=s.buildFn(); const paths=Array.isArray(b)?b:b.paths; const colored=Array.isArray(b)?[]:(b.colored||[]);
+  s.paths=(paths||[]).filter(isPath); s.colored=colored.filter(c=>isPath(c.path)); s.len=s.paths.length; });
 
-function clearSand(alpha){ sctx.globalAlpha=alpha; sctx.fillStyle='rgba(20,14,8,1)'; sctx.fillRect(0,0,W,H); sctx.globalAlpha=1; }
+function clearSand(a){ sctx.globalAlpha=a; sctx.fillStyle='rgba(20,14,8,1)'; sctx.fillRect(0,0,W,H); sctx.globalAlpha=1; }
 function sceneStart(i){ let t=TITLE_MS; for(let k=0;k<i;k++) t+=sceneTotal(k); return t; }
 
 let T=0, done=false;
 window.__cap=false;
-window.__resetT=function(){ T=0; done=false; window.__ANIM_DONE=false; scenes.forEach(s=>{s.__started=false; s.__coloredDone=false;}); clearSand(1); };
+window.__resetT=function(){ T=0; done=false; window.__ANIM_DONE=false; scenes.forEach(s=>{s.__started=false;s.__coloredDone=false;s.__prevT=0;s.__particles=null;}); clearSand(1); };
 window.__animState=function(){return {T,TOTAL,done};};
 window.__animStep=function(){ T+=MS_PER_FRAME; render(); };
 
 function render(){
   elBar.style.width=Math.min(100,(T/TOTAL)*100)+'%';
-  if(T<TITLE_MS){ elTitle.style.opacity = T<TITLE_MS-500 ? '1':'0'; return; }
+  if(T<TITLE_MS){ elTitle.style.opacity=T<TITLE_MS-600?'1':'0'; return; }
   if(elTitle.style.opacity!=='0') elTitle.style.opacity='0';
   hctx.clearRect(0,0,W,H);
-
   let idx=-1, local=0;
-  for(let i=0;i<scenes.length;i++){ const s0=sceneStart(i); if(T>=s0 && T<s0+sceneTotal(i)){ idx=i; local=T-s0; break; } }
-  if(idx<0){ if(T>=sceneStart(scenes.length-1)+sceneTotal(scenes.length-1)){
-      if(!done){done=true; elYear.textContent=''; elCap.textContent='';
-        elTitle.innerHTML='<h1>完</h1><p>纽约地铁百年 · 沙画叙事</p>'; elTitle.style.opacity='1'; window.__ANIM_DONE=true; } }
-    return; }
-
+  for(let i=0;i<scenes.length;i++){ const s0=sceneStart(i); if(T>=s0&&T<s0+sceneTotal(i)){ idx=i; local=T-s0; break; } }
+  if(idx<0){ if(T>=sceneStart(scenes.length-1)+sceneTotal(scenes.length-1)){ if(!done){done=true;elYear.textContent='';elCap.textContent='';elTitle.innerHTML='<h1>完</h1><p>纽约地铁百年 · 沙画叙事</p>';elTitle.style.opacity='1';window.__ANIM_DONE=true;} } return; }
   const sc=scenes[idx];
-  if(sc.__started!==true){ sc.__started=true; sc.__coloredDone=false; clearSand(1); elYear.textContent=sc.year; elCap.textContent=sc.cap; }
-
+  if(sc.__started!==true){ sc.__started=true; sc.__coloredDone=false; sc.__prevT=0; sc.__particles=null; clearSand(1); elYear.textContent=sc.year; elCap.textContent=sc.cap; }
   const dMs=drawMs(idx), holdEnd=DUR[idx];
-  if(local<dMs){ // (5) ease-in-out progressive draw; (4) pressure strokes
-    const t=easeInOut(local/dMs); const per=1/sc.len;
-    sc.paths.forEach((p,i)=>{ const start=i*per, pt=(t-start)/per; if(pt>0) sandStroke(sctx,p,Math.min(1,pt),2); });
+  if(local<dMs){ const t=easeInOut(local/dMs); const per=1/sc.len;
+    sc.paths.forEach((p,i)=>{ const start=i*per, pt=(t-start)/per, ppt=(sc.__prevT-start)/per;
+      if(pt>0) sandStroke(sctx,p,Math.min(1,pt),Math.max(0,ppt),2); });
+    sc.__prevT=t;
   } else if(local<holdEnd){
-    if(!sc.__coloredDone && sc.colored.length){ sc.colored.forEach(c=>colorPath(sctx,c.path,c.col)); sc.__coloredDone=true; } // (3) colored route dots painted after glyphs
-    const p=sc.paths[Math.floor(rnd(0,sc.len))];
-    if(p&&p.length){const [x,y]=p[Math.floor(rnd(0,p.length))]; for(let k=0;k<10;k++) grain(hctx,x,y,2,rnd(.1,.4),SAND_HI);}
-    sc.__particles=null; // reset so the transition recaptures fresh
-  } else { // (2) FLOWING-SAND TRANSITION: blow the painted sand away like wind, then it re-forms next scene
-    if(!sc.__particles){ sc.__particles=captureSandParticles(); clearSand(1); } // snapshot sand -> particles, wipe static layer
-    const d=(local-holdEnd)/FADE_MS;                 // 0..1 through the transition
-    const e=d*d;                                     // accelerate (wind picks up)
-    clearSand(1);                                    // dark base each frame
-    const wind = 520*e;                              // rightward drift
-    for(const pt of sc.__particles){
-      const sx = pt.x + wind + pt.vx*e*160 + Math.sin((pt.y+T)/40)*18*e; // sideways flow + swirl
-      const sy = pt.y + pt.vy*e*120 + e*e*260;        // gravity fall, accelerating
-      const a = pt.a*(1-d);                            // fade out as they scatter
-      if(a>0.02) grain(hctx, sx, sy, 1.3, a, pt.c);
-    }
+    if(!sc.__coloredDone&&sc.colored.length){ sc.colored.forEach(c=>colorPath(sctx,c.path,c.col)); sc.__coloredDone=true; }
+    const p=sc.paths[Math.floor(rnd(0,sc.len))]; if(p&&p.length){const [x,y]=p[Math.floor(rnd(0,p.length))]; for(let k=0;k<8;k++) grain(hctx,x,y,2,rnd(.1,.35),SAND_HI);}
+  } else {
+    if(!sc.__particles){ sc.__particles=captureSandParticles(); clearSand(1); }
+    const d=(local-holdEnd)/FADE_MS, e=d*d; clearSand(1); const wind=520*e;
+    for(const pt of sc.__particles){ const sx=pt.x+wind+pt.vx*e*160+Math.sin((pt.y+T)/40)*18*e; const sy=pt.y+pt.vy*e*120+e*e*260; const a=pt.a*(1-d); if(a>0.02) grain(hctx,sx,sy,1.3,a,pt.c); }
   }
 }
-/* (2) sample the current sand layer into drifting particles */
-function captureSandParticles(){
-  const img=sctx.getImageData(0,0,W,H).data; const out=[]; const STEP=4;
-  for(let y=0;y<H;y+=STEP) for(let x=0;x<W;x+=STEP){
-    const i=(y*W+x)*4; const r=img[i],g=img[i+1],b=img[i+2];
-    // sand is brighter/warmer than the dark paper; keep lit pixels
-    if(r>70 && (r+g+b)>150){
-      out.push({x,y, a:Math.min(.85,(r+g+b)/560), vx:rnd(.4,1.3), vy:rnd(-.3,.5),
-        c: r>190&&g>170 ? SAND_HI : (b>r*0.55 ? '#d9b57a' : SAND)});
-    }
-  }
-  return out;
-}
-function liveLoop(){ if(!window.__cap && !done){ T+=MS_PER_FRAME; render(); } requestAnimationFrame(liveLoop); }
+function captureSandParticles(){ const img=sctx.getImageData(0,0,W,H).data,out=[],STEP=4;
+  for(let y=0;y<H;y+=STEP)for(let x=0;x<W;x+=STEP){const i=(y*W+x)*4,r=img[i],g=img[i+1],b=img[i+2];
+    if(r>70&&(r+g+b)>150) out.push({x,y,a:Math.min(.85,(r+g+b)/560),vx:rnd(.4,1.3),vy:rnd(-.3,.5),c:r>190&&g>170?SAND_HI:(b>r*0.55?'#d9b57a':SAND)});}
+  return out; }
+function liveLoop(){ if(!window.__cap&&!done){ T+=MS_PER_FRAME; render(); } requestAnimationFrame(liveLoop); }
 requestAnimationFrame(liveLoop);
 </script>
 </body>
