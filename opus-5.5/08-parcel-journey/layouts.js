@@ -10,6 +10,12 @@ const END_ZONES_916 = { card: [0.07, 0.45, 0.76, 0.38], logo: [0.1, 0.48, 0.7, 0
 
 export const LAYOUTS = {
   '16x9': {
+    roast: { anchor: [0.58, 0.48], size: 0.7, align: 'left', zones: { cap: [0.06, 0.74, 0.52, 0.16] } },
+    cool: { anchor: [0.5, 0.5], size: 0.7 },
+    bag: { anchor: [0.6, 0.48], size: 0.6, align: 'left', zones: { cap: [0.06, 0.74, 0.52, 0.16] } },
+    night: { anchor: [0.5, 0.5], size: 0.8 },
+    alley: { anchor: [0.55, 0.46], size: 0.7, align: 'left', zones: { cap: [0.06, 0.74, 0.52, 0.16] } },
+    pour: { anchor: [0.74, 0.5], size: 0.7, align: 'left', zones: END_ZONES_169 },
     order: { anchor: [0.5, 0.5], size: 0.5 },
     robots: { anchor: [0.55, 0.45], size: 0.8, align: 'left', zones: { cap: [0.06, 0.74, 0.52, 0.16] } },
     pack: { anchor: [0.5, 0.5], size: 0.6 },
@@ -19,6 +25,12 @@ export const LAYOUTS = {
     door: { anchor: [0.72, 0.5], size: 0.7, align: 'left', zones: END_ZONES_169 },
   },
   '1x1': {
+    roast: { anchor: [0.5, 0.42], size: 0.76, align: 'center', zones: { cap: [0.08, 0.8, 0.84, 0.14] } },
+    cool: { anchor: [0.5, 0.48], size: 0.76 },
+    bag: { anchor: [0.5, 0.42], size: 0.7, align: 'center', zones: { cap: [0.08, 0.8, 0.84, 0.14] } },
+    night: { anchor: [0.5, 0.5], size: 0.8 },
+    alley: { anchor: [0.5, 0.42], size: 0.72, align: 'center', zones: { cap: [0.08, 0.8, 0.84, 0.14] } },
+    pour: { anchor: [0.5, 0.28], size: 0.42, align: 'center', zones: END_ZONES_11 },
     order: { anchor: [0.5, 0.5], size: 0.6 },
     robots: { anchor: [0.5, 0.42], size: 0.84, align: 'center', zones: { cap: [0.08, 0.8, 0.84, 0.14] } },
     pack: { anchor: [0.5, 0.46], size: 0.7 },
@@ -28,6 +40,12 @@ export const LAYOUTS = {
     door: { anchor: [0.5, 0.3], size: 0.42, align: 'center', zones: END_ZONES_11 },
   },
   '9x16': {
+    roast: { anchor: [0.45, 0.4], size: 0.7, align: 'center', zones: { cap: [0.08, 0.62, 0.74, 0.14] } },
+    cool: { anchor: [0.45, 0.44], size: 0.7 },
+    bag: { anchor: [0.45, 0.4], size: 0.66, align: 'center', zones: { cap: [0.08, 0.62, 0.74, 0.14] } },
+    night: { anchor: [0.45, 0.44], size: 0.72 },
+    alley: { anchor: [0.45, 0.4], size: 0.66, align: 'center', zones: { cap: [0.08, 0.62, 0.74, 0.14] } },
+    pour: { anchor: [0.45, 0.26], size: 0.34, align: 'center', zones: END_ZONES_916 },
     order: { anchor: [0.45, 0.44], size: 0.6 },
     robots: { anchor: [0.45, 0.4], size: 0.8, align: 'center', zones: { cap: [0.08, 0.62, 0.74, 0.14] } },
     pack: { anchor: [0.45, 0.44], size: 0.66 },

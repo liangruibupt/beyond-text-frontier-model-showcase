@@ -70,7 +70,7 @@ function buildAgv(m) {
   return g;
 }
 /** 一只纸箱（商品的包裹）：盖子四片，可按角度折起；面单藏着，命中点弹出 */
-function buildParcel(size, m) {
+export function buildParcel(size, m) {
   const [w, h, d] = size, g = new THREE.Group();
   g.add(box(w, h, d, m.box, [0, h / 2, 0]));
   const t = 0.006;
@@ -88,7 +88,7 @@ function buildParcel(size, m) {
   return g;
 }
 /** 盖片合上的程度 k（0 = 敞开、略微竖起；1 = 全盖上）；四片错开先后，胶带在全盖上以后才有 */
-function closeParcel(g, k, stagger = 0) {
+export function closeParcel(g, k, stagger = 0) {
   const [a, b, c, d] = g.userData.flaps, open = 0.38;                            // 敞开时也竖起 0.38·π，像刚折好的箱子
   const at = i => (stagger ? easeInOut(clamp((k - i * stagger) / (1 - 3 * stagger))) : k);
   const ang = i => Math.PI * (open + (1 - open) * at(i));
@@ -98,7 +98,7 @@ function closeParcel(g, k, stagger = 0) {
 }
 /** 正常比例的快递员：圆润低模（倒角身躯 + 头 + 头盔 + 工服 + 手套），两腿两臂各绕肩 / 胯转，手里可以抱一只小箱。
  *  总高约 0.46（之后在世界里再 scale 0.78 到比门矮一截）。保留 userData.limbs / carry 给 updateCourier。 */
-function buildCourier(m) {
+export function buildCourier(m) {
   const g = new THREE.Group();
   g.add(rbox(0.082, 0.15, 0.056, m.courier, [0, 0.235, 0], 0.022));                   // 躯干（工服）
   g.add(box(0.088, 0.02, 0.06, m.labelOrange, [0, 0.19, 0]));                          // 腰线反光带

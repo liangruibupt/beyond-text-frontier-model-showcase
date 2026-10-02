@@ -119,6 +119,75 @@ export const truckLivery = (orange = '#f0820f') => make(`livery-${orange}`, (g, 
   g.fillStyle = '#2b3038'; g.font = `${h * 0.1}px sans-serif`; g.fillText('YOUJI · 次日达 NEXT-DAY', w * 0.08, h * 0.5);
 }, { w: 1024, h: 512 });
 
+// ════ 瑰夏咖啡豆（stories/beans）用的贴图 ════
+// ── 冷却盘冲孔钢板：拉丝不锈钢底 + 规则排布的小圆孔（孔里是暗的） ──
+export const perforated = () => make('perforated', (g, w, h, rng) => {
+  g.fillStyle = '#a9adb2'; g.fillRect(0, 0, w, h);
+  for (let y = 0; y < h; y += 1) { g.globalAlpha = 0.05 + rng() * 0.05; g.fillStyle = rng() < 0.5 ? '#fff' : '#555'; g.fillRect(0, y, w, 1); }
+  g.globalAlpha = 1; g.fillStyle = '#26282b';
+  for (let y = 6, r = 0; y < h; y += 12, r++) for (let x = (r % 2) * 6 + 6; x < w; x += 12) { g.beginPath(); g.arc(x, y, 3, 0, 7); g.fill(); }
+}, { repeat: [6, 6] });
+// ── 老墙白灰：米白底 + 斑驳水渍 + 墙脚泛黄 ──
+export const plaster = (base = '#e9e2d4') => make(`plaster-${base}`, (g, w, h, rng) => {
+  g.fillStyle = base; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 26; i++) { g.globalAlpha = 0.04 + rng() * 0.06; g.fillStyle = rng() < 0.6 ? '#8a7a62' : '#ffffff'; g.beginPath(); g.ellipse(rng() * w, rng() * h, 20 + rng() * 80, 10 + rng() * 50, rng() * 7, 0, 7); g.fill(); }
+  const grd = g.createLinearGradient(0, h * 0.75, 0, h); grd.addColorStop(0, 'rgba(120,96,60,0)'); grd.addColorStop(1, 'rgba(120,96,60,0.35)'); g.globalAlpha = 1; g.fillStyle = grd; g.fillRect(0, h * 0.75, w, h * 0.25);
+  for (let i = 0; i < 2000; i++) { g.globalAlpha = rng() * 0.06; g.fillStyle = '#000'; g.fillRect(rng() * w, rng() * h, 1, 1); }
+  g.globalAlpha = 1;
+}, { repeat: [1, 1] });
+// ── 青石板路：大小不一的长条石板 + 深色缝 + 湿润的反光斑 ──
+export const stone = (base = '#7d7a73') => make(`stone-${base}`, (g, w, h, rng) => {
+  g.fillStyle = '#3a3936'; g.fillRect(0, 0, w, h);
+  for (let y = 0; y < h;) { const rh = 40 + rng() * 40; for (let x = -rng() * 80; x < w;) { const rw = 70 + rng() * 120; g.fillStyle = jitter(rng, base, 16); g.fillRect(x + 3, y + 3, rw - 6, rh - 6); x += rw; } y += rh; }
+  for (let i = 0; i < 30; i++) { g.globalAlpha = 0.05 + rng() * 0.08; g.fillStyle = rng() < 0.5 ? '#000' : '#cfd3d6'; g.beginPath(); g.ellipse(rng() * w, rng() * h, 10 + rng() * 40, 6 + rng() * 20, rng() * 7, 0, 7); g.fill(); }
+  g.globalAlpha = 1;
+}, { repeat: [3, 3] });
+// ── 小青瓦屋面：一垄一垄的瓦（亮的瓦脊 + 暗的瓦沟） ──
+export const tiles = () => make('tiles', (g, w, h, rng) => {
+  for (let x = 0; x < w; x += 16) { const grd = g.createLinearGradient(x, 0, x + 16, 0); grd.addColorStop(0, '#2c3034'); grd.addColorStop(0.5, '#6a7076'); grd.addColorStop(1, '#2c3034'); g.fillStyle = grd; g.fillRect(x, 0, 16, h); }
+  g.globalAlpha = 0.35; g.fillStyle = '#1b1d20'; for (let y = 0; y < h; y += 14) g.fillRect(0, y, w, 2);
+  for (let i = 0; i < 400; i++) { g.globalAlpha = rng() * 0.1; g.fillStyle = '#9aa0a6'; g.fillRect(rng() * w, rng() * h, 2, 2); }
+  g.globalAlpha = 1;
+}, { repeat: [4, 2] });
+// ── 夜里的暖色地图：深褐底 + 河 + 路网（琥珀细线）+ 城区灯点 ──
+export const nightMap = () => make('nightmap', (g, w, h, rng) => {
+  const grd = g.createRadialGradient(w * 0.75, h * 0.4, 10, w * 0.6, h * 0.5, w * 0.7); grd.addColorStop(0, '#2a1d14'); grd.addColorStop(1, '#0d0a08'); g.fillStyle = grd; g.fillRect(0, 0, w, h);
+  g.strokeStyle = '#1d2a36'; g.lineWidth = 18; g.globalAlpha = 0.9; g.beginPath(); g.moveTo(0, h * 0.8); g.bezierCurveTo(w * 0.3, h * 0.6, w * 0.55, h * 0.95, w, h * 0.7); g.stroke();
+  g.lineCap = 'round';
+  for (let i = 0; i < 70; i++) { g.globalAlpha = 0.15 + rng() * 0.3; g.strokeStyle = '#c98a3a'; g.lineWidth = 1 + rng() * 1.5; g.beginPath(); let x = rng() * w, y = rng() * h; g.moveTo(x, y); for (let k = 0; k < 4; k++) { x += (rng() - 0.5) * 260; y += (rng() - 0.5) * 160; g.lineTo(x, y); } g.stroke(); }
+  for (let i = 0; i < 1400; i++) { const cx = w * 0.78, cy = h * 0.38, r = Math.abs((rng() + rng() + rng() - 1.5)) * w * 0.25; const a = rng() * 7; g.globalAlpha = 0.3 + rng() * 0.7; g.fillStyle = rng() < 0.8 ? '#ffcf7a' : '#fff1d0'; g.fillRect(cx + Math.cos(a) * r, cy + Math.sin(a) * r * 0.7, 1.5, 1.5); }
+  for (let i = 0; i < 160; i++) { g.globalAlpha = 0.3 + rng() * 0.5; g.fillStyle = '#ffcf7a'; g.fillRect(rng() * w * 0.55, rng() * h, 1.2, 1.2); }
+  g.globalAlpha = 1;
+}, { w: 2048, h: 1536 });
+// ── 夜里城区楼面：深色楼体 + 一格格窗，约三成亮着暖灯（同一张图当 map 和 emissiveMap，只有亮窗发光） ──
+export const cityWindows = () => make('citywin', (g, w, h, rng) => {
+  g.fillStyle = '#000000'; g.fillRect(0, 0, w, h);
+  for (let y = 4; y < h - 8; y += 14) for (let x = 4; x < w - 6; x += 10) { const lit = rng() < 0.32; g.fillStyle = lit ? (rng() < 0.7 ? '#ffc56a' : '#fff0c8') : '#0c0907'; g.globalAlpha = lit ? 0.6 + rng() * 0.4 : 1; g.fillRect(x, y, 6, 8); }
+  g.globalAlpha = 1;
+}, { w: 128, h: 256, repeat: [1, 2] });
+
+// ── 红色圆章：「今日烘焙」/「昨日烘焙」+ 日期线，边缘不匀的印泥 ──
+export const stampMark = (text = '今日烘焙') => make(`stamp-${text}`, (g, w, h, rng) => {
+  g.clearRect(0, 0, w, h); g.strokeStyle = '#c0262d'; g.fillStyle = '#c0262d';
+  g.lineWidth = 14; g.beginPath(); g.arc(w / 2, h / 2, w * 0.42, 0, 7); g.stroke();
+  g.lineWidth = 4; g.beginPath(); g.arc(w / 2, h / 2, w * 0.34, 0, 7); g.stroke();
+  g.font = `bold ${w * 0.16}px sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillText(text.slice(0, 2), w / 2, h * 0.4); g.fillText(text.slice(2), w / 2, h * 0.6);
+  g.globalCompositeOperation = 'destination-out';
+  for (let i = 0; i < 500; i++) { g.globalAlpha = rng() * 0.6; g.beginPath(); g.arc(rng() * w, rng() * h, 1 + rng() * 3, 0, 7); g.fill(); }
+  g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+}, { w: 256, h: 256 });
+// ── 咖啡袋正面的标签：米白纸签 + 有集 + GEISHA + 产地行 ──
+export const beanLabel = () => make('beanlabel', (g, w, h) => {
+  g.fillStyle = '#f3ede2'; g.fillRect(0, 0, w, h);
+  g.fillStyle = '#1f3b35'; g.fillRect(0, 0, w, h * 0.2);
+  g.fillStyle = '#e9c46a'; g.font = `bold ${h * 0.11}px sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('有集 · 瑰夏', w / 2, h * 0.1);
+  g.fillStyle = '#1f3b35'; g.font = `bold ${h * 0.16}px serif`; g.fillText('GEISHA', w / 2, h * 0.42);
+  g.font = `${h * 0.065}px sans-serif`; g.fillText('PANAMA · WASHED · 250g', w / 2, h * 0.6);
+  g.strokeStyle = '#1f3b35'; g.lineWidth = 2; g.strokeRect(w * 0.12, h * 0.72, w * 0.76, h * 0.16);
+  g.fillText('烘焙日期 ROASTED ____', w / 2, h * 0.8);
+}, { w: 512, h: 512 });
+
 // ── 沥青：深灰细颗粒 + 浅色碎石点 ──
 export const asphalt = (base = '#3a3e45') => make(`asphalt-${base}`, (g, w, h, rng) => {
   g.fillStyle = base; g.fillRect(0, 0, w, h);

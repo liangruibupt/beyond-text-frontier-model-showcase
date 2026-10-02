@@ -2,6 +2,7 @@
 // 120 bpm，一小节 2 秒；命中点都落在 0.5 秒（一拍）的网格上
 import { ITEM_IDS } from './items.js';
 import { LAYOUTS } from './layouts.js';
+import { CUTS as BEANS_CUTS } from './stories/beans/meta.js';
 
 export const BAR = 2.0, GRID = 0.5;
 export const SHOTS = ['order', 'robots', 'pack', 'sort', 'truck', 'lastmile', 'door'];
@@ -114,5 +115,8 @@ export const META = {
   axes: { item: ITEM_IDS, lang: ['zh', 'en'], cut: [15, 6], promo: ['none', '1111', 'launch'] },
   sceneAxes: ['item'],
   cuts: CUTS,
+  cutFor: v => cutFor(v),
   fileName: v => `youji-parcel_${v.item}_${v.cut}s_${v.ar}_${v.lang}${v.promo === 'none' ? '' : `_${v.promo}`}${v.vo === 'off' ? '_novo' : ''}`,
 };
+/** 每件商品一套分镜（v2）：咖啡豆走 stories/beans 的剪辑表，其余沿用一镜到底的包裹旅程 */
+export function cutFor(v) { return (v.item === 'beans' ? BEANS_CUTS : CUTS)[v.cut]; }
