@@ -94,7 +94,7 @@ function qinghua(ctx, k) {
     env: { base: '#dfe6ee', strip: '#ffffff', k: 2.5, fill(add, B) { add(3, 6, [-10, 6, 5], B('#ffffff', 3)); add(6, 2, [6, 3, -8], B('#d8e6ff', 1.2)); } },
     post: { exposure: 1.0, vignette: 0.22, grain: 0.01, saturation: 1.0, lift: [0.004, 0.006, 0.01], gain: [0.99, 1.0, 1.02], bloom: { strength: 0.12, threshold: 0.92, radius: 0.4 } },
     props: { vase: { ...VASE, mesh: vase, setReveal: r => { vase.userData.reveal = r; pat.setReveal(r); } }, table },
-    update(s) {},
+    update(s) { vase.visible = table.visible = legs.visible = s.name !== 'end'; },   // 片尾只留礼盒（梅瓶会挡住它）
     reset() { vase.userData.reveal = 1; pat.setReveal(1); vase.rotation.y = 0; }, dispose() { pat.texture.dispose(); },
   };
 }

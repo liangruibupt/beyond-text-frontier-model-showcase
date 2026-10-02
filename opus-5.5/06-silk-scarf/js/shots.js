@@ -7,6 +7,7 @@ import { BUST, SCARF } from '../meta.js';
 import { clothAt } from '../../factory/engine/cloth.js';
 import { foldInto } from './fold.js';
 import { ribbonInto } from './ribbon.js';
+import { slipInto } from './wrap.js';
 import { smoothFold } from './sims.js';
 import { lerp, easeInOut, ss } from '../../factory/engine/ease.js';
 
@@ -141,25 +142,27 @@ const qinghua = {
     const V = qhVase(ctx, lerp(0.7, 1, ss(0, 0.8, s.lt)), -0.05 + 1.2 * easeInOut(s.u));
     return { camera: fit(VASE_BOX(V), s, [14, 10], [-14, 4], { fov: 30, scale: lerp(1.1, 1, easeInOut(s.u)) }), text: text(ctx, s) };
   },
-  /** 从瓷上来，落在身上：瓶上的青花 0.5 秒里褪成素白，丝巾同时在瓶口上方显出，落下、裹着瓶身滑到案上 */
+  /** 从瓷上来，落在身上：瓶腹的青花 0.5 秒里褪成素白，同一处已是一圈青花丝巾（对折成两层裹着瓶）；丝巾顺瓶身滑下去，在瓶足堆成一圈褶子 */
   qh_slip(ctx, s) {
-    const V = qhVase(ctx, 1, 1.15), fade = ss(0, 0.5, s.lt);
-    V.setReveal(1 - fade);
-    fromSim(ctx, 'slip', Math.min(s.lt, 3)); ctx.subjects.scarf.mesh.visible = true;
-    const B = VASE_BOX(V, 0.3).union(scarfBox(ctx.subjects.scarf));
-    return { camera: fit(B, s, [18, 22], [-20, -8], { fov: 30 }), text: text(ctx, s) };
+    const V = qhVase(ctx, 1, 1.15), { scarf } = ctx.subjects;
+    V.setReveal(1 - ss(0, 0.5, s.lt));
+    slipInto(scarf.positions, scarf.n, s.lt); scarf.commit(); scarf.mesh.visible = true;
+    return { camera: fit(VASE_BOX(V, 0.06), s, [16, 24], [-22, -8], { fov: 30 }), text: text(ctx, s) };
   },
-  /** 褶子微距：下摆在案面上的一角，浅景深，镜头横移 */
+  /** 褶子微距：瓶足一圈的手风琴褶，浅景深，镜头贴着案面横移 */
   qh_pool(ctx, s) {
-    const V = qhVase(ctx, 0, 1.15); fromSim(ctx, 'slip', 3); ctx.subjects.scarf.mesh.visible = true;
-    const x0 = lerp(-0.34, -0.22, s.u), B = box([x0 - 0.12, V.table, 0.12], [x0 + 0.12, V.table + 0.12, 0.34]);
-    return { camera: fit(B, s, [20, 16], [-38, -26], { fov: 26 }), text: text(ctx, s), post: { aperture: 0.6, maxBlur: 0.012 } };
+    const V = qhVase(ctx, 0, 1.15), { scarf } = ctx.subjects;
+    slipInto(scarf.positions, scarf.n, 3); scarf.commit(); scarf.mesh.visible = true;
+    const a = lerp(-2.0, -1.4, s.u), cx = V.x + Math.cos(a) * 0.17, cz = V.z + Math.sin(a) * 0.17;
+    const B = box([cx - 0.07, V.table, cz - 0.07], [cx + 0.07, V.table + 0.12, cz + 0.07]);
+    return { camera: fit(B, s, [14, 10], [-34, -22], { fov: 26 }), text: text(ctx, s), post: { aperture: 0.6, maxBlur: 0.012 } };
   },
-  /** 升起俯看：从斜上方升到正上方，瓶口居中，一圈青花丝巾铺开 */
+  /** 升起俯看：从斜上方升到正上方，素白的瓶口居中，一圈青花丝巾围在瓶足 */
   qh_hero(ctx, s) {
-    const V = qhVase(ctx, 0, 1.15); fromSim(ctx, 'slip', 3); ctx.subjects.scarf.mesh.visible = true;
-    const B = scarfBox(ctx.subjects.scarf).expandByScalar(0.03);
-    return { camera: fit(B, s, [58, 84], [-10, 0], { fov: 30, up: [0, 0, -1] }), text: text(ctx, s) };
+    const V = qhVase(ctx, 0, 1.15), { scarf } = ctx.subjects;
+    slipInto(scarf.positions, scarf.n, 3); scarf.commit(); scarf.mesh.visible = true;
+    const B = scarfBox(scarf).union(VASE_BOX(V)).expandByScalar(0.03);
+    return { camera: fit(B, s, [52, 82], [-10, 0], { fov: 30, up: [0, 0, -1] }), text: text(ctx, s) };
   },
 };
 

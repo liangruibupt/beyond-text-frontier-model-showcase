@@ -63,7 +63,7 @@ test('songjin: the weave reveals the pattern row by row, finishes woven, and the
   state(ctx, b, x.start + 0.1); assert.ok(ctx.subjects.giftBox.userData.lid < 0.01, 'lid open at the drop');
 });
 
-test('qinghua: the scarf slips down the vase onto the table and never passes through it', () => {
+test('qinghua: the scarf slips down the vase into pleats at its foot and never passes through it', () => {
   const ctx = make('qinghua'), b = buildCut(cutOf(META, ctx.variant)), e = b.entries.find(x => x.shot === 'qh_slip'), V = VASE;
   state(ctx, b, e.end - 0.01);
   const P = ctx.subjects.scarf.positions;
@@ -74,7 +74,7 @@ test('qinghua: the scarf slips down the vase onto the table and never passes thr
     // 瓶身内部：半径小于该高度轮廓半径 − 5 mm
     const seg = V.profile.findIndex(([py], q) => q + 1 < V.profile.length && y >= py && y <= V.profile[q + 1][0]);
     if (seg >= 0) { const [y0, r0] = V.profile[seg], [y1, r1] = V.profile[seg + 1], rr = r0 + (r1 - r0) * (y - y0) / (y1 - y0 || 1); assert.ok(r > rr - 0.005, `vertex inside the vase at y=${y.toFixed(3)} r=${r.toFixed(3)}`); }
-    if (y < 0.02) onTable++;
+    if (y < 0.03) onTable++;
   }
-  assert.ok(onTable > 20, `${onTable} vertices on the table`);
+  assert.ok(onTable > 200, `${onTable} vertices piled at the foot`);
 });
