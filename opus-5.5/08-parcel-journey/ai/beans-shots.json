@@ -1,0 +1,64 @@
+{
+  "note": "08 咖啡豆 AI 变体（beans-ai）的最终出片提示词：六个镜头，每个都为 16:9（1280x704）和 1:1（960x960）各出一段 LTX-2.5 画面。看法同 bakeoff.json（实拍商业广告、暖、慢、浅景深、不含任何文字/logo），由现有引擎在画面上叠字幕、价签、片尾卡、配音、配乐。镜头与分镜 docs/specs/2026-10-01-08-parcel-journey-storyboard-v2.md 第四节一一对应。",
+  "model": "Lightricks/LTX-2.5 (DistilledPipeline, fp8-cast)",
+  "fps": 24,
+  "seed": 1111,
+  "negative": "text, letters, words, logo, watermark, subtitles, caption, cartoon, anime, CGI render, 3d render, low poly, plastic look, video game, oversaturated, blurry, jpeg artifacts, deformed hands, extra fingers, flicker, people looking at camera",
+  "handle_seconds": 0.5,
+  "note_lengths": "每段长度 = 该镜头在 15 秒版里的时长（都是 2.5 秒）+ ~0.5 秒 handle，帧数取 8k+1 网格上恰好 >= 目标长度的值。pour 要覆盖 6 秒版里 3.0 秒的注水，所以更长。",
+  "framings": {
+    "16x9": { "width": 1280, "height": 704 },
+    "1x1": { "width": 960, "height": 960 }
+  },
+  "shots": [
+    {
+      "id": "roast",
+      "story_dur": 2.5,
+      "frames": 73,
+      "seconds": 3.04,
+      "prompt": "Cinematic macro shot, live-action commercial footage, early morning in an artisan coffee roastery. Front three-quarter view of a polished copper drum roaster; through its round glass sight window coffee beans tumble continuously in the rotating drum, their color shifting over the shot from pale sage green to golden caramel to glossy dark chestnut brown. A thin wisp of smoke rises from the exhaust vent, small flecks of papery chaff flash in the warm light. Warm amber key light from the left, dark moody roastery background with soft bokeh. Very shallow depth of field, focus on the beans behind the glass. The camera pushes in slowly and steadily. Rich browns and copper tones, natural film grain, 24fps.",
+      "prompt_11": "Cinematic macro shot, live-action commercial footage, early morning in an artisan coffee roastery, square 1:1 framing centered on the sight window. A polished copper drum roaster fills the frame; through its round glass sight window coffee beans tumble continuously in the rotating drum, their color shifting over the shot from pale sage green to golden caramel to glossy dark chestnut brown. A thin wisp of smoke rises, papery chaff flashes in the warm light. Warm amber key light from the left, dark moody background with soft bokeh. Very shallow depth of field, focus on the beans behind the glass. The camera pushes in slowly. Rich browns and copper tones, natural film grain, 24fps."
+    },
+    {
+      "id": "cool",
+      "story_dur": 2.5,
+      "frames": 73,
+      "seconds": 3.04,
+      "prompt": "Cinematic top-down macro shot, live-action commercial footage. Freshly roasted dark coffee beans pour out and spread across a circular perforated steel cooling tray; a slow rotating stirring arm sweeps gently through them, the beans glistening with a faint oily sheen under warm overhead light. Faint heat haze rises. Warm amber tones, soft bokeh at the edges, very shallow depth of field focused on the beans in the center. The camera is nearly overhead and drifts down slowly. Natural film grain, 24fps.",
+      "prompt_11": "Cinematic top-down macro shot, live-action commercial footage, square 1:1 framing. Freshly roasted dark coffee beans pour out and spread across a circular perforated steel cooling tray; a slow rotating stirring arm sweeps gently through them, the beans glistening with a faint oily sheen under warm overhead light. Faint heat haze rises. Warm amber tones, soft bokeh at the edges, very shallow depth of field on the beans. The camera is nearly overhead and drifts down slowly. Natural film grain, 24fps."
+    },
+    {
+      "id": "bag",
+      "story_dur": 2.5,
+      "frames": 73,
+      "seconds": 3.04,
+      "prompt": "Cinematic close-up, live-action commercial footage on a wooden workbench. Dark roasted coffee beans fall from a copper scoop into the open mouth of a kraft-paper coffee bag with a round one-way degassing valve on the front; a heat-seal bar presses the top of the bag closed, then a round rubber stamp presses a fresh ink mark onto the kraft paper. Beside it a small open cardboard shipping box lined with crinkled hay-colored packing paper waits. Warm morning side light, soft bokeh, very shallow depth of field. The camera pushes in slowly. Warm kraft browns, natural film grain, 24fps.",
+      "prompt_11": "Cinematic close-up, live-action commercial footage, square 1:1 framing on a wooden workbench. Dark roasted coffee beans fall from a copper scoop into the open mouth of a kraft-paper coffee bag with a round one-way degassing valve; a heat-seal bar presses the top closed, then a round rubber stamp presses a fresh ink mark onto the kraft paper. A small cardboard box lined with hay-colored packing paper waits beside it. Warm morning side light, soft bokeh, very shallow depth of field. The camera pushes in slowly. Natural film grain, 24fps."
+    },
+    {
+      "id": "night",
+      "story_dur": 2.5,
+      "frames": 73,
+      "seconds": 3.04,
+      "prompt": "Cinematic shot, live-action commercial footage, night. A warm-toned aerial view of a highway trunk route winding from a small town toward a distant city glowing with scattered warm lights; headlights streak softly along the road. Cut with the gently swaying interior of a refrigerated delivery truck where a small cardboard parcel rests, lit by a warm cabin light. Shallow depth of field, warm amber and deep blue night tones, soft glow and bokeh. The camera moves slowly and smoothly. Natural film grain, cinematic, 24fps.",
+      "prompt_11": "Cinematic shot, live-action commercial footage, night, square 1:1 framing. A warm-toned aerial view of a highway trunk route winding from a small town toward a distant city glowing with scattered warm lights; headlights streak softly. A small cardboard parcel rests in the gently swaying interior of a refrigerated delivery truck, lit by a warm cabin light. Shallow depth of field, warm amber and deep blue night tones, soft glow and bokeh. The camera moves slowly. Natural film grain, 24fps."
+    },
+    {
+      "id": "alley",
+      "story_dur": 2.5,
+      "frames": 73,
+      "seconds": 3.04,
+      "prompt": "Cinematic shot, live-action commercial footage, early morning on an old stone-paved lane with wooden lattice windows. A delivery courier in a plain uniform, seen from behind and to the side, sets a small cardboard parcel down at a wooden lattice door. In the soft-focus foreground, steam rises from a breakfast street stall. Warm low morning sunlight rakes across the wet cobblestones, soft bokeh, shallow depth of field. The camera holds and pushes in gently. Warm nostalgic tones, natural film grain, 24fps.",
+      "prompt_11": "Cinematic shot, live-action commercial footage, early morning on an old stone-paved lane with wooden lattice windows, square 1:1 framing. A delivery courier seen from behind sets a small cardboard parcel at a wooden lattice door; in the soft-focus foreground steam rises from a breakfast street stall. Warm low morning sunlight on wet cobblestones, soft bokeh, shallow depth of field. The camera pushes in gently. Warm nostalgic tones, natural film grain, 24fps."
+    },
+    {
+      "id": "pour",
+      "story_dur": 3.0,
+      "frames": 89,
+      "seconds": 3.71,
+      "note": "更长：6 秒版用这段演满 3.0 秒的注水 + handle。15 秒版只取前段。",
+      "prompt": "Cinematic close-up, live-action commercial footage. Morning sunlight through a window falls on a white ceramic V60 pour-over dripper on a clear glass server, light oak counter. A matte black gooseneck kettle pours a thin steady spiral of hot water onto the fresh coffee bed; the bed blooms and swells, bubbling gently, soft steam curling up through the backlit sunbeam. Dark coffee drips into the glass server below. A kraft coffee bag stands softly out of focus to one side. Warm golden backlight, cozy-kitchen bokeh, very shallow depth of field. The camera slowly dollies in. Calm slow feel, natural film grain, 24fps.",
+      "prompt_11": "Cinematic close-up, live-action commercial footage, square 1:1 framing. Morning sunlight through a window falls on a white ceramic V60 pour-over dripper on a clear glass server, light oak counter. A matte black gooseneck kettle pours a thin steady spiral of hot water onto the fresh coffee bed; the bed blooms and swells, soft steam curling up through the backlit sunbeam. Dark coffee drips into the server below; a kraft coffee bag stands softly out of focus to one side. Warm golden backlight, cozy bokeh, very shallow depth of field. The camera dollies in slowly. Natural film grain, 24fps."
+    }
+  ]
+}

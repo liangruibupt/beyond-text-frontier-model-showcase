@@ -1,6 +1,6 @@
 // copy.js — 文案：字体、界面用语、价格、配音台词与时段（纯数据，浏览器与 Node 测试共用）
 // 配音里的数字一律写成汉字 / 英文单词：Kokoro 直接读阿拉伯数字不稳定。音色沿用 04 有集：中文 zm_yunjian，英文 am_michael
-import { ITEMS } from './items.js';
+import { ITEMS, baseItem, isBeans } from './items.js';
 import { sayNum } from '../factory/engine/say.js';
 
 export const FONTS = {
@@ -49,7 +49,7 @@ const ONE = {
 export function voLines(v) {
   if (v.vo === 'off') return [];
   const it = ITEMS[v.item], L = v.lang, voice = VOICE[L], d = it.deal[T[L].currency];
-  if (v.item === 'beans') return beansLines(v, it, d, L, voice);
+  if (isBeans(v.item)) return beansLines(v, it, d, L, voice);
   const line = (slot, key, text) => { const [at, max] = SLOTS[v.cut][slot]; return { id: `${v.item}_${L}_${v.cut}_${key}`, text, voice, speed: SPEED[L], at, max }; };
   if (v.cut === 6) return [line('one', `one_${v.promo}`, ONE[L](it, d))];
   return [
@@ -71,7 +71,8 @@ const BEANS_NARR = {
   en: { roast: 'Geisha, roasted this morning,', sealed: 'sealed and shipped the same day,', cup: 'and in your cup tomorrow.' },
 };
 function beansLines(v, it, d, L, voice) {
-  const line = (slot, key, text) => { const [at, max] = BEANS_SLOTS[v.cut][slot]; return { id: `${v.item}_${L}_${v.cut}_${key}`, text, voice, speed: SPEED[L], at, max }; };
+  const base = baseItem(v.item);   // beans-ai 复用 beans_* 的配音文件，不另生成
+  const line = (slot, key, text) => { const [at, max] = BEANS_SLOTS[v.cut][slot]; return { id: `${base}_${L}_${v.cut}_${key}`, text, voice, speed: SPEED[L], at, max }; };
   if (v.cut === 6) return [line('one', `one_${v.promo}`, ONE[L](it, d))];
   return [
     line('roast', 'b_roast', BEANS_NARR[L].roast),

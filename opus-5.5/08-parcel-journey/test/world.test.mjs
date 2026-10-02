@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import film from '../film.js';
 import { CUTS, SHOTS as NAMES, poseFor, rowsFor, NATURAL, RIG, storyT, FOV } from '../meta.js';
-import { ITEM_IDS } from '../items.js';
+import { ITEM_IDS, isAiItem } from '../items.js';
 import { buildCut } from '../../factory/engine/timeline.js';
 
 async function make(item, ar = '16x9') {
@@ -36,6 +36,7 @@ test('camera is finite everywhere and continuous across every 15 s cut (one take
 
 test('the world depends on story time only: shuffled evaluation = in-order evaluation, reset restores t = 0', async () => {
   for (const item of ITEM_IDS) {
+    if (isAiItem(item)) continue;   // AI 变体画面来自预拆帧，没有可快照的 three.js 场景；由引擎渲染路径验证
     const ctx = await make(item), w = ctx.world, ts = [];
     for (let t = 0; t <= 15; t += 0.37) ts.push(+t.toFixed(2));
     const ref = new Map();
