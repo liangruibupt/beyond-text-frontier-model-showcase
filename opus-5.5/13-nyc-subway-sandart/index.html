@@ -59,7 +59,7 @@ function sandStroke(ctx,pts,t,prevT,baseDensity,col){ col=col||SAND; const n=pts
   if(upto>0&&upto<n){ const [hx,hy]=pts[upto-1];
     for(let k=0;k<30;k++){ const fy=hy-rnd(6,70)*(1-((k%6)/6)); grain(hctx,hx+rnd(-6,6),fy,3,rnd(.15,.7),SAND_HI); } }
 }
-function colorPath(ctx,pts,col){ for(const [x,y] of pts) for(let k=0;k<4;k++) grain(ctx,x,y,1.5,rnd(.45,.9),col); }
+function colorPath(ctx,pts,col){ for(const [x,y] of pts){ ctx.globalAlpha=1; ctx.fillStyle=col; ctx.beginPath(); ctx.arc(x,y,1.9,0,7); ctx.fill(); for(let k=0;k<2;k++) grain(ctx,x,y,1.2,rnd(.5,.95),col); } ctx.globalAlpha=1; }
 
 function line(x1,y1,x2,y2,st){st=st||3;const d=Math.hypot(x2-x1,y2-y1),m=Math.max(2,d/st),o=[];for(let i=0;i<=m;i++){const u=i/m;o.push([x1+(x2-x1)*u,y1+(y2-y1)*u]);}return o;}
 function poly(p,st){let o=[];for(let i=0;i<p.length-1;i++)o=o.concat(line(p[i][0],p[i][1],p[i+1][0],p[i+1][1],st));return o;}
@@ -117,15 +117,28 @@ function subwayLogo(cx,cy,r){ const o=[];
   const bx=cx+r*0.0, by=cy; const br=r*0.46;
   o.push(circle(bx,by,br,2));
   return {ring:o, bx,by,br}; }
-/* draw the letters "MTA" as sand strokes centered at (cx,cy), scale s */
-function lettersMTA(cx,cy,s){ s=s||1; const o=[]; const g=46*s;
-  // M
-  let x=cx-g*1.5; o.push(poly([[x-14*s,cy+20*s],[x-14*s,cy-20*s],[x,cy+2*s],[x+14*s,cy-20*s],[x+14*s,cy+20*s]],2));
-  // T
-  x=cx; o.push(line(x-16*s,cy-20*s,x+16*s,cy-20*s,2)); o.push(line(x,cy-20*s,x,cy+20*s,2));
-  // A
-  x=cx+g*1.5; o.push(poly([[x-14*s,cy+20*s],[x,cy-20*s],[x+14*s,cy+20*s]],2)); o.push(line(x-7*s,cy+2*s,x+7*s,cy+2*s,2));
+/* solid-filled disc as a dense point cloud (so colorPath paints it solid) */
+function fillDisc(cx,cy,r){ const o=[]; const st=2.4;
+  for(let y=-r;y<=r;y+=st){ const xw=Math.sqrt(Math.max(0,r*r-y*y)); for(let x=-xw;x<=xw;x+=st) o.push([cx+x,cy+y]); }
   return o; }
+/* single char (letter or digit) as thin strokes, centred at (cx,cy), half-height hh */
+function charGlyph(ch,cx,cy,hh){ const w=hh*0.6,o=[]; const T=cy-hh,B=cy+hh,L=cx-w,R=cx+w,Mx=cx,My=cy;
+  const P=(a)=>o.push(poly(a,2)), Ln=(x1,y1,x2,y2)=>o.push(line(x1,y1,x2,y2,2)), arc=(r,a0,a1)=>o.push(arcPts(cx,cy,r,a0,a1,2));
+  switch(ch){
+    case '1': Ln(Mx,T,Mx,B); Ln(Mx-w*0.5,T+hh*0.3,Mx,T); break;
+    case '7': Ln(L,T,R,T); Ln(R,T,cx-w*0.1,B); break;
+    case 'A': P([[L,B],[cx,T],[R,B]]); Ln(cx-w*0.5,cy+hh*0.1,cx+w*0.5,cy+hh*0.1); break;
+    case 'N': Ln(L,B,L,T); Ln(L,T,R,B); Ln(R,B,R,T); break;
+    case 'G': arc(hh*0.95,Math.PI*0.15,Math.PI*1.92); Ln(cx+w*0.15,My,R,My); Ln(R,My,R,My+hh*0.4); break;
+    case 'Q': arc(hh*0.95,0,Math.PI*2); Ln(cx+w*0.25,cy+hh*0.25,R,B); break;
+    case 'L': Ln(L,T,L,B); Ln(L,B,R,B); break;
+    default: arc(hh*0.9,0,Math.PI*2);
+  } return o; }
+/* official-style route bullet: solid coloured disc + white char. Returns ordered colored layers. */
+function routeBullet(cx,cy,r,ch,col){ const letterCol = (col===MTA.yellow)?'#1a1a1a':'#ffffff'; return [
+  {path:fillDisc(cx,cy,r), col},
+  {paths:charGlyph(ch,cx,cy,r*0.52), col:letterCol, letter:true}
+]; }
 
 /* ============ STORYBOARD — richer scenes, each a flat list of paths ============ */
 const S=[];
@@ -225,9 +238,13 @@ scene('今天 · 472 座车站','472 座车站、665 英里轨道、昼夜不息
    return {paths:p, colored}; });
 
 scene('纽约地铁','','',
- ()=>{ const cx=640,cy=320,r=175;
-   const paths=[circle(cx,cy,r,2), circle(cx,cy,r-11,2), ...lettersMTA(cx,cy,1.9)];
-   return {paths}; },
+ ()=>{ const cy=330, r=66, gap=168; const chs=[['1',MTA.red],['A',MTA.blue],['7',MTA.purple],['N',MTA.yellow],['G',MTA.green]];
+   const x0=640-gap*2; const paths=[]; const colored=[];
+   chs.forEach((cc,i)=>{ const cx=x0+i*gap;
+     paths.push(circle(cx,cy,r,2));                 // thin ring draws in sand first
+     colored.push(...routeBullet(cx,cy,r,cc[0],cc[1])); // solid colour + white letter at hold
+   });
+   return {paths, colored}; },
  {freeze:true});
 
 const scenes=S;
@@ -244,7 +261,7 @@ window.__ANIM_TOTAL_MS = TOTAL;
 
 function isPath(p){ return Array.isArray(p)&&p.length>0&&Array.isArray(p[0])&&p[0].length===2; }
 scenes.forEach(s=>{ const b=s.buildFn(); const paths=Array.isArray(b)?b:b.paths; const colored=Array.isArray(b)?[]:(b.colored||[]);
-  s.paths=(paths||[]).filter(isPath); s.colored=colored.filter(c=>isPath(c.path)); s.len=s.paths.length; });
+  s.paths=(paths||[]).filter(isPath); s.colored=colored.filter(c=>isPath(c.path)||(c.paths&&c.paths.some(isPath))); s.len=s.paths.length; });
 
 function clearSand(a){ sctx.globalAlpha=a; sctx.fillStyle='rgba(20,14,8,1)'; sctx.fillRect(0,0,W,H); sctx.globalAlpha=1; }
 function sceneStart(i){ let t=TITLE_MS; for(let k=0;k<i;k++) t+=sceneTotal(k); return t; }
@@ -271,7 +288,11 @@ function render(){
       if(pt>0) sandStroke(sctx,p,Math.min(1,pt),Math.max(0,ppt),2); });
     sc.__prevT=t;
   } else if(local<holdEnd){
-    if(!sc.__coloredDone&&sc.colored.length){ sc.colored.forEach(c=>colorPath(sctx,c.path,c.col)); sc.__coloredDone=true; }
+    if(!sc.__coloredDone&&sc.colored.length){ sc.colored.forEach(c=>{
+        if(c.letter){ sctx.globalAlpha=1; sctx.strokeStyle=c.col; sctx.lineWidth=5; sctx.lineCap='round'; sctx.lineJoin='round';
+          for(const p of c.paths){ if(!p||!p.length)continue; sctx.beginPath(); sctx.moveTo(p[0][0],p[0][1]); for(let j=1;j<p.length;j++) sctx.lineTo(p[j][0],p[j][1]); sctx.stroke(); } sctx.globalAlpha=1; }
+        else colorPath(sctx,c.path,c.col);
+      }); sc.__coloredDone=true; }
     const p=sc.paths[Math.floor(rnd(0,sc.len))]; if(p&&p.length){const [x,y]=p[Math.floor(rnd(0,p.length))]; for(let k=0;k<8;k++) grain(hctx,x,y,2,rnd(.1,.35),SAND_HI);}
   } else if(sc.freeze){
     // FINAL LOGO: freeze on the drawn frame — no dissolve, no end card. Signal done once.
