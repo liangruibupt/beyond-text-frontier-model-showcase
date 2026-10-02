@@ -1,7 +1,7 @@
 // captions.js — 各镜头的字幕图层（纯数据）：文字、字体、区、字号（画面短边比例）、入场 / 退场（镜头本地秒）
 // 入场时段相对 s.from，所以 6 秒版从中段切入的镜头字幕照样完整入场。字幕按分镜 §B：robots / sort / lastmile 有句子，door 是品牌 + 活动
 import { cutFor } from './meta.js';
-import { ITEMS } from './items.js';
+import { ITEMS, isAiItem } from './items.js';
 import { T, FONTS } from './copy.js';
 import { promoLayers } from './promos.js';
 
@@ -36,12 +36,20 @@ export function layersFor(v, s) {
   }
 }
 function endCard(v, base, F, a, align) {
-  return [
+  const layers = [
       { ...base, id: 'card', zone: 'card', text: '', font: F.display, size: 0.04, shadow: null, panel: { fill: '#fbf5ea', alpha: 0.93, radius: 0.08, shadow: 'rgba(0,0,0,0.35)' }, in: [a + 0.0, a + 0.4] },
       { ...base, id: 'logo', zone: 'logo', lang: 'zh', text: '有集', font: FONTS.zh.display, size: 0.1, tracking: 0.2, color: '#2b2016', shadow: { color: 'rgba(0,0,0,0.2)', blur: 0.3 }, lineHeight: 1.05, maxLines: 1, in: [a + 0.2, a + 0.7] },
       { ...base, id: 'brand', zone: 'brand', lang: 'en', text: 'Youji', font: FONTS.brand, size: 0.036, tracking: 0.4, color: '#8a7a66', shadow: null, maxLines: 1, in: [a + 0.4, a + 0.9] },
       ...promoLayers(v, { a: a + 0.5, align }),
   ];
+  // AI 画面变体：实拍底图的主体占画面大半，片尾卡收成紧凑的一块（layouts.js 的 ai_* 区：16:9 左侧三分之一、1:1 底部三分之一），
+  // 底板稍透一点，让后面的画面透出来；logo 字号跟着缩。图层 id 不变，只换区。
+  if (!isAiItem(v.item)) return layers;
+  return layers.map(L => ({
+    ...L, zone: `ai_${L.zone}`,
+    ...(L.id === 'card' ? { panel: { ...L.panel, alpha: 0.86 } } : {}),
+    ...(L.id === 'logo' ? { size: 0.08 } : {}),
+  }));
 }
 
 /** 变体用到的每种字体及其全部字符：页面在第一帧前按这些字符加载字体子集 */

@@ -7,6 +7,7 @@ import { ITEMS as CATALOG } from '../../04-year-review/catalog.js';
 import { T, voLines, SLOTS, VOICE } from '../copy.js';
 import { PROMO_T } from '../promos.js';
 import { layersFor, fontsFor } from '../captions.js';
+import { LAYOUTS } from '../layouts.js';
 import { score } from '../js/score.js';
 import { expandJobs, allAxes } from '../../factory/engine/variant.js';
 import { buildCut, shotAt } from '../../factory/engine/timeline.js';
@@ -32,13 +33,13 @@ test('default manifest = base items × (16:9 15 s zh, 16:9 15 s en launch, 1:1 6
   // 标准交付只覆盖三件代码版商品，每件 3 条；AI 变体（beans-ai）不进默认清单，单独按 --item beans-ai 出
   assert.deepEqual([...new Set(jobs.map(j => j.item))].sort(), ['beans', 'headset', 'lantern']);
   for (const it of ['lantern', 'headset', 'beans']) assert.equal(jobs.filter(j => j.item === it).length, 3, `item ${it}`);
-  assert.equal(jobs.filter(j => j.item === 'beans-ai').length, 0, 'beans-ai is not a standard deliverable');
+  for (const it of ['beans-ai', 'lantern-ai']) assert.equal(jobs.filter(j => j.item === it).length, 0, `${it} is not a standard deliverable`);
 });
 
-test('items reuse 04 catalog: three approved products + an opt-in beans-ai variant that aliases beans', () => {
-  assert.deepEqual(ITEM_IDS, ['lantern', 'headset', 'beans', 'beans-ai']);
+test('items reuse 04 catalog: three approved products + opt-in beans-ai / lantern-ai variants that alias them', () => {
+  assert.deepEqual(ITEM_IDS, ['lantern', 'headset', 'beans', 'beans-ai', 'lantern-ai']);
   assert.deepEqual(ITEM_IDS, META.axes.item);
-  const expect = { lantern: 'od-lantern', headset: 'gm-headset', beans: 'cf-geisha', 'beans-ai': 'cf-geisha' };
+  const expect = { lantern: 'od-lantern', headset: 'gm-headset', beans: 'cf-geisha', 'beans-ai': 'cf-geisha', 'lantern-ai': 'od-lantern' };
   for (const [id, it] of Object.entries(ITEMS)) {
     assert.equal(it.catId, expect[id]);
     assert.deepEqual(it.name, CATALOG[expect[id]].name, `${id} name = 04 catalog`);
@@ -164,4 +165,29 @@ test('score is deterministic and the same in both languages', () => {
   const run = o => JSON.stringify(score({ item: 'lantern', ar: '16x9', lang: 'zh', cut: 15, promo: 'none', vo: 'on', ...o }, buildCut(CUTS[o.cut ?? 15])).notes);
   assert.equal(run({}), run({}));
   assert.equal(run({}), run({ lang: 'en' }), 'language must not change the music');
+});
+
+test('lantern-ai is an AI picture variant of lantern: same parcel cut / VO files, its own filename', () => {
+  assert.ok(isAiItem('lantern-ai') && !isAiItem('lantern') && !isBeans('lantern-ai'));
+  assert.equal(baseItem('lantern-ai'), 'lantern');
+  assert.deepEqual(ITEMS['lantern-ai'].deal, ITEMS.lantern.deal);
+  const v = { item: 'lantern-ai', lang: 'en', cut: 6, promo: '1111', ar: '1x1', vo: 'on' };
+  assert.equal(META.fileName(v), 'youji-parcel_lantern-ai_6s_1x1_en_1111');
+  for (const lang of ['zh', 'en']) for (const cut of [15, 6]) {
+    const ai = voLines({ ...v, lang, cut }), code = voLines({ ...v, item: 'lantern', lang, cut });
+    assert.deepEqual(ai, code, `${cut}s ${lang} VO identical (reuses lantern_* mp3)`);
+  }
+});
+
+test('AI variants use the compact ai_* end-card zones; code versions keep the full card', () => {
+  for (const [item, base, shot] of [['beans-ai', 'beans', 'pour'], ['lantern-ai', 'lantern', 'door']]) {
+    const v = { item, lang: 'zh', cut: 15, promo: '1111', ar: '16x9', vo: 'on' };
+    const ai = layersFor(v, { name: shot, from: 0, dur: 2 }), code = layersFor({ ...v, item: base }, { name: shot, from: 0, dur: 2 });
+    assert.deepEqual(ai.map(l => l.id), code.map(l => l.id));
+    assert.ok(ai.every(l => l.zone.startsWith('ai_')) && code.every(l => !l.zone.startsWith('ai_')));
+  }
+  // 16:9 的紧凑卡在画面左侧三分之一以内，1:1 的在下方 40% 以内（AI 片段把主体放在留白之外）
+  const c169 = LAYOUTS['16x9'].pour.zones.ai_card, c11 = LAYOUTS['1x1'].pour.zones.ai_card;
+  assert.ok(c169[0] + c169[2] <= 0.36, '16:9 AI card stays in the left third');
+  assert.ok(c11[1] >= 0.6, '1:1 AI card stays in the bottom 40%');
 });

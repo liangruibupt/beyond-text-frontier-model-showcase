@@ -113,7 +113,7 @@ export function poseFor(name, lt, rows = {}) {
 export const META = {
   id: '08-parcel-journey',
   axes: { item: ITEM_IDS, lang: ['zh', 'en'], cut: [15, 6], promo: ['none', '1111', 'launch'] },
-  sceneAxes: ['item'],
+  sceneAxes: ['item', 'ar'],   // ar：AI 变体的底图片段按比例分开生成（16:9 / 1:1 构图不同），换比例要重建
   cuts: CUTS,
   cutFor: v => cutFor(v),
   fileName: v => `youji-parcel_${v.item}_${v.cut}s_${v.ar}_${v.lang}${v.promo === 'none' ? '' : `_${v.promo}`}${v.vo === 'off' ? '_novo' : ''}`,

@@ -37,13 +37,18 @@ LTX = HOME / "ltx"
 MODELS = HOME / "models" / "ltx-2.5"
 SHOWCASE = HOME / "showcase"
 AI_DIR = SHOWCASE / "08-parcel-journey" / "ai"
-OUT = SHOWCASE / "08-parcel-journey" / "out" / "ai" / "beans"
+# 通用化（r2）：GEN_SHOTS = ai/ 下的提示词文件（默认 beans-shots.json），GEN_OUT = out/ai/ 下的子目录（默认 beans），
+# GEN_ONLY = 只生成这几个镜头 id（逗号分隔，默认全部）。lantern-ai 用 GEN_SHOTS=lantern-shots.json GEN_OUT=lantern。
+GEN_SHOTS = os.environ.get("GEN_SHOTS", "beans-shots.json")
+GEN_OUT = os.environ.get("GEN_OUT", "beans")
+GEN_ONLY = [x for x in os.environ.get("GEN_ONLY", "").split(",") if x]
+OUT = SHOWCASE / "08-parcel-journey" / "out" / "ai" / GEN_OUT
 FRAMES = OUT / "frames"
 CONTACT = OUT / "contact"
 for d in (OUT, FRAMES, CONTACT):
     d.mkdir(parents=True, exist_ok=True)
 
-SHOTS = json.loads((AI_DIR / "beans-shots.json").read_text())
+SHOTS = json.loads((AI_DIR / GEN_SHOTS).read_text())
 FPS = SHOTS["fps"]            # 24
 SEED = SHOTS["seed"]          # 1111
 FRAMINGS = SHOTS["framings"]  # {"16x9": {w,h}, "1x1": {w,h}}
@@ -268,6 +273,8 @@ def main():
 
     for shot in SHOTS["shots"]:
         sid = shot["id"]
+        if GEN_ONLY and sid not in GEN_ONLY:
+            continue
         nframes = shot["frames"]
         for ar, dims in FRAMINGS.items():
             key = f"{sid}_{ar}"
@@ -299,7 +306,9 @@ def main():
                 except OSError:
                     pass
 
-    (OUT / "timing.json").write_text(json.dumps(timing, indent=2))
+    tag = "timing" + (f"-{'-'.join(GEN_ONLY)}" if GEN_ONLY else "") + ".json"
+    timing["shots_file"] = GEN_SHOTS
+    (OUT / tag).write_text(json.dumps(timing, indent=2))
     print(json.dumps(timing, indent=2), flush=True)
     failed = [k for k, v in timing["clips"].items() if "error" in v]
     if failed:

@@ -7,6 +7,11 @@
 const END_ZONES_169 = { card: [0.045, 0.16, 0.49, 0.66], logo: [0.07, 0.2, 0.44, 0.14], brand: [0.07, 0.34, 0.44, 0.06], line1: [0.07, 0.46, 0.44, 0.08], line2: [0.07, 0.56, 0.44, 0.12], line3: [0.07, 0.7, 0.44, 0.08] };
 const END_ZONES_11 = { card: [0.07, 0.47, 0.86, 0.48], logo: [0.1, 0.5, 0.8, 0.1], brand: [0.1, 0.6, 0.8, 0.05], line1: [0.1, 0.67, 0.8, 0.07], line2: [0.1, 0.74, 0.8, 0.11], line3: [0.1, 0.85, 0.8, 0.07] };
 const END_ZONES_916 = { card: [0.07, 0.45, 0.76, 0.38], logo: [0.1, 0.48, 0.7, 0.08], brand: [0.1, 0.56, 0.7, 0.04], line1: [0.1, 0.615, 0.7, 0.055], line2: [0.1, 0.675, 0.7, 0.07], line3: [0.1, 0.75, 0.7, 0.05] };
+// AI 画面变体（beans-ai / lantern-ai）的紧凑片尾卡：实拍底图生成时就把主体放在右侧 2/3（16:9）或上半（1:1），这几块区正好落在留白里
+const AI_END_169 = { ai_card: [0.04, 0.22, 0.31, 0.56], ai_logo: [0.06, 0.26, 0.27, 0.11], ai_brand: [0.06, 0.37, 0.27, 0.05], ai_line1: [0.06, 0.45, 0.27, 0.08], ai_line2: [0.06, 0.54, 0.27, 0.11], ai_line3: [0.06, 0.66, 0.27, 0.07] };
+const AI_END_11 = { ai_card: [0.06, 0.6, 0.88, 0.35], ai_logo: [0.09, 0.62, 0.38, 0.09], ai_brand: [0.09, 0.705, 0.38, 0.055], ai_line1: [0.48, 0.615, 0.43, 0.13], ai_line2: [0.09, 0.765, 0.82, 0.1], ai_line3: [0.09, 0.865, 0.82, 0.065] };
+const AI_END_916 = Object.fromEntries(Object.entries(END_ZONES_916).map(([k, z]) => [`ai_${k}`, z]));   // 9:16 不交付，沿用粗排
+const END_169 = { ...END_ZONES_169, ...AI_END_169 }, END_11 = { ...END_ZONES_11, ...AI_END_11 }, END_916 = { ...END_ZONES_916, ...AI_END_916 };
 
 export const LAYOUTS = {
   '16x9': {
@@ -15,14 +20,14 @@ export const LAYOUTS = {
     bag: { anchor: [0.6, 0.48], size: 0.6, align: 'left', zones: { cap: [0.06, 0.74, 0.52, 0.16] } },
     night: { anchor: [0.5, 0.5], size: 0.8 },
     alley: { anchor: [0.55, 0.46], size: 0.7, align: 'left', zones: { cap: [0.06, 0.74, 0.52, 0.16] } },
-    pour: { anchor: [0.74, 0.5], size: 0.7, align: 'left', zones: END_ZONES_169 },
+    pour: { anchor: [0.74, 0.5], size: 0.7, align: 'left', zones: END_169 },
     order: { anchor: [0.5, 0.5], size: 0.5 },
     robots: { anchor: [0.55, 0.45], size: 0.8, align: 'left', zones: { cap: [0.06, 0.74, 0.52, 0.16] } },
     pack: { anchor: [0.5, 0.5], size: 0.6 },
     sort: { anchor: [0.55, 0.45], size: 0.7, align: 'left', zones: { cap: [0.06, 0.74, 0.52, 0.16] } },
     truck: { anchor: [0.5, 0.5], size: 0.7 },
     lastmile: { anchor: [0.55, 0.46], size: 0.7, align: 'left', zones: { cap: [0.06, 0.74, 0.52, 0.16] } },
-    door: { anchor: [0.72, 0.5], size: 0.7, align: 'left', zones: END_ZONES_169 },
+    door: { anchor: [0.72, 0.5], size: 0.7, align: 'left', zones: END_169 },
   },
   '1x1': {
     roast: { anchor: [0.5, 0.42], size: 0.76, align: 'center', zones: { cap: [0.08, 0.8, 0.84, 0.14] } },
@@ -30,14 +35,14 @@ export const LAYOUTS = {
     bag: { anchor: [0.5, 0.42], size: 0.7, align: 'center', zones: { cap: [0.08, 0.8, 0.84, 0.14] } },
     night: { anchor: [0.5, 0.5], size: 0.8 },
     alley: { anchor: [0.5, 0.42], size: 0.72, align: 'center', zones: { cap: [0.08, 0.8, 0.84, 0.14] } },
-    pour: { anchor: [0.5, 0.28], size: 0.42, align: 'center', zones: END_ZONES_11 },
+    pour: { anchor: [0.5, 0.28], size: 0.42, align: 'center', zones: END_11 },
     order: { anchor: [0.5, 0.5], size: 0.6 },
     robots: { anchor: [0.5, 0.42], size: 0.84, align: 'center', zones: { cap: [0.08, 0.8, 0.84, 0.14] } },
     pack: { anchor: [0.5, 0.46], size: 0.7 },
     sort: { anchor: [0.5, 0.42], size: 0.78, align: 'center', zones: { cap: [0.08, 0.8, 0.84, 0.14] } },
     truck: { anchor: [0.5, 0.46], size: 0.78 },
     lastmile: { anchor: [0.5, 0.44], size: 0.72, align: 'center', zones: { cap: [0.08, 0.8, 0.84, 0.14] } },
-    door: { anchor: [0.5, 0.3], size: 0.42, align: 'center', zones: END_ZONES_11 },
+    door: { anchor: [0.5, 0.3], size: 0.42, align: 'center', zones: END_11 },
   },
   '9x16': {
     roast: { anchor: [0.45, 0.4], size: 0.7, align: 'center', zones: { cap: [0.08, 0.62, 0.74, 0.14] } },
@@ -45,13 +50,13 @@ export const LAYOUTS = {
     bag: { anchor: [0.45, 0.4], size: 0.66, align: 'center', zones: { cap: [0.08, 0.62, 0.74, 0.14] } },
     night: { anchor: [0.45, 0.44], size: 0.72 },
     alley: { anchor: [0.45, 0.4], size: 0.66, align: 'center', zones: { cap: [0.08, 0.62, 0.74, 0.14] } },
-    pour: { anchor: [0.45, 0.26], size: 0.34, align: 'center', zones: END_ZONES_916 },
+    pour: { anchor: [0.45, 0.26], size: 0.34, align: 'center', zones: END_916 },
     order: { anchor: [0.45, 0.44], size: 0.6 },
     robots: { anchor: [0.45, 0.4], size: 0.8, align: 'center', zones: { cap: [0.08, 0.62, 0.74, 0.14] } },
     pack: { anchor: [0.45, 0.44], size: 0.66 },
     sort: { anchor: [0.45, 0.4], size: 0.72, align: 'center', zones: { cap: [0.08, 0.62, 0.74, 0.14] } },
     truck: { anchor: [0.45, 0.44], size: 0.72 },
     lastmile: { anchor: [0.45, 0.42], size: 0.66, align: 'center', zones: { cap: [0.08, 0.62, 0.74, 0.14] } },
-    door: { anchor: [0.45, 0.27], size: 0.34, align: 'center', zones: END_ZONES_916 },
+    door: { anchor: [0.45, 0.27], size: 0.34, align: 'center', zones: END_916 },
   },
 };

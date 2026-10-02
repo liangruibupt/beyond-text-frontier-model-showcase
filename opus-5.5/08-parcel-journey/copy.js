@@ -50,7 +50,7 @@ export function voLines(v) {
   if (v.vo === 'off') return [];
   const it = ITEMS[v.item], L = v.lang, voice = VOICE[L], d = it.deal[T[L].currency];
   if (isBeans(v.item)) return beansLines(v, it, d, L, voice);
-  const line = (slot, key, text) => { const [at, max] = SLOTS[v.cut][slot]; return { id: `${v.item}_${L}_${v.cut}_${key}`, text, voice, speed: SPEED[L], at, max }; };
+  const line = (slot, key, text) => { const [at, max] = SLOTS[v.cut][slot]; return { id: `${baseItem(v.item)}_${L}_${v.cut}_${key}`, text, voice, speed: SPEED[L], at, max }; };   // lantern-ai 复用 lantern_* 配音
   if (v.cut === 6) return [line('one', `one_${v.promo}`, ONE[L](it, d))];
   return [
     line('hook', 'hook', NARR[L].hook),

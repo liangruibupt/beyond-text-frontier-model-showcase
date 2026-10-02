@@ -7,8 +7,14 @@
   "handle_seconds": 0.5,
   "note_lengths": "每段长度 = 该镜头在 15 秒版里的时长（都是 2.5 秒）+ ~0.5 秒 handle，帧数取 8k+1 网格上恰好 >= 目标长度的值。pour 要覆盖 6 秒版里 3.0 秒的注水，所以更长。",
   "framings": {
-    "16x9": { "width": 1280, "height": 704 },
-    "1x1": { "width": 960, "height": 960 }
+    "16x9": {
+      "width": 1280,
+      "height": 704
+    },
+    "1x1": {
+      "width": 960,
+      "height": 960
+    }
   },
   "shots": [
     {
@@ -40,16 +46,16 @@
       "story_dur": 2.5,
       "frames": 73,
       "seconds": 3.04,
-      "prompt": "Cinematic shot, live-action commercial footage, night. A warm-toned aerial view of a highway trunk route winding from a small town toward a distant city glowing with scattered warm lights; headlights streak softly along the road. Cut with the gently swaying interior of a refrigerated delivery truck where a small cardboard parcel rests, lit by a warm cabin light. Shallow depth of field, warm amber and deep blue night tones, soft glow and bokeh. The camera moves slowly and smoothly. Natural film grain, cinematic, 24fps.",
-      "prompt_11": "Cinematic shot, live-action commercial footage, night, square 1:1 framing. A warm-toned aerial view of a highway trunk route winding from a small town toward a distant city glowing with scattered warm lights; headlights streak softly. A small cardboard parcel rests in the gently swaying interior of a refrigerated delivery truck, lit by a warm cabin light. Shallow depth of field, warm amber and deep blue night tones, soft glow and bokeh. The camera moves slowly. Natural film grain, 24fps."
+      "prompt": "Cinematic high aerial drone shot at night, live-action commercial footage, looking down at a single long highway that winds from a small town at the bottom left of the frame to a glowing city skyline on the far horizon. A bright continuous ribbon of warm golden headlight trails flows along the whole highway like a glowing route line drawn across the dark landscape, long-exposure light-trail look. The surrounding fields and hills are dark and deep blue so the route stands out clearly. The camera glides slowly forward along the route. Warm amber route against deep blue night, soft glow, natural film grain, 24fps.",
+      "prompt_11": "Cinematic high aerial drone shot at night, live-action commercial footage, square 1:1 framing, looking down at a single highway winding from a small town at the bottom of the frame up to a glowing city on the horizon. A bright continuous ribbon of warm golden headlight trails flows along the whole highway like a glowing route line across the dark landscape, long-exposure light-trail look; the fields around are dark deep blue so the route stands out. The camera glides slowly forward. Natural film grain, 24fps."
     },
     {
       "id": "alley",
       "story_dur": 2.5,
       "frames": 73,
       "seconds": 3.04,
-      "prompt": "Cinematic shot, live-action commercial footage, early morning on an old stone-paved lane with wooden lattice windows. A delivery courier in a plain uniform, seen from behind and to the side, sets a small cardboard parcel down at a wooden lattice door. In the soft-focus foreground, steam rises from a breakfast street stall. Warm low morning sunlight rakes across the wet cobblestones, soft bokeh, shallow depth of field. The camera holds and pushes in gently. Warm nostalgic tones, natural film grain, 24fps.",
-      "prompt_11": "Cinematic shot, live-action commercial footage, early morning on an old stone-paved lane with wooden lattice windows, square 1:1 framing. A delivery courier seen from behind sets a small cardboard parcel at a wooden lattice door; in the soft-focus foreground steam rises from a breakfast street stall. Warm low morning sunlight on wet cobblestones, soft bokeh, shallow depth of field. The camera pushes in gently. Warm nostalgic tones, natural film grain, 24fps."
+      "prompt": "Cinematic shot, live-action commercial footage, early morning on an old stone-paved lane with white walls, grey roof tiles and wooden lattice windows. A friendly delivery courier in a plain dark green jacket walks toward the camera in a three-quarter front view, holding a small brown cardboard parcel clearly in both hands in front of his chest; he stops at a wooden lattice door on the right side of the frame and holds the parcel out toward the door. The parcel stays fully visible and in focus. In the soft-focus foreground, steam rises from a breakfast street stall. Warm low morning sunlight rakes across the wet cobblestones, soft bokeh, shallow depth of field. The camera holds and pushes in gently. Warm nostalgic tones, natural film grain, 24fps.",
+      "prompt_11": "Cinematic shot, live-action commercial footage, square 1:1 framing, early morning on an old stone-paved lane with white walls and wooden lattice windows. A friendly delivery courier in a plain dark green jacket walks toward the camera in a three-quarter front view, holding a small brown cardboard parcel clearly in both hands in front of his chest, and stops at a wooden lattice door, holding the parcel out toward it. The parcel stays fully visible and in focus. Steam rises from a breakfast stall in the soft-focus foreground. Warm low morning sunlight on wet cobblestones, shallow depth of field. The camera pushes in gently. Natural film grain, 24fps."
     },
     {
       "id": "pour",
@@ -57,8 +63,9 @@
       "frames": 89,
       "seconds": 3.71,
       "note": "更长：6 秒版用这段演满 3.0 秒的注水 + handle。15 秒版只取前段。",
-      "prompt": "Cinematic close-up, live-action commercial footage. Morning sunlight through a window falls on a white ceramic V60 pour-over dripper on a clear glass server, light oak counter. A matte black gooseneck kettle pours a thin steady spiral of hot water onto the fresh coffee bed; the bed blooms and swells, bubbling gently, soft steam curling up through the backlit sunbeam. Dark coffee drips into the glass server below. A kraft coffee bag stands softly out of focus to one side. Warm golden backlight, cozy-kitchen bokeh, very shallow depth of field. The camera slowly dollies in. Calm slow feel, natural film grain, 24fps.",
-      "prompt_11": "Cinematic close-up, live-action commercial footage, square 1:1 framing. Morning sunlight through a window falls on a white ceramic V60 pour-over dripper on a clear glass server, light oak counter. A matte black gooseneck kettle pours a thin steady spiral of hot water onto the fresh coffee bed; the bed blooms and swells, soft steam curling up through the backlit sunbeam. Dark coffee drips into the server below; a kraft coffee bag stands softly out of focus to one side. Warm golden backlight, cozy bokeh, very shallow depth of field. The camera dollies in slowly. Natural film grain, 24fps."
+      "prompt": "Cinematic close-up, live-action commercial footage, composed with the subject in the right two thirds of the frame. On the right, a white ceramic V60 pour-over dripper on a clear glass server on a light oak counter; a matte black gooseneck kettle pours a thin steady spiral of hot water onto the fresh coffee bed, the bed blooms and swells, soft steam curling up through a backlit morning sunbeam, dark coffee drips into the server. The left third of the frame is calm, empty, softly out-of-focus warm window light and bokeh, with nothing in it. Warm golden backlight, very shallow depth of field. The camera slowly dollies in. Calm slow feel, natural film grain, 24fps.",
+      "prompt_11": "Cinematic close-up, live-action commercial footage, square 1:1 framing with the subject in the upper half of the frame. A white ceramic V60 pour-over dripper on a clear glass server sits high in the frame; a matte black gooseneck kettle pours a thin steady spiral of hot water onto the coffee bed, the bed blooms, soft steam curls through a backlit morning sunbeam. The lower half of the frame is a calm, empty, softly out-of-focus light oak counter with nothing on it. Warm golden backlight, very shallow depth of field. The camera dollies in slowly. Natural film grain, 24fps."
     }
-  ]
+  ],
+  "revisions": "r2 (2026-10-02): alley = 快递员正面 3/4 朝镜头、包裹一直拿在胸前可见；night = 俯瞰一条亮起来的车灯光轨当配送路线；pour = 主体放右侧 2/3（1:1 放上半），给片尾卡留空。"
 }

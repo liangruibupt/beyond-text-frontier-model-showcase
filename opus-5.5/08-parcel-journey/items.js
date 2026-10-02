@@ -42,6 +42,16 @@ export const ITEM_SPEC = {
     scene: 'oldstreet',
     street: { wall: '#c9b596', door: '#5a4327', ground: '#8c7a5c', trim: '#e9c46a', porch: '#4a3820' },
   },
+  // 营地灯 AI 变体：和 lantern 同一条故事线（包裹旅程、剪辑表、字幕、配音、配乐、价格都不变），画面改用 LTX 实拍片段
+  'lantern-ai': {
+    base: 'lantern',
+    ai: true,
+    catId: 'od-lantern',
+    model: 'lantern',
+    box: [0.26, 0.24, 0.26],
+    scene: 'suburb',
+    street: { wall: '#d8c7a6', door: '#7a4a2a', ground: '#9ba06f', trim: '#f2b233', porch: '#6b4322' },
+  },
 };
 
 /** item → 合并后的数据：目录条目（name / one / price / deal / colors）+ 本片的 spec */

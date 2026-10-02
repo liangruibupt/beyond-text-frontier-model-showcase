@@ -1,7 +1,7 @@
 // film.js — 08 有集次日达：把数据（轴、剪辑表、构图、字体）、世界和镜头交给引擎（见 factory/README.md 的成片约定）
 // 分镜 v2：每件商品一条故事线。营地灯（和还没重做的耳机）走一镜到底的包裹旅程（js/），咖啡豆走 stories/beans/
-// 咖啡豆另有一条 AI 变体（item = beans-ai）：画面改用 LTX 生成的实拍片段当底图（stories/beans/world-ai.js +
-// factory/engine/video.js），字幕 / 价签 / 片尾卡 / 配音 / 配乐仍由现有引擎合成。代码版 beans 不受影响。
+// 咖啡豆和营地灯各有一条 AI 变体（item = beans-ai / lantern-ai）：画面改用 LTX 生成的实拍片段当底图（js/world-ai.js +
+// factory/engine/video.js），字幕 / 价签 / 片尾卡 / 配音 / 配乐仍由现有引擎合成。代码版不受影响。
 // vo.mjs 会在 Node 里 import 这个文件，所以顶层不能碰 window / document
 import { META } from './meta.js';
 import { ITEMS, isAiItem, isBeans } from './items.js';
@@ -12,9 +12,9 @@ import { build as buildWorld } from './js/world.js';
 import { SHOTS } from './js/shots.js';
 import { score as parcelScore } from './js/score.js';
 import { build as buildBeans } from './stories/beans/world.js';
-import { build as buildBeansAi } from './stories/beans/world-ai.js';
+import { build as buildAi } from './js/world-ai.js';
 import { SHOTS as BEANS_SHOTS } from './stories/beans/shots.js';
-import { SHOTS_AI as BEANS_SHOTS_AI } from './stories/beans/shots-ai.js';
+import { SHOTS_AI } from './js/shots-ai.js';
 import { score as beansScore } from './stories/beans/score.js';
 import { planCrowd } from './js/crowd.js';
 import { seedOf } from '../factory/engine/rng.js';
@@ -25,9 +25,9 @@ export default {
   fonts: fontsFor,
   async setup(ctx) {
     const item = ITEMS[ctx.variant.item];
-    // 咖啡豆 AI 变体：不建 3D 场景，预载 LTX 片段的帧序列当底图
+    // AI 变体：不建 3D 场景，预载 LTX 片段的帧序列当底图
     if (isAiItem(item.id)) {
-      ctx.world = buildBeansAi(ctx, item);
+      ctx.world = buildAi(ctx, item);
       await ctx.world.load();                              // 拉清单 + 预载帧图，出片前就位
       ctx.postDefaults = ctx.world.post ?? {};
       ctx.subjects = {};
@@ -53,19 +53,18 @@ export default {
     const { renderer, scene, camera } = ctx;
     renderer.setRenderTarget(target); renderer.clear(); renderer.render(scene, camera);
   },
-  // 咖啡豆镜头（roast/cool/bag/night/alley/pour）在代码版与 AI 版用同名镜头，按当前世界分流：
-  // AI 世界走 shots-ai（cue 片段 + 同样的字幕），否则走代码版 3D 镜头。parcel 的镜头名互不冲突，原样合并。
-  shots: { ...SHOTS, ...beansShotDispatch() },
+  // 代码版与 AI 版用同名镜头，按当前世界分流：AI 世界（有 cue）走 shots-ai（cue 片段 + 同样的字幕），否则走代码版 3D 镜头。
+  shots: shotDispatch({ ...SHOTS, ...BEANS_SHOTS }),
   score: (v, built) => (isBeans(v.item) ? beansScore : parcelScore)(v, built),
   voLines,
   audition: AUDITION,
 };
 
-/** 咖啡豆镜头的分流表：同名镜头按 ctx.world 是否是 AI 世界选 3D 或 AI 实现 */
-function beansShotDispatch() {
+/** 镜头分流表：同名镜头按 ctx.world 是否是 AI 世界选 3D 或 AI 实现 */
+function shotDispatch(code) {
   const out = {};
-  for (const name of Object.keys(BEANS_SHOTS)) {
-    out[name] = (ctx, s) => (ctx.world?.cue ? BEANS_SHOTS_AI[name](ctx, s) : BEANS_SHOTS[name](ctx, s));
+  for (const [name, fn] of Object.entries(code)) {
+    out[name] = (ctx, s) => (ctx.world?.cue ? SHOTS_AI[name](ctx, s) : fn(ctx, s));
   }
   return out;
 }
