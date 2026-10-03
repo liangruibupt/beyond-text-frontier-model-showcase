@@ -109,7 +109,8 @@ export function build(ctx, item) {
     const phone = new THREE.Group(); phone.position.set(0.75, 0.02, 0.35); phone.rotation.x = -Math.PI / 2; phone.rotation.z = -0.3; g.add(phone);
     phone.add(rbox(0.16, 0.33, 0.012, M.glassDark, [0, 0, 0], 0.02));
     const notif = plane(0.14, 0.06, (() => { const t = TX.phoneNotif(); return new THREE.MeshBasicMaterial({ color: t ? '#ffffff' : '#20242e', map: t, transparent: true, opacity: 0, fog: false }); })(), [0, 0.1, 0.008]); phone.add(notif);
-    const rim = new THREE.PointLight(MAGENTA, 0.35, 2.5, 2); rim.position.set(-0.6, 0.5, 0.5); g.add(rim);
+    const rim = new THREE.PointLight(MAGENTA, 1.1, 3.0, 2); rim.position.set(-0.7, 0.6, 0.6); g.add(rim);
+    const rimC = new THREE.PointLight('#3a6cff', 0.6, 3.0, 2); rimC.position.set(0.7, 0.5, 0.5); g.add(rimC);
     root.add(g); parts.defeat = { g, led: hs.userData.led, notif };
   }
 
@@ -131,48 +132,54 @@ export function build(ctx, item) {
   // ═════ 3 cube 城市前置仓：立体密集仓储塔（InstancedMesh 料箱网格）+ 顶部轨道机器人（闭式路径）+ 一台 5.0 把装耳机的料箱提上来；侧面剖开 ═════
   {
     const g = setGroup('cube');
-    g.add(box(8, 0.04, 8, M.road, [0, -0.02, 0]));
-    const COLS = 10, ROWS = 7, DEEP = 6, BW = 0.4, GAP = 0.02, PIT = BW + GAP;      // 一块金属网格塔：10×7 格，深 6 层
+    g.add(box(10, 0.04, 10, M.road, [0, -0.02, 0]));
+    const COLS = 10, ROWS = 7, DEEP = 4, BW = 0.4, GAP = 0.03, PIT = BW + GAP;      // 一块金属网格塔：10×7 格，深 4 层
     const towerW = COLS * PIT, towerH = ROWS * PIT, towerD = DEEP * PIT;
     const tower = new THREE.Group(); tower.position.set(0, 0, 0); g.add(tower);
-    // 网格框架（竖杆 + 横梁）
-    for (let c = 0; c <= COLS; c++) tower.add(box(0.02, towerH, towerD, M.steel, [(-COLS / 2 + c) * PIT, towerH / 2, 0]));
-    for (let r = 0; r <= ROWS; r++) tower.add(box(towerW, 0.02, towerD, M.steel, [0, r * PIT, 0]));
-    // 料箱：前面 N 格里放着料箱（剖面——只摆最前一两层，看得见），用 InstancedMesh
-    const N = COLS * ROWS, bins = new THREE.InstancedMesh(new RoundedBoxGeometry(BW - 0.04, BW - 0.04, towerD * 0.9, 2, 0.02), M.plastic, N);
+    // 网格框架（深色铝合金竖杆 + 横梁）
+    const alu = new THREE.MeshPhysicalMaterial({ color: '#565e6c', metalness: 0.9, roughness: 0.35 });
+    for (let c = 0; c <= COLS; c++) tower.add(box(0.025, towerH, towerD, alu, [(-COLS / 2 + c) * PIT, towerH / 2, 0]));
+    for (let r = 0; r <= ROWS; r++) tower.add(box(towerW, 0.025, towerD, alu, [0, r * PIT, 0]));
+    // 料箱：每格一只彩色料箱（InstancedMesh + instanceColor），前面满、往里渐疏
+    const N = COLS * ROWS, bins = new THREE.InstancedMesh(new RoundedBoxGeometry(BW - 0.05, BW - 0.05, BW - 0.05, 2, 0.025), new THREE.MeshStandardMaterial({ roughness: 0.5 }), N);
     bins.castShadow = true; tower.add(bins);
-    const binSeed = Array.from({ length: N }, () => R());
+    const BIN_COLS = ['#ff6b3d', '#ffb02e', '#36c5f0', '#6ad36a', '#ff4f8b', '#b48cff', '#f2eeff'];
+    const binSeed = Array.from({ length: N }, () => R()), col0 = new THREE.Color();
+    binSeed.forEach((sd, i) => bins.setColorAt(i, col0.set(BIN_COLS[(sd * BIN_COLS.length) | 0])));
+    if (bins.instanceColor) bins.instanceColor.needsUpdate = true;
     // 目标料箱（装耳机）：单独一只，带橙色标记，5.0 被提上来
-    const hero = rbox(BW - 0.03, BW - 0.03, BW - 0.03, mat('#2a2d38', { roughness: 0.45 }), [0, 0, 0], 0.02); g.add(hero);
-    const heroTag = plane(0.14, 0.14, glow(ORANGE, 1.0), [0, 0, (BW - 0.03) / 2 + 0.002]); hero.add(heroTag);
-    const miniHs = makeHeadset(M.ledOrange.clone()); miniHs.scale.setScalar(0.22); miniHs.position.set(0, -0.04, 0); hero.add(miniHs);
-    // 顶部轨道 + 几台机器人（闭式沿矩形轨道滑行）
-    const rail = new THREE.Group(); rail.position.set(0, towerH + 0.05, 0); g.add(rail);
-    rail.add(box(towerW + 0.4, 0.02, 0.03, M.steel, [0, 0, towerD / 2 + 0.1]), box(towerW + 0.4, 0.02, 0.03, M.steel, [0, 0, -towerD / 2 - 0.1]));
-    const ROB = 4, robots = [];
-    for (let i = 0; i < ROB; i++) { const rg = new THREE.Group(); rg.add(rbox(0.26, 0.1, 0.3, M.plastic, [0, 0.05, 0], 0.02)); rg.add(box(0.2, 0.01, 0.22, M.neonC, [0, 0.105, 0])); rail.add(rg); robots.push(rg); }
-    const lift = new THREE.PointLight(ORANGE, 0.0, 3, 2); lift.position.set(0, towerH * 0.6, towerD); g.add(lift);
-    const fill = new THREE.PointLight('#5566aa', 0.5, 12, 2); fill.position.set(2, towerH + 1, 3); g.add(fill);
-    root.add(g); parts.cube = { g, bins, binSeed, hero, heroTag, robots, lift, dims: { COLS, ROWS, PIT, towerH, towerW, towerD } };
+    const hero = rbox(BW - 0.03, BW - 0.03, BW - 0.03, mat('#20242e', { roughness: 0.4 }), [0, 0, 0], 0.02); g.add(hero);
+    const heroTag = plane(0.16, 0.16, glow(ORANGE, 1.4), [0, 0, (BW - 0.03) / 2 + 0.004]); hero.add(heroTag);
+    const miniHs = makeHeadset(M.ledOrange.clone()); miniHs.scale.setScalar(0.22); miniHs.position.set(0, -0.03, 0.0); miniHs.rotation.y = 0.4; hero.add(miniHs);
+    // 顶部轨道 + 几台机器人（闭式沿矩形轨道滑行，带发光灯带，个头够大能看见）
+    const rail = new THREE.Group(); rail.position.set(0, towerH + 0.06, 0); g.add(rail);
+    for (const dz of [towerD / 2 + 0.12, -towerD / 2 - 0.12]) rail.add(box(towerW + 0.5, 0.03, 0.04, alu, [0, 0, dz]));
+    const ROB = 5, robots = [];
+    for (let i = 0; i < ROB; i++) { const rg = new THREE.Group(); rg.add(rbox(0.34, 0.16, 0.4, mat('#2a2f3a', { roughness: 0.45 }), [0, 0.08, 0], 0.03)); rg.add(box(0.26, 0.015, 0.3, M.neonC, [0, 0.165, 0])); rg.add(box(0.05, 0.05, 0.05, glow(ORANGE, 1.5), [0, 0.1, 0.19])); rail.add(rg); robots.push(rg); }
+    const lift = new THREE.PointLight(ORANGE, 0.0, 4, 2); lift.position.set(0, towerH * 0.7, towerD); g.add(lift);
+    const fill = new THREE.PointLight('#6a86d8', 1.0, 20, 2); fill.position.set(3, towerH + 2, 4); g.add(fill);
+    const rimM = new THREE.PointLight(MAGENTA, 0.8, 14, 2); rimM.position.set(-3, towerH * 0.5, 2); g.add(rimM);
+    root.add(g); parts.cube = { g, bins, binSeed, hero, heroTag, robots, lift, dims: { COLS, ROWS, PIT, BW, towerH, towerW, towerD } };
   }
 
   // ═════ 4 route 夜城地图：实例化发光楼块 + 发光道路线 + 流动车灯；有集橙路线 7.0 从前置仓连通到公寓；HUD 小地图在文字层 ═════
   {
     const g = setGroup('route');
     const base = plane(4, 3, M.road, [0, 0, 0]); base.rotation.x = -Math.PI / 2; base.receiveShadow = true; g.add(base);
-    // 道路线（发光细线网格）
+    // 道路线（发光细线网格，青蓝）
     const roads = new THREE.Group(); g.add(roads);
-    for (let i = -3; i <= 3; i++) { roads.add(box(3.6, 0.004, 0.012, glow('#2a4a66', 0.8), [0, 0.01, i * 0.4])); roads.add(box(0.012, 0.004, 2.6, glow('#2a4a66', 0.8), [i * 0.5, 0.01, 0])); }
-    // 实例化发光楼块（越往中心越高）
-    const NB = 90, blocks = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), M.cityWin, NB);
+    for (let i = -3; i <= 3; i++) { roads.add(box(3.6, 0.006, 0.016, glow('#3a6ea8', 1.2), [0, 0.012, i * 0.4])); roads.add(box(0.016, 0.006, 2.6, glow('#3a6ea8', 1.2), [i * 0.5, 0.012, 0])); }
+    // 实例化夜蓝楼块（越往中心越高，顶面亮一点蓝，不用金色窗贴图——那在小尺寸下成了金粉）
+    const blockMat = new THREE.MeshStandardMaterial({ color: '#1a2740', emissive: '#2a4a7a', emissiveIntensity: 0.6, roughness: 0.7, metalness: 0.2 });
+    const NB = 90, blocks = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), blockMat, NB);
     const blockSeed = []; const m4 = new THREE.Matrix4();
     for (let i = 0; i < NB; i++) { const x = (R() - 0.5) * 3.4, z = (R() - 0.5) * 2.4, d = Math.hypot(x, z), h = 0.1 + (1.4 - clamp(d / 2)) * 0.5 * (0.4 + R() * 0.6), w = 0.1 + R() * 0.12; m4.compose(new THREE.Vector3(x, h / 2, z), new THREE.Quaternion(), new THREE.Vector3(w, h, w)); blocks.setMatrixAt(i, m4); blockSeed.push([x, z]); }
     blocks.instanceMatrix.needsUpdate = true; g.add(blocks);
     // 有集橙路线（从 hub 到公寓的一条曲线，7.0 连通）
     const hub = new THREE.Vector3(-1.5, 0.02, 0.9), home = new THREE.Vector3(1.4, 0.02, -0.8);
     const curve = new THREE.CatmullRomCurve3([hub, new THREE.Vector3(-0.8, 0.02, 0.5), new THREE.Vector3(-0.1, 0.02, 0.2), new THREE.Vector3(0.6, 0.02, -0.2), home]);
-    const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 160, 0.018, 8, false), M.route); g.add(tube);
-    const halo = new THREE.Mesh(new THREE.TubeGeometry(curve, 160, 0.05, 8, false), new THREE.MeshBasicMaterial({ color: ORANGE, transparent: true, opacity: 0.08, depthWrite: false, blending: THREE.AdditiveBlending })); g.add(halo);
+    const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 160, 0.03, 8, false), glow(ORANGE, 1.8)); g.add(tube);
+    const halo = new THREE.Mesh(new THREE.TubeGeometry(curve, 160, 0.075, 8, false), new THREE.MeshBasicMaterial({ color: ORANGE, transparent: true, opacity: 0.14, depthWrite: false, blending: THREE.AdditiveBlending })); g.add(halo);
     g.add(cyl(0.06, 0.06, 0.01, M.route, [hub.x, 0.015, hub.z], 20)); g.add(cyl(0.06, 0.06, 0.01, glow(MAGENTA, 1.2), [home.x, 0.015, home.z], 20));
     // 流动车灯（沿几条道路跑的小光点）
     const NC = 24, cars = new THREE.InstancedMesh(new THREE.SphereGeometry(0.014, 8, 6), M.carHead, NC); g.add(cars);
@@ -187,9 +194,14 @@ export function build(ctx, item) {
     g.add(box(10, 0.02, 4, M.wetAsphalt, [0, -0.01, 0]));
     // 积水（几块镜面平面，稍抬一点）
     for (const [px, pz, pw, pd] of [[0, 0.4, 1.6, 0.8], [-1.4, -0.3, 1.0, 0.6], [1.6, 0.1, 1.2, 0.7]]) { const pl = plane(pw, pd, M.puddle, [px, 0.002, pz]); pl.rotation.x = -Math.PI / 2; g.add(pl); }
-    // 街边霓虹招牌（夜蓝建筑 + 发光字条，倒影靠积水镜面）
-    for (const [sx, col, h] of [[-2.2, MAGENTA, 1.4], [2.3, '#38d0ff', 1.2], [-3.4, ORANGE, 1.0]]) { g.add(box(1.0, h, 0.1, M.cityBlock, [sx, h / 2, -1.4])); g.add(box(0.7, 0.12, 0.02, glow(col, 1.4), [sx, h * 0.7, -1.33])); }
-    g.add(box(10, 1.6, 0.1, M.cityBlock, [0, 0.8, -1.6]));
+    // 街边霓虹招牌（夜蓝建筑 + 大块发光字条）+ 积水上的霓虹倒影条（低、朝上发光）
+    for (const [sx, col, h] of [[-2.2, MAGENTA, 1.6], [2.3, '#38d0ff', 1.3], [-3.6, ORANGE, 1.1], [3.6, MAGENTA, 1.4]]) {
+      g.add(box(1.1, h, 0.1, M.cityBlock, [sx, h / 2, -1.5]));
+      g.add(box(0.9, 0.28, 0.03, glow(col, 2.0), [sx, h * 0.66, -1.42]));                 // 大霓虹字条
+      g.add(box(0.5, 0.9, 0.02, glow(col, 1.2), [sx + (sx > 0 ? -0.55 : 0.55), h * 0.5, -1.42]));   // 竖霓虹条
+      g.add(box(0.6, 0.02, 1.2, new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending, depthWrite: false }), [sx * 0.5, 0.012, 0.3]));   // 积水里的倒影
+    }
+    g.add(box(10, 1.8, 0.1, M.cityBlock, [0, 0.9, -1.7]));
     // 配送车（厢式小货车）：从右往左驶过
     const van = new THREE.Group(); g.add(van);
     van.add(rbox(0.9, 0.5, 0.5, M.carBody, [0, 0.42, 0], 0.06)); van.add(rbox(0.45, 0.42, 0.52, M.carBody, [0.5, 0.38, 0], 0.05));
@@ -206,40 +218,44 @@ export function build(ctx, item) {
   // ═════ 6 lift 公寓电梯：楼层数字 1→23 飞快跳动，12.5 门开（叮）；门口快递柜 + 门口放着包裹；HUD「已送达 08:12」在文字层 ═════
   {
     const g = setGroup('lift');
-    g.add(box(4, 0.04, 3, M.road, [0, -0.02, 0])); g.add(box(4, 3, 0.06, M.liftWall, [0, 1.5, -0.6]));
-    // 电梯门框 + 两扇门
-    g.add(box(1.5, 2.4, 0.1, M.steel, [0, 1.2, -0.5]));
-    const doorL = box(0.6, 2.2, 0.06, M.liftDoor, [-0.33, 1.1, -0.46]); const doorR = box(0.6, 2.2, 0.06, M.liftDoor, [0.33, 1.1, -0.46]); g.add(doorL, doorR);
-    // 门楣楼层数字面板
-    const panel = plane(0.6, 0.22, M.numPanel, [0, 2.36, -0.44]); g.add(panel);
+    g.add(box(4, 0.04, 3, M.road, [0, -0.02, 0])); g.add(box(5, 3.4, 0.06, M.liftWall, [0, 1.7, -0.65]));
+    // 电梯门框 + 两扇门（占画面中央）
+    g.add(box(1.8, 2.7, 0.12, M.steel, [0, 1.35, -0.52]));
+    const doorL = box(0.74, 2.5, 0.08, M.liftDoor, [-0.4, 1.3, -0.46]); const doorR = box(0.74, 2.5, 0.08, M.liftDoor, [0.4, 1.3, -0.46]); g.add(doorL, doorR);
+    // 门楣楼层数字面板（大、在门框正上方、朝相机）：预建 1..23 每层一张，update 里换当前楼层
+    const floorTex = Array.from({ length: 23 }, (_, i) => TX.floorNum(i + 1));
+    const panelMat = new THREE.MeshBasicMaterial({ color: floorTex[22] ? '#ffffff' : '#0b1a14', map: floorTex[22] ?? null, fog: false });
+    const panel = plane(0.9, 0.34, panelMat, [0, 2.78, -0.44]); g.add(panel);
+    g.add(box(1.0, 0.44, 0.04, mat('#0b0d12', { roughness: 0.6 }), [0, 2.78, -0.47]));      // 面板暗框
     // 轿厢内（门开后露出）：里面放着的包裹
-    const car = new THREE.Group(); car.position.set(0, 0, -0.56); g.add(car);
-    car.add(box(1.3, 2.1, 0.04, mat('#20242e', { roughness: 0.5 }), [0, 1.05, -0.1]));
-    const parcel = buildParcel([0.34, 0.12, 0.26], { ...M }); closeParcel(parcel, 1, 0); parcel.position.set(0, 0.0, 0.08); car.add(parcel);
-    // 快递柜（门口一排）
-    const locker = new THREE.Group(); locker.position.set(1.3, 0, -0.3); g.add(locker);
+    const car = new THREE.Group(); car.position.set(0, 0, -0.6); g.add(car);
+    car.add(box(1.5, 2.5, 0.04, mat('#20242e', { roughness: 0.5 }), [0, 1.25, -0.1]));
+    const parcel = buildParcel([0.34, 0.12, 0.26], { ...M }); closeParcel(parcel, 1, 0); parcel.position.set(0, 0.0, 0.12); car.add(parcel);
+    const carGlow = new THREE.PointLight('#cfe0ff', 0.0, 3, 2); carGlow.position.set(0, 1.2, -0.3); g.add(carGlow);
+    // 快递柜（门口一侧）
+    const locker = new THREE.Group(); locker.position.set(1.5, 0, -0.3); g.add(locker);
     for (let r = 0; r < 4; r++) for (let c = 0; c < 2; c++) { locker.add(box(0.34, 0.34, 0.3, M.lockerDoor, [c * 0.36 - 0.18, 0.3 + r * 0.36, 0])); }
     locker.add(box(0.76, 1.56, 0.02, M.locker, [0, 0.9, -0.16]));
-    const ding = new THREE.PointLight('#fff0d0', 0.0, 3, 2); ding.position.set(0, 1.8, 0.4); g.add(ding);
-    const key = new THREE.PointLight('#9fb0d8', 0.6, 8, 2); key.position.set(1, 2.4, 1); g.add(key);
-    root.add(g); parts.lift = { g, doorL, doorR, panel, ding };
+    const ding = new THREE.PointLight('#fff0d0', 0.0, 3, 2); ding.position.set(0, 2.0, 0.4); g.add(ding);
+    const key = new THREE.PointLight('#b8c8f0', 1.0, 10, 2); key.position.set(1, 2.6, 1.4); g.add(key);
+    root.add(g); parts.lift = { g, doorL, doorR, panel, panelMat, floorTex, ding, carGlow };
   }
 
   // ═════ 7 victory 玩家戴上新耳机，屏幕 VICTORY，耳机 LED 亮起有集橙；片尾卡（文字层） ═════
   {
     const g = setGroup('victory');
     g.add(box(4, 0.04, 2.4, M.desk, [0, -0.02, 0])); g.add(box(5, 3, 0.05, M.wall, [0, 1.5, -1.0]));
-    const monitor = new THREE.Group(); monitor.position.set(0, 0, -0.55); g.add(monitor);
+    const monitor = new THREE.Group(); monitor.position.set(-0.55, 0, -0.55); g.add(monitor);   // 显示器挪到左后，给右侧 / 上方的玩家主体让位
     monitor.add(rbox(1.1, 0.62, 0.03, M.plastic, [0, 0.72, 0], 0.015));
     monitor.add(plane(1.02, 0.56, M.screenVictory, [0, 0.72, 0.018]));
     monitor.add(box(0.1, 0.26, 0.1, M.plastic, [0, 0.3, -0.02])); monitor.add(box(0.32, 0.03, 0.22, M.plastic, [0, 0.17, -0.02]));
-    // 玩家头（简化圆球 + 肩）戴上耳机：耳机从上方降下扣住
-    const player = new THREE.Group(); player.position.set(0.1, 0, 0.3); g.add(player);
+    // 玩家头（简化圆球 + 肩）戴上耳机：耳机从上方降下扣住。放在偏右 / 偏前
+    const player = new THREE.Group(); player.position.set(0.28, 0, 0.35); g.add(player);
     player.add(cyl(0.16, 0.2, 0.3, M.courier, [0, 0.15, 0], 24));                     // 肩/躯干
     player.add(new THREE.Mesh(new THREE.SphereGeometry(0.12, 24, 20), M.skin).translateY(0.42));   // 头
-    const hs = makeHeadset(M.led.clone()); hs.scale.setScalar(0.62); g.add(hs);        // LED 一开始暗红，13.0 戴上后点亮橙
-    const glowScr = new THREE.PointLight('#ffd27a', 0.7, 2.5, 2); glowScr.position.set(0, 0.72, 0.5); g.add(glowScr);
-    const rim = new THREE.PointLight(ORANGE, 0.0, 3, 2); rim.position.set(0.1, 0.6, 0.5); g.add(rim);
+    const hs = makeHeadset(M.led.clone()); hs.scale.setScalar(0.62); hs.position.set(0.28, 0, 0.35); g.add(hs);   // LED 一开始暗红，13.0 戴上后点亮橙
+    const glowScr = new THREE.PointLight('#9fb4e0', 0.3, 2.0, 2); glowScr.position.set(-0.55, 0.72, 0.3); g.add(glowScr);   // 屏幕冷光，压低不过曝
+    const rim = new THREE.PointLight(ORANGE, 0.0, 2.2, 2); rim.position.set(0.5, 0.6, 0.5); g.add(rim);
     root.add(g); parts.victory = { g, headset: hs, led: hs.userData.led, rim };
   }
 
@@ -247,20 +263,20 @@ export function build(ctx, item) {
   const key = new THREE.DirectionalLight('#aab4e0', 1.4); key.castShadow = true;
   Object.assign(key.shadow.camera, { left: -2.4, right: 2.4, top: 2.4, bottom: -2.4, near: 0.2, far: 16 });
   key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -0.0003; key.shadow.normalBias = 0.006;
-  const amb = new THREE.HemisphereLight('#4a5578', '#0a0b12', 0.4);
-  scene.add(key, key.target, amb); scene.background = new THREE.Color('#0a0c14');
+  const amb = new THREE.HemisphereLight('#5a68a0', '#141622', 0.6);
+  scene.add(key, key.target, amb); scene.background = new THREE.Color('#0a0d1a');
   let env = null, pmrem = null;
-  try { if (ctx.renderer && typeof ctx.renderer.compile === 'function') { pmrem = new THREE.PMREMGenerator(ctx.renderer); env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture; scene.environment = env; if (scene.environmentIntensity != null) scene.environmentIntensity = 0.5; } } catch { env = null; }
+  try { if (ctx.renderer && typeof ctx.renderer.compile === 'function') { pmrem = new THREE.PMREMGenerator(ctx.renderer); env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture; scene.environment = env; if (scene.environmentIntensity != null) scene.environmentIntensity = 0.65; } } catch { env = null; }
 
   // 每个布景的主光方向、颜色、强度和环境光、背景色（都偏夜蓝）
   const LIGHT = {
-    defeat: { dir: [-1.5, 2.0, 1.5], color: '#6a78b8', k: 0.9, amb: 0.35, bg: '#07080e' },
-    order: { dir: [1.2, 2.0, 1.5], color: '#ffb060', k: 1.2, amb: 0.4, bg: '#0a0c14' },
-    cube: { dir: [1.5, 3.0, 2.0], color: '#8f9ecf', k: 1.3, amb: 0.4, bg: '#0b0e18' },
-    route: { dir: [0.5, 3.0, 1.0], color: '#5a6aa0', k: 0.7, amb: 0.3, bg: '#070910' },
-    ride: { dir: [-1.5, 1.6, 1.2], color: '#7a86c0', k: 1.0, amb: 0.3, bg: '#080a12' },
-    lift: { dir: [1.0, 2.4, 1.5], color: '#b8c2e0', k: 1.6, amb: 0.5, bg: '#10131c' },
-    victory: { dir: [1.0, 2.0, 1.8], color: '#ffcf8a', k: 1.4, amb: 0.45, bg: '#0a0c14' },
+    defeat: { dir: [-1.5, 2.0, 1.5], color: '#7f8fd8', k: 1.3, amb: 0.5, bg: '#0a0d1a' },
+    order: { dir: [1.2, 2.0, 1.5], color: '#ffb060', k: 1.4, amb: 0.5, bg: '#0c0f1c' },
+    cube: { dir: [1.5, 3.0, 2.0], color: '#aebbe8', k: 2.0, amb: 0.6, bg: '#0d1222' },
+    route: { dir: [0.5, 3.0, 1.0], color: '#6a7ac0', k: 1.0, amb: 0.4, bg: '#080b16' },
+    ride: { dir: [-1.5, 1.6, 1.2], color: '#8f9cd8', k: 1.5, amb: 0.45, bg: '#0a0e1c' },
+    lift: { dir: [1.0, 2.4, 1.5], color: '#c6d2f0', k: 2.0, amb: 0.6, bg: '#121726' },
+    victory: { dir: [1.0, 2.0, 1.8], color: '#9fb0e0', k: 1.5, amb: 0.5, bg: '#0c0f1c' },
   };
   const m4 = new THREE.Matrix4(), tmpV = new THREE.Vector3(), one = new THREE.Vector3(1, 1, 1);
   root.traverse(o => { if (o.isInstancedMesh) o.frustumCulled = false; });
@@ -268,7 +284,7 @@ export function build(ctx, item) {
 
   const handle = {
     root, parts, M, item, scene, key, amb, env, pmrem,
-    post: { exposure: 1.0, vignette: 0.4, grain: 0.03, bloom: { strength: 0.5, threshold: 0.7 }, saturation: 1.08, chroma: 0.0012 },
+    post: { exposure: 1.15, vignette: 0.34, grain: 0.025, bloom: { strength: 0.38, radius: 0.5, threshold: 0.82 }, saturation: 1.18, gain: [0.96, 0.99, 1.08], lift: [0.015, 0.0, 0.03], chroma: 0.0012 },
     update(s) {
       const t = s.t;
       // ── defeat：LED 在 1.0 断音熄灭（亮红 → 暗）；手机通知在 1.3 后弹出；屏幕一直是 DEFEAT ──
@@ -283,16 +299,16 @@ export function build(ctx, item) {
         P.btn.material.opacity = 1; P.btn.material.color.setStyle(ORANGE); P.btn.material.emissive?.setStyle?.(ORANGE); if (P.btn.material.emissiveIntensity != null) P.btn.material.emissiveIntensity = 0.6 + 1.2 * flash; }
       // ── cube：机器人沿顶部轨道闭式滑行；5.0 一台把目标料箱从塔里提上来（lift 灯亮）；料箱网格静止（剖面展示） ──
       { const P = parts.cube, lt = localT('cube', t), D = P.dims;
-        P.binSeed.forEach((sd, i) => { const c = i % D.COLS, r = (i / D.COLS) | 0, show = sd > 0.25; place(P.bins, i, (-D.COLS / 2 + c + 0.5) * D.PIT, (r + 0.5) * D.PIT, 0, show ? 1 : 0.0001); });
+        P.binSeed.forEach((sd, i) => { const c = i % D.COLS, r = (i / D.COLS) | 0; place(P.bins, i, (-D.COLS / 2 + c + 0.5) * D.PIT, (r + 0.5) * D.PIT, 0, 1); });
         P.bins.instanceMatrix.needsUpdate = true;
         // 机器人：矩形轨道（沿 ±x 跑，两端换到另一条轨），每台相位错开
-        P.robots.forEach((rg, i) => { const u = ((lt * 0.4 + i / P.robots.length) % 1 + 1) % 1, side = u < 0.5 ? 1 : -1, uu = (u % 0.5) * 2; rg.position.set((-0.5 + uu) * (D.towerW + 0.3), 0, side * (D.towerD / 2 + 0.1)); });
-        // 目标料箱：藏在塔里 → lift 时沿塔前面升到顶再被机器人接走
-        const rise = ss(EV.lift - 1.0, EV.lift, lt), out = ss(EV.lift, EV.lift + 0.6, lt);
-        const y = lerp(D.PIT * 2.5, D.towerH + 0.1, rise), z = lerp(0, D.towerD / 2 + 0.2, out);
-        P.hero.position.set(lerp(0, (-0.5 + ((lt * 0.4) % 0.5) * 2) * 0, 0) + 0, y, z);
-        P.hero.visible = rise > 0.01; P.heroTag.material.emissiveIntensity = 1.0;
-        P.lift.intensity = 1.6 * ss(EV.lift - 0.1, EV.lift + 0.1, lt) * (1 - ss(EV.lift + 0.4, EV.lift + 0.9, lt)); }
+        P.robots.forEach((rg, i) => { const u = ((lt * 0.4 + i / P.robots.length) % 1 + 1) % 1, side = u < 0.5 ? 1 : -1, uu = (u % 0.5) * 2; rg.position.set((-0.5 + uu) * (D.towerW + 0.4), 0, side * (D.towerD / 2 + 0.12)); });
+        // 目标料箱：从塔中部沿塔前面升到顶（z 在塔面前方，看得见），再被顶部机器人接走
+        const rise = ss(EV.lift - 1.2, EV.lift, lt), out = ss(EV.lift, EV.lift + 0.6, lt);
+        const y = lerp(D.PIT * 2.5, D.towerH + 0.12, rise), z = D.towerD / 2 + 0.1 + lerp(0, 0.25, out);
+        P.hero.position.set(0, y, z);
+        P.hero.visible = rise > 0.01; P.heroTag.material.emissiveIntensity = 1.4;
+        P.lift.intensity = 2.2 * ss(EV.lift - 0.2, EV.lift + 0.1, lt) * (1 - ss(EV.lift + 0.5, EV.lift + 1.0, lt)); }
       // ── route：7.0 (connect) 路线从 hub 一点点连到公寓；车灯沿道路流动 ──
       { const P = parts.route, lt = localT('route', t), u = clamp(ss(0.2, EV.connect, lt));
         const n = Math.max(6, Math.floor(P.tube.geometry.index.count * u / 6) * 6); P.tube.geometry.setDrawRange(0, n); P.halo.geometry.setDrawRange(0, n);
@@ -300,23 +316,25 @@ export function build(ctx, item) {
           if (horiz) place(P.cars, i, (p - 0.5) * 3.4, 0.02, lane * 0.4); else place(P.cars, i, lane * 0.5, 0.02, (p - 0.5) * 2.4); });
         P.cars.instanceMatrix.needsUpdate = true; }
       // ── ride：配送车从右往左驶过，9.5 (splash) 过积水溅起水花；车灯一直亮 ──
-      { const P = parts.ride, lt = localT('ride', t), drive = ss(0, NATURAL.ride, lt), x = lerp(3.5, -3.5, drive);
-        P.van.position.set(x, 0, 0.4); P.headlight.position.set(x + 0.7, 0.3, 0.4); P.headlight.target.position.set(x - 3, 0, 0.4); P.headlight.target.updateMatrixWorld();
-        const sp = ss(EV.splash - 0.1, EV.splash + 0.05, lt) * (1 - ss(EV.splash + 0.1, EV.splash + 0.7, lt));
-        placePuffs(P.splash, 7, lt, [-0.3, 0, -0.2, 0.3, 0.6, 0.2], { vel: [-0.6, 0.9, 0], sway: 0.05, swayHz: 2 }, { grow: 1.2, life: 0.6, k: sp });
-        P.splash.position.set(0, 0, 0.4); }
+      { const P = parts.ride, lt = localT('ride', t), drive = ss(0, NATURAL.ride, lt), x = lerp(2.6, -2.6, drive);
+        P.van.position.set(x, 0, 0.5); P.headlight.position.set(x + 0.7, 0.3, 0.5); P.headlight.target.position.set(x - 3, 0, 0.5); P.headlight.target.updateMatrixWorld();
+        const sp = ss(EV.splash - 0.1, EV.splash + 0.05, lt) * (1 - ss(EV.splash + 0.15, EV.splash + 0.8, lt));
+        placePuffs(P.splash, 7, lt, [-0.4, 0, -0.25, 0.4, 0.7, 0.25], { vel: [-0.7, 1.0, 0], sway: 0.05, swayHz: 2 }, { grow: 1.4, life: 0.6, k: sp });
+        P.splash.position.set(x - 0.5, 0, 0.5); }
       // ── lift：楼层数字 1→23 飞快跳动（面板纹理不变，这里用面板的 UV 偏移模拟不现实——改用缩放脉冲 + ding 门开）──
       { const P = parts.lift, lt = localT('lift', t), open = ss(EV.ding, EV.ding + 0.6, lt);
-        P.doorL.position.x = -0.33 - 0.5 * open; P.doorR.position.x = 0.33 + 0.5 * open;
-        P.ding.intensity = 0.9 * ss(EV.ding - 0.05, EV.ding + 0.05, lt) * (1 - ss(EV.ding + 0.3, EV.ding + 0.9, lt));
-        // 面板「跳动」：数字面板随楼层快速闪烁亮度（真实数字靠 HUD 文字层，这里给点生命感）
-        const climbing = lt < EV.ding ? (0.7 + 0.3 * Math.sin(lt * 40)) : 1; P.panel.material.color.setScalar?.(climbing); }
+        P.doorL.position.x = -0.4 - 0.74 * open; P.doorR.position.x = 0.4 + 0.74 * open;
+        P.ding.intensity = 1.2 * ss(EV.ding - 0.05, EV.ding + 0.05, lt) * (1 - ss(EV.ding + 0.3, EV.ding + 0.9, lt));
+        P.carGlow.intensity = 1.6 * open;
+        // 楼层 1→23 飞快跳动（在 ding 之前到 23 停住）：按故事时间选当前楼层的那张面板贴图
+        const climb = clamp(lt / (EV.ding - 0.3)), floor = Math.min(23, 1 + Math.floor(climb * 22 + 1e-6));
+        if (P.floorTex[floor - 1]) { P.panelMat.map = P.floorTex[floor - 1]; P.panelMat.needsUpdate = true; } }
       // ── victory：13.0 (wear) 耳机从上降下扣住头，LED 从暗红点亮成有集橙；屏幕 VICTORY 发光 ──
       { const P = parts.victory, lt = localT('victory', t), wear = ss(EV.wear, EV.wear + 0.5, lt);
-        P.headset.position.set(0.1, lerp(0.9, 0.33, wear), 0.3); P.headset.rotation.y = -0.2;
+        P.headset.position.set(0.28, lerp(0.95, 0.33, wear), 0.35); P.headset.rotation.y = -0.2;
         const on = ss(EV.wear + 0.2, EV.wear + 0.8, lt);
-        P.led.material.color.set(on > 0.5 ? ORANGE : '#ff3b5b'); P.led.material.emissive.set(on > 0.5 ? ORANGE : '#ff3b5b'); P.led.material.emissiveIntensity = lerp(0.2, 1.8, on);
-        P.rim.intensity = 1.2 * on; }
+        P.led.material.color.set(on > 0.5 ? ORANGE : '#ff3b5b'); P.led.material.emissive.set(on > 0.5 ? ORANGE : '#ff3b5b'); P.led.material.emissiveIntensity = lerp(0.2, 2.0, on);
+        P.rim.intensity = 1.0 * on; }
       // ── 灯光：主光对准当前取景点所在的布景 ──
       const f = s.focus ?? SETS.defeat, name = Object.keys(SETS).reduce((a, k) => (Math.abs(SETS[k][0] - f[0]) < Math.abs(SETS[a][0] - f[0]) ? k : a), 'defeat'), Lt = LIGHT[name];
       key.color.set(Lt.color); key.intensity = Lt.k; amb.intensity = Lt.amb;

@@ -215,12 +215,12 @@ export const phoneNotif = () => make('phonenotif', (g, w, h) => {
   g.fillStyle = '#ff5c8a'; g.font = `bold ${h * 0.26}px sans-serif`; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText('⏰ 赛程提醒', 28, h * 0.34);
   g.fillStyle = '#f2eeff'; g.font = `${h * 0.3}px sans-serif`; g.fillText('明早 9:00 决赛', 28, h * 0.68);
 }, { w: 512, h: 200, repeat: [1, 1] });
-// ── 电梯楼层面板：深色底 + 发光大数字（静态「23」+ 上行箭头），跳动靠世界里改亮度 ──
-export const floorNum = () => make('floornum', (g, w, h) => {
+// ── 电梯楼层面板：深色底 + 发光大数字（传入楼层号，按号缓存一张）+ 上行箭头 ──
+export const floorNum = (n = 23) => make(`floornum-${n}`, (g, w, h) => {
   g.fillStyle = '#06120d'; g.fillRect(0, 0, w, h);
   g.fillStyle = '#4affc8'; g.font = `900 ${h * 0.7}px monospace`; g.textAlign = 'center'; g.textBaseline = 'middle';
-  g.shadowColor = '#4affc8'; g.shadowBlur = 20; g.fillText('23', w * 0.6, h * 0.5);
-  g.font = `${h * 0.5}px sans-serif`; g.fillText('▲', w * 0.18, h * 0.5); g.shadowBlur = 0;
+  g.shadowColor = '#4affc8'; g.shadowBlur = 24; g.fillText(String(n), w * 0.62, h * 0.5);
+  g.font = `${h * 0.5}px sans-serif`; g.fillText('▲', w * 0.2, h * 0.5); g.shadowBlur = 0;
 }, { w: 512, h: 192, repeat: [1, 1] });
 
 // ── 沥青：深灰细颗粒 + 浅色碎石点 ──
