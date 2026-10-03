@@ -188,6 +188,41 @@ export const beanLabel = () => make('beanlabel', (g, w, h) => {
   g.fillText('烘焙日期 ROASTED ____', w / 2, h * 0.8);
 }, { w: 512, h: 512 });
 
+// ════ 电竞耳机（stories/headset）用的贴图：游戏屏 / 手机下单页 / 通知 / 电梯楼层面板 ════
+// ── 电竞显示器画面：深色 + 居中大字（DEFEAT 红 / VICTORY 金）+ 边框 HUD 条，用作自发光屏（MeshBasic） ──
+export const gameScreen = (word = 'DEFEAT', color = '#ff3b5b') => make(`gamescreen-${word}`, (g, w, h) => {
+  const grd = g.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, w * 0.7); grd.addColorStop(0, '#1a1230'); grd.addColorStop(1, '#07060f'); g.fillStyle = grd; g.fillRect(0, 0, w, h);
+  g.strokeStyle = color; g.globalAlpha = 0.5; g.lineWidth = 6; g.strokeRect(16, 16, w - 32, h - 32); g.globalAlpha = 1;
+  g.fillStyle = color; g.font = `900 ${h * 0.26}px sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.shadowColor = color; g.shadowBlur = 24; g.fillText(word, w / 2, h / 2); g.shadowBlur = 0;
+  g.fillStyle = 'rgba(255,255,255,0.4)'; g.font = `${h * 0.055}px sans-serif`; g.fillText(word === 'VICTORY' ? 'RANKED · WIN' : 'RANKED · LOSS', w / 2, h * 0.78);
+}, { w: 1024, h: 576, repeat: [1, 1] });
+// ── 手机下单页：耳机商品页 + 价格 + 「立即下单」橙色按钮 + 底部倒计时条 ──
+export const phoneOrder = () => make('phoneorder', (g, w, h) => {
+  g.fillStyle = '#0f1220'; g.fillRect(0, 0, w, h);
+  g.fillStyle = '#1a1f33'; g.fillRect(0, 0, w, h * 0.08);                                   // 状态栏
+  g.fillStyle = '#232a44'; g.fillRect(w * 0.1, h * 0.12, w * 0.8, h * 0.4);                 // 商品图位
+  g.fillStyle = '#ff5c8a'; g.font = `bold ${h * 0.05}px sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('电竞耳机 · PRO', w / 2, h * 0.32);
+  g.fillStyle = '#f2eeff'; g.font = `900 ${h * 0.06}px sans-serif`; g.fillText('¥359', w / 2, h * 0.6);
+  g.fillStyle = '#ff8a1e'; const by = h * 0.7, bh = h * 0.09; g.fillRect(w * 0.14, by, w * 0.72, bh);
+  g.fillStyle = '#1a1020'; g.font = `bold ${h * 0.045}px sans-serif`; g.fillText('立即下单', w / 2, by + bh / 2);
+  g.fillStyle = '#38d0ff'; g.font = `${h * 0.035}px sans-serif`; g.fillText('预计 08:30 前送达', w / 2, h * 0.88);
+}, { w: 512, h: 1024, repeat: [1, 1] });
+// ── 手机通知气泡：「明早 9:00 决赛」 ──
+export const phoneNotif = () => make('phonenotif', (g, w, h) => {
+  g.clearRect(0, 0, w, h);
+  g.fillStyle = 'rgba(20,22,34,0.95)'; g.beginPath(); g.roundRect ? g.roundRect(8, 8, w - 16, h - 16, 18) : g.rect(8, 8, w - 16, h - 16); g.fill();
+  g.fillStyle = '#ff5c8a'; g.font = `bold ${h * 0.26}px sans-serif`; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText('⏰ 赛程提醒', 28, h * 0.34);
+  g.fillStyle = '#f2eeff'; g.font = `${h * 0.3}px sans-serif`; g.fillText('明早 9:00 决赛', 28, h * 0.68);
+}, { w: 512, h: 200, repeat: [1, 1] });
+// ── 电梯楼层面板：深色底 + 发光大数字（静态「23」+ 上行箭头），跳动靠世界里改亮度 ──
+export const floorNum = () => make('floornum', (g, w, h) => {
+  g.fillStyle = '#06120d'; g.fillRect(0, 0, w, h);
+  g.fillStyle = '#4affc8'; g.font = `900 ${h * 0.7}px monospace`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.shadowColor = '#4affc8'; g.shadowBlur = 20; g.fillText('23', w * 0.6, h * 0.5);
+  g.font = `${h * 0.5}px sans-serif`; g.fillText('▲', w * 0.18, h * 0.5); g.shadowBlur = 0;
+}, { w: 512, h: 192, repeat: [1, 1] });
+
 // ── 沥青：深灰细颗粒 + 浅色碎石点 ──
 export const asphalt = (base = '#3a3e45') => make(`asphalt-${base}`, (g, w, h, rng) => {
   g.fillStyle = base; g.fillRect(0, 0, w, h);

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { META, CUTS, SHOTS, GRID, BAR } from '../meta.js';
-import { ITEMS, ITEM_IDS, baseItem, isAiItem, isBeans } from '../items.js';
+import { ITEMS, ITEM_IDS, baseItem, isAiItem, isBeans, isHeadset } from '../items.js';
 import { ITEMS as CATALOG } from '../../04-year-review/catalog.js';
 import { T, voLines, SLOTS, VOICE } from '../copy.js';
 import { PROMO_T } from '../promos.js';
@@ -99,6 +99,42 @@ test('cuts: lengths exactly 15 / 6, shot names, hits on the 0.5 s grid', () => {
   const b15 = buildCut(CUTS[15]);
   assert.ok(b15.cover > shotAt(b15, 'robots').start && b15.cover < shotAt(b15, 'robots').end, '15 s cover in robots');
   const b6 = buildCut(CUTS[6]), d6 = shotAt(b6, 'door'); assert.ok(b6.cover > d6.start + 1.0, '6 s cover shows the price card');
+});
+
+test('headset is its own story (stories/headset): seven shots per §三, hits on the 0.5 s grid, 6 s = order→lift→victory, captions and VO keyed by headset', () => {
+  const v15 = { item: 'headset', lang: 'zh', cut: 15, promo: 'none', ar: '16x9', vo: 'on' };
+  assert.ok(isHeadset('headset') && !isBeans('headset'));
+  assert.equal(baseItem('headset'), 'headset');
+  // 七镜，照 §三 的顺序
+  assert.deepEqual(META.cutFor(v15).shots.map(s => s.shot), ['defeat', 'order', 'cube', 'route', 'ride', 'lift', 'victory']);
+  // 15 秒七段时长 2+1.5+2.5+2.5+2.5+2+2 = 15
+  assert.deepEqual(META.cutFor(v15).shots.map(s => s.dur), [2.0, 1.5, 2.5, 2.5, 2.5, 2.0, 2.0]);
+  const b15 = buildCut(META.cutFor(v15));
+  assert.ok(Math.abs(b15.duration - 15) < 1e-9);
+  // 命中点照 §三 表，且落在 0.5 s 网格
+  assert.deepEqual(b15.hits, { mute: 1.0, order: 2.5, lift: 5.0, connect: 7.0, splash: 9.5, ding: 12.5, wear: 13.0, logo: 13.5 });
+  assert.deepEqual(offGrid(Object.values(b15.hits), GRID), []);
+  // 6 秒版：order（下单）→ lift（叮）→ victory（价签），时长 1.5+1.5+3 = 6
+  const v6 = { ...v15, cut: 6, promo: '1111', ar: '1x1' };
+  assert.deepEqual(META.cutFor(v6).shots.map(s => s.shot), ['order', 'lift', 'victory']);
+  const b6 = buildCut(META.cutFor(v6));
+  assert.ok(Math.abs(b6.duration - 6) < 1e-9);
+  assert.deepEqual(offGrid(Object.values(b6.hits), GRID), []);
+  assert.ok(b6.cover > shotAt(b6, 'victory').start + 1.0, '6 s cover shows the price card on victory');
+  // 字幕照 §三 表（defeat / cube / route / lift 有句子；order / ride 无字幕；victory 是片尾卡）
+  const capOf = (name) => layersFor(v15, { name, from: 0, dur: 2 });
+  assert.equal(capOf('defeat').find(l => l.id === 'cap').text, '明早决赛，耳机坏了？');
+  assert.equal(capOf('route').find(l => l.id === 'cap').text, '路线实时规划，绕开每一个红灯');
+  assert.deepEqual(capOf('order'), []);
+  assert.deepEqual(capOf('ride'), []);
+  assert.ok(capOf('victory').some(l => l.id === 'logo' && l.text === '有集'), 'victory carries the end card');
+  // 配音用 headset_* 文件名，和包裹旅程 / 咖啡豆分开
+  for (const cut of [15, 6]) for (const lang of ['zh', 'en']) {
+    const lines = voLines({ item: 'headset', lang, cut, promo: '1111', ar: '16x9', vo: 'on' });
+    assert.ok(lines.length > 0 && lines.every(l => l.id.startsWith('headset_')), `${cut}s ${lang} VO keyed by headset`);
+    assert.ok(lines.every(l => !/\d/.test(l.text)), `${cut}s ${lang} VO has no digits`);
+    assert.ok(lines.every(l => l.voice === VOICE[lang]), `${cut}s ${lang} VO voice`);
+  }
 });
 
 test('voice-over: 04 voices, numbers spelt out, Double 11 read as 双十一 / Double Eleven, every line ends before the fade', () => {

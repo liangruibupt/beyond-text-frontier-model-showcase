@@ -86,3 +86,27 @@ test('subjects sit inside the frame while each shot holds, and the 6 s entry poi
     const lt = e.from + t - e.start; assert.ok(lt / NATURAL[name] < RIG[name].move[0], `${name} entered at lt ${lt} is mid-move`);
   }
 });
+
+import { SHOTS as HS_NAMES, CUTS as HS_CUTS, poseFor as hsPose, NATURAL as HS_NAT, RIG as HS_RIG, storyT as hsStoryT, STORY0 as HS_STORY0 } from '../stories/headset/meta.js';
+
+test('headset world (stories/headset): poses finite for all seven shots; story-time only (shuffled = in-order); 6 s entries land on order / lift / victory', async () => {
+  // 机位有限（夜城是硬切，不要求一镜到底的首尾相接）
+  for (const n of HS_NAMES) for (let lt = 0; lt <= HS_NAT[n]; lt += 0.1) {
+    const p = hsPose(n, lt, {});
+    for (const val of [...p.position, ...p.target, ...p.offset]) assert.ok(Number.isFinite(val), `headset ${n}@${lt}`);
+  }
+  // 世界只看故事时间：乱序求值 = 顺序求值，reset 复原 t = 0
+  const ctx = { THREE, scene: new THREE.Scene(), variant: { item: 'headset', ar: '16x9', lang: 'zh', cut: 15, promo: 'none', vo: 'on' }, ar: '16x9' };
+  await film.setup(ctx);
+  const w = ctx.world, ts = []; for (let t = 0; t <= 15; t += 0.41) ts.push(+t.toFixed(2));
+  w.reset(); const s0 = snap(ctx.scene); const ref = new Map();
+  for (const t of ts) { w.update({ t }); ref.set(t, snap(ctx.scene)); }
+  for (const t of [...ts].reverse()) { w.update({ t: 14.9 }); w.reset(); w.update({ t }); same(snap(ctx.scene), ref.get(t), `headset t=${t}`); }
+  w.reset(); same(snap(ctx.scene), s0, 'headset reset');
+  w.dispose();
+  // 6 秒版三个切入时刻落在各自镜头的 hold 里
+  const b6 = buildCut(HS_CUTS[6]);
+  for (const [t, name] of [[0.3, 'order'], [2.0, 'lift'], [4.0, 'victory']]) {
+    const e = b6.entries.find(x => t >= x.start && t < x.end); assert.equal(e.shot, name, `6 s @${t}`);
+  }
+});

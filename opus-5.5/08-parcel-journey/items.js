@@ -70,3 +70,5 @@ export const baseItem = id => ITEM_SPEC[id]?.base ?? id;
 export const isAiItem = id => !!ITEM_SPEC[id]?.ai;
 /** 是不是咖啡豆这条线（含 AI 变体） */
 export const isBeans = id => baseItem(id) === 'beans';
+/** 是不是电竞耳机这条线（赛前送达，stories/headset；含将来的 AI 变体） */
+export const isHeadset = id => baseItem(id) === 'headset';

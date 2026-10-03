@@ -14,6 +14,11 @@ const CAP = {
   roast: { zh: '今天早上 7 点，刚出炉', en: 'Roasted at 7 this morning' },
   bag: { zh: '当天烘焙，当天发出', en: 'Roasted today, shipped today' },
   alley: { zh: '明天一早，到你门口', en: 'At your door by morning' },
+  // 电竞耳机（分镜 v2 §三）
+  defeat: { zh: '明早决赛，耳机坏了？', en: 'Finals at 9. Headset dead?' },
+  cube: { zh: '城市前置仓，夜里也在跑', en: 'City hubs never sleep' },
+  route: { zh: '路线实时规划，绕开每一个红灯', en: 'Routed live, around every red light' },
+  lift: { zh: '08:12，送到门口', en: '08:12. At your door.' },
 };
 
 const INK = '#f4efe6', SOFT = '#d8c6a8';       // 仓库 / 夜色里的浅字
@@ -30,6 +35,11 @@ export function layersFor(v, s) {
     case 'roast': return cap(CAP.roast[L]);
     case 'bag': return cap(CAP.bag[L]);
     case 'alley': return cap(CAP.alley[L]);
+    case 'defeat': return cap(CAP.defeat[L]);
+    case 'cube': return cap(CAP.cube[L]);
+    case 'route': return cap(CAP.route[L]);
+    case 'lift': return cap(CAP.lift[L]);
+    case 'victory': return endCard(v, base, F, a + (v.cut === 15 ? 0.6 : 0), align);   // 耳机片尾卡（戴上后入场）：15 秒版晚 0.6 s；6 秒版价签停满 3 秒
     case 'pour': return endCard(v, base, F, a + (v.cut === 15 ? 0.6 : 0), align);   // 15 秒版片尾卡晚 0.6 s 入场，先看一眼注水；6 秒版价签要停满 3 秒
     case 'door': return endCard(v, base, F, a, align);
     default: return [];                                        // order / pack / truck / cool / night：无字幕

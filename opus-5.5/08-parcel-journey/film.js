@@ -4,7 +4,7 @@
 // factory/engine/video.js），字幕 / 价签 / 片尾卡 / 配音 / 配乐仍由现有引擎合成。代码版不受影响。
 // vo.mjs 会在 Node 里 import 这个文件，所以顶层不能碰 window / document
 import { META } from './meta.js';
-import { ITEMS, isAiItem, isBeans } from './items.js';
+import { ITEMS, isAiItem, isBeans, isHeadset } from './items.js';
 import { LAYOUTS } from './layouts.js';
 import { fontsFor } from './captions.js';
 import { voLines, AUDITION } from './copy.js';
@@ -16,6 +16,9 @@ import { build as buildAi } from './js/world-ai.js';
 import { SHOTS as BEANS_SHOTS } from './stories/beans/shots.js';
 import { SHOTS_AI } from './js/shots-ai.js';
 import { score as beansScore } from './stories/beans/score.js';
+import { build as buildHeadset } from './stories/headset/world.js';
+import { SHOTS as HEADSET_SHOTS } from './stories/headset/shots.js';
+import { score as headsetScore } from './stories/headset/score.js';
 import { planCrowd } from './js/crowd.js';
 import { seedOf } from '../factory/engine/rng.js';
 
@@ -34,6 +37,7 @@ export default {
       return;
     }
     if (item.id === 'beans') { ctx.world = buildBeans(ctx, item); ctx.postDefaults = ctx.world.post ?? {}; ctx.subjects = {}; return; }
+    if (item.id === 'headset') { ctx.world = buildHeadset(ctx, item); ctx.postDefaults = ctx.world.post ?? {}; ctx.subjects = {}; return; }
     // 换商品要重跑机器人路径规划（目标货架跟着商品换）；种子由商品决定，确定
     const plan = planCrowd({ seed: seedOf(`08-${item.id}`) });
     ctx.world = buildWorld(ctx, item, plan);
@@ -54,8 +58,8 @@ export default {
     renderer.setRenderTarget(target); renderer.clear(); renderer.render(scene, camera);
   },
   // 代码版与 AI 版用同名镜头，按当前世界分流：AI 世界（有 cue）走 shots-ai（cue 片段 + 同样的字幕），否则走代码版 3D 镜头。
-  shots: shotDispatch({ ...SHOTS, ...BEANS_SHOTS }),
-  score: (v, built) => (isBeans(v.item) ? beansScore : parcelScore)(v, built),
+  shots: shotDispatch({ ...SHOTS, ...BEANS_SHOTS, ...HEADSET_SHOTS }),
+  score: (v, built) => (isBeans(v.item) ? beansScore : isHeadset(v.item) ? headsetScore : parcelScore)(v, built),
   voLines,
   audition: AUDITION,
 };
