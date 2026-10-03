@@ -30,6 +30,28 @@ export const ITEM_SPEC = {
     scene: 'oldstreet',
     street: { wall: '#c9b596', door: '#5a4327', ground: '#8c7a5c', trim: '#e9c46a', porch: '#4a3820' },
   },
+  // 咖啡豆 AI 变体：和 beans 同一条故事线（分镜、剪辑表、字幕、配音、配乐、价格都不变），
+  // 只是画面改用 LTX 生成的实拍片段当底图。base: 'beans' 让所有「只看故事」的数据沿用 beans
+  // （目录、配音文件名、配乐、剪辑表、构图），文件名则保留 beans-ai 以便和代码版并存不覆盖。
+  'beans-ai': {
+    base: 'beans',
+    ai: true,
+    catId: 'cf-geisha',
+    model: 'pouch',
+    box: [0.2, 0.22, 0.16],
+    scene: 'oldstreet',
+    street: { wall: '#c9b596', door: '#5a4327', ground: '#8c7a5c', trim: '#e9c46a', porch: '#4a3820' },
+  },
+  // 营地灯 AI 变体：和 lantern 同一条故事线（包裹旅程、剪辑表、字幕、配音、配乐、价格都不变），画面改用 LTX 实拍片段
+  'lantern-ai': {
+    base: 'lantern',
+    ai: true,
+    catId: 'od-lantern',
+    model: 'lantern',
+    box: [0.26, 0.24, 0.26],
+    scene: 'suburb',
+    street: { wall: '#d8c7a6', door: '#7a4a2a', ground: '#9ba06f', trim: '#f2b233', porch: '#6b4322' },
+  },
 };
 
 /** item → 合并后的数据：目录条目（name / one / price / deal / colors）+ 本片的 spec */
@@ -42,3 +64,9 @@ export const ITEMS = Object.fromEntries(
 );
 
 export const ITEM_IDS = Object.keys(ITEMS);
+/** 该 item 底下是哪条故事线（beans-ai → beans）；只看故事的数据都用这个基准 id */
+export const baseItem = id => ITEM_SPEC[id]?.base ?? id;
+/** 这件商品是不是 AI 画面变体 */
+export const isAiItem = id => !!ITEM_SPEC[id]?.ai;
+/** 是不是咖啡豆这条线（含 AI 变体） */
+export const isBeans = id => baseItem(id) === 'beans';

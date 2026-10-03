@@ -1,10 +1,26 @@
 {
-  "beans_en_15_door": {
-    "text": "and at your door by sunrise.",
+  "beans_en_15_b_cup": {
+    "text": "and in your cup tomorrow.",
     "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.728,
+    "dur": 1.344,
+    "lufs": -20
+  },
+  "beans_en_15_b_roast": {
+    "text": "Geisha, roasted this morning,",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.872,
+    "lufs": -20
+  },
+  "beans_en_15_b_sealed": {
+    "text": "sealed and shipped the same day,",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.608,
     "lufs": -20
   },
   "beans_en_15_end_1111": {
@@ -31,30 +47,6 @@
     "dur": 1.776,
     "lufs": -20
   },
-  "beans_en_15_hook": {
-    "text": "The second you tap order,",
-    "voice": "am_michael",
-    "speed": 1,
-    "rate": 1,
-    "dur": 1.488,
-    "lufs": -20
-  },
-  "beans_en_15_robots": {
-    "text": "dozens of robots get moving.",
-    "voice": "am_michael",
-    "speed": 1,
-    "rate": 1,
-    "dur": 1.824,
-    "lufs": -20
-  },
-  "beans_en_15_route": {
-    "text": "Packed, sorted, out overnight,",
-    "voice": "am_michael",
-    "speed": 1,
-    "rate": 1,
-    "dur": 1.728,
-    "lufs": -20
-  },
   "beans_en_6_one_1111": {
     "text": "Double Eleven: Geisha beans, nineteen dollars, here tomorrow.",
     "voice": "am_michael",
@@ -79,12 +71,28 @@
     "dur": 3.576,
     "lufs": -20
   },
-  "beans_zh_15_door": {
-    "text": "天一亮，就到你家门口。",
+  "beans_zh_15_b_cup": {
+    "text": "明天一早，就在你的杯里。",
     "voice": "zm_yunjian",
     "speed": 1,
     "rate": 1,
     "dur": 1.992,
+    "lufs": -20
+  },
+  "beans_zh_15_b_roast": {
+    "text": "今天早上，刚烘好的瑰夏，",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.304,
+    "lufs": -20
+  },
+  "beans_zh_15_b_sealed": {
+    "text": "当天封袋，当天发出，",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.848,
     "lufs": -20
   },
   "beans_zh_15_end_1111": {
@@ -108,30 +116,6 @@
     "voice": "zm_yunjian",
     "speed": 1,
     "rate": 1.07,
-    "dur": 1.8,
-    "lufs": -20
-  },
-  "beans_zh_15_hook": {
-    "text": "你点下单的那一秒，",
-    "voice": "zm_yunjian",
-    "speed": 1,
-    "rate": 1,
-    "dur": 1.68,
-    "lufs": -20
-  },
-  "beans_zh_15_robots": {
-    "text": "几十台机器人就动了起来。",
-    "voice": "zm_yunjian",
-    "speed": 1,
-    "rate": 1,
-    "dur": 2.232,
-    "lufs": -20
-  },
-  "beans_zh_15_route": {
-    "text": "打包、分拣，连夜出发，",
-    "voice": "zm_yunjian",
-    "speed": 1,
-    "rate": 1,
     "dur": 1.8,
     "lufs": -20
   },

@@ -2,11 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { META, CUTS, SHOTS, GRID, BAR } from '../meta.js';
-import { ITEMS, ITEM_IDS } from '../items.js';
+import { ITEMS, ITEM_IDS, baseItem, isAiItem, isBeans } from '../items.js';
 import { ITEMS as CATALOG } from '../../04-year-review/catalog.js';
 import { T, voLines, SLOTS, VOICE } from '../copy.js';
 import { PROMO_T } from '../promos.js';
 import { layersFor, fontsFor } from '../captions.js';
+import { LAYOUTS } from '../layouts.js';
 import { score } from '../js/score.js';
 import { expandJobs, allAxes } from '../../factory/engine/variant.js';
 import { buildCut, shotAt } from '../../factory/engine/timeline.js';
@@ -24,18 +25,21 @@ test('file names encode every axis that changes the output', () => {
   assert.equal(new Set(names).size, names.length, 'two variants share a file name');
 });
 
-test('default manifest = every item × (16:9 15 s zh, 16:9 15 s en launch, 1:1 6 s zh 1111) = 9 jobs', () => {
+test('default manifest = base items × (16:9 15 s zh, 16:9 15 s en launch, 1:1 6 s zh 1111) = 9 jobs; the AI variant is opt-in, not in the standard deliverables', () => {
   const jobs = expandJobs(META, manifest);
   assert.equal(jobs.length, 9);
   const kinds = new Set(jobs.map(j => `${j.ar} ${j.cut} ${j.lang} ${j.promo} ${j.vo}`));
   assert.deepEqual([...kinds].sort(), ['16x9 15 en launch on', '16x9 15 zh none on', '1x1 6 zh 1111 on']);
-  for (const it of allAxes(META).item) assert.equal(jobs.filter(j => j.item === it).length, 3, `item ${it}`);
+  // 标准交付只覆盖三件代码版商品，每件 3 条；AI 变体（beans-ai）不进默认清单，单独按 --item beans-ai 出
+  assert.deepEqual([...new Set(jobs.map(j => j.item))].sort(), ['beans', 'headset', 'lantern']);
+  for (const it of ['lantern', 'headset', 'beans']) assert.equal(jobs.filter(j => j.item === it).length, 3, `item ${it}`);
+  for (const it of ['beans-ai', 'lantern-ai']) assert.equal(jobs.filter(j => j.item === it).length, 0, `${it} is not a standard deliverable`);
 });
 
-test('items reuse 04 catalog: three approved products, integer prices with the deal below the price', () => {
-  assert.deepEqual(ITEM_IDS, ['lantern', 'headset', 'beans']);
+test('items reuse 04 catalog: three approved products + opt-in beans-ai / lantern-ai variants that alias them', () => {
+  assert.deepEqual(ITEM_IDS, ['lantern', 'headset', 'beans', 'beans-ai', 'lantern-ai']);
   assert.deepEqual(ITEM_IDS, META.axes.item);
-  const expect = { lantern: 'od-lantern', headset: 'gm-headset', beans: 'cf-geisha' };
+  const expect = { lantern: 'od-lantern', headset: 'gm-headset', beans: 'cf-geisha', 'beans-ai': 'cf-geisha', 'lantern-ai': 'od-lantern' };
   for (const [id, it] of Object.entries(ITEMS)) {
     assert.equal(it.catId, expect[id]);
     assert.deepEqual(it.name, CATALOG[expect[id]].name, `${id} name = 04 catalog`);
@@ -48,6 +52,36 @@ test('items reuse 04 catalog: three approved products, integer prices with the d
     assert.ok(['lantern', 'headset', 'pouch'].includes(it.model), `${id} model`);
     assert.equal(it.box.length, 3);
     for (const f of ['wall', 'door', 'ground', 'trim', 'porch']) assert.match(it.street[f], /^#[0-9a-f]{6}$/i, `${id} street.${f}`);
+  }
+  // beans-ai 和 beans 的价格 / 目录完全一致（同一条故事线，只换画面）
+  assert.deepEqual(ITEMS['beans-ai'].price, ITEMS.beans.price);
+  assert.deepEqual(ITEMS['beans-ai'].deal, ITEMS.beans.deal);
+});
+
+test('beans-ai is an AI picture variant of beans: same cut / captions / VO files / score, its own filename', () => {
+  assert.ok(isAiItem('beans-ai') && !isAiItem('beans'));
+  assert.ok(isBeans('beans-ai') && isBeans('beans') && !isBeans('lantern'));
+  assert.equal(baseItem('beans-ai'), 'beans');
+  assert.equal(baseItem('beans'), 'beans');
+  // 文件名保留 beans-ai，和代码版并存不覆盖
+  const v = { item: 'beans-ai', lang: 'zh', cut: 15, promo: 'none', ar: '16x9', vo: 'on' };
+  assert.equal(META.fileName(v), 'youji-parcel_beans-ai_15s_16x9_zh');
+  assert.equal(META.fileName({ ...v, item: 'beans' }), 'youji-parcel_beans_15s_16x9_zh');
+  // 剪辑表沿用 beans（咖啡豆六镜），不是一镜到底的包裹旅程
+  assert.deepEqual(META.cutFor(v).shots.map(s => s.shot), META.cutFor({ ...v, item: 'beans' }).shots.map(s => s.shot));
+  // 配音台词 id 用基准 item（beans_*），复用已生成的 mp3，不另生成 beans-ai_* 文件
+  for (const cut of [15, 6]) for (const lang of ['zh', 'en']) {
+    const ai = voLines({ item: 'beans-ai', lang, cut, promo: '1111', ar: '16x9', vo: 'on' });
+    const code = voLines({ item: 'beans', lang, cut, promo: '1111', ar: '16x9', vo: 'on' });
+    assert.deepEqual(ai.map(l => l.id), code.map(l => l.id), `${cut}s ${lang} VO ids`);
+    assert.deepEqual(ai.map(l => l.text), code.map(l => l.text), `${cut}s ${lang} VO text`);
+    assert.ok(ai.every(l => l.id.startsWith('beans_')), `${cut}s ${lang} VO ids keyed by beans`);
+  }
+  // 字幕 / 片尾卡与 beans 一致（layersFor 按镜头名，不看 item）
+  for (const name of ['roast', 'bag', 'alley', 'pour']) {
+    const a = layersFor({ item: 'beans-ai', lang: 'zh', cut: 15, promo: 'none', ar: '16x9', vo: 'on' }, { name, from: 0, dur: 2.5 });
+    const b = layersFor({ item: 'beans', lang: 'zh', cut: 15, promo: 'none', ar: '16x9', vo: 'on' }, { name, from: 0, dur: 2.5 });
+    assert.deepEqual(a.map(l => l.id), b.map(l => l.id), `${name} caption ids`);
   }
 });
 
@@ -131,4 +165,29 @@ test('score is deterministic and the same in both languages', () => {
   const run = o => JSON.stringify(score({ item: 'lantern', ar: '16x9', lang: 'zh', cut: 15, promo: 'none', vo: 'on', ...o }, buildCut(CUTS[o.cut ?? 15])).notes);
   assert.equal(run({}), run({}));
   assert.equal(run({}), run({ lang: 'en' }), 'language must not change the music');
+});
+
+test('lantern-ai is an AI picture variant of lantern: same parcel cut / VO files, its own filename', () => {
+  assert.ok(isAiItem('lantern-ai') && !isAiItem('lantern') && !isBeans('lantern-ai'));
+  assert.equal(baseItem('lantern-ai'), 'lantern');
+  assert.deepEqual(ITEMS['lantern-ai'].deal, ITEMS.lantern.deal);
+  const v = { item: 'lantern-ai', lang: 'en', cut: 6, promo: '1111', ar: '1x1', vo: 'on' };
+  assert.equal(META.fileName(v), 'youji-parcel_lantern-ai_6s_1x1_en_1111');
+  for (const lang of ['zh', 'en']) for (const cut of [15, 6]) {
+    const ai = voLines({ ...v, lang, cut }), code = voLines({ ...v, item: 'lantern', lang, cut });
+    assert.deepEqual(ai, code, `${cut}s ${lang} VO identical (reuses lantern_* mp3)`);
+  }
+});
+
+test('AI variants use the compact ai_* end-card zones; code versions keep the full card', () => {
+  for (const [item, base, shot] of [['beans-ai', 'beans', 'pour'], ['lantern-ai', 'lantern', 'door']]) {
+    const v = { item, lang: 'zh', cut: 15, promo: '1111', ar: '16x9', vo: 'on' };
+    const ai = layersFor(v, { name: shot, from: 0, dur: 2 }), code = layersFor({ ...v, item: base }, { name: shot, from: 0, dur: 2 });
+    assert.deepEqual(ai.map(l => l.id), code.map(l => l.id));
+    assert.ok(ai.every(l => l.zone.startsWith('ai_')) && code.every(l => !l.zone.startsWith('ai_')));
+  }
+  // 16:9 的紧凑卡在画面左侧三分之一以内，1:1 的在下方 40% 以内（AI 片段把主体放在留白之外）
+  const c169 = LAYOUTS['16x9'].pour.zones.ai_card, c11 = LAYOUTS['1x1'].pour.zones.ai_card;
+  assert.ok(c169[0] + c169[2] <= 0.36, '16:9 AI card stays in the left third');
+  assert.ok(c11[1] >= 0.6, '1:1 AI card stays in the bottom 40%');
 });

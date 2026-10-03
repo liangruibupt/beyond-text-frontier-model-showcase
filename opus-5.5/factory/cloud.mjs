@@ -1,5 +1,5 @@
 // cloud.mjs — 在 AWS 的 GPU 实例上出片：开机 → 同步代码 → 云端跑 render.mjs（或任意命令）→ 拉回 out/ → 关机
-//   node factory/cloud.mjs up [--type g6.4xlarge,g5.4xlarge] [--hours 3]
+//   node factory/cloud.mjs up [--type g6.4xlarge,g5.4xlarge] [--hours 3] [--disk 200]   --disk 是根盘 GB（放大模型权重时用）
 //   node factory/cloud.mjs render <film> [render.mjs 的参数…]      同步、出片、拉回 <film>/out/
 //   node factory/cloud.mjs run <命令…>                             同步后在云端 showcase/ 下跑，如 run node factory/check.mjs 03-perfume
 //   node factory/cloud.mjs pull <film> | extend --hours 2 | status | down
@@ -11,7 +11,8 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import { parseArgs, isMain } from './lib/args.mjs';
 import { ROOT } from './lib/serve.mjs';
 
-export const NAME = 'opus55-render', PROJECT = 'opus55-showcase';
+// OPUS55_INSTANCE 给实例换个名字（如 opus55-ltx），就能同时开几台互不干扰：各自的实例标签、ssh 钥匙和配置。IAM 实例配置文件和安全组共用 opus55-render
+export const NAME = process.env.OPUS55_INSTANCE || 'opus55-render', SHARED = 'opus55-render', PROJECT = 'opus55-showcase';
 export const AMI = 'resolve:ssm:/aws/service/deeplearning/ami/x86_64/base-oss-nvidia-driver-gpu-ubuntu-24.04/latest/ami-id';
 export const TYPES = ['g6.4xlarge', 'g5.4xlarge'];
 export const READY = '/var/lib/cloud/opus55-ready', DEADLINE = '/etc/opus55-deadline', SETUP = '/var/lib/cloud/scripts/per-boot/opus55-setup.sh';
@@ -123,16 +124,16 @@ function need() {
 }
 
 function securityGroup(vpc) {
-  const g = aws(['ec2', 'describe-security-groups', '--filters', `Name=group-name,Values=${NAME}`, `Name=vpc-id,Values=${vpc}`, '--query', 'SecurityGroups[0].GroupId']);
+  const g = aws(['ec2', 'describe-security-groups', '--filters', `Name=group-name,Values=${SHARED}`, `Name=vpc-id,Values=${vpc}`, '--query', 'SecurityGroups[0].GroupId']);
   if (g) return g;
-  log(`creating security group ${NAME} (no inbound rules)`);
-  return aws(['ec2', 'create-security-group', '--group-name', NAME, '--vpc-id', vpc, '--description', 'opus55 showcase GPU render: SSM only, no inbound',
+  log(`creating security group ${SHARED} (no inbound rules)`);
+  return aws(['ec2', 'create-security-group', '--group-name', SHARED, '--vpc-id', vpc, '--description', 'opus55 showcase GPU render: SSM only, no inbound',
     '--tag-specifications', `ResourceType=security-group,Tags=[{Key=Project,Value=${PROJECT}}]`, '--query', 'GroupId']);
 }
 
-function launch({ types, hours }) {
-  try { aws(['iam', 'get-instance-profile', '--instance-profile-name', NAME]); }
-  catch { console.error(`instance profile ${NAME} not found. Create a role ${NAME} with AmazonSSMManagedInstanceCore and an instance profile of the same name (see factory/README.md 云端出片)`); process.exit(2); }
+function launch({ types, hours, disk }) {
+  try { aws(['iam', 'get-instance-profile', '--instance-profile-name', SHARED]); }
+  catch { console.error(`instance profile ${SHARED} not found. Create a role ${SHARED} with AmazonSSMManagedInstanceCore and an instance profile of the same name (see factory/README.md 云端出片)`); process.exit(2); }
   if (!fs.existsSync(KEY)) execFileSync('ssh-keygen', ['-t', 'ed25519', '-N', '', '-C', NAME, '-f', KEY], { stdio: 'ignore' });
   const vpc = aws(['ec2', 'describe-vpcs', '--filters', 'Name=is-default,Values=true', '--query', 'Vpcs[0].VpcId']);
   if (!vpc) throw new Error('no default VPC in this region');
@@ -144,7 +145,8 @@ function launch({ types, hours }) {
   for (const { type, subnet } of launchPlan(types, subnets)) {
     try {
       const id = aws(['ec2', 'run-instances', '--image-id', AMI, '--instance-type', type, '--subnet-id', subnet, '--security-group-ids', sg,
-        '--iam-instance-profile', `Name=${NAME}`, '--instance-initiated-shutdown-behavior', 'terminate', '--metadata-options', 'HttpTokens=required',
+        '--iam-instance-profile', `Name=${SHARED}`, '--instance-initiated-shutdown-behavior', 'terminate', '--metadata-options', 'HttpTokens=required',
+        ...(disk ? ['--block-device-mappings', `DeviceName=/dev/sda1,Ebs={VolumeSize=${disk},VolumeType=gp3,DeleteOnTermination=true}`] : []),
         '--user-data', `file://${ud}`, '--tag-specifications', tags, `ResourceType=volume,Tags=[{Key=Project,Value=${PROJECT}}]`,
         '--query', 'Instances[0].InstanceId']);
       log(`launched ${id} (${type}, ${subnet}); powers itself off after ${new Date(deadline * 1000).toISOString()}`);
@@ -212,7 +214,7 @@ async function main() {
     case 'up': {
       const hours = +(o.hours ?? 3), types = typeof o.type === 'string' ? o.type.split(',') : TYPES;
       let i = find();
-      const id = i ? i.InstanceId : launch({ types, hours });
+      const id = i ? i.InstanceId : launch({ types, hours, disk: o.disk ? +o.disk : 0 });
       if (i) log(`reusing ${id} (${i.InstanceType}, ${i.State.Name})`);
       if (i?.State.Name === 'stopped') aws(['ec2', 'start-instances', '--instance-ids', id]);
       need(); await settle(id); sync();

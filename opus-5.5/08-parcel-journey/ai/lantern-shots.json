@@ -1,0 +1,49 @@
+{
+  "note": "08 营地灯 AI 变体（lantern-ai）的出片提示词：故事线、剪辑表、字幕、配音、配乐、片尾卡和代码版 lantern 完全一样（一个包裹从帐篷边下单到郊区门口），只把画面换成 LTX-2.5 生成的实拍片段。七个镜头与 meta.js 的 SHOTS 一一对应；每个都为 16:9（1280x704）和 1:1（960x960）各出一段。画面里不要任何文字 / logo，字幕和品牌由引擎叠加。",
+  "model": "Lightricks/LTX-2.5 (DistilledPipeline, fp8-cast)",
+  "fps": 24,
+  "seed": 1111,
+  "negative": "text, letters, words, logo, watermark, subtitles, caption, cartoon, anime, CGI render, 3d render, low poly, plastic look, video game, oversaturated, blurry, jpeg artifacts, deformed hands, extra fingers, flicker, people looking at camera",
+  "note_lengths": "每段长度 = 该镜头在 15 秒版里的时长 + ~0.5 秒 handle，帧数取 8k+1 网格。door 要撑满 6 秒版的 3.5 秒（敲门 + 价签停留），所以 89 帧。",
+  "framings": {
+    "16x9": { "width": 1280, "height": 704 },
+    "1x1": { "width": 960, "height": 960 }
+  },
+  "shots": [
+    {
+      "id": "order", "story_dur": 1.5, "frames": 49, "seconds": 2.04,
+      "prompt": "Cinematic close-up, live-action commercial footage, night at a campsite. A hand holds a smartphone in front of a glowing orange dome tent; the thumb taps the bright screen, whose content is an abstract soft orange glow with no readable text. Warm light from inside the tent, grass and guy lines in the foreground, a starry deep-blue night sky behind, soft bokeh, very shallow depth of field focused on the phone and thumb. The camera pushes in slowly. Natural film grain, 24fps.",
+      "prompt_11": "Cinematic close-up, live-action commercial footage, square 1:1 framing, night at a campsite. A hand holds a smartphone in front of a glowing orange dome tent; the thumb taps the bright screen, whose content is an abstract soft orange glow with no readable text. Warm tent light, grass in the foreground, deep-blue night sky, soft bokeh, very shallow depth of field on the phone. The camera pushes in slowly. Natural film grain, 24fps."
+    },
+    {
+      "id": "robots", "story_dur": 3.5, "frames": 97, "seconds": 4.04,
+      "prompt": "Cinematic low-angle tracking shot, live-action commercial footage inside a modern automated fulfillment warehouse at night. Dozens of small flat orange warehouse robots glide across a polished grey concrete floor, each one carrying a tall shelf pod stacked with colorful fabric bins on top of it, crossing each other smoothly in a grid. Rows of bright high-bay LED lights overhead, yellow safety lines on the floor, steel beams, cool white light with orange accents. Shallow depth of field, a robot passes close in the blurred foreground. The camera glides slowly forward at floor level. Clean, high-tech, natural film grain, 24fps.",
+      "prompt_11": "Cinematic low-angle shot, live-action commercial footage, square 1:1 framing, inside a modern automated fulfillment warehouse. Small flat orange robots glide across a polished grey concrete floor, each carrying a tall shelf pod stacked with colorful fabric bins, crossing smoothly in a grid. Bright high-bay LED lights, yellow safety lines, cool white light with orange accents, shallow depth of field. The camera glides slowly forward at floor level. Natural film grain, 24fps."
+    },
+    {
+      "id": "pack", "story_dur": 2.0, "frames": 65, "seconds": 2.71,
+      "prompt": "Cinematic close-up, live-action commercial footage on an automated packing line in a bright warehouse. A kraft corrugated cardboard box on a roller conveyor has its top flaps folded down by a machine, then clear packing tape is sealed across the top, and a robotic applicator presses a white blank shipping label onto the side. Stainless steel machine parts, orange safety panels, cool white light, shallow depth of field. The camera pushes in slowly. Realistic cardboard texture, natural film grain, 24fps.",
+      "prompt_11": "Cinematic close-up, live-action commercial footage, square 1:1 framing, automated packing line. A kraft corrugated cardboard box on a roller conveyor has its top flaps folded down by a machine, clear tape is sealed across the top, and a robotic applicator presses a white blank shipping label onto it. Stainless steel and orange safety panels, cool white light, shallow depth of field. The camera pushes in slowly. Natural film grain, 24fps."
+    },
+    {
+      "id": "sort", "story_dur": 2.0, "frames": 65, "seconds": 2.71,
+      "prompt": "Cinematic shot, live-action commercial footage in a high-speed parcel sorting center. Many cardboard parcels race along a long cross-belt sorting conveyor under a scanning gantry with a red scanning light; one brown box is pushed off the belt by a diverter and slides down a curved steel chute. Motion blur on the moving parcels, bright industrial lighting, cool tones with orange accents, shallow depth of field. The camera tracks alongside the conveyor. Natural film grain, 24fps.",
+      "prompt_11": "Cinematic shot, live-action commercial footage, square 1:1 framing, high-speed parcel sorting center. Cardboard parcels race along a cross-belt sorting conveyor under a scanning gantry with a red scanning light; one brown box is diverted off the belt and slides down a curved steel chute. Motion blur, bright industrial light, cool tones with orange accents. The camera tracks alongside the conveyor. Natural film grain, 24fps."
+    },
+    {
+      "id": "truck", "story_dur": 2.0, "frames": 65, "seconds": 2.71,
+      "prompt": "Cinematic wide shot, live-action commercial footage at a logistics loading dock just before dawn. A clean white box truck with a plain orange stripe and no lettering pulls away from the dock and drives off onto an empty road, headlights on. The sky glows from deep night blue to warm orange at the horizon, wet asphalt reflects the lights. Low camera, shallow depth of field. The camera pans slowly to follow the truck. Natural film grain, 24fps.",
+      "prompt_11": "Cinematic shot, live-action commercial footage, square 1:1 framing, logistics loading dock just before dawn. A clean white box truck with a plain orange stripe and no lettering pulls away from the dock with headlights on. The sky glows from night blue to warm orange at the horizon, wet asphalt reflects the lights. Low camera, the camera pans to follow. Natural film grain, 24fps."
+    },
+    {
+      "id": "lastmile", "story_dur": 2.0, "frames": 65, "seconds": 2.71,
+      "prompt": "Cinematic tracking shot, live-action commercial footage, sunrise on a quiet tree-lined suburban street with small houses and front lawns. A delivery courier in a plain dark green jacket rides a small electric cargo tricycle loaded with brown cardboard parcels toward the camera, then slows down by the curb. Warm golden low sunlight, long soft shadows, dew on the grass, shallow depth of field. The camera tracks alongside at street level. Natural film grain, 24fps.",
+      "prompt_11": "Cinematic tracking shot, live-action commercial footage, square 1:1 framing, sunrise on a quiet tree-lined suburban street. A delivery courier in a plain dark green jacket rides a small electric cargo tricycle loaded with brown cardboard parcels toward the camera and slows by the curb. Warm golden low sunlight, long soft shadows, shallow depth of field. Natural film grain, 24fps."
+    },
+    {
+      "id": "door", "story_dur": 2.0, "frames": 89, "seconds": 3.71,
+      "prompt": "Cinematic shot, live-action commercial footage, early morning at the wooden front porch of a cozy suburban house, composed with the action in the right two thirds of the frame. A delivery courier in a plain dark green jacket stands on the porch holding a brown cardboard parcel; the wooden front door opens and warm golden light spills out as a smiling resident reaches out and takes the parcel. The left third of the frame is calm, soft, out-of-focus morning garden and sky with nothing in it. Warm golden sunrise light, shallow depth of field. The camera holds steady with a gentle push in. Natural film grain, 24fps.",
+      "prompt_11": "Cinematic shot, live-action commercial footage, square 1:1 framing with the action in the upper half of the frame, early morning at the wooden front porch of a cozy suburban house. A delivery courier in a plain dark green jacket holds a brown cardboard parcel; the front door opens, warm golden light spills out and a smiling resident takes the parcel. The lower half of the frame is a calm, soft, out-of-focus wooden porch floor with nothing on it. Warm sunrise light, shallow depth of field. Gentle push in. Natural film grain, 24fps."
+    }
+  ]
+}

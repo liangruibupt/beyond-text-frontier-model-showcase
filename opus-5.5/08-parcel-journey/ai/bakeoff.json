@@ -1,0 +1,18 @@
+{
+  "note": "08 咖啡豆 AI 变体的模型对比：同一组提示词分别交给 LTX-2.5 和 Wan 2.2 TI2V-5B，比速度和画质。提示词由 opus-5.5 按 docs/specs/2026-10-01-08-parcel-journey-storyboard-v2.md 的咖啡豆分镜写成",
+  "size": { "width": 1280, "height": 704 },
+  "fps": 24,
+  "seconds": 5,
+  "seed": 1111,
+  "negative": "text, letters, logo, watermark, subtitles, cartoon, CGI render, low poly, plastic look, oversaturated, blurry, jpeg artifacts, deformed hands, extra fingers, flicker",
+  "shots": [
+    {
+      "id": "roast",
+      "prompt": "Cinematic macro shot, live-action commercial footage. Through the round glass sight window of a polished copper drum coffee roaster, coffee beans tumble continuously in the rotating drum, their color shifting from pale green to caramel to glossy chestnut brown. Small flecks of papery chaff drift and flash in the warm light. Warm amber key light from the left, dark moody roastery background with soft bokeh, faint wisps of smoke. Very shallow depth of field, focus on the beans behind the glass. The camera pushes in slowly and steadily. Rich browns and copper tones, natural film grain, 24fps."
+    },
+    {
+      "id": "pourover",
+      "prompt": "Cinematic close-up, live-action commercial footage. Morning sunlight through a window falls on a white ceramic V60 pour-over dripper sitting on a clear glass coffee server on a light oak table. A matte black gooseneck kettle pours a thin, steady spiral of hot water onto freshly ground coffee; the coffee bed blooms and bubbles, swelling gently, and soft steam rises and curls through the sunbeam. Dark coffee drips into the glass server below. Warm golden backlight, soft bokeh of a cozy kitchen, very shallow depth of field. The camera slowly dollies in. Calm, slow motion feel, natural film grain, 24fps."
+    }
+  ]
+}

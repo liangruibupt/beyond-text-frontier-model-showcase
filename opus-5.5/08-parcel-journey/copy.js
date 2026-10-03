@@ -1,6 +1,6 @@
 // copy.js — 文案：字体、界面用语、价格、配音台词与时段（纯数据，浏览器与 Node 测试共用）
 // 配音里的数字一律写成汉字 / 英文单词：Kokoro 直接读阿拉伯数字不稳定。音色沿用 04 有集：中文 zm_yunjian，英文 am_michael
-import { ITEMS } from './items.js';
+import { ITEMS, baseItem, isBeans } from './items.js';
 import { sayNum } from '../factory/engine/say.js';
 
 export const FONTS = {
@@ -49,13 +49,35 @@ const ONE = {
 export function voLines(v) {
   if (v.vo === 'off') return [];
   const it = ITEMS[v.item], L = v.lang, voice = VOICE[L], d = it.deal[T[L].currency];
-  const line = (slot, key, text) => { const [at, max] = SLOTS[v.cut][slot]; return { id: `${v.item}_${L}_${v.cut}_${key}`, text, voice, speed: SPEED[L], at, max }; };
+  if (isBeans(v.item)) return beansLines(v, it, d, L, voice);
+  const line = (slot, key, text) => { const [at, max] = SLOTS[v.cut][slot]; return { id: `${baseItem(v.item)}_${L}_${v.cut}_${key}`, text, voice, speed: SPEED[L], at, max }; };   // lantern-ai 复用 lantern_* 配音
   if (v.cut === 6) return [line('one', `one_${v.promo}`, ONE[L](it, d))];
   return [
     line('hook', 'hook', NARR[L].hook),
     line('robots', 'robots', NARR[L].robots),
     line('route', 'route', NARR[L].route),
     line('door', 'door', NARR[L].door),
+    line('end', `end_${v.promo}`, END[L][v.promo](it, d)),
+  ];
+}
+
+// ── 瑰夏咖啡豆（分镜 v2 §四）：三句旁白 + 片尾（同上）；6 秒版同一句双十一 ──
+export const BEANS_SLOTS = {
+  15: { roast: [0.4, 2.6], sealed: [5.3, 2.4], cup: [10.2, 2.4], end: [12.9, 1.8] },
+  6: { one: [2.0, 3.6] },
+};
+const BEANS_NARR = {
+  zh: { roast: '今天早上，刚烘好的瑰夏，', sealed: '当天封袋，当天发出，', cup: '明天一早，就在你的杯里。' },
+  en: { roast: 'Geisha, roasted this morning,', sealed: 'sealed and shipped the same day,', cup: 'and in your cup tomorrow.' },
+};
+function beansLines(v, it, d, L, voice) {
+  const base = baseItem(v.item);   // beans-ai 复用 beans_* 的配音文件，不另生成
+  const line = (slot, key, text) => { const [at, max] = BEANS_SLOTS[v.cut][slot]; return { id: `${base}_${L}_${v.cut}_${key}`, text, voice, speed: SPEED[L], at, max }; };
+  if (v.cut === 6) return [line('one', `one_${v.promo}`, ONE[L](it, d))];
+  return [
+    line('roast', 'b_roast', BEANS_NARR[L].roast),
+    line('sealed', 'b_sealed', BEANS_NARR[L].sealed),
+    line('cup', 'b_cup', BEANS_NARR[L].cup),
     line('end', `end_${v.promo}`, END[L][v.promo](it, d)),
   ];
 }
