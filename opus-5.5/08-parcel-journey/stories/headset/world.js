@@ -92,6 +92,21 @@ export function build(ctx, item) {
     g.userData.led = led; return g;
   };
 
+  // 一个风格化但可信的玩家（3/4 背侧视角，不露脸）：连帽衫肩膀 + 头 + 深色发帽 + 两只耳朵。原点在座位，面朝 -z（背对相机）。
+  const buildGamer = () => {
+    const gm = new THREE.Group();
+    const hoodie = mat('#2a3040', { roughness: 0.8 }), hair = mat('#241d30', { roughness: 0.85 }), skin = mat('#e3b48c', { roughness: 0.6 });
+    gm.add(shadowed(new THREE.Mesh(new THREE.SphereGeometry(0.26, 24, 18), hoodie)).translateY(0.14));   // 肩/上身（压扁的球）
+    gm.children[0].scale.set(1.0, 0.7, 0.85);
+    gm.add(box(0.08, 0.012, 0.3, M.neonM, [0, 0.2, 0.12]));                                   // 帽衫领口霓虹拉链条
+    gm.add(cyl(0.055, 0.06, 0.1, skin, [0, 0.36, 0], 20));                                     // 脖子
+    const head = shadowed(new THREE.Mesh(new THREE.SphereGeometry(0.12, 28, 22), skin)); head.position.set(0, 0.47, 0); gm.add(head);
+    const cap = shadowed(new THREE.Mesh(new THREE.SphereGeometry(0.126, 28, 22, 0, Math.PI * 2, 0, Math.PI * 0.62), hair)); cap.position.set(0, 0.47, 0); cap.rotation.x = -0.35; gm.add(cap);   // 发帽盖住头顶 + 后脑
+    gm.add(shadowed(new THREE.Mesh(new THREE.SphereGeometry(0.1, 20, 16), hair)).translateY(0.44).translateZ(-0.03));   // 后脑头发（朝相机那面）
+    for (const sx of [-1, 1]) gm.add(new THREE.Mesh(new THREE.SphereGeometry(0.025, 12, 10), skin).translateX(sx * 0.115).translateY(0.46));   // 耳朵
+    return gm;
+  };
+
   // ═════ 1 defeat 暗房电竞桌：显示器「DEFEAT」、桌上耳机特写（LED 1.0 熄灭）、旁边手机弹「明早 9:00 决赛」 ═════
   {
     const g = setGroup('defeat');
@@ -202,16 +217,19 @@ export function build(ctx, item) {
       g.add(box(0.6, 0.02, 1.2, new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending, depthWrite: false }), [sx * 0.5, 0.012, 0.3]));   // 积水里的倒影
     }
     g.add(box(10, 1.8, 0.1, M.cityBlock, [0, 0.9, -1.7]));
-    // 配送车（厢式小货车）：从右往左驶过
+    // 配送车（厢式小货车）：有集橙车身 + 双前照灯，从右往左驶过
     const van = new THREE.Group(); g.add(van);
-    van.add(rbox(0.9, 0.5, 0.5, M.carBody, [0, 0.42, 0], 0.06)); van.add(rbox(0.45, 0.42, 0.52, M.carBody, [0.5, 0.38, 0], 0.05));
-    van.add(box(0.5, 0.1, 0.5, glow('#ff5c8a', 0.6), [0, 0.68, 0]));                 // 车顶灯带
-    for (const wx of [-0.3, 0.5]) for (const wz of [0.27, -0.27]) van.add(cyl(0.12, 0.12, 0.08, M.rubber, [wx, 0.12, wz], 18).rotateX(Math.PI / 2));
-    van.add(unlit('#fff4d8') && new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 8), M.carHead)); van.children.at(-1).position.set(0.74, 0.3, 0.18);
-    const headlight = new THREE.SpotLight('#fff0d0', 1.2, 4, 0.6, 0.5, 1.5); headlight.position.set(0.7, 0.3, 0); headlight.target.position.set(-3, 0, 0); g.add(headlight, headlight.target);
-    const splash = puffs(26, DOT, '#cfe3ff', 0.12, 0.0); g.add(splash);
-    const rimM = new THREE.PointLight(MAGENTA, 0.5, 6, 2); rimM.position.set(-2, 1, 0.5); g.add(rimM);
-    const rimC = new THREE.PointLight('#38d0ff', 0.4, 6, 2); rimC.position.set(2.2, 1, 0.5); g.add(rimC);
+    van.add(rbox(1.0, 0.56, 0.56, M.carBody, [0, 0.46, 0], 0.06));                    // 厢体
+    van.add(rbox(0.5, 0.46, 0.58, M.carBody, [0.58, 0.4, 0], 0.05));                  // 车头
+    van.add(box(0.86, 0.26, 0.57, M.labelOrange, [-0.02, 0.46, 0], ));               // 有集橙车身腰带
+    van.add(box(0.52, 0.1, 0.58, glow(ORANGE, 1.2), [0, 0.74, 0]));                   // 车顶橙灯带
+    for (const wx of [-0.32, 0.56]) for (const wz of [0.3, -0.3]) van.add(cyl(0.13, 0.13, 0.08, M.rubber, [wx, 0.13, wz], 18).rotateX(Math.PI / 2));
+    const hlL = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 10), M.carHead), hlR = hlL.clone();   // 双前照灯（发光球）
+    hlL.position.set(0.84, 0.34, 0.2); hlR.position.set(0.84, 0.34, -0.2); van.add(hlL, hlR);
+    const headlight = new THREE.SpotLight('#fff2d6', 2.2, 5, 0.7, 0.5, 1.2); headlight.position.set(0.8, 0.34, 0); headlight.target.position.set(-3, 0, 0.3); g.add(headlight, headlight.target);
+    const splash = puffs(30, DOT, '#dcebff', 0.14, 0.0); g.add(splash);
+    const rimM = new THREE.PointLight(MAGENTA, 0.8, 8, 2); rimM.position.set(-2, 1, 0.6); g.add(rimM);
+    const rimC = new THREE.PointLight('#38d0ff', 0.6, 8, 2); rimC.position.set(2.2, 1, 0.6); g.add(rimC);
     root.add(g); parts.ride = { g, van, headlight, splash };
   }
 
@@ -219,25 +237,27 @@ export function build(ctx, item) {
   {
     const g = setGroup('lift');
     g.add(box(4, 0.04, 3, M.road, [0, -0.02, 0])); g.add(box(5, 3.4, 0.06, M.liftWall, [0, 1.7, -0.65]));
-    // 电梯门框 + 两扇门（占画面中央）
-    g.add(box(1.8, 2.7, 0.12, M.steel, [0, 1.35, -0.52]));
-    const doorL = box(0.74, 2.5, 0.08, M.liftDoor, [-0.4, 1.3, -0.46]); const doorR = box(0.74, 2.5, 0.08, M.liftDoor, [0.4, 1.3, -0.46]); g.add(doorL, doorR);
-    // 门楣楼层数字面板（大、在门框正上方、朝相机）：预建 1..23 每层一张，update 里换当前楼层
+    // 拉丝不锈钢门框 + 两扇拉丝钢门（占画面中央）
+    const brushed = new THREE.MeshPhysicalMaterial({ color: '#c3c9d2', metalness: 0.9, roughness: 0.34 });
+    g.add(box(1.9, 2.7, 0.14, brushed, [0, 1.35, -0.5]));
+    const doorL = box(0.78, 2.4, 0.08, brushed, [-0.4, 1.25, -0.42]); const doorR = box(0.78, 2.4, 0.08, brushed, [0.4, 1.25, -0.42]); g.add(doorL, doorR);
+    for (const dx of [-0.4, 0.4]) g.add(box(0.02, 2.4, 0.02, mat('#3a3f48'), [dx + (dx < 0 ? 0.39 : -0.39), 1.25, -0.37]));   // 门缝暗线（不发光）
+    // 门楣楼层数字面板（大、门框正上方略进框、朝相机）：预建 1..23 每层一张，update 里换当前楼层
     const floorTex = Array.from({ length: 23 }, (_, i) => TX.floorNum(i + 1));
     const panelMat = new THREE.MeshBasicMaterial({ color: floorTex[22] ? '#ffffff' : '#0b1a14', map: floorTex[22] ?? null, fog: false });
-    const panel = plane(0.9, 0.34, panelMat, [0, 2.78, -0.44]); g.add(panel);
-    g.add(box(1.0, 0.44, 0.04, mat('#0b0d12', { roughness: 0.6 }), [0, 2.78, -0.47]));      // 面板暗框
-    // 轿厢内（门开后露出）：里面放着的包裹
-    const car = new THREE.Group(); car.position.set(0, 0, -0.6); g.add(car);
-    car.add(box(1.5, 2.5, 0.04, mat('#20242e', { roughness: 0.5 }), [0, 1.25, -0.1]));
-    const parcel = buildParcel([0.34, 0.12, 0.26], { ...M }); closeParcel(parcel, 1, 0); parcel.position.set(0, 0.0, 0.12); car.add(parcel);
-    const carGlow = new THREE.PointLight('#cfe0ff', 0.0, 3, 2); carGlow.position.set(0, 1.2, -0.3); g.add(carGlow);
+    g.add(box(1.3, 0.5, 0.04, mat('#0a0c10', { roughness: 0.6 }), [0, 2.42, -0.4]));          // 面板暗框
+    const panel = plane(1.16, 0.4, panelMat, [0, 2.42, -0.37]); g.add(panel);
+    // 轿厢内（门开后露出）：暗内壁 + 一只包裹；不放强光，避免门缝漏出白条
+    const car = new THREE.Group(); car.position.set(0, 0, -0.62); g.add(car);
+    car.add(box(1.5, 2.4, 0.04, mat('#171a22', { roughness: 0.7 }), [0, 1.2, -0.08]));
+    const parcel = buildParcel([0.34, 0.12, 0.26], { ...M }); closeParcel(parcel, 1, 0); parcel.position.set(0, 0.0, 0.14); car.add(parcel);
+    const carGlow = new THREE.PointLight('#aebcd8', 0.0, 2.0, 2); carGlow.position.set(0, 1.0, -0.35); g.add(carGlow);
     // 快递柜（门口一侧）
     const locker = new THREE.Group(); locker.position.set(1.5, 0, -0.3); g.add(locker);
     for (let r = 0; r < 4; r++) for (let c = 0; c < 2; c++) { locker.add(box(0.34, 0.34, 0.3, M.lockerDoor, [c * 0.36 - 0.18, 0.3 + r * 0.36, 0])); }
     locker.add(box(0.76, 1.56, 0.02, M.locker, [0, 0.9, -0.16]));
     const ding = new THREE.PointLight('#fff0d0', 0.0, 3, 2); ding.position.set(0, 2.0, 0.4); g.add(ding);
-    const key = new THREE.PointLight('#b8c8f0', 1.0, 10, 2); key.position.set(1, 2.6, 1.4); g.add(key);
+    const key = new THREE.PointLight('#b8c8f0', 0.8, 10, 2); key.position.set(1.2, 2.6, 1.6); g.add(key);
     root.add(g); parts.lift = { g, doorL, doorR, panel, panelMat, floorTex, ding, carGlow };
   }
 
@@ -249,13 +269,11 @@ export function build(ctx, item) {
     monitor.add(rbox(1.1, 0.62, 0.03, M.plastic, [0, 0.72, 0], 0.015));
     monitor.add(plane(1.02, 0.56, M.screenVictory, [0, 0.72, 0.018]));
     monitor.add(box(0.1, 0.26, 0.1, M.plastic, [0, 0.3, -0.02])); monitor.add(box(0.32, 0.03, 0.22, M.plastic, [0, 0.17, -0.02]));
-    // 玩家头（简化圆球 + 肩）戴上耳机：耳机从上方降下扣住。放在偏右 / 偏前
-    const player = new THREE.Group(); player.position.set(0.28, 0, 0.35); g.add(player);
-    player.add(cyl(0.16, 0.2, 0.3, M.courier, [0, 0.15, 0], 24));                     // 肩/躯干
-    player.add(new THREE.Mesh(new THREE.SphereGeometry(0.12, 24, 20), M.skin).translateY(0.42));   // 头
-    const hs = makeHeadset(M.led.clone()); hs.scale.setScalar(0.62); hs.position.set(0.28, 0, 0.35); g.add(hs);   // LED 一开始暗红，13.0 戴上后点亮橙
+    // 风格化玩家（3/4 背侧，不露脸）戴上耳机：耳机从上方降下扣住。放在偏右 / 偏前
+    const player = buildGamer(); player.position.set(0.28, 0.0, 0.35); player.rotation.y = 0.6; g.add(player);   // 稍微转 3/4，露出侧后脑和耳朵
+    const hs = makeHeadset(M.led.clone()); hs.scale.setScalar(0.6); hs.position.set(0.28, 0.3, 0.35); hs.rotation.y = 0.6; g.add(hs);   // LED 一开始暗红，13.0 戴上后点亮橙
     const glowScr = new THREE.PointLight('#9fb4e0', 0.3, 2.0, 2); glowScr.position.set(-0.55, 0.72, 0.3); g.add(glowScr);   // 屏幕冷光，压低不过曝
-    const rim = new THREE.PointLight(ORANGE, 0.0, 2.2, 2); rim.position.set(0.5, 0.6, 0.5); g.add(rim);
+    const rim = new THREE.PointLight(ORANGE, 0.0, 2.2, 2); rim.position.set(0.55, 0.6, 0.6); g.add(rim);
     root.add(g); parts.victory = { g, headset: hs, led: hs.userData.led, rim };
   }
 
@@ -284,7 +302,7 @@ export function build(ctx, item) {
 
   const handle = {
     root, parts, M, item, scene, key, amb, env, pmrem,
-    post: { exposure: 1.15, vignette: 0.34, grain: 0.025, bloom: { strength: 0.38, radius: 0.5, threshold: 0.82 }, saturation: 1.18, gain: [0.96, 0.99, 1.08], lift: [0.015, 0.0, 0.03], chroma: 0.0012 },
+    post: { exposure: 1.15, vignette: 0.34, grain: 0.025, bloom: { strength: 0.38, radius: 0.5, threshold: 0.82 }, saturation: 1.18, gain: [0.96, 0.99, 1.08], lift: [0.015, 0.0, 0.03], chroma: 0.0012, flashColor: [0.72, 0.71, 0.74] },
     update(s) {
       const t = s.t;
       // ── defeat：LED 在 1.0 断音熄灭（亮红 → 暗）；手机通知在 1.3 后弹出；屏幕一直是 DEFEAT ──
@@ -316,22 +334,23 @@ export function build(ctx, item) {
           if (horiz) place(P.cars, i, (p - 0.5) * 3.4, 0.02, lane * 0.4); else place(P.cars, i, lane * 0.5, 0.02, (p - 0.5) * 2.4); });
         P.cars.instanceMatrix.needsUpdate = true; }
       // ── ride：配送车从右往左驶过，9.5 (splash) 过积水溅起水花；车灯一直亮 ──
-      { const P = parts.ride, lt = localT('ride', t), drive = ss(0, NATURAL.ride, lt), x = lerp(2.6, -2.6, drive);
-        P.van.position.set(x, 0, 0.5); P.headlight.position.set(x + 0.7, 0.3, 0.5); P.headlight.target.position.set(x - 3, 0, 0.5); P.headlight.target.updateMatrixWorld();
-        const sp = ss(EV.splash - 0.1, EV.splash + 0.05, lt) * (1 - ss(EV.splash + 0.15, EV.splash + 0.8, lt));
-        placePuffs(P.splash, 7, lt, [-0.4, 0, -0.25, 0.4, 0.7, 0.25], { vel: [-0.7, 1.0, 0], sway: 0.05, swayHz: 2 }, { grow: 1.4, life: 0.6, k: sp });
-        P.splash.position.set(x - 0.5, 0, 0.5); }
+      { const P = parts.ride, lt = localT('ride', t), drive = ss(0, NATURAL.ride, lt), x = lerp(2.4, -2.4, drive);
+        P.van.position.set(x, 0, 0.15); P.van.rotation.y = Math.PI;                   // 车头朝 -x（驶来的方向）
+        P.headlight.position.set(x - 0.8, 0.34, 0.15); P.headlight.target.position.set(x - 3, 0, 0.2); P.headlight.target.updateMatrixWorld();
+        const sp = ss(EV.splash - 0.12, EV.splash + 0.04, lt) * (1 - ss(EV.splash + 0.15, EV.splash + 0.85, lt));
+        placePuffs(P.splash, 7, lt, [-0.45, 0, -0.3, 0.45, 0.8, 0.3], { vel: [0.9, 1.1, 0], sway: 0.06, swayHz: 2 }, { grow: 1.5, life: 0.6, k: sp });
+        P.splash.position.set(x + 0.45, 0, 0.15); }
       // ── lift：楼层数字 1→23 飞快跳动（面板纹理不变，这里用面板的 UV 偏移模拟不现实——改用缩放脉冲 + ding 门开）──
       { const P = parts.lift, lt = localT('lift', t), open = ss(EV.ding, EV.ding + 0.6, lt);
         P.doorL.position.x = -0.4 - 0.74 * open; P.doorR.position.x = 0.4 + 0.74 * open;
-        P.ding.intensity = 1.2 * ss(EV.ding - 0.05, EV.ding + 0.05, lt) * (1 - ss(EV.ding + 0.3, EV.ding + 0.9, lt));
-        P.carGlow.intensity = 1.6 * open;
+        P.ding.intensity = 0.5 * ss(EV.ding - 0.05, EV.ding + 0.05, lt) * (1 - ss(EV.ding + 0.3, EV.ding + 0.9, lt));
+        P.carGlow.intensity = 0.35 * open;                                           // 轿厢内只给一点柔和光，不从门缝漏出白条
         // 楼层 1→23 飞快跳动（在 ding 之前到 23 停住）：按故事时间选当前楼层的那张面板贴图
         const climb = clamp(lt / (EV.ding - 0.3)), floor = Math.min(23, 1 + Math.floor(climb * 22 + 1e-6));
         if (P.floorTex[floor - 1]) { P.panelMat.map = P.floorTex[floor - 1]; P.panelMat.needsUpdate = true; } }
       // ── victory：13.0 (wear) 耳机从上降下扣住头，LED 从暗红点亮成有集橙；屏幕 VICTORY 发光 ──
       { const P = parts.victory, lt = localT('victory', t), wear = ss(EV.wear, EV.wear + 0.5, lt);
-        P.headset.position.set(0.28, lerp(0.95, 0.33, wear), 0.35); P.headset.rotation.y = -0.2;
+        P.headset.position.set(0.28, lerp(0.95, 0.37, wear), 0.35); P.headset.rotation.y = 0.6;
         const on = ss(EV.wear + 0.2, EV.wear + 0.8, lt);
         P.led.material.color.set(on > 0.5 ? ORANGE : '#ff3b5b'); P.led.material.emissive.set(on > 0.5 ? ORANGE : '#ff3b5b'); P.led.material.emissiveIntensity = lerp(0.2, 2.0, on);
         P.rim.intensity = 1.0 * on; }

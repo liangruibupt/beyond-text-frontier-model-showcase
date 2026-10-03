@@ -8,7 +8,7 @@ export const SHOTS = ['defeat', 'order', 'cube', 'route', 'ride', 'lift', 'victo
 // 料箱出塔 lift（cube 1.5 = 5.0）、路线连通 connect（route 1.0 = 7.0）、溅水 splash（ride 1.0 = 9.5）、
 // 叮 ding（lift 1.5 = 12.5）、戴上 wear（victory 0.0 = 13.0）、品牌动机 logo（victory 0.5 = 13.5）
 export const EV = { mute: 1.0, order: 0.5, lift: 1.5, connect: 1.0, splash: 1.0, ding: 1.5, wear: 0.0, logo: 0.5 };
-const flash = (d = 0.2) => ({ type: 'flash', dur: d });
+const flash = (d = 0.12) => ({ type: 'flash', dur: d });
 
 export const CUTS = {
   15: {
@@ -48,8 +48,8 @@ export const RIG = {
   order: { from: [0.26, 0.44, 0.56], to: [0.2, 0.42, 0.46], look0: [0, 0.4, 0], look1: [0, 0.4, 0.01] },          // 手机屏正面近推
   cube: { from: [3.2, 2.4, 4.6], to: [2.4, 2.0, 3.6], look0: [0, 1.3, 0], look1: [0, 1.4, 0] },                   // 立体仓储塔：3/4 俯侧，退得够远看到整座塔和顶部机器人
   route: { from: [0.0, 2.8, 2.4], to: [0.0, 2.5, 1.9], look0: [0, 0, -0.1], look1: [0.1, 0, -0.1] },              // 夜城地图：高机位俯瞰整块沙盘
-  ride: { from: [1.6, 0.5, 1.9], to: [1.0, 0.45, 1.5], look0: [0.2, 0.5, -0.3], look1: [-0.1, 0.5, -0.3] },       // 雨后街道：低机位看向招牌 + 积水，车从右掠过
-  lift: { from: [0.0, 1.35, 2.1], to: [0.0, 1.3, 1.7], look0: [0, 1.5, -0.4], look1: [0, 1.55, -0.4] },           // 电梯：正对门，看点抬到门楣数字面板
+  ride: { from: [2.1, 0.62, 1.7], to: [1.4, 0.55, 1.3], look0: [-0.2, 0.42, -0.2], look1: [-0.5, 0.4, -0.4] },       // 雨后街道：低机位沿街看向驶来的车 + 招牌 + 积水
+  lift: { from: [0.0, 1.55, 2.2], to: [0.0, 1.5, 1.8], look0: [0, 1.75, -0.4], look1: [0, 1.8, -0.4] },           // 电梯：正对门，看点抬高让门楣「23」面板落在上三分之一
   victory: { from: [0.3, 0.55, 1.35], to: [0.2, 0.52, 1.1], look0: [0.05, 0.5, 0.1], look1: [0.08, 0.5, 0.1] },   // 玩家戴上耳机 + 屏幕 VICTORY：退远一点，主体不占满、不过曝
 };
 export const rowsFor = () => ({});
