@@ -60,6 +60,22 @@ OPUS55_INSTANCE=opus55-ltx AWS_REGION=ap-northeast-1 node factory/cloud.mjs down
 `--workers 1` is mandatory: 6 workers render black 3D on these hosts (documented in
 `factory/README.md`).
 
+### r2 (2026-10-03): beans fixes + lantern-ai, same script
+
+`beans-gen.py` is generic now: `GEN_SHOTS` (prompt file under `ai/`, default
+`beans-shots.json`), `GEN_OUT` (subdir under `out/ai/`, default `beans`) and `GEN_ONLY`
+(comma-separated shot ids). One `g6e.2xlarge` in ap-northeast-1 ran both jobs:
+
+* **beans r2**: `GEN_ONLY=alley,night,pour` (6 clips, 330–480 s each). The kept shots
+  (roast/cool/bag) were re-extracted on the instance from their earlier mp4s
+  (`.scratch/beans-keep/`) instead of regenerating them.
+* **lantern-ai**: `GEN_SHOTS=lantern-shots.json GEN_OUT=lantern`, 7 shots × 2 aspects =
+  14 clips, 49–97 frames, **330–573 s each (mean 471 s)**, model load 32 s once, peak
+  VRAM ~25 GB. Then render `--item lantern-ai` ×3 with `--workers 1`.
+
+Wall clock: ~20 min boot + setup, ~40 min beans, ~110 min lantern, ~30 min renders +
+pulls (the frame directories make `pull` slow over SSM; ~1 GB for lantern).
+
 ---
 
 ## Bake-off (how LTX-2.5 was chosen)
