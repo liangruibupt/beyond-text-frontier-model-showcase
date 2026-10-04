@@ -236,28 +236,33 @@ export function build(ctx, item) {
   // ═════ 6 lift 公寓电梯：楼层数字 1→23 飞快跳动，12.5 门开（叮）；门口快递柜 + 门口放着包裹；HUD「已送达 08:12」在文字层 ═════
   {
     const g = setGroup('lift');
-    g.add(box(4, 0.04, 3, M.road, [0, -0.02, 0])); g.add(box(5, 3.4, 0.06, M.liftWall, [0, 1.7, -0.65]));
-    // 拉丝不锈钢门框 + 两扇拉丝钢门（占画面中央）
-    const brushed = new THREE.MeshPhysicalMaterial({ color: '#c3c9d2', metalness: 0.9, roughness: 0.34 });
-    g.add(box(1.9, 2.7, 0.14, brushed, [0, 1.35, -0.5]));
+    g.add(box(4, 0.04, 3, M.road, [0, -0.02, 0])); g.add(box(5, 3.4, 0.06, mat('#2a2f3a', { roughness: 0.8 }), [0, 1.7, -0.65]));
+    // 拉丝不锈钢门框 + 两扇拉丝钢门：中灰调（粗糙度高一点）才不会被环境反射冲成白雾
+    const brushed = new THREE.MeshPhysicalMaterial({ color: '#8a9099', metalness: 0.82, roughness: 0.46 });
+    const frameMat = new THREE.MeshPhysicalMaterial({ color: '#6b707a', metalness: 0.85, roughness: 0.4 });
+    g.add(box(1.9, 2.7, 0.14, frameMat, [0, 1.35, -0.5]));
     const doorL = box(0.78, 2.4, 0.08, brushed, [-0.4, 1.25, -0.42]); const doorR = box(0.78, 2.4, 0.08, brushed, [0.4, 1.25, -0.42]); g.add(doorL, doorR);
-    for (const dx of [-0.4, 0.4]) g.add(box(0.02, 2.4, 0.02, mat('#3a3f48'), [dx + (dx < 0 ? 0.39 : -0.39), 1.25, -0.37]));   // 门缝暗线（不发光）
+    // 门上横向拉丝暗槽（看得出是金属门，不是白板）：每扇门几道细暗线，挂在门上随门移动
+    const grooveMat = mat('#4a4f58', { roughness: 0.6 });
+    for (const door of [doorL, doorR]) for (let y = -0.9; y <= 0.9; y += 0.45) door.add(box(0.76, 0.012, 0.01, grooveMat, [0, y, 0.045]));
+    for (const dx of [-0.4, 0.4]) g.add(box(0.025, 2.4, 0.02, mat('#23262e'), [dx + (dx < 0 ? 0.39 : -0.39), 1.25, -0.37]));   // 门缝暗线（不发光）
     // 门楣楼层数字面板（大、门框正上方略进框、朝相机）：预建 1..23 每层一张，update 里换当前楼层
     const floorTex = Array.from({ length: 23 }, (_, i) => TX.floorNum(i + 1));
     const panelMat = new THREE.MeshBasicMaterial({ color: floorTex[22] ? '#ffffff' : '#0b1a14', map: floorTex[22] ?? null, fog: false });
     g.add(box(1.3, 0.5, 0.04, mat('#0a0c10', { roughness: 0.6 }), [0, 2.42, -0.4]));          // 面板暗框
     const panel = plane(1.16, 0.4, panelMat, [0, 2.42, -0.37]); g.add(panel);
-    // 轿厢内（门开后露出）：暗内壁 + 一只包裹；不放强光，避免门缝漏出白条
-    const car = new THREE.Group(); car.position.set(0, 0, -0.62); g.add(car);
-    car.add(box(1.5, 2.4, 0.04, mat('#171a22', { roughness: 0.7 }), [0, 1.2, -0.08]));
-    const parcel = buildParcel([0.34, 0.12, 0.26], { ...M }); closeParcel(parcel, 1, 0); parcel.position.set(0, 0.0, 0.14); car.add(parcel);
-    const carGlow = new THREE.PointLight('#aebcd8', 0.0, 2.0, 2); carGlow.position.set(0, 1.0, -0.35); g.add(carGlow);
+    // 轿厢内（门开后露出）：暗暖内壁 + 一只包裹；只给很弱的暖光，避免门缝漏出白雾
+    const car = new THREE.Group(); car.position.set(0, 0, -0.64); g.add(car);
+    car.add(box(1.5, 2.4, 0.04, mat('#2a2320', { roughness: 0.75 }), [0, 1.2, -0.08]));        // 暖木色内壁
+    car.add(box(1.5, 0.04, 0.5, mat('#1a1612', { roughness: 0.8 }), [0, 0.02, 0.14]));          // 轿厢地板
+    const parcel = buildParcel([0.34, 0.12, 0.26], { ...M }); closeParcel(parcel, 1, 0); parcel.position.set(0, 0.0, 0.16); car.add(parcel);
+    const carGlow = new THREE.PointLight('#ffdca8', 0.0, 1.4, 2); carGlow.position.set(0, 1.3, -0.4); g.add(carGlow);   // 暖、弱、范围小
     // 快递柜（门口一侧）
     const locker = new THREE.Group(); locker.position.set(1.5, 0, -0.3); g.add(locker);
     for (let r = 0; r < 4; r++) for (let c = 0; c < 2; c++) { locker.add(box(0.34, 0.34, 0.3, M.lockerDoor, [c * 0.36 - 0.18, 0.3 + r * 0.36, 0])); }
     locker.add(box(0.76, 1.56, 0.02, M.locker, [0, 0.9, -0.16]));
-    const ding = new THREE.PointLight('#fff0d0', 0.0, 3, 2); ding.position.set(0, 2.0, 0.4); g.add(ding);
-    const key = new THREE.PointLight('#b8c8f0', 0.8, 10, 2); key.position.set(1.2, 2.6, 1.6); g.add(key);
+    const ding = new THREE.PointLight('#ffe6b8', 0.0, 2.0, 2); ding.position.set(0, 2.0, 0.4); g.add(ding);
+    const key = new THREE.PointLight('#9fb0d8', 0.6, 9, 2); key.position.set(1.2, 2.6, 1.8); g.add(key);
     root.add(g); parts.lift = { g, doorL, doorR, panel, panelMat, floorTex, ding, carGlow };
   }
 
@@ -271,7 +276,7 @@ export function build(ctx, item) {
     monitor.add(box(0.1, 0.26, 0.1, M.plastic, [0, 0.3, -0.02])); monitor.add(box(0.32, 0.03, 0.22, M.plastic, [0, 0.17, -0.02]));
     // 风格化玩家（3/4 背侧，不露脸）戴上耳机：耳机从上方降下扣住。放在偏右 / 偏前
     const player = buildGamer(); player.position.set(0.28, 0.0, 0.35); player.rotation.y = 0.6; g.add(player);   // 稍微转 3/4，露出侧后脑和耳朵
-    const hs = makeHeadset(M.led.clone()); hs.scale.setScalar(0.6); hs.position.set(0.28, 0.3, 0.35); hs.rotation.y = 0.6; g.add(hs);   // LED 一开始暗红，13.0 戴上后点亮橙
+    const hs = makeHeadset(M.led.clone()); hs.scale.setScalar(0.56); hs.position.set(0.28, 0.3, 0.35); hs.rotation.y = 0.6; g.add(hs);   // LED 一开始暗红，13.0 戴上后点亮橙
     const glowScr = new THREE.PointLight('#9fb4e0', 0.3, 2.0, 2); glowScr.position.set(-0.55, 0.72, 0.3); g.add(glowScr);   // 屏幕冷光，压低不过曝
     const rim = new THREE.PointLight(ORANGE, 0.0, 2.2, 2); rim.position.set(0.55, 0.6, 0.6); g.add(rim);
     root.add(g); parts.victory = { g, headset: hs, led: hs.userData.led, rim };
@@ -343,14 +348,14 @@ export function build(ctx, item) {
       // ── lift：楼层数字 1→23 飞快跳动（面板纹理不变，这里用面板的 UV 偏移模拟不现实——改用缩放脉冲 + ding 门开）──
       { const P = parts.lift, lt = localT('lift', t), open = ss(EV.ding, EV.ding + 0.6, lt);
         P.doorL.position.x = -0.4 - 0.74 * open; P.doorR.position.x = 0.4 + 0.74 * open;
-        P.ding.intensity = 0.5 * ss(EV.ding - 0.05, EV.ding + 0.05, lt) * (1 - ss(EV.ding + 0.3, EV.ding + 0.9, lt));
-        P.carGlow.intensity = 0.35 * open;                                           // 轿厢内只给一点柔和光，不从门缝漏出白条
+        P.ding.intensity = 0.4 * ss(EV.ding - 0.05, EV.ding + 0.05, lt) * (1 - ss(EV.ding + 0.3, EV.ding + 0.9, lt));
+        P.carGlow.intensity = 0.25 * open;                                           // 轿厢内一点暖光，不从门缝漏出白雾
         // 楼层 1→23 飞快跳动（在 ding 之前到 23 停住）：按故事时间选当前楼层的那张面板贴图
         const climb = clamp(lt / (EV.ding - 0.3)), floor = Math.min(23, 1 + Math.floor(climb * 22 + 1e-6));
         if (P.floorTex[floor - 1]) { P.panelMat.map = P.floorTex[floor - 1]; P.panelMat.needsUpdate = true; } }
       // ── victory：13.0 (wear) 耳机从上降下扣住头，LED 从暗红点亮成有集橙；屏幕 VICTORY 发光 ──
       { const P = parts.victory, lt = localT('victory', t), wear = ss(EV.wear, EV.wear + 0.5, lt);
-        P.headset.position.set(0.28, lerp(0.95, 0.37, wear), 0.35); P.headset.rotation.y = 0.6;
+        P.headset.position.set(0.28, lerp(0.95, 0.35, wear), 0.35); P.headset.rotation.y = 0.6;
         const on = ss(EV.wear + 0.2, EV.wear + 0.8, lt);
         P.led.material.color.set(on > 0.5 ? ORANGE : '#ff3b5b'); P.led.material.emissive.set(on > 0.5 ? ORANGE : '#ff3b5b'); P.led.material.emissiveIntensity = lerp(0.2, 2.0, on);
         P.rim.intensity = 1.0 * on; }
