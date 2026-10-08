@@ -6,3 +6,6 @@ node_modules/
 **/*.mp4
 **/gen/ltx_frames/
 **/gen/ltx_mp4/
+**/out/films/
+**/gen/vo_cache/
+**/out/verify/

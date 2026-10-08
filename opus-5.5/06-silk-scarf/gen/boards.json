@@ -1,0 +1,322 @@
+{
+  "dunhuang": {
+    "6": {
+      "shots": [
+        {
+          "shot": "dh_ceiling",
+          "dur": 1.5,
+          "from": 0
+        },
+        {
+          "shot": "dh_drape",
+          "dur": 1.5,
+          "from": 0.75,
+          "transition": {
+            "type": "flash",
+            "dur": 0.2
+          }
+        },
+        {
+          "shot": "end",
+          "dur": 3,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.4
+          }
+        }
+      ],
+      "hits": {
+        "align": 0.75,
+        "land": 2.25,
+        "logo": 3
+      },
+      "cover": 4.4
+    },
+    "15": {
+      "shots": [
+        {
+          "shot": "dh_cave",
+          "dur": 2.25
+        },
+        {
+          "shot": "dh_fly",
+          "dur": 3
+        },
+        {
+          "shot": "dh_ceiling",
+          "dur": 2.25,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.3
+          }
+        },
+        {
+          "shot": "dh_drape",
+          "dur": 3
+        },
+        {
+          "shot": "dh_hero",
+          "dur": 1.5,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.3
+          }
+        },
+        {
+          "shot": "end",
+          "dur": 3,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.4
+          }
+        }
+      ],
+      "hits": {
+        "lift": 1.5,
+        "soar": 3.75,
+        "align": 6,
+        "land": 9,
+        "logo": 12
+      },
+      "cover": 6.4
+    }
+  },
+  "songjin": {
+    "6": {
+      "shots": [
+        {
+          "shot": "sj_weave",
+          "dur": 1.5,
+          "from": 0.75
+        },
+        {
+          "shot": "sj_fold",
+          "dur": 1.5,
+          "from": 0.75,
+          "transition": {
+            "type": "flash",
+            "dur": 0.2
+          }
+        },
+        {
+          "shot": "end",
+          "dur": 3,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.4
+          }
+        }
+      ],
+      "hits": {
+        "woven": 0.75,
+        "fold": 2.25,
+        "logo": 3
+      },
+      "cover": 4.4
+    },
+    "15": {
+      "shots": [
+        {
+          "shot": "sj_warp",
+          "dur": 3
+        },
+        {
+          "shot": "sj_weave",
+          "dur": 2.25,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.3
+          }
+        },
+        {
+          "shot": "sj_lift",
+          "dur": 3
+        },
+        {
+          "shot": "sj_fold",
+          "dur": 2.25
+        },
+        {
+          "shot": "sj_box",
+          "dur": 1.5
+        },
+        {
+          "shot": "end",
+          "dur": 3,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.4
+          }
+        }
+      ],
+      "hits": {
+        "shuttle": 1.5,
+        "woven": 4.5,
+        "lift": 6.75,
+        "fold": 9.75,
+        "lid": 11.25,
+        "logo": 12
+      },
+      "cover": 4.9
+    }
+  },
+  "qinghua": {
+    "6": {
+      "shots": [
+        {
+          "shot": "qh_bloom",
+          "dur": 1.5
+        },
+        {
+          "shot": "qh_slip",
+          "dur": 1.5,
+          "from": 0.75,
+          "transition": {
+            "type": "flash",
+            "dur": 0.2
+          }
+        },
+        {
+          "shot": "end",
+          "dur": 3,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.4
+          }
+        }
+      ],
+      "hits": {
+        "bloom": 0.75,
+        "settle": 2.25,
+        "logo": 3
+      },
+      "cover": 4.4
+    },
+    "15": {
+      "shots": [
+        {
+          "shot": "qh_paint",
+          "dur": 3
+        },
+        {
+          "shot": "qh_bloom",
+          "dur": 1.5
+        },
+        {
+          "shot": "qh_slip",
+          "dur": 3.75,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.3
+          }
+        },
+        {
+          "shot": "qh_pool",
+          "dur": 2.25
+        },
+        {
+          "shot": "qh_hero",
+          "dur": 1.5,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.3
+          }
+        },
+        {
+          "shot": "end",
+          "dur": 3,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.4
+          }
+        }
+      ],
+      "hits": {
+        "stroke": 2.25,
+        "bloom": 3.75,
+        "settle": 6,
+        "gleam": 9,
+        "logo": 12
+      },
+      "cover": 9.4
+    }
+  },
+  "yunhe": {
+    "6": {
+      "shots": [
+        {
+          "shot": "yh_crane",
+          "dur": 1.5,
+          "from": 0.75
+        },
+        {
+          "shot": "yh_land",
+          "dur": 1.5,
+          "from": 1.5,
+          "transition": {
+            "type": "flash",
+            "dur": 0.2
+          }
+        },
+        {
+          "shot": "end",
+          "dur": 3,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.4
+          }
+        }
+      ],
+      "hits": {
+        "pass": 0.75,
+        "land": 2.25,
+        "logo": 3
+      },
+      "cover": 4.4
+    },
+    "15": {
+      "shots": [
+        {
+          "shot": "yh_dusk",
+          "dur": 2.25
+        },
+        {
+          "shot": "yh_crane",
+          "dur": 3
+        },
+        {
+          "shot": "yh_glide",
+          "dur": 2.25
+        },
+        {
+          "shot": "yh_land",
+          "dur": 3,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.3
+          }
+        },
+        {
+          "shot": "yh_hero",
+          "dur": 1.5
+        },
+        {
+          "shot": "end",
+          "dur": 3,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.4
+          }
+        }
+      ],
+      "hits": {
+        "moon": 1.5,
+        "pass": 3.75,
+        "glide": 6.75,
+        "land": 9,
+        "logo": 12
+      },
+      "cover": 3.9
+    }
+  }
+}
