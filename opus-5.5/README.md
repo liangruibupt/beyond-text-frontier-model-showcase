@@ -4,6 +4,42 @@
 
 这个目录是 [Beyond Text](../README.md) 仓库里 Claude Opus 5.5 的部分。它原是 [aws-is-how](https://github.com/liangruibupt/aws-is-how) 里的 `ai-ml/chatgpt/claude/opus55-showcase/`，2026-09-29 拆出来单独成库（历史都保留了），往后加案例和素材不再撑大 aws-is-how。配音用的 Kokoro 部署脚本还在 aws-is-how 里（见 [factory/README.md](factory/README.md) 的配音一节）。
 
+## 两种视频生成方式
+
+为了让生成效果出色，本库采用两种互补的视频生成方式。一部成片可以整部用其中一种，也可以分镜头混用。
+
+### 方式一 · Opus 写程序，代码渲染（code-authored）
+
+Opus 5.5 不直接产出像素，而是写出一个能画出视频的程序，用下面这些工具在浏览器 GPU 上逐帧渲染，再编码成 MP4：
+
+- **Three.js（WebGL 2）**：程序建模的场景、PBR 材质、相机与运镜；
+- **GLSL 着色器**：Three.js 自带材质做不到的折射、色散、焦散、后期；
+- **Canvas 2D**：字幕、片尾卡，把 WebGL 画面拷过来叠字合成整帧；
+- **Web Audio**：离线合成配乐与音效，排入配音；
+- **Node + Playwright + ffmpeg**：无头 Chromium 逐帧取 PNG，经管道交给 ffmpeg 编成 H.264 MP4。
+
+特点：每一帧只由（变体, t）决定，完全确定、可任意跳转、可并行与断点续做；画面是程序算出来的，像素级可控，没有生成模型的随机性。适合几何精确、文字清晰、可批量出多变体的商品片。03 起各案例共用的 [factory 引擎](factory/README.md) 就是这一方式的实现。本节下文「视频工厂：原理与技术」是这一方式的完整说明。
+
+### 方式二 · Opus 写分镜与提示词，视频模型生成（model-generated）
+
+Opus 5.5 写分镜（镜头表、运动、时长）和每个镜头的文生视频 / 图生视频提示词，再调用开源视频生成模型产出每个镜头的片段，最后拼接、叠字幕、配音、统一响度，编成成片。
+
+- **视频生成模型**：**LTX-2.5**（经测试目前效果不错，作为默认）、WAN 2.2、Minimax H3 等。开源模型镜像从 Hugging Face 获取，token 用 `~/.env` 里的 `HF_TOKEN`。
+- **运行环境**：在 AWS 的 EC2 GPU 实例上部署推理服务（下载模型权重 → 本地推理出片段），沿用 [`factory/cloud.mjs`](factory/cloud.mjs) 的开机 / 同步 / 拉回 / 关机流程。
+- **后期**：片段用 ffmpeg 拼接、叠字幕层、混入 Kokoro 配音、统一到 −14 LUFS，与方式一的交付规格一致。
+
+特点：Opus 的工作是分镜与提示词工程（叙事、运镜、风格、连贯性），画面质感和自然运动交给视频模型。适合写实、材质与光影复杂、靠程序建模难做的镜头。
+
+### 怎么选
+
+| | 方式一 代码渲染 | 方式二 模型生成 |
+|---|---|---|
+| Opus 做什么 | 写出渲染整部片的程序 | 写分镜 + 提示词，审片迭代 |
+| 画面来自 | GPU 逐帧算（确定） | 视频模型推理（有随机性） |
+| 强项 | 几何精确、文字清晰、可批量多变体、逐帧可复现 | 写实质感、自然运动、复杂光影 |
+| 工具 | Three.js · GLSL · Canvas 2D · Web Audio · Node + Playwright + ffmpeg | LTX-2.5 / WAN 2.2 / Minimax H3（EC2 GPU）+ ffmpeg + Kokoro |
+| 案例 | 01–05、11、12 | 06（丝巾，采用方式二重写） |
+
 ## 案例
 
 | # | 案例 | 类型 | 要点 |
