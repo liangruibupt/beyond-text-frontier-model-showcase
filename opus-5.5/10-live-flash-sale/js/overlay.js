@@ -6,6 +6,7 @@
 // 画面只由（变体, t）决定：draw(state, txt) 按 pack/state.js 的纯数据重绘，无逐帧随机。Node 无 document 时是空操作壳。
 import * as THREE from 'three';
 import { ORANGE, RED, GOLD } from '../items.js';
+import { countdownSpot } from '../layouts.js';
 
 const HAS_DOC = typeof document !== 'undefined';
 const CWREF = 1600;   // 画布参考分辨率（横）；竖屏按比例换高
@@ -101,18 +102,19 @@ export function createOverlay(ctx, item, { scrim = false } = {}) {
 
   // ── 倒计时：巨大数字（~45% 高）、白/金 + 粗描边 + 辉光 + 冲击波环；上链接大爆开 ──
   function drawCountdown(cd, txt) {
-    const cx = X(0.5), cy = Y(0.44);
-    if (cd.shock) { g.save(); g.globalAlpha = cd.shock.alpha; g.strokeStyle = GOLD; g.lineWidth = S(0.016); g.beginPath(); g.arc(cx, cy, S(cd.shock.r * 1.4), 0, Math.PI * 2); g.stroke(); g.restore(); }
+    const spot = countdownSpot(ctx.ar, scrim);   // scrim = AI 实拍变体：避开主播的脸
+    const cx = X(spot.digit[0]), cy = Y(spot.digit[1]), k0 = spot.size / 0.45;
+    if (cd.shock) { g.save(); g.globalAlpha = cd.shock.alpha; g.strokeStyle = GOLD; g.lineWidth = S(0.016); g.beginPath(); g.arc(cx, cy, S(cd.shock.r * 1.4 * k0), 0, Math.PI * 2); g.stroke(); g.restore(); }
     if (cd.digit) {
       g.save(); g.globalAlpha = cd.digit.alpha; g.translate(cx, cy); g.scale(cd.digit.scale, cd.digit.scale);
-      text(cd.digit.char, 0, 0, S(0.45), { lang: 'en', weight: 900, fill: '#fff', outline: RED, glow: 'rgba(255,45,61,0.9)' });
+      text(cd.digit.char, 0, 0, S(spot.size), { lang: 'en', weight: 900, fill: '#fff', outline: RED, glow: 'rgba(255,45,61,0.9)' });
       g.restore();
     }
     if (cd.linkBurst > 0) {
-      g.save(); const k = cd.linkBurst;
-      g.globalAlpha = Math.min(1, k * 1.4); g.strokeStyle = GOLD; g.lineWidth = S(0.02); g.beginPath(); g.arc(cx, cy + Y(0.06), S((0.1 + 0.35 * k)), 0, Math.PI * 2); g.stroke();
+      g.save(); const k = cd.linkBurst, lx = X(spot.link[0]), ly = Y(spot.link[1]);
+      g.globalAlpha = Math.min(1, k * 1.4); g.strokeStyle = GOLD; g.lineWidth = S(0.02); g.beginPath(); g.arc(lx, ly - Y(0.02), S((0.1 + 0.35 * k) * (scrim ? 0.6 : 1)), 0, Math.PI * 2); g.stroke();
       const sc = 0.7 + 0.3 * Math.sin(Math.PI * k) + 0.3 * k;
-      g.translate(cx, cy + Y(0.08)); g.scale(sc, sc);
+      g.translate(lx, ly); g.scale(sc, sc);
       text(txt.link, 0, 0, S(0.11), { lang: txt.lang, weight: 900, fill: GOLD, outline: RED, glow: 'rgba(255,45,61,0.9)' });
       g.restore();
     }

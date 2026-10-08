@@ -13,6 +13,15 @@ const END_916 = { card: [0.1, 0.5, 0.76, 0.3], logo: [0.13, 0.52, 0.7, 0.08], br
 const CAP_169 = { cap: [0.2, 0.78, 0.6, 0.12] }, CAP_11 = { cap: [0.1, 0.82, 0.8, 0.12] }, CAP_916 = { cap: [0.1, 0.68, 0.76, 0.12] };
 const COUP_169 = { coupon: [0.4, 0.5, 0.2, 0.08] }, COUP_11 = { coupon: [0.36, 0.5, 0.28, 0.09] }, COUP_916 = { coupon: [0.34, 0.46, 0.3, 0.08] };
 
+// AI 实拍变体的倒计时位置（画面比例）：真人主播的脸在画面正中偏上，数字和「上链接！」不能压脸。
+// digit = 数字中心，size = 数字字号（占画面高），link = 「上链接！」中心。代码 3D 版不出主播，仍用正中。
+export const COUNTDOWN_DEFAULT = { digit: [0.5, 0.44], size: 0.45, link: [0.5, 0.52] };
+export const COUNTDOWN_AI = {
+  '16x9': { digit: [0.17, 0.52], size: 0.36, link: [0.5, 0.84] },   // 左侧三分之一（环形灯一侧），上链接落到桌面带
+  '1x1': { digit: [0.18, 0.66], size: 0.28, link: [0.5, 0.84] },    // 左下角，避开脸（上半）和正中下方的商品
+};
+export const countdownSpot = (ar, ai) => (ai && COUNTDOWN_AI[ar]) || COUNTDOWN_DEFAULT;
+
 export const LAYOUTS = {
   '16x9': {
     room: { anchor: [0.5, 0.52], size: 0.6, zones: CAP_169 },

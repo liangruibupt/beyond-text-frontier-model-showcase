@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { META, CUTS, SHOTS } from '../meta.js';
-import { LAYOUTS } from '../layouts.js';
+import { LAYOUTS, countdownSpot, COUNTDOWN_DEFAULT } from '../layouts.js';
 import { ITEMS, ITEM_IDS, AI_ITEM_IDS, baseItem, isAiItem } from '../items.js';
 import { voLines, overlayText } from '../copy.js';
 import { layersFor } from '../captions.js';
@@ -85,4 +85,17 @@ test('every clip is long enough for both cuts (incl. 6 s `from` and the dissolve
 test('AI shot table covers every shot and frames resolve to the base item folder', () => {
   for (const s of SHOTS) assert.equal(typeof SHOTS_AI[s], 'function');
   assert.equal(framesUrl('beans-ai'), '/10-live-flash-sale/out/ai/beans/frames');
+});
+
+test('AI 变体的倒计时数字和「上链接！」不压主播的脸（脸 ≈ 画面中间 x 0.3–0.7、y < 0.62）', () => {
+  const inFace = ([x, y]) => x > 0.3 && x < 0.7 && y < 0.62;
+  for (const ar of ['16x9', '1x1']) {
+    const s = countdownSpot(ar, true);
+    // 数字是方块近似：中心 ± 半个字号（按画面高；16:9 横向再除以宽高比）
+    const half = s.size / 2, hx = ar === '16x9' ? half * 9 / 16 : half;
+    assert.ok(s.digit[0] + hx < 0.36 || s.digit[0] - hx > 0.64, `${ar}: 数字横向避开脸`);
+    assert.ok(!inFace(s.link), `${ar}: 上链接不在脸上`);
+    for (const v of [...s.digit, ...s.link]) assert.ok(v > 0 && v < 1);
+  }
+  assert.deepEqual(countdownSpot('16x9', false), COUNTDOWN_DEFAULT, '代码 3D 版位置不变');
 });
