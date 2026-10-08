@@ -1,7 +1,7 @@
 // captions.js — 各镜头的字幕图层（纯数据）：文字、字体、区、字号（画面短边比例）、入场 / 退场（镜头本地秒）
 // 入场时段相对 s.from，所以 6 秒版从中段切入的镜头字幕照样完整入场。字幕按分镜 §B：robots / sort / lastmile 有句子，door 是品牌 + 活动
 import { cutFor } from './meta.js';
-import { ITEMS, isAiItem } from './items.js';
+import { ITEMS, isAiItem, isPerShotAi } from './items.js';
 import { T, FONTS } from './copy.js';
 import { promoLayers } from './promos.js';
 
@@ -19,6 +19,10 @@ const CAP = {
   cube: { zh: '城市前置仓，夜里也在跑', en: 'City hubs never sleep' },
   route: { zh: '路线实时规划，绕开每一个红灯', en: 'Routed live, around every red light' },
   lift: { zh: '08:12，送到门口', en: '08:12. At your door.' },
+  // 胜利 HUD 大标题（仅 headset-ai：victory 换成 LTX 实拍，屏幕只剩金/品光，代码版显示器上的「VICTORY」没了，
+  // 这里用引擎叠一个同款 game-HUD 标题把「DEFEAT→VICTORY」的反转补回来）。zh / en 同为 "VICTORY"，副行同代码版显示器
+  victory: { zh: 'VICTORY', en: 'VICTORY' },
+  victoryRank: { zh: 'RANKED · WIN', en: 'RANKED · WIN' },
 };
 
 const INK = '#f4efe6', SOFT = '#d8c6a8';       // 仓库 / 夜色里的浅字
@@ -39,11 +43,28 @@ export function layersFor(v, s) {
     case 'cube': return cap(CAP.cube[L]);
     case 'route': return cap(CAP.route[L]);
     case 'lift': return cap(CAP.lift[L]);
-    case 'victory': return endCard(v, base, F, a + (v.cut === 15 ? 0.6 : 0), align);   // 耳机片尾卡（戴上后入场）：15 秒版晚 0.6 s；6 秒版价签停满 3 秒
+    case 'victory': {
+      const card = endCard(v, base, F, a + (v.cut === 15 ? 0.6 : 0), align);
+      // 仅 headset-ai（逐镜 AI，victory 为 LTX 实拍）：实拍屏幕只剩金/品光，代码版显示器上的「VICTORY」随之消失，
+      // 用引擎在 overlay 层补一个同款 game-HUD 大标题，让「DEFEAT→VICTORY」的反转叙事活下来。代码版 headset 不受影响（走 default/下方）。
+      return isPerShotAi(v.item) ? [...victoryTitle(v, F, a, align), ...card] : card;
+    }
     case 'pour': return endCard(v, base, F, a + (v.cut === 15 ? 0.6 : 0), align);   // 15 秒版片尾卡晚 0.6 s 入场，先看一眼注水；6 秒版价签要停满 3 秒
     case 'door': return endCard(v, base, F, a, align);
     default: return [];                                        // order / pack / truck / cool / night：无字幕
   }
+}
+// 胜利 HUD 大标题（仅 headset-ai）：和 shot 1 代码版显示器上的 DEFEAT 同款 game-HUD——金字（#ffcf4a）+ 品红辉光，
+// 入场一个快速 punch-in（pop：缩放回弹，配 in 的 0.2 s 淡入），然后保持。副行「RANKED · WIN」小一号、更淡。
+// 两个比例各自的落位在 layouts.js 的 vtitle / vrank 区：16:9 片尾卡上方的左上留白，1:1 显示器所在的顶部中带（都在头和价签之上）。
+const V_GOLD = '#ffcf4a', V_GLOW = 'rgba(255,70,150,0.9)';
+function victoryTitle(v, F, a, align) {
+  const L = v.lang;
+  const base = { lang: L, align, valign: 'top', color: V_GOLD, shadow: { color: V_GLOW, blur: 0.55 } };
+  return [
+    { ...base, id: 'vtitle', zone: 'vtitle', text: CAP.victory[L], font: F.display, size: 0.11, tracking: 0.04, lineHeight: 1.0, maxLines: 1, pop: true, in: [a + 0.0, a + 0.2] },
+    { ...base, id: 'vrank', zone: 'vrank', text: CAP.victoryRank[L], font: F.display, size: 0.03, tracking: 0.14, lineHeight: 1.0, maxLines: 1, color: '#ffe6a6', shadow: { color: V_GLOW, blur: 0.35 }, in: [a + 0.18, a + 0.42] },
+  ];
 }
 function endCard(v, base, F, a, align) {
   const layers = [

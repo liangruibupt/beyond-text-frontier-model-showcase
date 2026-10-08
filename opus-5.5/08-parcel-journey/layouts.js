@@ -33,7 +33,7 @@ export const LAYOUTS = {
     route: { anchor: [0.5, 0.45], size: 0.8, align: 'left', zones: { cap: [0.06, 0.74, 0.62, 0.16] } },
     ride: { anchor: [0.5, 0.5], size: 0.7 },
     lift: { anchor: [0.5, 0.46], size: 0.7, align: 'left', zones: { cap: [0.06, 0.74, 0.52, 0.16] } },
-    victory: { anchor: [0.72, 0.5], size: 0.7, align: 'left', zones: END_169 },
+    victory: { anchor: [0.72, 0.5], size: 0.7, align: 'left', zones: { ...END_169, vtitle: [0.055, 0.045, 0.4, 0.115], vrank: [0.055, 0.165, 0.4, 0.04] } },
   },
   '1x1': {
     roast: { anchor: [0.5, 0.42], size: 0.76, align: 'center', zones: { cap: [0.08, 0.8, 0.84, 0.14] } },
@@ -54,7 +54,7 @@ export const LAYOUTS = {
     route: { anchor: [0.5, 0.44], size: 0.84, align: 'center', zones: { cap: [0.08, 0.8, 0.84, 0.14] } },
     ride: { anchor: [0.5, 0.5], size: 0.78 },
     lift: { anchor: [0.5, 0.42], size: 0.72, align: 'center', zones: { cap: [0.08, 0.8, 0.84, 0.14] } },
-    victory: { anchor: [0.5, 0.3], size: 0.42, align: 'center', zones: END_11 },
+    victory: { anchor: [0.5, 0.3], size: 0.42, align: 'center', zones: { ...END_11, vtitle: [0.12, 0.045, 0.76, 0.12], vrank: [0.12, 0.17, 0.76, 0.045] } },
   },
   '9x16': {
     roast: { anchor: [0.45, 0.4], size: 0.7, align: 'center', zones: { cap: [0.08, 0.62, 0.74, 0.14] } },
@@ -75,6 +75,6 @@ export const LAYOUTS = {
     route: { anchor: [0.45, 0.42], size: 0.78, align: 'center', zones: { cap: [0.08, 0.62, 0.74, 0.14] } },
     ride: { anchor: [0.45, 0.44], size: 0.72 },
     lift: { anchor: [0.45, 0.4], size: 0.66, align: 'center', zones: { cap: [0.08, 0.62, 0.74, 0.14] } },
-    victory: { anchor: [0.45, 0.27], size: 0.34, align: 'center', zones: END_916 },
+    victory: { anchor: [0.45, 0.27], size: 0.34, align: 'center', zones: { ...END_916, vtitle: [0.1, 0.09, 0.7, 0.11], vrank: [0.1, 0.21, 0.7, 0.04] } },
   },
 };

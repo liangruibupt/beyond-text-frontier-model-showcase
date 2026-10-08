@@ -234,17 +234,23 @@ test('headset-ai is a PER-SHOT AI variant of headset: only victory is live-actio
     const ai = voLines({ ...v, lang, cut }), code = voLines({ ...v, item: 'headset', lang, cut });
     assert.deepEqual(ai, code, `${cut}s ${lang} VO identical (reuses headset_* mp3)`);
   }
-  // 字幕 / 片尾卡与 headset 的 id 一致（layersFor 按镜头名）
-  for (const name of ['defeat', 'cube', 'route', 'lift', 'victory']) {
+  // 字幕 / 片尾卡与 headset 的 id 一致（layersFor 按镜头名）——代码镜头（defeat / cube / route / lift）完全相同。
+  // victory 例外：headset-ai 的 victory 多了引擎补的 VICTORY HUD 标题（代码版显示器自带，实拍版没有），单独在下方断言。
+  for (const name of ['defeat', 'cube', 'route', 'lift']) {
     const a = layersFor({ ...v, lang: 'zh', cut: 15, promo: 'none', ar: '16x9' }, { name, from: 0, dur: 2 });
     const b = layersFor({ ...v, item: 'headset', lang: 'zh', cut: 15, promo: 'none', ar: '16x9' }, { name, from: 0, dur: 2 });
     assert.deepEqual(a.map(l => l.id), b.map(l => l.id), `${name} caption ids`);
   }
-  // victory 是片尾卡：headset-ai 用紧凑的 ai_* 区（实拍主体占大半），代码版 headset 用整张卡
+  // victory 片尾卡：headset-ai 用紧凑的 ai_* 区（实拍主体占大半）+ 一个 VICTORY HUD 标题；代码版 headset 用整张卡、无 HUD（显示器 3D 自带 VICTORY）
   const vz = { item: 'headset-ai', lang: 'zh', cut: 15, promo: '1111', ar: '16x9', vo: 'on' };
   const ai = layersFor(vz, { name: 'victory', from: 0, dur: 2 }), code = layersFor({ ...vz, item: 'headset' }, { name: 'victory', from: 0, dur: 2 });
-  assert.deepEqual(ai.map(l => l.id), code.map(l => l.id));
-  assert.ok(ai.every(l => l.zone.startsWith('ai_')) && code.every(l => !l.zone.startsWith('ai_')), 'victory end card: headset-ai compact ai_* zones, headset full card');
+  // headset-ai 的 victory = 代码版的全部 id（片尾卡）+ 额外的 vtitle / vrank（HUD 标题）
+  assert.deepEqual(ai.filter(l => !['vtitle', 'vrank'].includes(l.id)).map(l => l.id), code.map(l => l.id), 'end-card ids unchanged aside from the HUD title');
+  assert.deepEqual(ai.filter(l => ['vtitle', 'vrank'].includes(l.id)).map(l => l.id), ['vtitle', 'vrank'], 'headset-ai victory adds the VICTORY HUD title');
+  assert.ok(!code.some(l => ['vtitle', 'vrank'].includes(l.id)), 'code headset victory has no HUD overlay (it is on the 3D monitor)');
+  // 片尾卡仍走紧凑 ai_* 区；HUD 标题是独立的 vtitle / vrank 区（不是 ai_ 前缀）
+  assert.ok(ai.filter(l => !['vtitle', 'vrank'].includes(l.id)).every(l => l.zone.startsWith('ai_')), 'end card stays on compact ai_* zones');
+  assert.ok(code.every(l => !l.zone.startsWith('ai_')), 'code victory uses the full card');
   // 但代码镜头（defeat 等）的字幕不受 AI 影响：仍是普通 cap 区，不加 ai_ 前缀
   const capAi = layersFor(vz, { name: 'route', from: 0, dur: 2 });
   assert.ok(capAi.every(l => !l.zone.startsWith('ai_')), 'code-shot captions keep plain zones even on headset-ai');
@@ -261,4 +267,50 @@ test('AI variants use the compact ai_* end-card zones; code versions keep the fu
   const c169 = LAYOUTS['16x9'].pour.zones.ai_card, c11 = LAYOUTS['1x1'].pour.zones.ai_card;
   assert.ok(c169[0] + c169[2] <= 0.36, '16:9 AI card stays in the left third');
   assert.ok(c11[1] >= 0.6, '1:1 AI card stays in the bottom 40%');
+});
+
+test('headset-ai victory carries an engine-drawn VICTORY HUD title (restores the DEFEAT→VICTORY payoff lost with the LTX monitor); code headset never does', () => {
+  const MARGIN = 0.04;
+  for (const ar of ['16x9', '1x1']) for (const [lang, cut, promo] of [['zh', 15, 'none'], ['en', 15, 'launch'], ['zh', 6, '1111']]) {
+    const v = { item: 'headset-ai', lang, cut, promo, ar, vo: 'on' };
+    const L = layersFor(v, { name: 'victory', from: 0, dur: cut === 15 ? 2 : 3 });
+    const title = L.find(l => l.id === 'vtitle'), rank = L.find(l => l.id === 'vrank');
+    const where = `${ar} ${lang} ${cut}s`;
+    // 标题存在、文字就是 VICTORY（中英一致）、金字（和 shot 1 的 game HUD 同色）、带辉光、入场 punch-in
+    assert.ok(title, `${where}: VICTORY title present`);
+    assert.equal(title.text, 'VICTORY', `${where}: title text`);
+    assert.equal(title.color, '#ffcf4a', `${where}: HUD gold`);
+    assert.ok(title.pop === true, `${where}: punch-in`);
+    assert.ok(title.shadow && title.shadow.color, `${where}: glow`);
+    assert.ok(Array.isArray(title.in) && title.in[1] - title.in[0] <= 0.3, `${where}: quick entry`);
+    assert.ok(rank && rank.text === 'RANKED · WIN', `${where}: rank line`);
+    // 落位在交付比例的 victory 区里，且在 4% 安全边距内
+    const z = LAYOUTS[ar].victory.zones;
+    for (const id of ['vtitle', 'vrank']) {
+      const r = z[id];
+      assert.ok(r, `${where}: zone ${id} exists`);
+      assert.ok(r[0] >= MARGIN - 1e-9 && r[1] >= MARGIN - 1e-9 && r[0] + r[2] <= 1 - MARGIN + 1e-9 && r[1] + r[3] <= 1 - MARGIN + 1e-9, `${where}: ${id} inside safe margin`);
+    }
+    // 构图约束：标题在价签/片尾卡之上，且避开玩家头部
+    const vt = z.vtitle, vr = z.vrank;
+    if (ar === '16x9') {
+      // 16:9：头在右半（x≥~0.51），片尾卡在 x 4–35% / y 22–78% —— 标题留在左上，右边不过头，底边不进片尾卡
+      assert.ok(vt[0] + vt[2] <= 0.5 && vr[0] + vr[2] <= 0.5, '16:9 title clear of the player head (right half)');
+      assert.ok(vr[1] + vr[3] <= z.ai_card[1] + 1e-9, '16:9 title sits above the end card');
+    } else {
+      // 1:1：显示器顶带（主体头在中下，价签在下三分之一 y≥~0.6）——标题在顶部中带，底边远在价签之上
+      assert.ok(vr[1] + vr[3] <= z.ai_card[1] + 1e-9, '1:1 title sits above the price card');
+    }
+    // 代码版 headset 的同一镜头没有 HUD 标题（它在 3D 显示器上）
+    const codeL = layersFor({ ...v, item: 'headset' }, { name: 'victory', from: 0, dur: cut === 15 ? 2 : 3 });
+    assert.ok(!codeL.some(l => ['vtitle', 'vrank'].includes(l.id)), `${where}: code headset has no HUD title`);
+  }
+  // 其它镜头（defeat…lift）不会误带 victory HUD 标题
+  for (const name of ['defeat', 'order', 'cube', 'route', 'ride', 'lift']) {
+    const L = layersFor({ item: 'headset-ai', lang: 'zh', cut: 15, promo: 'none', ar: '16x9', vo: 'on' }, { name, from: 0, dur: 2 });
+    assert.ok(!L.some(l => ['vtitle', 'vrank'].includes(l.id)), `${name}: no stray VICTORY title`);
+  }
+  // fontsFor 收录了标题用到的拉丁字符（页面首帧前会子集化字体）
+  const faces = fontsFor({ item: 'headset-ai', lang: 'en', cut: 15, promo: 'launch', ar: '16x9', vo: 'on' });
+  assert.ok(faces.some(f => [...'VICTORY'].every(ch => f.text.includes(ch))), 'VICTORY glyphs are in the font subset');
 });
