@@ -2,7 +2,7 @@
 // 其余直播间文字（有集直播信息、倒计时数字、上链接、商品名 / 价格、仅剩 N 件、已抢光、弹幕）都画在相机前的 overlay，
 // 和各自的底板同在一套画布坐标里，天然对齐、清晰（见 js/overlay.js、js/pack/state.js）。
 import { CUTS } from './meta.js';
-import { ITEMS, RED, ORANGE } from './items.js';
+import { ITEMS, RED, ORANGE, isAiItem } from './items.js';
 import { T, FONTS } from './copy.js';
 import { promoLayers } from './promos.js';
 
@@ -36,12 +36,14 @@ export function layersFor(v, s) {
 
 function endCard(v, a) {
   const L = v.lang, it = ITEMS[v.item], P = pal(it), align = 'center';
+  // AI 变体 16:9：LTX 的 end 画面左半是负空间、商品在右 → 片尾卡用左半的 *_l 区（layouts.js）
+  const zs = isAiItem(v.item) && v.ar === '16x9' ? '_l' : '';
   const base = { lang: L, align, valign: 'middle', color: DARKINK, shadow: { color: P.shadow, blur: 0.3 } };
   return [
-    { ...base, id: 'card', zone: 'card', text: '', font: FONTS[L].display, size: 0.04, shadow: null, panel: { fill: '#fbf5ea', alpha: 0.95, radius: 0.08, shadow: 'rgba(0,0,0,0.35)' }, in: [a + 0.0, a + 0.4] },
-    { ...base, id: 'logo', zone: 'logo', lang: 'zh', text: '有集', font: FONTS.zh.display, size: 0.1, tracking: 0.2, color: DARKINK, lineHeight: 1.05, maxLines: 1, in: [a + 0.2, a + 0.7] },
-    { ...base, id: 'brand', zone: 'brand', lang: 'en', text: 'Youji', font: FONTS.brand, size: 0.036, tracking: 0.4, color: '#8a7a66', shadow: null, maxLines: 1, in: [a + 0.4, a + 0.9] },
-    ...promoLayers(v, { a: a + 0.5, align, pal: { ...P, shadow: P.shadow } }),
+    { ...base, id: 'card', zone: `card${zs}`, text: '', font: FONTS[L].display, size: 0.04, shadow: null, panel: { fill: '#fbf5ea', alpha: 0.95, radius: 0.08, shadow: 'rgba(0,0,0,0.35)' }, in: [a + 0.0, a + 0.4] },
+    { ...base, id: 'logo', zone: `logo${zs}`, lang: 'zh', text: '有集', font: FONTS.zh.display, size: 0.1, tracking: 0.2, color: DARKINK, lineHeight: 1.05, maxLines: 1, in: [a + 0.2, a + 0.7] },
+    { ...base, id: 'brand', zone: `brand${zs}`, lang: 'en', text: 'Youji', font: FONTS.brand, size: 0.036, tracking: 0.4, color: '#8a7a66', shadow: null, maxLines: 1, in: [a + 0.4, a + 0.9] },
+    ...promoLayers(v, { a: a + 0.5, align, pal: { ...P, shadow: P.shadow }, zs }),
   ];
 }
 

@@ -1,7 +1,7 @@
 // copy.js — 文案：字体、界面用语、价格、配音台词与时段（纯数据，浏览器与 Node 测试共用）
 // 配音里的数字一律写成汉字 / 英文单词（say.js）：Kokoro 直接读阿拉伯数字不稳定。
 // 主播音色（分镜 §I 第 3 条，用户已批）：中文 zf_xiaoyi、英文 af_heart——年轻、有冲劲的直播腔。
-import { ITEMS } from './items.js';
+import { ITEMS, baseItem } from './items.js';
 import { sayNum } from '../factory/engine/say.js';
 
 export const FONTS = {
@@ -28,7 +28,7 @@ export function viewersText(n, lang) {
 export function overlayText(v, viewers) {
   const it = ITEMS[v.item], L = v.lang, Tl = T[L], cur = Tl.currency;
   return {
-    lang: L, item: v.item, live: Tl.live, viewers: viewersText(viewers, L), link: Tl.link,
+    lang: L, item: baseItem(v.item), live: Tl.live, viewers: viewersText(viewers, L), link: Tl.link,
     name: it.name[L], deal: Tl.cartDeal, priceStr: money(it.deal[cur], L), was: Tl.was, wasStr: money(it.price[cur], L), cta: Tl.cta,
     only: Tl.only(0), onlyFn: Tl.only, soldout: Tl.soldout, couponed: Tl.couponed,
   };
@@ -76,11 +76,12 @@ const ONE_1111 = {
   en: (it, d) => `${it.one.en}, Double Eleven, just ${sayNum(d, 'en')} dollars!`,
 };
 
-/** 变体 → 配音台词 [{ id, text, voice, speed, at, max }]；vo off → []。同一 id 在所有变体里文字相同 */
+/** 变体 → 配音台词 [{ id, text, voice, speed, at, max }]；vo off → []。同一 id 在所有变体里文字相同。
+ *  AI 变体（lantern-ai…）的 id 用基准商品，直接复用 lantern_* 等已生成的配音文件 */
 export function voLines(v) {
   if (v.vo === 'off') return [];
   const it = ITEMS[v.item], L = v.lang, voice = VOICE[L], d = it.deal[T[L].currency];
-  const line = (slot, key, text) => { const [at, max] = SLOTS[v.cut][slot]; return { id: `${v.item}_${L}_${v.cut}_${key}`, text, voice, speed: SPEED[L], at, max }; };
+  const line = (slot, key, text) => { const [at, max] = SLOTS[v.cut][slot]; return { id: `${baseItem(v.item)}_${L}_${v.cut}_${key}`, text, voice, speed: SPEED[L], at, max }; };
   if (v.cut === 6) return [line('one', `one_${v.promo}`, ONE_1111[L](it, d))];
   return [
     line('hook', 'hook', HOOK[L]),

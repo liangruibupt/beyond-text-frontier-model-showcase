@@ -14,7 +14,8 @@ const FZH = `"Noto Sans SC", "Fredoka", sans-serif`;
 const FEN = `"Fredoka", "Noto Sans SC", sans-serif`;
 const font900 = (lang) => (lang === 'en' ? FEN : FZH);
 
-export function createOverlay(ctx, item) {
+/** opts.scrim：AI 实拍底图上加一层很淡的上 / 下渐变暗边（弹幕带、弹窗 / 字幕带），让小字在真实画面上也读得清 */
+export function createOverlay(ctx, item, { scrim = false } = {}) {
   if (!HAS_DOC) return { plane: null, draw() {}, place() {}, dispose() {} };
 
   const w = CWREF, h = Math.round(CWREF * (ctx.H / ctx.W || 1));
@@ -207,8 +208,20 @@ export function createOverlay(ctx, item) {
     }
   }
 
+  // ── 实拍底图用的淡渐变暗边：上 42%（弹幕带 + 外框）、下 34%（弹窗 / 字幕 / 库存条），跟外框一起在 end 镜头淡出 ──
+  function drawScrim(k) {
+    if (k <= 0) return;
+    g.save(); g.globalAlpha = k;
+    const top = g.createLinearGradient(0, 0, 0, Y(0.42)); top.addColorStop(0, 'rgba(8,10,16,0.42)'); top.addColorStop(1, 'rgba(8,10,16,0)');
+    g.fillStyle = top; g.fillRect(0, 0, w, Y(0.42));
+    const bot = g.createLinearGradient(0, Y(0.66), 0, h); bot.addColorStop(0, 'rgba(8,10,16,0)'); bot.addColorStop(1, 'rgba(8,10,16,0.34)');
+    g.fillStyle = bot; g.fillRect(0, Y(0.66), w, h - Y(0.66));
+    g.restore();
+  }
+
   function draw(state, txt) {
     g.clearRect(0, 0, w, h);
+    if (scrim) drawScrim(state.chrome.dim);
     drawChrome(state.chrome, txt);
     drawDanmaku(state.danmaku, txt.lang);
     if (state.countdown) drawCountdown(state.countdown, txt);

@@ -15,6 +15,11 @@ export const ITEM_SPEC = {
   lantern: { catId: 'od-lantern', model: 'lantern', accent: '#2f6b45', sceneTint: '#1c3a2b' },
   headset: { catId: 'gm-headset', model: 'headset', accent: '#ff5c8a', sceneTint: '#2a1c3a' },
   beans: { catId: 'cf-geisha', model: 'pouch', accent: '#1f3b35', sceneTint: '#2a241c' },
+  // 整片 AI 变体（用户 2026-10-08 定：画面全部交给 LTX-2.5）：真人主播在实拍感直播间里演示商品，每个镜头的底图都是
+  // LTX 片段（js/world-ai.js）；直播间图形包、字幕、片尾卡、配音、配乐、价格全部沿用基准商品（base）。代码版照旧可出片。
+  'lantern-ai': { base: 'lantern', ai: true, catId: 'od-lantern', model: 'lantern', accent: '#2f6b45', sceneTint: '#1c3a2b' },
+  'headset-ai': { base: 'headset', ai: true, catId: 'gm-headset', model: 'headset', accent: '#ff5c8a', sceneTint: '#2a1c3a' },
+  'beans-ai': { base: 'beans', ai: true, catId: 'cf-geisha', model: 'pouch', accent: '#1f3b35', sceneTint: '#2a241c' },
 };
 
 /** item → 合并后的数据：目录条目（name / one / price / deal / colors）+ 本片的 spec */
@@ -27,3 +32,9 @@ export const ITEMS = Object.fromEntries(
 );
 
 export const ITEM_IDS = Object.keys(ITEMS);
+/** 该 item 底下的基准商品（lantern-ai → lantern）：配音文件、弹窗小图标这些「只看商品」的数据都用它 */
+export const baseItem = id => ITEM_SPEC[id]?.base ?? id;
+/** 是不是整片 AI 画面变体 */
+export const isAiItem = id => !!ITEM_SPEC[id]?.ai;
+/** 默认交付的三条 AI 变体 */
+export const AI_ITEM_IDS = ITEM_IDS.filter(isAiItem);
