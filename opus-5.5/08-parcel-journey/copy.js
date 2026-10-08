@@ -1,6 +1,6 @@
 // copy.js — 文案：字体、界面用语、价格、配音台词与时段（纯数据，浏览器与 Node 测试共用）
 // 配音里的数字一律写成汉字 / 英文单词：Kokoro 直接读阿拉伯数字不稳定。音色沿用 04 有集：中文 zm_yunjian，英文 am_michael
-import { ITEMS, baseItem, isBeans } from './items.js';
+import { ITEMS, baseItem, isBeans, isHeadset } from './items.js';
 import { sayNum } from '../factory/engine/say.js';
 
 export const FONTS = {
@@ -50,6 +50,7 @@ export function voLines(v) {
   if (v.vo === 'off') return [];
   const it = ITEMS[v.item], L = v.lang, voice = VOICE[L], d = it.deal[T[L].currency];
   if (isBeans(v.item)) return beansLines(v, it, d, L, voice);
+  if (isHeadset(v.item)) return headsetLines(v, it, d, L, voice);
   const line = (slot, key, text) => { const [at, max] = SLOTS[v.cut][slot]; return { id: `${baseItem(v.item)}_${L}_${v.cut}_${key}`, text, voice, speed: SPEED[L], at, max }; };   // lantern-ai 复用 lantern_* 配音
   if (v.cut === 6) return [line('one', `one_${v.promo}`, ONE[L](it, d))];
   return [
@@ -78,6 +79,28 @@ function beansLines(v, it, d, L, voice) {
     line('roast', 'b_roast', BEANS_NARR[L].roast),
     line('sealed', 'b_sealed', BEANS_NARR[L].sealed),
     line('cup', 'b_cup', BEANS_NARR[L].cup),
+    line('end', `end_${v.promo}`, END[L][v.promo](it, d)),
+  ];
+}
+
+// ── 电竞耳机（分镜 v2 §三）：四句旁白 + 片尾（同上）；6 秒版同一句双十一 ──
+export const HEADSET_SLOTS = {
+  15: { hook: [0.3, 2.1], order: [2.6, 2.2], hub: [5.1, 2.6], hands: [10.4, 2.4], end: [12.9, 1.8] },
+  6: { one: [2.0, 3.6] },
+};
+const HEADSET_NARR = {
+  zh: { hook: '明早决赛，耳机坏了？', order: '今晚下单，', hub: '城市前置仓连夜出货，', hands: '开赛之前，送到你手上。' },
+  en: { hook: "Finals tomorrow. Headset's dead?", order: 'Order tonight,', hub: 'our city hubs work all night,', hands: "and it's in your hands before the match." },
+};
+function headsetLines(v, it, d, L, voice) {
+  const base = baseItem(v.item);   // 将来的 headset-ai 复用 headset_* 配音文件
+  const line = (slot, key, text) => { const [at, max] = HEADSET_SLOTS[v.cut][slot]; return { id: `${base}_${L}_${v.cut}_${key}`, text, voice, speed: SPEED[L], at, max }; };
+  if (v.cut === 6) return [line('one', `one_${v.promo}`, ONE[L](it, d))];
+  return [
+    line('hook', 'h_hook', HEADSET_NARR[L].hook),
+    line('order', 'h_order', HEADSET_NARR[L].order),
+    line('hub', 'h_hub', HEADSET_NARR[L].hub),
+    line('hands', 'h_hands', HEADSET_NARR[L].hands),
     line('end', `end_${v.promo}`, END[L][v.promo](it, d)),
   ];
 }

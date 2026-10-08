@@ -4,7 +4,7 @@
 // factory/engine/video.js），字幕 / 价签 / 片尾卡 / 配音 / 配乐仍由现有引擎合成。代码版不受影响。
 // vo.mjs 会在 Node 里 import 这个文件，所以顶层不能碰 window / document
 import { META } from './meta.js';
-import { ITEMS, isAiItem, isBeans } from './items.js';
+import { ITEMS, isAiItem, isPerShotAi, isBeans, isHeadset } from './items.js';
 import { LAYOUTS } from './layouts.js';
 import { fontsFor } from './captions.js';
 import { voLines, AUDITION } from './copy.js';
@@ -13,9 +13,13 @@ import { SHOTS } from './js/shots.js';
 import { score as parcelScore } from './js/score.js';
 import { build as buildBeans } from './stories/beans/world.js';
 import { build as buildAi } from './js/world-ai.js';
+import { build as buildHeadsetAi } from './js/world-headset-ai.js';
 import { SHOTS as BEANS_SHOTS } from './stories/beans/shots.js';
 import { SHOTS_AI } from './js/shots-ai.js';
 import { score as beansScore } from './stories/beans/score.js';
+import { build as buildHeadset } from './stories/headset/world.js';
+import { SHOTS as HEADSET_SHOTS } from './stories/headset/shots.js';
+import { score as headsetScore } from './stories/headset/score.js';
 import { planCrowd } from './js/crowd.js';
 import { seedOf } from '../factory/engine/rng.js';
 
@@ -25,7 +29,16 @@ export default {
   fonts: fontsFor,
   async setup(ctx) {
     const item = ITEMS[ctx.variant.item];
-    // AI 变体：不建 3D 场景，预载 LTX 片段的帧序列当底图
+    // 逐镜 AI 变体（headset-ai）：照常搭 3D 世界，另挂一个只装 AI 镜头片段的「视频背景」；victory 走实拍、其余六镜走 3D。
+    // 必须排在整片 AI 分支之前——它也满足 isAiItem，但不是整片 AI。
+    if (isPerShotAi(item.id)) {
+      ctx.world = buildHeadsetAi(ctx, item);
+      await ctx.world.load();                              // 预载 AI 片段的帧序列（3D 世界同步搭好）
+      ctx.postDefaults = ctx.world.post ?? {};
+      ctx.subjects = {};
+      return;
+    }
+    // 整片 AI 变体（beans-ai / lantern-ai）：不建 3D 场景，预载 LTX 片段的帧序列当底图
     if (isAiItem(item.id)) {
       ctx.world = buildAi(ctx, item);
       await ctx.world.load();                              // 拉清单 + 预载帧图，出片前就位
@@ -34,6 +47,7 @@ export default {
       return;
     }
     if (item.id === 'beans') { ctx.world = buildBeans(ctx, item); ctx.postDefaults = ctx.world.post ?? {}; ctx.subjects = {}; return; }
+    if (item.id === 'headset') { ctx.world = buildHeadset(ctx, item); ctx.postDefaults = ctx.world.post ?? {}; ctx.subjects = {}; return; }
     // 换商品要重跑机器人路径规划（目标货架跟着商品换）；种子由商品决定，确定
     const plan = planCrowd({ seed: seedOf(`08-${item.id}`) });
     ctx.world = buildWorld(ctx, item, plan);
@@ -54,17 +68,24 @@ export default {
     renderer.setRenderTarget(target); renderer.clear(); renderer.render(scene, camera);
   },
   // 代码版与 AI 版用同名镜头，按当前世界分流：AI 世界（有 cue）走 shots-ai（cue 片段 + 同样的字幕），否则走代码版 3D 镜头。
-  shots: shotDispatch({ ...SHOTS, ...BEANS_SHOTS }),
-  score: (v, built) => (isBeans(v.item) ? beansScore : parcelScore)(v, built),
+  shots: shotDispatch({ ...SHOTS, ...BEANS_SHOTS, ...HEADSET_SHOTS }),
+  score: (v, built) => (isBeans(v.item) ? beansScore : isHeadset(v.item) ? headsetScore : parcelScore)(v, built),
   voLines,
   audition: AUDITION,
 };
 
-/** 镜头分流表：同名镜头按 ctx.world 是否是 AI 世界选 3D 或 AI 实现 */
+/** 镜头分流表：同名镜头选 3D 还是 AI 实现。
+ *  - 逐镜 AI（world.isAiShot 存在，headset-ai）：只有 isAiShot(name) 的镜头走 shots-ai，其余走代码 3D 镜头；
+ *  - 整片 AI（只有 world.cue，没有 isAiShot，beans-ai / lantern-ai）：所有镜头走 shots-ai；
+ *  - 代码版（没有 cue）：全部走代码 3D 镜头。 */
 function shotDispatch(code) {
   const out = {};
   for (const [name, fn] of Object.entries(code)) {
-    out[name] = (ctx, s) => (ctx.world?.cue ? SHOTS_AI[name](ctx, s) : fn(ctx, s));
+    out[name] = (ctx, s) => {
+      const w = ctx.world;
+      const ai = w?.isAiShot ? w.isAiShot(name) : !!w?.cue;
+      return ai ? SHOTS_AI[name](ctx, s) : fn(ctx, s);
+    };
   }
   return out;
 }

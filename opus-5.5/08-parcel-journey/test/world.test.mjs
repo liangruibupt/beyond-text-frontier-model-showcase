@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import film from '../film.js';
 import { CUTS, SHOTS as NAMES, poseFor, rowsFor, NATURAL, RIG, storyT, FOV } from '../meta.js';
-import { ITEM_IDS, isAiItem } from '../items.js';
+import { ITEMS, ITEM_IDS, isAiItem } from '../items.js';
 import { buildCut } from '../../factory/engine/timeline.js';
 
 async function make(item, ar = '16x9') {
@@ -85,4 +85,71 @@ test('subjects sit inside the frame while each shot holds, and the 6 s entry poi
     const e = b6.entries.find(x => t >= x.start && t < x.end); assert.equal(e.shot, name);
     const lt = e.from + t - e.start; assert.ok(lt / NATURAL[name] < RIG[name].move[0], `${name} entered at lt ${lt} is mid-move`);
   }
+});
+
+import { SHOTS as HS_NAMES, CUTS as HS_CUTS, poseFor as hsPose, NATURAL as HS_NAT, RIG as HS_RIG, storyT as hsStoryT, STORY0 as HS_STORY0 } from '../stories/headset/meta.js';
+
+test('headset world (stories/headset): poses finite for all seven shots; story-time only (shuffled = in-order); 6 s entries land on order / lift / victory', async () => {
+  // 机位有限（夜城是硬切，不要求一镜到底的首尾相接）
+  for (const n of HS_NAMES) for (let lt = 0; lt <= HS_NAT[n]; lt += 0.1) {
+    const p = hsPose(n, lt, {});
+    for (const val of [...p.position, ...p.target, ...p.offset]) assert.ok(Number.isFinite(val), `headset ${n}@${lt}`);
+  }
+  // 世界只看故事时间：乱序求值 = 顺序求值，reset 复原 t = 0
+  const ctx = { THREE, scene: new THREE.Scene(), variant: { item: 'headset', ar: '16x9', lang: 'zh', cut: 15, promo: 'none', vo: 'on' }, ar: '16x9' };
+  await film.setup(ctx);
+  const w = ctx.world, ts = []; for (let t = 0; t <= 15; t += 0.41) ts.push(+t.toFixed(2));
+  w.reset(); const s0 = snap(ctx.scene); const ref = new Map();
+  for (const t of ts) { w.update({ t }); ref.set(t, snap(ctx.scene)); }
+  for (const t of [...ts].reverse()) { w.update({ t: 14.9 }); w.reset(); w.update({ t }); same(snap(ctx.scene), ref.get(t), `headset t=${t}`); }
+  w.reset(); same(snap(ctx.scene), s0, 'headset reset');
+  w.dispose();
+  // 6 秒版三个切入时刻落在各自镜头的 hold 里
+  const b6 = buildCut(HS_CUTS[6]);
+  for (const [t, name] of [[0.3, 'order'], [2.0, 'lift'], [4.0, 'victory']]) {
+    const e = b6.entries.find(x => t >= x.start && t < x.end); assert.equal(e.shot, name, `6 s @${t}`);
+  }
+});
+
+import { build as buildHeadsetAi } from '../js/world-headset-ai.js';
+import { aiShotsOf, isPerShotAi, isAiItem as _isAiItem, baseItem as _baseItem } from '../items.js';
+
+test('headset-ai is PER-SHOT AI: only victory is live-action footage, the other six shots stay code-rendered 3D', async () => {
+  // 逐镜 AI 的身份：有 ai、显式 aiShots=['victory']；整片 AI（beans-ai / lantern-ai）没有 aiShots
+  assert.ok(isPerShotAi('headset-ai') && _isAiItem('headset-ai'));
+  assert.deepEqual(aiShotsOf('headset-ai'), ['victory']);
+  assert.ok(!isPerShotAi('beans-ai') && !isPerShotAi('lantern-ai'), 'whole-film AI is not per-shot');
+  assert.deepEqual(aiShotsOf('beans-ai'), []);
+  assert.equal(_baseItem('headset-ai'), 'headset');
+
+  // 直接搭混合世界（不调 load()：bg.load 要浏览器 fetch/Image）。3D 世界照常搭。
+  const ctx = { THREE, scene: new THREE.Scene(), variant: { item: 'headset-ai', ar: '16x9', lang: 'zh', cut: 15, promo: 'none', vo: 'on' }, ar: '16x9' };
+  const w = buildHeadsetAi(ctx, ITEMS['headset-ai']);
+  // isAiShot：只有 victory 为真
+  for (const n of HS_NAMES) assert.equal(w.isAiShot(n), n === 'victory', `isAiShot(${n})`);
+
+  // 镜头分流：film.shots[victory] 必须走 shots-ai（会调 world.cue），其余六镜走 stories/headset（会调 world.update）。
+  // 用一个记录调用的假 world 验证分流只看 isAiShot。
+  const calls = [];
+  const fakeWorld = {
+    isAiShot: n => n === 'victory',
+    cue: (shot) => calls.push(['cue', shot]),
+    update: () => calls.push(['update']),
+    reset() {}, post: {},
+  };
+  const fctx = { ...ctx, world: fakeWorld };
+  for (const n of HS_NAMES) {
+    calls.length = 0;
+    film.reset(fctx);
+    film.shots[n](fctx, { name: n, lt: 0.2, dur: 2, u: 0.1, from: 0, t: 0.2, row: {} });
+    if (n === 'victory') assert.deepEqual(calls, [['cue', 'victory']], 'victory → shots-ai (cue)');
+    else assert.ok(calls.some(c => c[0] === 'update') && !calls.some(c => c[0] === 'cue'), `${n} → code 3D (update, no cue)`);
+  }
+
+  // 混合世界的 3D 侧仍然只看故事时间（和纯 headset 一致）：对非 AI 镜头乱序求值 = 顺序求值
+  const ts = []; for (let t = 0; t <= 12.9; t += 0.47) ts.push(+t.toFixed(2));   // 停在 victory 之前（victory 不画 3D）
+  w.reset(); const ref = new Map();
+  for (const t of ts) { w.update({ t }); ref.set(t, snap(ctx.scene)); }
+  for (const t of [...ts].reverse()) { w.update({ t: 12.0 }); w.reset(); w.update({ t }); same(snap(ctx.scene), ref.get(t), `headset-ai 3D t=${t}`); }
+  w.dispose();
 });

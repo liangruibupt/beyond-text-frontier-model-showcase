@@ -1,0 +1,19 @@
+{
+  "note": "08 电竞耳机 AI 变体（headset-ai）的出片提示词。和 beans-ai / lantern-ai 不同——这里只有「胜利」一个镜头换成 LTX-2.5 实拍（代码版玩家太风格化），其余六镜仍是 stories/headset 的代码 3D。所以这个文件只有一个 shot: victory。画面里不要任何可读文字 / logo（引擎会把「VICTORY」HUD、字幕、片尾卡、价签叠上去），构图把玩家 + 耳机放在 16:9 的右半 / 1:1 的上半，另一侧 / 下半留白给引擎的卡片。",
+  "model": "Lightricks/LTX-2.5 (DistilledPipeline, fp8-cast)",
+  "fps": 24,
+  "seed": 1111,
+  "negative": "text, letters, words, numbers, logo, watermark, subtitles, caption, cartoon, anime, CGI render, 3d render, low poly, plastic look, video game character, oversaturated, blurry, jpeg artifacts, deformed hands, extra fingers, hands near camera, flicker, person looking at camera, eye contact",
+  "note_lengths": "victory 在 1:1 的 6 秒版里停得最久（约 3 s），加 ~0.5 s handle，帧数取 8k+1 网格 → 89 帧（3.71 s），和已验证的 door 片段同长。",
+  "framings": {
+    "16x9": { "width": 1280, "height": 704 },
+    "1x1": { "width": 960, "height": 960 }
+  },
+  "shots": [
+    {
+      "id": "victory", "story_dur": 3.0, "frames": 89, "seconds": 3.71,
+      "prompt": "Cinematic live-action commercial footage, night gaming room lit in deep night-blue with magenta neon accents, composed with the gamer in the RIGHT half of the frame. A realistic young gamer seen from behind and three-quarter rear, face only partly visible and never making eye contact with the camera, tousled hair, wearing a dark hoodie and large over-ear gaming headphones that are black with a glowing magenta-pink headband accent. He leans back in a gaming chair in a moment of relief and triumph, fists raised. In front of him a large monitor glows with abstract gold and magenta light only, no readable text or numbers on the screen. The LEFT roughly 40% of the frame is calm, dark, out-of-focus room with nothing in it. Shallow depth of field, gentle slow push-in, soft neon rim light on the hair and headphones, hands kept away from the camera. Natural film grain, 24fps.",
+      "prompt_11": "Cinematic live-action commercial footage, square 1:1 framing, night gaming room lit in deep night-blue with magenta neon accents, composed with the gamer and the headphones in the UPPER half of the frame. A realistic young gamer seen from behind and three-quarter rear, face only partly visible and no eye contact with the camera, tousled hair, dark hoodie, large over-ear gaming headphones that are black with a glowing magenta-pink headband accent. He leans back in a gaming chair in relief and triumph, fists raised, in front of a large monitor glowing with abstract gold and magenta light only, no readable text or numbers. The LOWER half of the frame is calm, dark, out-of-focus desk and room with nothing in it. Shallow depth of field, gentle slow push-in, soft neon rim light, hands kept away from the camera. Natural film grain, 24fps."
+    }
+  ]
+}

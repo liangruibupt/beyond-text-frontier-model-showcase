@@ -1,8 +1,9 @@
 // meta.js — 成片骨架（纯数据，浏览器与 Node 测试共用）：轴、剪辑表、命中点、封面时刻、沿对角线的工位、一镜到底的机位、文件命名
 // 120 bpm，一小节 2 秒；命中点都落在 0.5 秒（一拍）的网格上
-import { ITEM_IDS, isBeans } from './items.js';
+import { ITEM_IDS, isBeans, isHeadset } from './items.js';
 import { LAYOUTS } from './layouts.js';
 import { CUTS as BEANS_CUTS } from './stories/beans/meta.js';
+import { CUTS as HEADSET_CUTS } from './stories/headset/meta.js';
 
 export const BAR = 2.0, GRID = 0.5;
 export const SHOTS = ['order', 'robots', 'pack', 'sort', 'truck', 'lastmile', 'door'];
@@ -118,5 +119,5 @@ export const META = {
   cutFor: v => cutFor(v),
   fileName: v => `youji-parcel_${v.item}_${v.cut}s_${v.ar}_${v.lang}${v.promo === 'none' ? '' : `_${v.promo}`}${v.vo === 'off' ? '_novo' : ''}`,
 };
-/** 每件商品一套分镜（v2）：咖啡豆走 stories/beans 的剪辑表，其余沿用一镜到底的包裹旅程 */
-export function cutFor(v) { return (isBeans(v.item) ? BEANS_CUTS : CUTS)[v.cut]; }
+/** 每件商品一套分镜（v2）：咖啡豆走 stories/beans、电竞耳机走 stories/headset 的剪辑表，其余沿用一镜到底的包裹旅程 */
+export function cutFor(v) { return (isBeans(v.item) ? BEANS_CUTS : isHeadset(v.item) ? HEADSET_CUTS : CUTS)[v.cut]; }

@@ -52,6 +52,19 @@ export const ITEM_SPEC = {
     scene: 'suburb',
     street: { wall: '#d8c7a6', door: '#7a4a2a', ground: '#9ba06f', trim: '#f2b233', porch: '#6b4322' },
   },
+  // 电竞耳机 AI 变体：和 headset 同一条故事线（赛前送达、剪辑表、字幕、配音、配乐、价格都不变）。
+  // 和 beans-ai / lantern-ai 不同——这里只有「胜利」一个镜头换成 LTX 实拍（代码版玩家太风格化），其余六镜仍走代码渲染的 3D。
+  // aiShots 列出哪些镜头用实拍底图；为空 / 未写则整片都是 AI（beans-ai / lantern-ai 就是这种整片 AI）。
+  'headset-ai': {
+    base: 'headset',
+    ai: true,
+    aiShots: ['victory'],
+    catId: 'gm-headset',
+    model: 'headset',
+    box: [0.34, 0.12, 0.26],
+    scene: 'city',
+    street: { wall: '#9aa3ad', door: '#3b4654', ground: '#6b7078', trim: '#ff5c8a', porch: '#4a515c' },
+  },
 };
 
 /** item → 合并后的数据：目录条目（name / one / price / deal / colors）+ 本片的 spec */
@@ -68,5 +81,11 @@ export const ITEM_IDS = Object.keys(ITEMS);
 export const baseItem = id => ITEM_SPEC[id]?.base ?? id;
 /** 这件商品是不是 AI 画面变体 */
 export const isAiItem = id => !!ITEM_SPEC[id]?.ai;
+/** 该 AI 变体里哪些镜头用实拍底图：显式 aiShots（逐镜 AI，如 headset-ai=['victory']）或空数组（整片 AI，如 beans-ai / lantern-ai，表示「全部镜头」） */
+export const aiShotsOf = id => ITEM_SPEC[id]?.aiShots ?? [];
+/** 逐镜 AI（只有部分镜头是实拍）：有 ai 且显式列了 aiShots。整片 AI 返回 false（它没有 aiShots） */
+export const isPerShotAi = id => isAiItem(id) && Array.isArray(ITEM_SPEC[id]?.aiShots);
 /** 是不是咖啡豆这条线（含 AI 变体） */
 export const isBeans = id => baseItem(id) === 'beans';
+/** 是不是电竞耳机这条线（赛前送达，stories/headset；含将来的 AI 变体） */
+export const isHeadset = id => baseItem(id) === 'headset';

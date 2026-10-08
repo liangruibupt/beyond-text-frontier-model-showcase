@@ -143,14 +143,6 @@
     "dur": 3.576,
     "lufs": -20
   },
-  "headset_en_15_door": {
-    "text": "and at your door by sunrise.",
-    "voice": "am_michael",
-    "speed": 1,
-    "rate": 1,
-    "dur": 1.728,
-    "lufs": -20
-  },
   "headset_en_15_end_1111": {
     "text": "Youji. Tomorrow, every time.",
     "voice": "am_michael",
@@ -175,28 +167,36 @@
     "dur": 1.776,
     "lufs": -20
   },
-  "headset_en_15_hook": {
-    "text": "The second you tap order,",
+  "headset_en_15_h_hands": {
+    "text": "and it's in your hands before the match.",
     "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.464,
+    "dur": 2.208,
     "lufs": -20
   },
-  "headset_en_15_robots": {
-    "text": "dozens of robots get moving.",
+  "headset_en_15_h_hook": {
+    "text": "Finals tomorrow. Headset's dead?",
     "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.824,
+    "dur": 2.088,
     "lufs": -20
   },
-  "headset_en_15_route": {
-    "text": "Packed, sorted, out overnight,",
+  "headset_en_15_h_hub": {
+    "text": "our city hubs work all night,",
     "voice": "am_michael",
     "speed": 1,
     "rate": 1,
     "dur": 1.728,
+    "lufs": -20
+  },
+  "headset_en_15_h_order": {
+    "text": "Order tonight,",
+    "voice": "am_michael",
+    "speed": 1,
+    "rate": 1,
+    "dur": 0.984,
     "lufs": -20
   },
   "headset_en_6_one_1111": {
@@ -223,14 +223,6 @@
     "dur": 3.504,
     "lufs": -20
   },
-  "headset_zh_15_door": {
-    "text": "天一亮，就到你家门口。",
-    "voice": "zm_yunjian",
-    "speed": 1,
-    "rate": 1,
-    "dur": 1.992,
-    "lufs": -20
-  },
   "headset_zh_15_end_1111": {
     "text": "有集，次次都次日达。",
     "voice": "zm_yunjian",
@@ -255,28 +247,36 @@
     "dur": 1.8,
     "lufs": -20
   },
-  "headset_zh_15_hook": {
-    "text": "你点下单的那一秒，",
+  "headset_zh_15_h_hands": {
+    "text": "开赛之前，送到你手上。",
     "voice": "zm_yunjian",
     "speed": 1,
     "rate": 1,
-    "dur": 1.68,
+    "dur": 2.064,
     "lufs": -20
   },
-  "headset_zh_15_robots": {
-    "text": "几十台机器人就动了起来。",
+  "headset_zh_15_h_hook": {
+    "text": "明早决赛，耳机坏了？",
     "voice": "zm_yunjian",
     "speed": 1,
     "rate": 1,
-    "dur": 2.232,
+    "dur": 1.872,
     "lufs": -20
   },
-  "headset_zh_15_route": {
-    "text": "打包、分拣，连夜出发，",
+  "headset_zh_15_h_hub": {
+    "text": "城市前置仓连夜出货，",
     "voice": "zm_yunjian",
     "speed": 1,
     "rate": 1,
-    "dur": 1.8,
+    "dur": 2.112,
+    "lufs": -20
+  },
+  "headset_zh_15_h_order": {
+    "text": "今晚下单，",
+    "voice": "zm_yunjian",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.032,
     "lufs": -20
   },
   "headset_zh_6_one_1111": {

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { META, CUTS, SHOTS, GRID, BAR } from '../meta.js';
-import { ITEMS, ITEM_IDS, baseItem, isAiItem, isBeans } from '../items.js';
+import { ITEMS, ITEM_IDS, baseItem, isAiItem, isBeans, isHeadset, isPerShotAi, aiShotsOf } from '../items.js';
 import { ITEMS as CATALOG } from '../../04-year-review/catalog.js';
 import { T, voLines, SLOTS, VOICE } from '../copy.js';
 import { PROMO_T } from '../promos.js';
@@ -33,13 +33,13 @@ test('default manifest = base items × (16:9 15 s zh, 16:9 15 s en launch, 1:1 6
   // 标准交付只覆盖三件代码版商品，每件 3 条；AI 变体（beans-ai）不进默认清单，单独按 --item beans-ai 出
   assert.deepEqual([...new Set(jobs.map(j => j.item))].sort(), ['beans', 'headset', 'lantern']);
   for (const it of ['lantern', 'headset', 'beans']) assert.equal(jobs.filter(j => j.item === it).length, 3, `item ${it}`);
-  for (const it of ['beans-ai', 'lantern-ai']) assert.equal(jobs.filter(j => j.item === it).length, 0, `${it} is not a standard deliverable`);
+  for (const it of ['beans-ai', 'lantern-ai', 'headset-ai']) assert.equal(jobs.filter(j => j.item === it).length, 0, `${it} is not a standard deliverable`);
 });
 
-test('items reuse 04 catalog: three approved products + opt-in beans-ai / lantern-ai variants that alias them', () => {
-  assert.deepEqual(ITEM_IDS, ['lantern', 'headset', 'beans', 'beans-ai', 'lantern-ai']);
+test('items reuse 04 catalog: three approved products + opt-in beans-ai / lantern-ai / headset-ai variants that alias them', () => {
+  assert.deepEqual(ITEM_IDS, ['lantern', 'headset', 'beans', 'beans-ai', 'lantern-ai', 'headset-ai']);
   assert.deepEqual(ITEM_IDS, META.axes.item);
-  const expect = { lantern: 'od-lantern', headset: 'gm-headset', beans: 'cf-geisha', 'beans-ai': 'cf-geisha', 'lantern-ai': 'od-lantern' };
+  const expect = { lantern: 'od-lantern', headset: 'gm-headset', beans: 'cf-geisha', 'beans-ai': 'cf-geisha', 'lantern-ai': 'od-lantern', 'headset-ai': 'gm-headset' };
   for (const [id, it] of Object.entries(ITEMS)) {
     assert.equal(it.catId, expect[id]);
     assert.deepEqual(it.name, CATALOG[expect[id]].name, `${id} name = 04 catalog`);
@@ -99,6 +99,42 @@ test('cuts: lengths exactly 15 / 6, shot names, hits on the 0.5 s grid', () => {
   const b15 = buildCut(CUTS[15]);
   assert.ok(b15.cover > shotAt(b15, 'robots').start && b15.cover < shotAt(b15, 'robots').end, '15 s cover in robots');
   const b6 = buildCut(CUTS[6]), d6 = shotAt(b6, 'door'); assert.ok(b6.cover > d6.start + 1.0, '6 s cover shows the price card');
+});
+
+test('headset is its own story (stories/headset): seven shots per §三, hits on the 0.5 s grid, 6 s = order→lift→victory, captions and VO keyed by headset', () => {
+  const v15 = { item: 'headset', lang: 'zh', cut: 15, promo: 'none', ar: '16x9', vo: 'on' };
+  assert.ok(isHeadset('headset') && !isBeans('headset'));
+  assert.equal(baseItem('headset'), 'headset');
+  // 七镜，照 §三 的顺序
+  assert.deepEqual(META.cutFor(v15).shots.map(s => s.shot), ['defeat', 'order', 'cube', 'route', 'ride', 'lift', 'victory']);
+  // 15 秒七段时长 2+1.5+2.5+2.5+2.5+2+2 = 15
+  assert.deepEqual(META.cutFor(v15).shots.map(s => s.dur), [2.0, 1.5, 2.5, 2.5, 2.5, 2.0, 2.0]);
+  const b15 = buildCut(META.cutFor(v15));
+  assert.ok(Math.abs(b15.duration - 15) < 1e-9);
+  // 命中点照 §三 表，且落在 0.5 s 网格
+  assert.deepEqual(b15.hits, { mute: 1.0, order: 2.5, lift: 5.0, connect: 7.0, splash: 9.5, ding: 12.5, wear: 13.0, logo: 13.5 });
+  assert.deepEqual(offGrid(Object.values(b15.hits), GRID), []);
+  // 6 秒版：order（下单）→ lift（叮）→ victory（价签），时长 1.5+1.5+3 = 6
+  const v6 = { ...v15, cut: 6, promo: '1111', ar: '1x1' };
+  assert.deepEqual(META.cutFor(v6).shots.map(s => s.shot), ['order', 'lift', 'victory']);
+  const b6 = buildCut(META.cutFor(v6));
+  assert.ok(Math.abs(b6.duration - 6) < 1e-9);
+  assert.deepEqual(offGrid(Object.values(b6.hits), GRID), []);
+  assert.ok(b6.cover > shotAt(b6, 'victory').start + 1.0, '6 s cover shows the price card on victory');
+  // 字幕照 §三 表（defeat / cube / route / lift 有句子；order / ride 无字幕；victory 是片尾卡）
+  const capOf = (name) => layersFor(v15, { name, from: 0, dur: 2 });
+  assert.equal(capOf('defeat').find(l => l.id === 'cap').text, '明早决赛，耳机坏了？');
+  assert.equal(capOf('route').find(l => l.id === 'cap').text, '路线实时规划，绕开每一个红灯');
+  assert.deepEqual(capOf('order'), []);
+  assert.deepEqual(capOf('ride'), []);
+  assert.ok(capOf('victory').some(l => l.id === 'logo' && l.text === '有集'), 'victory carries the end card');
+  // 配音用 headset_* 文件名，和包裹旅程 / 咖啡豆分开
+  for (const cut of [15, 6]) for (const lang of ['zh', 'en']) {
+    const lines = voLines({ item: 'headset', lang, cut, promo: '1111', ar: '16x9', vo: 'on' });
+    assert.ok(lines.length > 0 && lines.every(l => l.id.startsWith('headset_')), `${cut}s ${lang} VO keyed by headset`);
+    assert.ok(lines.every(l => !/\d/.test(l.text)), `${cut}s ${lang} VO has no digits`);
+    assert.ok(lines.every(l => l.voice === VOICE[lang]), `${cut}s ${lang} VO voice`);
+  }
 });
 
 test('voice-over: 04 voices, numbers spelt out, Double 11 read as 双十一 / Double Eleven, every line ends before the fade', () => {
@@ -179,6 +215,47 @@ test('lantern-ai is an AI picture variant of lantern: same parcel cut / VO files
   }
 });
 
+test('headset-ai is a PER-SHOT AI variant of headset: only victory is live-action, same headset cut / VO files / captions, its own filename, not a standard deliverable', () => {
+  assert.ok(isAiItem('headset-ai') && !isAiItem('headset'));
+  assert.ok(isPerShotAi('headset-ai') && !isPerShotAi('beans-ai') && !isPerShotAi('lantern-ai'));
+  assert.deepEqual(aiShotsOf('headset-ai'), ['victory']);        // 只有胜利镜换成实拍
+  assert.ok(isHeadset('headset-ai') && !isBeans('headset-ai'));
+  assert.equal(baseItem('headset-ai'), 'headset');
+  assert.deepEqual(ITEMS['headset-ai'].price, ITEMS.headset.price);
+  assert.deepEqual(ITEMS['headset-ai'].deal, ITEMS.headset.deal);
+  // 文件名保留 headset-ai，和代码版 headset 并存不覆盖
+  const v = { item: 'headset-ai', lang: 'en', cut: 6, promo: '1111', ar: '1x1', vo: 'on' };
+  assert.equal(META.fileName(v), 'youji-parcel_headset-ai_6s_1x1_en_1111');
+  assert.equal(META.fileName({ ...v, item: 'headset' }), 'youji-parcel_headset_6s_1x1_en_1111');
+  // 剪辑表沿用 headset（七镜赛前送达），不是一镜到底的包裹旅程
+  assert.deepEqual(META.cutFor(v).shots.map(s => s.shot), META.cutFor({ ...v, item: 'headset' }).shots.map(s => s.shot));
+  // 配音复用 headset_* 文件（同一条故事线），不另生成 headset-ai_*
+  for (const lang of ['zh', 'en']) for (const cut of [15, 6]) {
+    const ai = voLines({ ...v, lang, cut }), code = voLines({ ...v, item: 'headset', lang, cut });
+    assert.deepEqual(ai, code, `${cut}s ${lang} VO identical (reuses headset_* mp3)`);
+  }
+  // 字幕 / 片尾卡与 headset 的 id 一致（layersFor 按镜头名）——代码镜头（defeat / cube / route / lift）完全相同。
+  // victory 例外：headset-ai 的 victory 多了引擎补的 VICTORY HUD 标题（代码版显示器自带，实拍版没有），单独在下方断言。
+  for (const name of ['defeat', 'cube', 'route', 'lift']) {
+    const a = layersFor({ ...v, lang: 'zh', cut: 15, promo: 'none', ar: '16x9' }, { name, from: 0, dur: 2 });
+    const b = layersFor({ ...v, item: 'headset', lang: 'zh', cut: 15, promo: 'none', ar: '16x9' }, { name, from: 0, dur: 2 });
+    assert.deepEqual(a.map(l => l.id), b.map(l => l.id), `${name} caption ids`);
+  }
+  // victory 片尾卡：headset-ai 用紧凑的 ai_* 区（实拍主体占大半）+ 一个 VICTORY HUD 标题；代码版 headset 用整张卡、无 HUD（显示器 3D 自带 VICTORY）
+  const vz = { item: 'headset-ai', lang: 'zh', cut: 15, promo: '1111', ar: '16x9', vo: 'on' };
+  const ai = layersFor(vz, { name: 'victory', from: 0, dur: 2 }), code = layersFor({ ...vz, item: 'headset' }, { name: 'victory', from: 0, dur: 2 });
+  // headset-ai 的 victory = 代码版的全部 id（片尾卡）+ 额外的 vtitle / vrank（HUD 标题）
+  assert.deepEqual(ai.filter(l => !['vtitle', 'vrank'].includes(l.id)).map(l => l.id), code.map(l => l.id), 'end-card ids unchanged aside from the HUD title');
+  assert.deepEqual(ai.filter(l => ['vtitle', 'vrank'].includes(l.id)).map(l => l.id), ['vtitle', 'vrank'], 'headset-ai victory adds the VICTORY HUD title');
+  assert.ok(!code.some(l => ['vtitle', 'vrank'].includes(l.id)), 'code headset victory has no HUD overlay (it is on the 3D monitor)');
+  // 片尾卡仍走紧凑 ai_* 区；HUD 标题是独立的 vtitle / vrank 区（不是 ai_ 前缀）
+  assert.ok(ai.filter(l => !['vtitle', 'vrank'].includes(l.id)).every(l => l.zone.startsWith('ai_')), 'end card stays on compact ai_* zones');
+  assert.ok(code.every(l => !l.zone.startsWith('ai_')), 'code victory uses the full card');
+  // 但代码镜头（defeat 等）的字幕不受 AI 影响：仍是普通 cap 区，不加 ai_ 前缀
+  const capAi = layersFor(vz, { name: 'route', from: 0, dur: 2 });
+  assert.ok(capAi.every(l => !l.zone.startsWith('ai_')), 'code-shot captions keep plain zones even on headset-ai');
+});
+
 test('AI variants use the compact ai_* end-card zones; code versions keep the full card', () => {
   for (const [item, base, shot] of [['beans-ai', 'beans', 'pour'], ['lantern-ai', 'lantern', 'door']]) {
     const v = { item, lang: 'zh', cut: 15, promo: '1111', ar: '16x9', vo: 'on' };
@@ -190,4 +267,50 @@ test('AI variants use the compact ai_* end-card zones; code versions keep the fu
   const c169 = LAYOUTS['16x9'].pour.zones.ai_card, c11 = LAYOUTS['1x1'].pour.zones.ai_card;
   assert.ok(c169[0] + c169[2] <= 0.36, '16:9 AI card stays in the left third');
   assert.ok(c11[1] >= 0.6, '1:1 AI card stays in the bottom 40%');
+});
+
+test('headset-ai victory carries an engine-drawn VICTORY HUD title (restores the DEFEAT→VICTORY payoff lost with the LTX monitor); code headset never does', () => {
+  const MARGIN = 0.04;
+  for (const ar of ['16x9', '1x1']) for (const [lang, cut, promo] of [['zh', 15, 'none'], ['en', 15, 'launch'], ['zh', 6, '1111']]) {
+    const v = { item: 'headset-ai', lang, cut, promo, ar, vo: 'on' };
+    const L = layersFor(v, { name: 'victory', from: 0, dur: cut === 15 ? 2 : 3 });
+    const title = L.find(l => l.id === 'vtitle'), rank = L.find(l => l.id === 'vrank');
+    const where = `${ar} ${lang} ${cut}s`;
+    // 标题存在、文字就是 VICTORY（中英一致）、金字（和 shot 1 的 game HUD 同色）、带辉光、入场 punch-in
+    assert.ok(title, `${where}: VICTORY title present`);
+    assert.equal(title.text, 'VICTORY', `${where}: title text`);
+    assert.equal(title.color, '#ffcf4a', `${where}: HUD gold`);
+    assert.ok(title.pop === true, `${where}: punch-in`);
+    assert.ok(title.shadow && title.shadow.color, `${where}: glow`);
+    assert.ok(Array.isArray(title.in) && title.in[1] - title.in[0] <= 0.3, `${where}: quick entry`);
+    assert.ok(rank && rank.text === 'RANKED · WIN', `${where}: rank line`);
+    // 落位在交付比例的 victory 区里，且在 4% 安全边距内
+    const z = LAYOUTS[ar].victory.zones;
+    for (const id of ['vtitle', 'vrank']) {
+      const r = z[id];
+      assert.ok(r, `${where}: zone ${id} exists`);
+      assert.ok(r[0] >= MARGIN - 1e-9 && r[1] >= MARGIN - 1e-9 && r[0] + r[2] <= 1 - MARGIN + 1e-9 && r[1] + r[3] <= 1 - MARGIN + 1e-9, `${where}: ${id} inside safe margin`);
+    }
+    // 构图约束：标题在价签/片尾卡之上，且避开玩家头部
+    const vt = z.vtitle, vr = z.vrank;
+    if (ar === '16x9') {
+      // 16:9：头在右半（x≥~0.51），片尾卡在 x 4–35% / y 22–78% —— 标题留在左上，右边不过头，底边不进片尾卡
+      assert.ok(vt[0] + vt[2] <= 0.5 && vr[0] + vr[2] <= 0.5, '16:9 title clear of the player head (right half)');
+      assert.ok(vr[1] + vr[3] <= z.ai_card[1] + 1e-9, '16:9 title sits above the end card');
+    } else {
+      // 1:1：显示器顶带（主体头在中下，价签在下三分之一 y≥~0.6）——标题在顶部中带，底边远在价签之上
+      assert.ok(vr[1] + vr[3] <= z.ai_card[1] + 1e-9, '1:1 title sits above the price card');
+    }
+    // 代码版 headset 的同一镜头没有 HUD 标题（它在 3D 显示器上）
+    const codeL = layersFor({ ...v, item: 'headset' }, { name: 'victory', from: 0, dur: cut === 15 ? 2 : 3 });
+    assert.ok(!codeL.some(l => ['vtitle', 'vrank'].includes(l.id)), `${where}: code headset has no HUD title`);
+  }
+  // 其它镜头（defeat…lift）不会误带 victory HUD 标题
+  for (const name of ['defeat', 'order', 'cube', 'route', 'ride', 'lift']) {
+    const L = layersFor({ item: 'headset-ai', lang: 'zh', cut: 15, promo: 'none', ar: '16x9', vo: 'on' }, { name, from: 0, dur: 2 });
+    assert.ok(!L.some(l => ['vtitle', 'vrank'].includes(l.id)), `${name}: no stray VICTORY title`);
+  }
+  // fontsFor 收录了标题用到的拉丁字符（页面首帧前会子集化字体）
+  const faces = fontsFor({ item: 'headset-ai', lang: 'en', cut: 15, promo: 'launch', ar: '16x9', vo: 'on' });
+  assert.ok(faces.some(f => [...'VICTORY'].every(ch => f.text.includes(ch))), 'VICTORY glyphs are in the font subset');
 });
