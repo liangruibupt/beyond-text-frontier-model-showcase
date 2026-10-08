@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { META, CUTS, SHOTS, GRID, BAR } from '../meta.js';
-import { ITEMS, ITEM_IDS, baseItem, isAiItem, isBeans, isHeadset } from '../items.js';
+import { ITEMS, ITEM_IDS, baseItem, isAiItem, isBeans, isHeadset, isPerShotAi, aiShotsOf } from '../items.js';
 import { ITEMS as CATALOG } from '../../04-year-review/catalog.js';
 import { T, voLines, SLOTS, VOICE } from '../copy.js';
 import { PROMO_T } from '../promos.js';
@@ -33,13 +33,13 @@ test('default manifest = base items × (16:9 15 s zh, 16:9 15 s en launch, 1:1 6
   // 标准交付只覆盖三件代码版商品，每件 3 条；AI 变体（beans-ai）不进默认清单，单独按 --item beans-ai 出
   assert.deepEqual([...new Set(jobs.map(j => j.item))].sort(), ['beans', 'headset', 'lantern']);
   for (const it of ['lantern', 'headset', 'beans']) assert.equal(jobs.filter(j => j.item === it).length, 3, `item ${it}`);
-  for (const it of ['beans-ai', 'lantern-ai']) assert.equal(jobs.filter(j => j.item === it).length, 0, `${it} is not a standard deliverable`);
+  for (const it of ['beans-ai', 'lantern-ai', 'headset-ai']) assert.equal(jobs.filter(j => j.item === it).length, 0, `${it} is not a standard deliverable`);
 });
 
-test('items reuse 04 catalog: three approved products + opt-in beans-ai / lantern-ai variants that alias them', () => {
-  assert.deepEqual(ITEM_IDS, ['lantern', 'headset', 'beans', 'beans-ai', 'lantern-ai']);
+test('items reuse 04 catalog: three approved products + opt-in beans-ai / lantern-ai / headset-ai variants that alias them', () => {
+  assert.deepEqual(ITEM_IDS, ['lantern', 'headset', 'beans', 'beans-ai', 'lantern-ai', 'headset-ai']);
   assert.deepEqual(ITEM_IDS, META.axes.item);
-  const expect = { lantern: 'od-lantern', headset: 'gm-headset', beans: 'cf-geisha', 'beans-ai': 'cf-geisha', 'lantern-ai': 'od-lantern' };
+  const expect = { lantern: 'od-lantern', headset: 'gm-headset', beans: 'cf-geisha', 'beans-ai': 'cf-geisha', 'lantern-ai': 'od-lantern', 'headset-ai': 'gm-headset' };
   for (const [id, it] of Object.entries(ITEMS)) {
     assert.equal(it.catId, expect[id]);
     assert.deepEqual(it.name, CATALOG[expect[id]].name, `${id} name = 04 catalog`);
@@ -213,6 +213,41 @@ test('lantern-ai is an AI picture variant of lantern: same parcel cut / VO files
     const ai = voLines({ ...v, lang, cut }), code = voLines({ ...v, item: 'lantern', lang, cut });
     assert.deepEqual(ai, code, `${cut}s ${lang} VO identical (reuses lantern_* mp3)`);
   }
+});
+
+test('headset-ai is a PER-SHOT AI variant of headset: only victory is live-action, same headset cut / VO files / captions, its own filename, not a standard deliverable', () => {
+  assert.ok(isAiItem('headset-ai') && !isAiItem('headset'));
+  assert.ok(isPerShotAi('headset-ai') && !isPerShotAi('beans-ai') && !isPerShotAi('lantern-ai'));
+  assert.deepEqual(aiShotsOf('headset-ai'), ['victory']);        // 只有胜利镜换成实拍
+  assert.ok(isHeadset('headset-ai') && !isBeans('headset-ai'));
+  assert.equal(baseItem('headset-ai'), 'headset');
+  assert.deepEqual(ITEMS['headset-ai'].price, ITEMS.headset.price);
+  assert.deepEqual(ITEMS['headset-ai'].deal, ITEMS.headset.deal);
+  // 文件名保留 headset-ai，和代码版 headset 并存不覆盖
+  const v = { item: 'headset-ai', lang: 'en', cut: 6, promo: '1111', ar: '1x1', vo: 'on' };
+  assert.equal(META.fileName(v), 'youji-parcel_headset-ai_6s_1x1_en_1111');
+  assert.equal(META.fileName({ ...v, item: 'headset' }), 'youji-parcel_headset_6s_1x1_en_1111');
+  // 剪辑表沿用 headset（七镜赛前送达），不是一镜到底的包裹旅程
+  assert.deepEqual(META.cutFor(v).shots.map(s => s.shot), META.cutFor({ ...v, item: 'headset' }).shots.map(s => s.shot));
+  // 配音复用 headset_* 文件（同一条故事线），不另生成 headset-ai_*
+  for (const lang of ['zh', 'en']) for (const cut of [15, 6]) {
+    const ai = voLines({ ...v, lang, cut }), code = voLines({ ...v, item: 'headset', lang, cut });
+    assert.deepEqual(ai, code, `${cut}s ${lang} VO identical (reuses headset_* mp3)`);
+  }
+  // 字幕 / 片尾卡与 headset 的 id 一致（layersFor 按镜头名）
+  for (const name of ['defeat', 'cube', 'route', 'lift', 'victory']) {
+    const a = layersFor({ ...v, lang: 'zh', cut: 15, promo: 'none', ar: '16x9' }, { name, from: 0, dur: 2 });
+    const b = layersFor({ ...v, item: 'headset', lang: 'zh', cut: 15, promo: 'none', ar: '16x9' }, { name, from: 0, dur: 2 });
+    assert.deepEqual(a.map(l => l.id), b.map(l => l.id), `${name} caption ids`);
+  }
+  // victory 是片尾卡：headset-ai 用紧凑的 ai_* 区（实拍主体占大半），代码版 headset 用整张卡
+  const vz = { item: 'headset-ai', lang: 'zh', cut: 15, promo: '1111', ar: '16x9', vo: 'on' };
+  const ai = layersFor(vz, { name: 'victory', from: 0, dur: 2 }), code = layersFor({ ...vz, item: 'headset' }, { name: 'victory', from: 0, dur: 2 });
+  assert.deepEqual(ai.map(l => l.id), code.map(l => l.id));
+  assert.ok(ai.every(l => l.zone.startsWith('ai_')) && code.every(l => !l.zone.startsWith('ai_')), 'victory end card: headset-ai compact ai_* zones, headset full card');
+  // 但代码镜头（defeat 等）的字幕不受 AI 影响：仍是普通 cap 区，不加 ai_ 前缀
+  const capAi = layersFor(vz, { name: 'route', from: 0, dur: 2 });
+  assert.ok(capAi.every(l => !l.zone.startsWith('ai_')), 'code-shot captions keep plain zones even on headset-ai');
 });
 
 test('AI variants use the compact ai_* end-card zones; code versions keep the full card', () => {
