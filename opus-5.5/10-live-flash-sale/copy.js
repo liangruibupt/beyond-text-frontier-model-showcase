@@ -28,7 +28,7 @@ export function viewersText(n, lang) {
 export function overlayText(v, viewers) {
   const it = ITEMS[v.item], L = v.lang, Tl = T[L], cur = Tl.currency;
   return {
-    lang: L, live: Tl.live, viewers: viewersText(viewers, L), link: Tl.link,
+    lang: L, item: v.item, live: Tl.live, viewers: viewersText(viewers, L), link: Tl.link,
     name: it.name[L], deal: Tl.cartDeal, priceStr: money(it.deal[cur], L), was: Tl.was, wasStr: money(it.price[cur], L), cta: Tl.cta,
     only: Tl.only(0), onlyFn: Tl.only, soldout: Tl.soldout, couponed: Tl.couponed,
   };

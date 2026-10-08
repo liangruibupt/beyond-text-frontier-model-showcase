@@ -54,34 +54,44 @@ export function createOverlay(ctx, item) {
     g.fillStyle = fill; g.fillText(str, x, y); g.restore();
   }
 
-  // ── 外框 chrome：左上头像 + 有集直播 + 在线人数、红 LIVE、右下点赞心形 ──
+  // ── 外框 chrome：左上一枚深色半透明胶囊（头像 + 有集直播 + 在线人数 + 红 LIVE），右下点赞心形 ──
   function drawChrome(ch, txt) {
     if (ch.dim <= 0) return;
     g.save(); g.globalAlpha = ch.dim;
-    const padx = X(0.03), top = Y(0.04), ah = S(0.05);           // 头像直径
-    // 头像圈
-    g.fillStyle = acc; g.beginPath(); g.arc(padx + ah / 2, top + ah / 2, ah / 2, 0, Math.PI * 2); g.fill();
-    g.fillStyle = '#fff'; text('有', padx + ah / 2, top + ah / 2, ah * 0.6, { lang: 'zh', fill: '#fff' });
-    // 名称 + 在线人数（两行）
-    const tx = padx + ah + S(0.015);
-    text(txt.live, tx, top + ah * 0.32, S(0.03), { lang: txt.lang, fill: '#fff', align: 'left', outline: 'rgba(0,0,0,0.5)' });
-    text(txt.viewers, tx, top + ah * 0.78, S(0.026), { lang: txt.lang, weight: 500, fill: '#ffd9b0', align: 'left', outline: 'rgba(0,0,0,0.5)' });
-    // 红 LIVE 标（右上，避开 9:16 红区就放左上一行右侧）
-    if (ch.live) { const lw = S(0.09), lh = S(0.042), lx = tx + S(0.18), ly = top; g.fillStyle = RED; rr(lx, ly, lw, lh, lh * 0.3); g.fill(); text('LIVE', lx + lw / 2, ly + lh / 2, lh * 0.56, { lang: 'en', weight: 700, fill: '#fff' }); }
+    const ph = S(0.052), top = Y(0.035), left = X(0.03), ah = ph * 0.76;   // 胶囊高 ≈5.2% 画面高；头像直径
+    // 先量名称 / 人数两行的宽度，决定胶囊宽
+    const nameSz = ph * 0.4, viewSz = ph * 0.34;
+    g.font = `900 ${nameSz}px ${font900(txt.lang)}`; const nameW = g.measureText(txt.live).width;
+    g.font = `500 ${viewSz}px ${font900(txt.lang)}`; const viewW = g.measureText(txt.viewers).width;
+    const liveW = ch.live ? S(0.085) : 0, gap = S(0.012);
+    const textW = Math.max(nameW, viewW);
+    const pillW = ah + gap + textW + (liveW ? liveW + gap : 0) + ph * 0.5;
+    // 胶囊底
+    g.fillStyle = 'rgba(16,18,26,0.6)'; rr(left, top, pillW, ph, ph * 0.5); g.fill();
+    // 头像
+    const ax = left + ph * 0.18 + ah / 2, ay = top + ph / 2;
+    g.fillStyle = acc; g.beginPath(); g.arc(ax, ay, ah / 2, 0, Math.PI * 2); g.fill();
+    text('有', ax, ay, ah * 0.62, { lang: 'zh', fill: '#fff' });
+    // 名称 + 人数两行
+    const tx = ax + ah / 2 + gap;
+    text(txt.live, tx, top + ph * 0.34, nameSz, { lang: txt.lang, fill: '#fff', align: 'left' });
+    text(txt.viewers, tx, top + ph * 0.72, viewSz, { lang: txt.lang, weight: 500, fill: '#ffd9b0', align: 'left' });
+    // 红 LIVE 标（胶囊右端）
+    if (ch.live) { const lh = ph * 0.5, lx = left + pillW - liveW - ph * 0.22, ly = top + (ph - lh) / 2; g.fillStyle = RED; rr(lx, ly, liveW, lh, lh * 0.3); g.fill(); text('LIVE', lx + liveW / 2, ly + lh / 2, lh * 0.56, { lang: 'en', weight: 700, fill: '#fff' }); }
     g.restore();
-    // 点赞心形（右下）
-    for (const hp of ch.hearts) if (hp.fade > 0.02) { g.save(); g.globalAlpha = hp.fade * 0.95; g.fillStyle = acc; g.translate(X(hp.x), Y(hp.y)); const s = S(0.02); g.beginPath(); g.moveTo(0, s * 0.6); g.bezierCurveTo(-s, -s * 0.4, -s * 0.8, -s * 1.4, 0, -s * 0.8); g.bezierCurveTo(s * 0.8, -s * 1.4, s, -s * 0.4, 0, s * 0.6); g.fill(); g.restore(); }
+    // 点赞心形（右下，更大更饱和）
+    for (const hp of ch.hearts) if (hp.fade > 0.02) { g.save(); g.globalAlpha = hp.fade; g.fillStyle = acc; g.shadowColor = acc; g.shadowBlur = S(0.01); g.translate(X(hp.x), Y(hp.y)); const s = S(0.028); g.beginPath(); g.moveTo(0, s * 0.6); g.bezierCurveTo(-s, -s * 0.4, -s * 0.8, -s * 1.4, 0, -s * 0.8); g.bezierCurveTo(s * 0.8, -s * 1.4, s, -s * 0.4, 0, s * 0.6); g.fill(); g.restore(); }
   }
 
-  // ── 弹幕：白字 + 深描边，半透明胶囊，上方 40%，可读 ──
+  // ── 弹幕：白字 + 深描边，半透明胶囊，上方 40%，可读（≈3.4% 画面高） ──
   function drawDanmaku(list, lang) {
-    const size = S(0.032);
+    const size = S(0.034);
     for (const d of list) {
       g.save(); g.globalAlpha = d.alpha;
       g.font = `700 ${size}px ${font900(lang)}`; g.textAlign = 'left'; g.textBaseline = 'middle';
-      const tw = g.measureText(d.text).width, padx = size * 0.5, bx = X(d.x), by = Y(d.y) - size * 0.8;
-      g.fillStyle = 'rgba(20,20,28,0.5)'; rr(bx - padx, by, tw + padx * 2, size * 1.6, size * 0.8); g.fill();
-      g.lineWidth = Math.max(2, size * 0.08); g.strokeStyle = 'rgba(0,0,0,0.6)'; g.strokeText(d.text, bx, Y(d.y));
+      const tw = g.measureText(d.text).width, padx = size * 0.55, bx = X(d.x), by = Y(d.y) - size * 0.85;
+      g.fillStyle = 'rgba(16,18,26,0.6)'; rr(bx - padx, by, tw + padx * 2, size * 1.7, size * 0.85); g.fill();
+      g.lineWidth = Math.max(2, size * 0.1); g.lineJoin = 'round'; g.strokeStyle = 'rgba(0,0,0,0.7)'; g.strokeText(d.text, bx, Y(d.y));
       g.fillStyle = '#ffffff'; g.fillText(d.text, bx, Y(d.y));
       g.restore();
     }
@@ -106,29 +116,55 @@ export function createOverlay(ctx, item) {
     }
   }
 
-  // ── 购物车弹窗（底部弹上）：左侧商品色块 + 右侧名称/秒杀价/划掉原价/立即抢；点击水波 + 角标 +1 ──
+  // 商品小图标（白瓷砖上一个干净可辨的矢量图标，按 item 画）：营地灯 / 耳机 / 咖啡立袋
+  function productIcon(cx, cy, r, id) {
+    g.save(); g.translate(cx, cy); g.lineWidth = Math.max(2, r * 0.12); g.lineJoin = 'round'; g.lineCap = 'round';
+    const col = acc;
+    if (id === 'lantern') {
+      g.strokeStyle = col; g.fillStyle = '#fff3cf';
+      g.beginPath(); g.moveTo(-r * 0.08, -r * 0.9); g.lineTo(r * 0.08, -r * 0.9); g.stroke();                 // 提手顶
+      g.beginPath(); g.arc(0, -r * 0.9, r * 0.28, Math.PI, 0); g.stroke();                                     // 提手
+      g.fillStyle = '#ffe79a'; g.strokeStyle = col; rr(-r * 0.5, -r * 0.45, r, r * 0.9, r * 0.18); g.fill(); g.stroke();  // 灯罩（发光）
+      g.beginPath(); rr(-r * 0.6, r * 0.42, r * 1.2, r * 0.22, r * 0.06); g.fillStyle = col; g.fill();          // 底座
+    } else if (id === 'headset') {
+      g.strokeStyle = col; g.fillStyle = col;
+      g.beginPath(); g.arc(0, r * 0.05, r * 0.62, Math.PI * 1.05, Math.PI * 1.95); g.stroke();                 // 头梁
+      rr(-r * 0.78, -r * 0.05, r * 0.34, r * 0.7, r * 0.12); g.fill();                                          // 左耳罩
+      rr(r * 0.44, -r * 0.05, r * 0.34, r * 0.7, r * 0.12); g.fill();                                           // 右耳罩
+    } else {   // beans：咖啡立袋
+      g.fillStyle = col; g.strokeStyle = col;
+      rr(-r * 0.45, -r * 0.5, r * 0.9, r * 1.1, r * 0.1); g.fill();                                             // 袋身
+      g.fillStyle = '#fff'; rr(-r * 0.45, -r * 0.62, r * 0.9, r * 0.16, r * 0.04); g.fill();                    // 封口
+      g.fillStyle = '#fff'; g.beginPath(); g.arc(0, 0, r * 0.2, 0, Math.PI * 2); g.fill();                      // 标签点
+    }
+    g.restore();
+  }
+
+  // ── 购物车弹窗（底部弹上）：不透明近白卡 + 阴影；左侧白瓷砖 + 商品图标；右侧名称/秒杀价/划掉原价/立即抢 ──
   function drawCart(c, txt) {
     if (c.rise <= 0.001) return;
     const bw = X(0.82), bx = (w - bw) / 2, bh = Y(0.3), byFull = Y(0.62), by = byFull + (1 - Math.min(1, c.rise)) * bh;
     g.save(); g.globalAlpha = Math.min(1, c.rise);
-    g.shadowColor = 'rgba(0,0,0,0.3)'; g.shadowBlur = S(0.02); g.shadowOffsetY = S(0.006);
-    g.fillStyle = '#f7f3ea'; rr(bx, by, bw, bh, S(0.03)); g.fill();
+    g.shadowColor = 'rgba(0,0,0,0.45)'; g.shadowBlur = S(0.028); g.shadowOffsetY = S(0.008);
+    g.fillStyle = '#fdfaf4'; rr(bx, by, bw, bh, S(0.03)); g.fill();                 // 不透明近白卡
     g.shadowColor = 'transparent'; g.shadowBlur = 0; g.shadowOffsetY = 0;
-    // 左侧商品小图块
-    const ps = bh * 0.72, pxx = bx + bh * 0.14, pyy = by + (bh - ps) / 2;
-    g.fillStyle = acc; rr(pxx, pyy, ps, ps, S(0.015)); g.fill();
-    // 文字区（紧挨色块右侧）
+    // 左侧白瓷砖 + 商品图标
+    const ps = bh * 0.74, pxx = bx + bh * 0.14, pyy = by + (bh - ps) / 2;
+    g.fillStyle = '#ffffff'; g.strokeStyle = 'rgba(0,0,0,0.08)'; g.lineWidth = Math.max(1, S(0.002));
+    rr(pxx, pyy, ps, ps, S(0.015)); g.fill(); g.stroke();
+    productIcon(pxx + ps / 2, pyy + ps / 2, ps * 0.34, txt.item);
+    // 文字区（紧挨瓷砖右侧）
     const tx = pxx + ps + S(0.03);
-    text(txt.name, tx, by + bh * 0.26, S(0.045), { lang: txt.lang, weight: 900, fill: '#2b2016', align: 'left' });
-    text(`${txt.deal} ${txt.priceStr}`, tx, by + bh * 0.56, S(0.075), { lang: txt.lang, weight: 900, fill: RED, align: 'left' });
-    // 划掉的原价
-    g.save(); g.font = `700 ${S(0.034)}px ${font900(txt.lang)}`; g.textAlign = 'left'; g.textBaseline = 'middle';
-    const wasStr = `${txt.was} ${txt.wasStr}`; g.fillStyle = '#9a8d78'; g.fillText(wasStr, tx, by + bh * 0.82);
-    const wW = g.measureText(wasStr).width; g.strokeStyle = '#9a8d78'; g.lineWidth = Math.max(2, S(0.004)); g.beginPath(); g.moveTo(tx, by + bh * 0.82); g.lineTo(tx + wW, by + bh * 0.82); g.stroke(); g.restore();
+    text(txt.name, tx, by + bh * 0.25, S(0.044), { lang: txt.lang, weight: 900, fill: '#2b2016', align: 'left' });
+    text(`${txt.deal} ${txt.priceStr}`, tx, by + bh * 0.54, S(0.078), { lang: txt.lang, weight: 900, fill: RED, align: 'left' });
+    // 划掉的原价：深灰、粗一点，清楚可见
+    g.save(); g.font = `700 ${S(0.036)}px ${font900(txt.lang)}`; g.textAlign = 'left'; g.textBaseline = 'middle';
+    const wasStr = `${txt.was} ${txt.wasStr}`, wy = by + bh * 0.82; g.fillStyle = '#6b6258'; g.fillText(wasStr, tx, wy);
+    const wW = g.measureText(wasStr).width; g.strokeStyle = '#6b6258'; g.lineWidth = Math.max(2.5, S(0.005)); g.beginPath(); g.moveTo(tx - S(0.004), wy); g.lineTo(tx + wW + S(0.004), wy); g.stroke(); g.restore();
     // 立即抢按钮（右侧）
-    const btnw = X(0.16), btnh = bh * 0.42, btx = bx + bw - btnw - S(0.03), bty = by + (bh - btnh) / 2;
+    const btnw = X(0.16), btnh = bh * 0.44, btx = bx + bw - btnw - S(0.03), bty = by + (bh - btnh) / 2;
     g.fillStyle = ORANGE; rr(btx, bty, btnw, btnh, btnh * 0.4); g.fill();
-    text(txt.cta, btx + btnw / 2, bty + btnh / 2, btnh * 0.44, { lang: txt.lang, weight: 900, fill: '#fff' });
+    text(txt.cta, btx + btnw / 2, bty + btnh / 2, btnh * 0.42, { lang: txt.lang, weight: 900, fill: '#fff' });
     g.restore();
     // 点击水波 + 角标
     if (c.ripple) { g.save(); g.globalAlpha = c.ripple.alpha; g.strokeStyle = '#fff'; g.lineWidth = S(0.008); g.beginPath(); g.arc(btx + btnw / 2, bty + btnh / 2, S(c.ripple.r), 0, Math.PI * 2); g.stroke(); g.restore(); }
@@ -160,7 +196,7 @@ export function createOverlay(ctx, item) {
     const fw = bw * (sb.width / 0.37); const grad = g.createLinearGradient(bx, 0, bx + bw, 0); grad.addColorStop(0, RED); grad.addColorStop(1, ORANGE);
     g.fillStyle = grad; rr(bx, by, Math.max(0, fw), bh, bh / 2); g.fill();
     g.restore();
-    text(txt.onlyFn ? txt.onlyFn(sb.left) : txt.only, X(0.5), by - S(0.03), S(0.034), { lang: txt.lang, weight: 900, fill: GOLD, outline: 'rgba(0,0,0,0.5)' });
+    text(txt.onlyFn ? txt.onlyFn(sb.left) : txt.only, X(0.5), by - S(0.045), S(0.038), { lang: txt.lang, weight: 900, fill: '#ffffff', outline: 'rgba(0,0,0,0.6)' });
     if (sb.soldout) {
       g.save(); g.globalAlpha = sb.soldout.alpha; g.translate(X(0.5), Y(0.46) + sb.soldout.shake * h); g.rotate(-0.14); g.scale(sb.soldout.scale, sb.soldout.scale);
       const sw = X(0.46), sh = S(0.18); g.fillStyle = 'rgba(255,45,61,0.92)'; rr(-sw / 2, -sh / 2, sw, sh, S(0.02)); g.fill();
