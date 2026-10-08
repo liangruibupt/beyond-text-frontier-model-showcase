@@ -14,6 +14,17 @@ const TURN_HZ = 0.12;   // 转台每秒转的圈数（慢转，像带货展示�
 /** 发光材质（霓虹招牌、灯斑） */
 const glow = (c, k = 1) => new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: k, roughness: 0.5, toneMapped: false });
 
+/** 预先模糊的软圆盘贴图（径向渐变，中心亮边缘透明）：当 bokeh / 灯牌辉光的精灵贴图，不靠真实景深就是柔的 */
+function makeSoftDisc() {
+  const n = 128, cv = document.createElement('canvas'); cv.width = cv.height = n;
+  const g = cv.getContext('2d');
+  const grd = g.createRadialGradient(n / 2, n / 2, 0, n / 2, n / 2, n / 2);
+  grd.addColorStop(0, 'rgba(255,255,255,1)'); grd.addColorStop(0.35, 'rgba(255,255,255,0.75)');
+  grd.addColorStop(0.7, 'rgba(255,255,255,0.2)'); grd.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = grd; g.fillRect(0, 0, n, n);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+
 export function build(ctx, item) {
   const { scene, renderer } = ctx;
   const tint = item.sceneTint ?? '#20202a';
@@ -58,18 +69,23 @@ export function build(ctx, item) {
   product.position.y = 0.05;        // 盘面上
   turntable.add(product);
 
-  // ── 背后虚化的环形补光灯光斑（bokeh）：一圈小发光片，离相机远、靠浅景深化开 ──
-  const bokeh = new THREE.Group(); bokeh.position.set(0, 0.9, -1.8); root.add(bokeh);
-  const bmat = glow('#ffe6c0', 0.9);
-  for (let i = 0; i < 14; i++) {
-    const a = (i / 14) * Math.PI * 2;
-    const d = new THREE.Mesh(new THREE.CircleGeometry(0.06 + 0.03 * ((i * 7) % 3), 20), i % 2 ? bmat : glow(item.accent, 0.8));
-    d.position.set(Math.cos(a) * (0.7 + 0.1 * (i % 3)), Math.sin(a) * 0.5, -0.1 * (i % 4));
-    bokeh.add(d);
+  // ── 背后的环形补光灯光斑（bokeh）：预先模糊的柔光精灵（径向渐变贴图，加色混合），不靠真实景深就有虚焦感 ──
+  // 关掉 DoF 后，背景的「浅景深」感全靠这些软精灵 + 柔和背板来营造，UI 则保持清晰。
+  const softTex = HAS_DOC ? makeSoftDisc() : null;
+  const softMat = c => new THREE.SpriteMaterial({ map: softTex, color: c, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, depthTest: true, toneMapped: false });
+  const bokeh = new THREE.Group(); bokeh.position.set(0, 0.95, -1.9); root.add(bokeh);
+  for (let i = 0; i < 16; i++) {
+    const a = (i / 16) * Math.PI * 2, warm = i % 2 === 0;
+    const col = new THREE.Color(warm ? '#ffe6c0' : item.accent).multiplyScalar(1.4);   // > 泛光阈值 → 发光
+    const m = softMat(col);
+    const spr = softTex ? new THREE.Sprite(m) : new THREE.Mesh(new THREE.CircleGeometry(0.14, 16), glow(warm ? '#ffe6c0' : item.accent, 1.4));
+    const r = 0.75 + 0.12 * (i % 3), sz = 0.18 + 0.1 * ((i * 7) % 3);
+    spr.position.set(Math.cos(a) * r * 1.3, Math.sin(a) * r * 0.7, -0.12 * (i % 4));
+    if (spr.scale) spr.scale.setScalar(sz * 2.2);
+    bokeh.add(spr);
   }
 
-  // ── 「有集直播」霓虹招牌：背景墙上的发光字牌。有 document 时用 CanvasTexture 画出字，读得出是招牌；
-  //     Node 测试没有 canvas 时退回一块纯发光板（不报错）。 ──
+  // ── 「有集直播」霓虹招牌：CanvasTexture 画出字（读得出是招牌）；背后垫一圈柔光让它像亮着的灯牌。 ──
   const sign = new THREE.Group(); sign.position.set(0.0, 1.3, -1.5); root.add(sign);
   let signTex = null;
   if (HAS_DOC) {
@@ -81,28 +97,28 @@ export function build(ctx, item) {
     sg.shadowBlur = 0; sg.strokeStyle = ORANGE; sg.lineWidth = 4; sg.strokeText('有集直播', 256, 84);
     signTex = new THREE.CanvasTexture(scv); signTex.colorSpace = THREE.SRGBColorSpace;
   }
-  const signMat = signTex
-    ? new THREE.MeshBasicMaterial({ map: signTex, toneMapped: false })
-    : glow(ORANGE, 1.2);
+  const signMat = signTex ? new THREE.MeshBasicMaterial({ map: signTex, toneMapped: false }) : glow(ORANGE, 1.2);
   const signBoard = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 0.34), signMat);
   sign.add(signBoard);
-  // 招牌外框光管
   const frame = new THREE.Mesh(new RoundedBoxGeometry(1.18, 0.42, 0.03, 2, 0.02), glow(item.accent, 1.6));
   frame.position.z = -0.03; sign.add(frame);
+  if (softTex) { const halo = new THREE.Sprite(softMat(new THREE.Color(ORANGE).multiplyScalar(1.3))); halo.scale.set(1.9, 0.9, 1); halo.position.z = -0.08; sign.add(halo); }
 
   const subjectBox = new THREE.Box3(new THREE.Vector3(-0.35, 0, -0.35), new THREE.Vector3(0.35, 0.6, 0.35));
   const subjectCenter = new THREE.Vector3(0, 0.3, 0);
 
   const api = {
     root, turntable, product, subjectBox, subjectCenter,
-    // 泛光阈值抬到 0.9：toneMapped:false 的高强度自发光（灯斑、招牌）仍然炸开发光，而 overlay 的 UI 白字（toneMapped 后≈0.8）不被泛光糊成白团
-    post: { aperture: 1.3, maxBlur: 0.014, focus: 'target', bloom: { strength: 0.5, radius: 0.6, threshold: 0.9 }, vignette: 0.3, grain: 0.03 },
+    // DoF 关掉（aperture 0）：plane-at-focus 仍不够清晰，所以这片不用真实景深——背景的虚焦感靠预先模糊的
+    // bokeh 软精灵营造。泛光阈值抬到 1.1：UI 用 toneMapped:false 的实色（白≈1.0 < 1.1）永不发光糊团，
+    // 只有自发光强度 >1.1 的 bokeh / 招牌 / 灯环炸开发光。颗粒压低，免得糊掉 3.4% 的弹幕字。
+    post: { aperture: 0, maxBlur: 0, focus: 'target', bloom: { strength: 0.6, radius: 0.6, threshold: 1.1 }, vignette: 0.3, grain: 0.015 },
     reset() { turntable.rotation.y = 0; },
     update(t) { turntable.rotation.y = t * TURN_HZ * Math.PI * 2; },
     dispose() {
       scene.remove(root, key, fill, rim);
       root.traverse(o => { o.geometry?.dispose?.(); if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.dispose?.()); });
-      signTex?.dispose?.();
+      signTex?.dispose?.(); softTex?.dispose?.();
       if (scene.environment) { scene.environment.dispose?.(); scene.environment = null; }
     },
   };

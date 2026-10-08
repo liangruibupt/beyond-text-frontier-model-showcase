@@ -22,8 +22,8 @@ export function createOverlay(ctx, item) {
   const g = cv.getContext('2d');
   const tex = new THREE.CanvasTexture(cv);
   tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
-  // toneMapped:true → sRGB 颜色经色调映射，白(1.0)落到泛光阈值(0.85)以下附近，不炸团；depthTest 关，永远盖在场景前
-  const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, depthWrite: false, toneMapped: true });
+  // toneMapped:false → UI 颜色按原值写入（白≈1.0 < 泛光阈值 1.1 → 不发光糊团）；DoF 已在 studio 关掉 → 不被景深糊。
+  const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, depthWrite: false, toneMapped: false });
   const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat);
   plane.renderOrder = 50; plane.frustumCulled = false;
 
@@ -67,7 +67,7 @@ export function createOverlay(ctx, item) {
     const textW = Math.max(nameW, viewW);
     const pillW = ah + gap + textW + (liveW ? liveW + gap : 0) + ph * 0.5;
     // 胶囊底
-    g.fillStyle = 'rgba(16,18,26,0.6)'; rr(left, top, pillW, ph, ph * 0.5); g.fill();
+    g.fillStyle = 'rgba(14,16,24,0.74)'; rr(left, top, pillW, ph, ph * 0.5); g.fill();
     // 头像
     const ax = left + ph * 0.18 + ah / 2, ay = top + ph / 2;
     g.fillStyle = acc; g.beginPath(); g.arc(ax, ay, ah / 2, 0, Math.PI * 2); g.fill();
