@@ -4,3 +4,5 @@ node_modules/
 */out/
 **/gen/probe/
 **/*.mp4
+**/gen/ltx_frames/
+**/gen/ltx_mp4/
