@@ -1,2 +1,11 @@
 .DS_Store
 node_modules/
+# render + generation outputs (binary, regenerable, never回传)
+*/out/
+**/gen/probe/
+**/*.mp4
+**/gen/ltx_frames/
+**/gen/ltx_mp4/
+**/out/films/
+**/gen/vo_cache/
+**/out/verify/

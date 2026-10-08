@@ -17,7 +17,7 @@ import { bake, sampleInto } from './bake.js';
  *   stretch       结构/剪切约束的刚度 0..1（默认 1）；bend 弯曲约束刚度（默认 0.15，丝绸软）
  *   wind(x, y, z, t, out)  → 把风速 [vx, vy, vz]（米/秒）写进 out；drag 风对布的拖拽系数（默认 1.5，按法向投影）
  *   pins          [{ i, j, pos: t => [x, y, z], until? }]：固定点；until 之后松开（自由下落）
- *   colliders     [{ type: 'sphere', c, r } | { type: 'capsule', a, b, r } | { type: 'cylinder', c, r, y0, y1 } | { type: 'ground', y }]
+ *   colliders     [{ type: 'sphere', c, r } | { type: 'capsule', a, b, r } | { type: 'cylinder', c, r, y0, y1 }（实心，带顶面和底面） | { type: 'ground', y }]
  *                 c / a / b 是 [x, y, z]；也可以是函数 t => [x, y, z]（会动的碰撞体）
  *   thickness     碰撞体外再留的厚度（默认 0.004）；friction 贴住碰撞体时切向速度保留的比例（默认 0.6）
  *   dt, t1, stride, seed   传给 bake（默认 1/1200、2、20、1：每 1/60 秒存一帧）
@@ -68,15 +68,25 @@ export function bakeCloth(o) {
       else {
         let cx, cy, cz, r = c.r + th;
         if (c.type === 'sphere') [cx, cy, cz] = at(c.c, t);
-        else if (c.type === 'cylinder') { const cc = at(c.c, t); if (y < c.y0 || y > c.y1) continue; cx = cc[0]; cy = y; cz = cc[2]; }
+        else if (c.type === 'cylinder') {                               // 实心竖直圆柱：从离得最近的面推出去（顶面、底面或侧面）
+          const cc = at(c.c, t), y0 = c.y0 - th, y1 = c.y1 + th; if (y < y0 || y > y1) continue;
+          const dx = x - cc[0], dz = z - cc[2], m = Math.sqrt(dx * dx + dz * dz); if (m >= r) continue;
+          const side = r - m, up = y1 - y, down = y - y0;
+          if (up <= side && up <= down) { nx_ = 0; ny_ = 1; nz_ = 0; d = up; }
+          else if (down <= side) { nx_ = 0; ny_ = -1; nz_ = 0; d = down; }
+          else { if (m < 1e-9) { nx_ = 1; nz_ = 0; } else { nx_ = dx / m; nz_ = dz / m; } ny_ = 0; d = side; }
+          cx = null;
+        }
         else { const A = at(c.a, t), B = at(c.b, t), ex = B[0] - A[0], ey = B[1] - A[1], ez = B[2] - A[2];
           const s = Math.min(Math.max(((x - A[0]) * ex + (y - A[1]) * ey + (z - A[2]) * ez) / (ex * ex + ey * ey + ez * ez || 1), 0), 1);
           cx = A[0] + ex * s; cy = A[1] + ey * s; cz = A[2] + ez * s; }
-        const dx = x - cx, dy = y - cy, dz = z - cz, m2 = dx * dx + dy * dy + dz * dz;
-        if (m2 >= r * r) continue;
-        const m = Math.sqrt(m2);
-        if (m < 1e-9) { nx_ = 0; ny_ = 1; nz_ = 0; } else { nx_ = dx / m; ny_ = dy / m; nz_ = dz / m; }
-        d = r - m;
+        if (cx !== null) {
+          const dx = x - cx, dy = y - cy, dz = z - cz, m2 = dx * dx + dy * dy + dz * dz;
+          if (m2 >= r * r) continue;
+          const m = Math.sqrt(m2);
+          if (m < 1e-9) { nx_ = 0; ny_ = 1; nz_ = 0; } else { nx_ = dx / m; ny_ = dy / m; nz_ = dz / m; }
+          d = r - m;
+        }
       }
       P[k] += nx_ * d; P[k + 1] += ny_ * d; P[k + 2] += nz_ * d;
       // 摩擦：本步位移的切向部分留 fr

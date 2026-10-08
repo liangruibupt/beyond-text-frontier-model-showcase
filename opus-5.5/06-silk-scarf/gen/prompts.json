@@ -1,0 +1,99 @@
+{
+ "_note": "方式二 per-shot 文生视频提示词。shot id 见 meta.js BOARDS。每条镜头生成一个 t2v clip（24 步, guidance+CFG, fp8+model offload）。end 片尾是 post 静态 logo 卡，不在此生成。品牌「锦时 JINSHI」，桑蚕丝 16 姆米方巾，影棚级产品片，photoreal real footage，无文字无水印（字幕/logo 在 post 叠加）。",
+ "_defaults": {
+  "width": 704,
+  "height": 480,
+  "num_frames": 73,
+  "fps": 24,
+  "num_inference_steps": 30,
+  "guidance_scale": 3.0,
+  "negative_prompt": "worst quality, inconsistent motion, blurry, jittery, distorted, deformed, text, caption, subtitles, watermark, logo, extra limbs, low resolution, oversaturated"
+ },
+ "shots": {
+  "dh_cave": {
+   "scarf": "dunhuang",
+   "prompt": "Cinematic product film opening: wind rising through a dim Dunhuang grotto, fine golden sand and dust motes drifting on warm shafts of light, ancient teal and vermilion mural pigments glowing faintly on cave walls, a weightless white mulberry-silk scarf edge beginning to lift and ripple in the draft, slow graceful camera push-in, soft volumetric studio light, elegant, photoreal, high detail, real footage"
+  },
+  "dh_fly": {
+   "scarf": "dunhuang",
+   "prompt": "A single long luxury silk scarf as the only subject, no people, no human figures, no faces, no animals, the weightless silk ribbon printed with flowing teal vermilion and ochre Dunhuang cloud-scroll motifs, the fabric itself spiraling and soaring on its own through warm golden empty air, pure fluid aerodynamic cloth motion, trailing silk streamers, cinematic slow orbit around the drifting scarf, soft studio light, clean empty background, photoreal, high detail, graceful, real footage",
+   "negative_prompt": "person, woman, human, face, body, model, bird, creature, animal, wings, hands, worst quality, inconsistent motion, blurry, jittery, distorted, deformed, text, caption, subtitles, watermark, logo, extra limbs, low resolution, oversaturated"
+  },
+  "dh_ceiling": {
+   "scarf": "dunhuang",
+   "prompt": "Overhead view of a square Dunhuang caisson-ceiling lotus mandala rendered in teal, vermilion, gold and cream on luminous white silk, the symmetrical lotus pattern resolving crisply as the fabric settles flat and taut, radiant centered symmetry, cinematic slow dolly looking up, museum studio light, photoreal, ornate, high detail, real footage"
+  },
+  "dh_drape": {
+   "scarf": "dunhuang",
+   "prompt": "Macro of lustrous 16-momme mulberry silk draping over a smooth matte mannequin shoulder, the silk is clearly PRINTED all over with an intricate Dunhuang caisson-ceiling lotus pattern in teal, vermilion, gold and cream, bold colorful printed motifs covering the entire fabric surface, warm sheen catching the folds, shallow depth of field, delicate fabric physics, cinematic slow reveal, premium studio light, photoreal, tactile, high detail, real footage",
+   "negative_prompt": "plain fabric, solid color, blank fabric, unprinted, patternless, monochrome gold, worst quality, inconsistent motion, blurry, jittery, distorted, deformed, text, caption, subtitles, watermark, logo, extra limbs, low resolution, oversaturated"
+  },
+  "dh_hero": {
+   "scarf": "dunhuang",
+   "prompt": "Hero product shot of the finished Dunhuang Ceiling silk scarf elegantly knotted and settled on a mannequin bust, teal vermilion gold cream lotus-ceiling print, warm museum light, clean seamless cream backdrop, slow cinematic push-in, luxurious, photoreal, high detail, real footage"
+  },
+  "sj_warp": {
+   "scarf": "songjin",
+   "prompt": "Extreme macro inside a dim traditional loom at night, a bright shuttle of light passing through tensioned warp threads, golden and deep-blue silk threads being woven row by row, glints of light racing along the weave, Song-brocade eight-way-halo pattern beginning to emerge, cinematic shallow depth of field, moody warm highlights on dark background, photoreal, intricate, high detail, real footage"
+  },
+  "sj_weave": {
+   "scarf": "songjin",
+   "prompt": "Extreme close-up of a large flat square of fine smooth lustrous mulberry silk fabric filling the frame, the entire silk surface printed edge to edge with a repeating Song-brocade geometric interlocking lattice pattern in navy, gold, deep red and cream, flowing soft fabric with gentle folds and silk sheen, soft light sweeping across the flat textile, cinematic slow dolly, warm night-studio light, photoreal, ornate printed cloth, high detail, real footage",
+   "negative_prompt": "medal, medallion, coin, badge, emblem, metal disc, plate, circular object, enamel pin, jewelry, hard surface, rigid object, chunky weave, thick threads, raffia, basket weave, coarse textile, worst quality, inconsistent motion, blurry, jittery, distorted, deformed, text, caption, subtitles, watermark, logo, low resolution, oversaturated"
+  },
+  "sj_lift": {
+   "scarf": "songjin",
+   "prompt": "A single square of fine lustrous mulberry silk fabric rising and unfurling in the air against a dark elegant background, the flat silk sheet printed all over with a navy-gold-and-deep-red Song-brocade geometric lattice pattern, catching warm light as it floats and gently waves, soft smooth cloth ripples settling into an even flowing drape, cinematic slow upward reveal, premium studio light, photoreal, tactile silk, high detail, real footage",
+   "negative_prompt": "box, cube, table, pedestal, loom, hard surface, rigid object, draped over furniture, covered object, hand, person, crumpled, tangled, messy folds, worst quality, inconsistent motion, blurry, jittery, distorted, deformed, text, caption, subtitles, watermark, logo, low resolution, oversaturated"
+  },
+  "sj_fold": {
+   "scarf": "songjin",
+   "prompt": "A lustrous Song-brocade silk scarf folding itself in mid-air into a neat square through three graceful folds, crisp fabric physics, navy gold and deep-red geometric brocade, floating against a dark elegant backdrop, cinematic slow motion, warm key light, photoreal, high detail, real footage"
+  },
+  "sj_box": {
+   "scarf": "songjin",
+   "prompt": "The folded Song-brocade silk square settling into an elegant dark presentation gift box, lid closing slowly, navy-and-gold brocade glinting under a warm spotlight, premium packaging product shot, cinematic slow push-in, luxurious, photoreal, high detail, real footage"
+  },
+  "qh_paint": {
+   "scarf": "qinghua",
+   "prompt": "Cinematic macro: a calligraphy brush with a gold ferrule paints a flowing cobalt-blue lotus scroll onto glossy white porcelain, wet pigment trailing in a single graceful stroke, blue-and-white ceramic aesthetic, soft studio light, shallow depth of field, elegant, photoreal, high detail, slow graceful camera move, real footage"
+  },
+  "qh_bloom": {
+   "scarf": "qinghua",
+   "prompt": "Cobalt-blue ink blooming and spreading across white porcelain into an endless interlocking lotus scroll pattern, organic diffusion of blue pigment resolving into crisp blue-and-white floral motifs, cinematic macro, soft studio light, mesmerizing fluid motion, photoreal, high detail, real footage"
+  },
+  "qh_slip": {
+   "scarf": "qinghua",
+   "prompt": "A white silk scarf printed with a blue-and-white porcelain lotus-scroll pattern slips and cascades down over a slender porcelain meiping vase, draping and settling onto a mannequin form, graceful cloth sliding physics, cobalt-blue motifs flowing from ceramic to fabric, cinematic slow descent, soft cool studio light, photoreal, elegant, high detail, real footage"
+  },
+  "qh_pool": {
+   "scarf": "qinghua",
+   "prompt": "Macro of 16-momme mulberry silk pooling in soft folds, the blue-and-white porcelain lotus-scroll print catching a cool satin sheen, delicate rippling fabric, shallow depth of field, cinematic slow reveal, premium cool studio light, photoreal, tactile, high detail, real footage"
+  },
+  "qh_hero": {
+   "scarf": "qinghua",
+   "prompt": "Hero product shot of the finished Blue Lotus Scroll silk scarf elegantly draped on a mannequin bust, crisp cobalt blue-and-white porcelain lotus print on white silk, clean seamless light backdrop, cool premium light, slow cinematic push-in, luxurious, photoreal, high detail, real footage"
+  },
+  "yh_dusk": {
+   "scarf": "yunhe",
+   "prompt": "Cinematic wide shot of a tranquil sea of dusk clouds glowing moon-white and soft vermilion under a rising pale moon, serene twilight sky, gentle drifting mist, a faint white silk edge catching the last warm light, slow majestic camera drift, atmospheric, photoreal, high detail, real footage"
+  },
+  "yh_crane": {
+   "scarf": "yunhe",
+   "prompt": "A single white silk scarf printed with a vermilion crane-and-cloud pattern, soaring and spiralling upward through soft dusk clouds toward a pale rising moon, continuous flowing cloth motion, the long silk ribbon twisting and unfurling in the air, cinematic rising camera that follows the ascending scarf, moon-white vermilion and gold palette, soft sunset sky background, photoreal, graceful fabric motion, high detail, real footage",
+   "negative_prompt": "bird, crane, real bird, animal, wings, feathers, beak, flying creature, person, human, model, worst quality, inconsistent motion, blurry, jittery, distorted, deformed, text, caption, subtitles, watermark, logo, low resolution, oversaturated"
+  },
+  "yh_glide": {
+   "scarf": "yunhe",
+   "prompt": "Close tracking shot gliding alongside a flowing white silk scarf with vermilion crane-and-cloud pattern soaring through soft dusk clouds, continuous fluid cloth motion, moon-white vermilion and gold palette, cinematic smooth follow, atmospheric light, photoreal, high detail, real footage"
+  },
+  "yh_land": {
+   "scarf": "yunhe",
+   "prompt": "A vermilion-and-white crane-pattern silk scarf folding its 'wings' and settling gently onto a mannequin shoulder like a crane alighting, 16-momme mulberry silk draping into soft folds, warm dusk light, cinematic slow descent, elegant, photoreal, tactile, high detail, real footage"
+  },
+  "yh_hero": {
+   "scarf": "yunhe",
+   "prompt": "Hero product shot of the finished Cloud Crane silk scarf elegantly knotted on a mannequin bust, vermilion crane and moon-white cloud pattern, warm dusk studio light, clean backdrop, slow cinematic push-in, luxurious, photoreal, high detail, real footage"
+  }
+ }
+}

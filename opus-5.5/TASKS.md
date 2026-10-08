@@ -87,6 +87,22 @@
 - [x] 引擎 2（PR #8 已合，03 像素不变）：03 的分层折射抽成共用模块，支持凸棱柱（03）和薄壁圆台（05 的杯子）；03 生成的 GLSL 逐字节不变，云 GPU 上 `check.mjs 03-perfume` 全过
 - [x] 05 成片（2026-09-30：用户批了画面方向；第二阶段加了奶柱、冰块浮起、冷凝画到 over 层、四款口味加对比、完整配乐、64 句 Kokoro 配音；云 GPU `check.mjs` 全过，12 条出片 −14 LUFS）
 
+### 06 丝巾（2026-10-01 分镜已批）
+
+用户定下：四款**四套不同的分镜**（不只是换皮），场景、光、配乐也各不相同。品牌「锦时 JINSHI」（虚构）。第一轴 `scarf`：`dunhuang` 敦煌藻井（默认）、`songjin` 宋锦八达晕、`qinghua` 青花缠枝莲、`yunhe` 云鹤。价格 ¥399 → 双11 ¥299，$59。交付 4 × 3 = 12 条。
+
+- [x] 引擎（PR #12 已合）：`film.cutFor(v)` 剪辑表按变体取；`factory/engine/cloth.js` 布料（建在 bake.js 上）
+- [x] 06 脚手架 + 四套分镜逐个做（分支 `opus55-06-scarf`）
+- [x] 06 **方法2（LTX-2.5 文生视频）完成** 2026-10-08：四款 20 镜头经分镜写提示词、在 EC2 g6e.2xlarge(L40S) 用 LTX-2.5 文生视频生成（`gen/gen_batch.py`，fp8+sequential offload，704×480/24步，每镜头出完即传 S3 + AUTO_POWEROFF）；后期 `gen/post.py`（ffmpeg 裁剪+xfade转场+Pillow字幕overlay+片尾卡+Kokoro配音混音）产出 manifest 的 12 条 gallery 成片（4款×{15s/16x9/zh/none、15s/16x9/en/launch、6s/1x1/zh/1111}）。成片在 `out/films/`，S3 存档 `s3://cdh-ingest-demo/showcase-ltx/06-silk-scarf/films/`。详见 `gen/DEPLOYMENT-method2.md`。局限：配乐缺失（score.js 是 WebAudio 程序配乐，ffmpeg 后期用不了）；字幕用简化安全区定位非逐镜头 zone。
+
+分镜（0.75 s 网格；15 s，片尾 `end` 12–15 共用；6 s = 两个镜头各 1.5 s + `end` 3 s）：
+- **敦煌「飞天」**：cave 0–2.25 风掀起石台上的丝巾 · fly 2.25–5.25 飘带般盘旋上升 · ceiling 5.25–7.5 仰拍在藻井下展开、纹样对上藻井 · drape 7.5–10.5 落人台肩 · hero 10.5–12 环绕。烛光洞窟，琵琶 + 手鼓。6 s：ceiling → drape → end
+- **宋锦「织」**：warp 0–3 光作梭逐行织出纹样 · weave 3–5.25 拉远织成 · lift 5.25–8.25 两角提起离机慢动作起伏 · fold 8.25–10.5 空中三折 · box 10.5–12 落盒合盖（无人台）。素绢屏风天光，古琴 + 箫无鼓。6 s：weave → fold → end
+- **青花「瓷」**：paint 0–3 毛笔在白瓷瓶上画缠枝莲 · bloom 3–4.5 钴蓝晕开 · slip 4.5–8.25 纹样化作丝巾裹瓶滑落堆在白台 · pool 8.25–10.5 褶子微距高光流过 · hero 10.5–12 升起俯看。白瓷影棚冷硬光，钢片琴 + 弦乐。6 s：bloom → slip → end
+- **云鹤「鹤」**：dusk 0–2.25 暮色云海明月 · crane 2.25–5.25 两角上下扇动如鹤展翅掠过月亮 · glide 5.25–7.5 贴身跟拍鹤纹 · land 7.5–10.5 收翅落逆光人台肩 · hero 10.5–12 慢推。暮色天幕逆光，合成器 + 笙。6 s：crane → land → end
+
+共同：字幕「桑蚕丝 · 十六姆米」；片尾卡同 05 的三种；配音每款 hook / hero / end + 6 s 一句，台词按各自分镜写，数字念成字；声音建议 zh `zf_xiaoxiao`、en `bf_emma`（待用户定）。风险：青花裹瓶滑落、云鹤扇翅（退路：缩短或按脚本过渡）；不做布自碰撞。
+
 ## 3. 03 香水的遗留
 
 - [x] 03 的 Kokoro 配音片段（`03-perfume/assets/vo/`）：2026-09-30 用户验收通过

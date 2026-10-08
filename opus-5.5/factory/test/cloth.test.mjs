@@ -53,3 +53,11 @@ test('a 40 × 40 scarf bakes 2.5 s in under 1.5 s; index covers every cell', () 
   assert.ok(c.table.bakeMs < 1500, `bake took ${c.table.bakeMs.toFixed(0)} ms`);
   assert.equal(clothIndex(40, 40).length, 39 * 39 * 6);
 });
+
+test('cloth landing on a cylinder top rests on the cap instead of being thrown off the side', () => {
+  const c = bakeCloth({ nx: 16, ny: 16, size: [0.3, 0.3], origin: [0, 0.6, 0], t1: 1, seed: 6,
+    colliders: [{ type: 'cylinder', c: [0, 0, 0], r: 0.25, y0: 0, y1: 0.5 }] });
+  const P = at(c, 1);
+  for (let k = 1; k < P.length; k += 3) assert.ok(P[k] > 0.49, `vertex ${(k - 1) / 3} slid off (y=${P[k].toFixed(3)})`);
+  for (const t of [0.2, 0.25, 0.3, 0.5]) assert.ok(maxStretch(c, at(c, t)) < 0.03, `no spike at t=${t}`);
+});
