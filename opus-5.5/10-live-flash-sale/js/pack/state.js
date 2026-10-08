@@ -11,13 +11,7 @@ import { DANMAKU } from '../../copy.js';
 import { CUTS, STORY0, NATURAL } from '../../meta.js';
 
 const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
-
-/** 当前剪辑里某镜头的「成片起点」和本地时间（6 秒版从 from 中段切入，用同一张故事时间轴） */
-function shotWindow(cut, name) {
-  const edit = CUTS[cut].shots.find(e => e.shot === name);
-  if (!edit) return null;
-  return edit;
-}
+const ASPECT = { '16x9': 16 / 9, '1x1': 1, '9x16': 9 / 16 };
 
 /**
  * packState(variant, t)：t 是成片秒。返回 { shot, chrome, danmaku, countdown?, cart?, envelopes?, stockbar? }
@@ -33,10 +27,11 @@ export function packState(v, t) {
   const lt = (cur.from ?? 0) + (t - from);         // 镜头本地时间
 
   const out = { shot: cur.shot, lt, t };
-  // 常驻外框 + 弹幕（end 镜头淡出，不画）
+  // 常驻外框 + 弹幕（end 镜头淡出，不画）；弹幕用传送带模型，stockFrom 之后整条车道提速（相对间距不变 → 不重叠）
   const fade = cur.shot === 'end';
+  const stockFrom = cut === 15 ? STORY0.stock : Infinity;   // 15 秒版 stock 镜头的成片起点；6 秒版无 stock
   out.chrome = chrome(t, { dur, liveAt: cut === 15 ? 0.5 : -1, fade });
-  out.danmaku = fade ? [] : danmaku(t, { lines: DANMAKU[v.lang], dur, stock: cur.shot === 'stock' });
+  out.danmaku = fade ? [] : danmaku(t, { lines: DANMAKU[v.lang], stockFrom, aspect: ASPECT[v.ar] ?? 16 / 9 });
 
   if (cur.shot === 'count') out.countdown = countdown(lt, { beats: [0.5, 1.0, 1.5], digits: ['3', '2', '1'], linkAt: 2.0 });
   if (cur.shot === 'cart') out.cart = cart(lt, { riseAt: 0, tapAt: 1.5 });

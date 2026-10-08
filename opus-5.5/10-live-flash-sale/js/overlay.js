@@ -83,16 +83,17 @@ export function createOverlay(ctx, item) {
     for (const hp of ch.hearts) if (hp.fade > 0.02) { g.save(); g.globalAlpha = hp.fade; g.fillStyle = acc; g.shadowColor = acc; g.shadowBlur = S(0.01); g.translate(X(hp.x), Y(hp.y)); const s = S(0.028); g.beginPath(); g.moveTo(0, s * 0.6); g.bezierCurveTo(-s, -s * 0.4, -s * 0.8, -s * 1.4, 0, -s * 0.8); g.bezierCurveTo(s * 0.8, -s * 1.4, s, -s * 0.4, 0, s * 0.6); g.fill(); g.restore(); }
   }
 
-  // ── 弹幕：白字 + 深描边，半透明胶囊，上方 40%，可读（≈3.4% 画面高） ──
+  // ── 弹幕：白粗体 + 深描边，深色半透明胶囊，上方 40%；胶囊宽用纯函数给的 w（画面宽比例），和碰撞测试一致 ──
   function drawDanmaku(list, lang) {
     const size = S(0.034);
     for (const d of list) {
       g.save(); g.globalAlpha = d.alpha;
+      const bx = X(d.x), bw = X(d.w), by = Y(d.y) - size * 0.9, bh = size * 1.8;
+      g.fillStyle = 'rgba(14,16,24,0.6)'; rr(bx, by, bw, bh, bh * 0.5); g.fill();
       g.font = `700 ${size}px ${font900(lang)}`; g.textAlign = 'left'; g.textBaseline = 'middle';
-      const tw = g.measureText(d.text).width, padx = size * 0.55, bx = X(d.x), by = Y(d.y) - size * 0.85;
-      g.fillStyle = 'rgba(16,18,26,0.6)'; rr(bx - padx, by, tw + padx * 2, size * 1.7, size * 0.85); g.fill();
-      g.lineWidth = Math.max(2, size * 0.1); g.lineJoin = 'round'; g.strokeStyle = 'rgba(0,0,0,0.7)'; g.strokeText(d.text, bx, Y(d.y));
-      g.fillStyle = '#ffffff'; g.fillText(d.text, bx, Y(d.y));
+      const tx = bx + bw * 0.5 - g.measureText(d.text).width / 2;   // 居中于胶囊
+      g.lineWidth = Math.max(2, size * 0.09); g.lineJoin = 'round'; g.strokeStyle = 'rgba(0,0,0,0.7)'; g.strokeText(d.text, tx, Y(d.y));
+      g.fillStyle = '#ffffff'; g.fillText(d.text, tx, Y(d.y));
       g.restore();
     }
   }

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { chrome } from '../js/pack/chrome.js';
-import { danmaku } from '../js/pack/danmaku.js';
+import { danmaku, conveyor } from '../js/pack/danmaku.js';
 import { countdown } from '../js/pack/countdown.js';
 import { cart, spring } from '../js/pack/cart.js';
 import { envelopes } from '../js/pack/envelopes.js';
@@ -80,16 +80,31 @@ test('chrome viewer count rises monotonically and hearts stay in the top-right b
 });
 
 test('danmaku stays in the top 40% band and speeds up in the stock phase', () => {
-  for (const d of danmaku(5, { lines: DANMAKU.zh, dur: 15 })) assert.ok(d.y <= 0.4 + 1e-9);
-  // 加速：同一组弹幕在 stock 段，某条的 x 比常速时更靠左（走得更远）
-  const normal = danmaku(5, { lines: DANMAKU.zh, dur: 15, stock: false });
-  const fast = danmaku(5, { lines: DANMAKU.zh, dur: 15, stock: true });
-  // 两者条数可能不同；比较同一 i 的 x
-  const byI = l => Object.fromEntries(l.map(d => [d.i, d.x]));
-  const nI = byI(normal), fI = byI(fast);
-  let compared = 0;
-  for (const i of Object.keys(fI)) if (i in nI) { assert.ok(fI[i] <= nI[i] + 1e-9); compared++; }
-  assert.ok(compared > 0);
+  for (const d of danmaku(5, { lines: DANMAKU.zh })) assert.ok(d.y <= 0.4 + 1e-9 && d.y >= 0.08 - 1e-9);
+  // 加速：stockFrom 之后传送带整体更快 → conveyor(t) 更大，且 stockFrom 之前两者相等
+  assert.ok(Math.abs(conveyor(6, { stockFrom: 10.5 }) - conveyor(6, { stockFrom: Infinity })) < 1e-12);  // 提速点之前无差别
+  assert.ok(conveyor(13, { stockFrom: 10.5 }) > conveyor(13, { stockFrom: Infinity }) + 1e-6);           // 提速点之后走得更远
+  // 单调：传送带只增不减
+  let prevP = -1; for (let f = 0; f <= 15 * 30; f++) { const p = conveyor(f / 30, { stockFrom: 10.5 }); assert.ok(p >= prevP - 1e-12); prevP = p; }
+});
+
+// 车道内零重叠：任意 1/30 s 的 t、任意两条同车道的胶囊 [x, x+w] 不相交（16:9 与 1:1）
+test('no two danmaku pills in the same lane ever overlap (1/30s grid, 16x9 & 1x1)', () => {
+  for (const aspect of [16 / 9, 1]) {
+    for (let f = 0; f <= 15 * 30; f++) {
+      const t = f / 30;
+      const list = danmaku(t, { lines: DANMAKU.zh, aspect, stockFrom: 10.5 });
+      const byLane = {};
+      for (const d of list) (byLane[d.lane] ??= []).push(d);
+      for (const lane of Object.keys(byLane)) {
+        const arr = byLane[lane].sort((a, b) => a.x - b.x);
+        for (let i = 1; i < arr.length; i++) {
+          const prev = arr[i - 1], cur = arr[i];
+          assert.ok(prev.x + prev.w <= cur.x + 1e-9, `aspect ${aspect} t=${t.toFixed(2)} lane ${lane}: "${prev.text}"(${prev.x.toFixed(3)}+${prev.w.toFixed(3)}) overlaps "${cur.text}"(${cur.x.toFixed(3)})`);
+        }
+      }
+    }
+  }
 });
 
 test('spring is monotone-ish and settles to 1', () => {

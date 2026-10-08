@@ -86,7 +86,7 @@ export function build(ctx, item) {
   }
 
   // ── 「有集直播」霓虹招牌：CanvasTexture 画出字（读得出是招牌）；背后垫一圈柔光让它像亮着的灯牌。 ──
-  const sign = new THREE.Group(); sign.position.set(0.0, 1.3, -1.5); root.add(sign);
+  const sign = new THREE.Group(); sign.position.set(0.0, 1.12, -1.6); root.add(sign);
   let signTex = null;
   if (HAS_DOC) {
     const scv = document.createElement('canvas'); scv.width = 512; scv.height = 160;
@@ -102,7 +102,7 @@ export function build(ctx, item) {
   sign.add(signBoard);
   const frame = new THREE.Mesh(new RoundedBoxGeometry(1.18, 0.42, 0.03, 2, 0.02), glow(item.accent, 1.6));
   frame.position.z = -0.03; sign.add(frame);
-  if (softTex) { const halo = new THREE.Sprite(softMat(new THREE.Color(ORANGE).multiplyScalar(1.3))); halo.scale.set(1.9, 0.9, 1); halo.position.z = -0.08; sign.add(halo); }
+  if (softTex) { const halo = new THREE.Sprite(softMat(new THREE.Color(ORANGE).multiplyScalar(1.15))); halo.scale.set(1.35, 0.5, 1); halo.position.z = -0.06; sign.add(halo); }
 
   const subjectBox = new THREE.Box3(new THREE.Vector3(-0.35, 0, -0.35), new THREE.Vector3(0.35, 0.6, 0.35));
   const subjectCenter = new THREE.Vector3(0, 0.3, 0);
