@@ -92,7 +92,8 @@
 用户定下：四款**四套不同的分镜**（不只是换皮），场景、光、配乐也各不相同。品牌「锦时 JINSHI」（虚构）。第一轴 `scarf`：`dunhuang` 敦煌藻井（默认）、`songjin` 宋锦八达晕、`qinghua` 青花缠枝莲、`yunhe` 云鹤。价格 ¥399 → 双11 ¥299，$59。交付 4 × 3 = 12 条。
 
 - [x] 引擎（PR #12 已合）：`film.cutFor(v)` 剪辑表按变体取；`factory/engine/cloth.js` 布料（建在 bake.js 上）
-- [ ] 06 脚手架 + 四套分镜逐个做（分支 `opus55-06-scarf`）
+- [x] 06 脚手架 + 四套分镜逐个做（分支 `opus55-06-scarf`）
+- [x] 06 **方法2（LTX-2.5 文生视频）完成** 2026-10-08：四款 20 镜头经分镜写提示词、在 EC2 g6e.2xlarge(L40S) 用 LTX-2.5 文生视频生成（`gen/gen_batch.py`，fp8+sequential offload，704×480/24步，每镜头出完即传 S3 + AUTO_POWEROFF）；后期 `gen/post.py`（ffmpeg 裁剪+xfade转场+Pillow字幕overlay+片尾卡+Kokoro配音混音）产出 manifest 的 12 条 gallery 成片（4款×{15s/16x9/zh/none、15s/16x9/en/launch、6s/1x1/zh/1111}）。成片在 `out/films/`，S3 存档 `s3://cdh-ingest-demo/showcase-ltx/06-silk-scarf/films/`。详见 `gen/DEPLOYMENT-method2.md`。局限：配乐缺失（score.js 是 WebAudio 程序配乐，ffmpeg 后期用不了）；字幕用简化安全区定位非逐镜头 zone。
 
 分镜（0.75 s 网格；15 s，片尾 `end` 12–15 共用；6 s = 两个镜头各 1.5 s + `end` 3 s）：
 - **敦煌「飞天」**：cave 0–2.25 风掀起石台上的丝巾 · fly 2.25–5.25 飘带般盘旋上升 · ceiling 5.25–7.5 仰拍在藻井下展开、纹样对上藻井 · drape 7.5–10.5 落人台肩 · hero 10.5–12 环绕。烛光洞窟，琵琶 + 手鼓。6 s：ceiling → drape → end

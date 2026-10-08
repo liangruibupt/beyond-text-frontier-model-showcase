@@ -38,7 +38,8 @@
       "ink": "#f4e3c2",
       "accent": "#b5442e",
       "cta": "#c99a3b",
-      "ctaInk": "#1d1208"
+      "ctaInk": "#1d1208",
+      "soft": "#d9b98a"
     },
     "deal": {
       "CNY": 299,
@@ -48,32 +49,78 @@
       "CNY": 399,
       "USD": 59
     },
-    "vo15_zh": [
-      {
-        "id": "dunhuang_zh_15_hook",
-        "text": "风起敦煌，千年飞天。",
-        "voice": "zf_xiaoxiao",
-        "speed": 1,
-        "at": 0.4,
-        "max": 2.6
-      },
-      {
-        "id": "dunhuang_zh_15_hero",
-        "text": "敦煌藻井，桑蚕丝方巾。",
-        "voice": "zf_xiaoxiao",
-        "speed": 1,
-        "at": 7.6,
-        "max": 2.4
-      },
-      {
-        "id": "dunhuang_zh_15_end_none",
-        "text": "锦时，把纹样戴在身上。",
-        "voice": "zf_xiaoxiao",
-        "speed": 1,
-        "at": 12.3,
-        "max": 2.3
-      }
-    ]
+    "tagline": {
+      "zh": "把纹样戴在身上",
+      "en": "Heritage you can wear"
+    },
+    "cta": {
+      "zh": "立即选购",
+      "en": "Shop now"
+    },
+    "vo": {
+      "15_zh_none": [
+        {
+          "id": "dunhuang_zh_15_hook",
+          "text": "风起敦煌，千年飞天。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 0.4,
+          "max": 2.6
+        },
+        {
+          "id": "dunhuang_zh_15_hero",
+          "text": "敦煌藻井，桑蚕丝方巾。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 7.6,
+          "max": 2.4
+        },
+        {
+          "id": "dunhuang_zh_15_end_none",
+          "text": "锦时，把纹样戴在身上。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 12.3,
+          "max": 2.3
+        }
+      ],
+      "15_en_launch": [
+        {
+          "id": "dunhuang_en_15_hook",
+          "text": "Wind over Dunhuang, a thousand years in flight.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 0.4,
+          "max": 2.6
+        },
+        {
+          "id": "dunhuang_en_15_hero",
+          "text": "Dunhuang Ceiling, a mulberry silk square.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 7.6,
+          "max": 2.4
+        },
+        {
+          "id": "dunhuang_en_15_end_launch",
+          "text": "New from Jinshi: Dunhuang Ceiling.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 12.3,
+          "max": 2.3
+        }
+      ],
+      "6_zh_1111": [
+        {
+          "id": "dunhuang_zh_6_one_1111",
+          "text": "锦时敦煌藻井，双十一到手二百九十九元。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 1.9,
+          "max": 3.4
+        }
+      ]
+    }
   },
   "songjin": {
     "name": {
@@ -114,7 +161,8 @@
       "ink": "#f3e9d2",
       "accent": "#1f3a68",
       "cta": "#c9a24a",
-      "ctaInk": "#141a2e"
+      "ctaInk": "#141a2e",
+      "soft": "#c9b98f"
     },
     "deal": {
       "CNY": 299,
@@ -124,32 +172,78 @@
       "CNY": 399,
       "USD": 59
     },
-    "vo15_zh": [
-      {
-        "id": "songjin_zh_15_hook",
-        "text": "一梭一线，织出宋锦。",
-        "voice": "zf_xiaoxiao",
-        "speed": 1,
-        "at": 0.4,
-        "max": 2.6
-      },
-      {
-        "id": "songjin_zh_15_hero",
-        "text": "宋锦八达晕，桑蚕丝方巾。",
-        "voice": "zf_xiaoxiao",
-        "speed": 1,
-        "at": 8.35,
-        "max": 2.4
-      },
-      {
-        "id": "songjin_zh_15_end_none",
-        "text": "锦时，把纹样戴在身上。",
-        "voice": "zf_xiaoxiao",
-        "speed": 1,
-        "at": 12.3,
-        "max": 2.3
-      }
-    ]
+    "tagline": {
+      "zh": "把纹样戴在身上",
+      "en": "Heritage you can wear"
+    },
+    "cta": {
+      "zh": "立即选购",
+      "en": "Shop now"
+    },
+    "vo": {
+      "15_zh_none": [
+        {
+          "id": "songjin_zh_15_hook",
+          "text": "一梭一线，织出宋锦。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 0.4,
+          "max": 2.6
+        },
+        {
+          "id": "songjin_zh_15_hero",
+          "text": "宋锦八达晕，桑蚕丝方巾。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 8.35,
+          "max": 2.4
+        },
+        {
+          "id": "songjin_zh_15_end_none",
+          "text": "锦时，把纹样戴在身上。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 12.3,
+          "max": 2.3
+        }
+      ],
+      "15_en_launch": [
+        {
+          "id": "songjin_en_15_hook",
+          "text": "Thread by thread, a Song brocade.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 0.4,
+          "max": 2.6
+        },
+        {
+          "id": "songjin_en_15_hero",
+          "text": "Song Brocade, a mulberry silk square.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 8.35,
+          "max": 2.4
+        },
+        {
+          "id": "songjin_en_15_end_launch",
+          "text": "New from Jinshi: Song Brocade.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 12.3,
+          "max": 2.3
+        }
+      ],
+      "6_zh_1111": [
+        {
+          "id": "songjin_zh_6_one_1111",
+          "text": "锦时宋锦八达晕，双十一到手二百九十九元。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 1.9,
+          "max": 3.4
+        }
+      ]
+    }
   },
   "qinghua": {
     "name": {
@@ -190,7 +284,8 @@
       "ink": "#16295a",
       "accent": "#1f4fa0",
       "cta": "#1f4fa0",
-      "ctaInk": "#f4f6f8"
+      "ctaInk": "#f4f6f8",
+      "soft": "#4d6290"
     },
     "deal": {
       "CNY": 299,
@@ -200,32 +295,78 @@
       "CNY": 399,
       "USD": 59
     },
-    "vo15_zh": [
-      {
-        "id": "qinghua_zh_15_hook",
-        "text": "一笔青花，缠枝不断。",
-        "voice": "zf_xiaoxiao",
-        "speed": 1,
-        "at": 0.4,
-        "max": 2.6
-      },
-      {
-        "id": "qinghua_zh_15_hero",
-        "text": "青花缠枝莲，桑蚕丝方巾。",
-        "voice": "zf_xiaoxiao",
-        "speed": 1,
-        "at": 7.6,
-        "max": 2.4
-      },
-      {
-        "id": "qinghua_zh_15_end_none",
-        "text": "锦时，把纹样戴在身上。",
-        "voice": "zf_xiaoxiao",
-        "speed": 1,
-        "at": 12.3,
-        "max": 2.3
-      }
-    ]
+    "tagline": {
+      "zh": "把纹样戴在身上",
+      "en": "Heritage you can wear"
+    },
+    "cta": {
+      "zh": "立即选购",
+      "en": "Shop now"
+    },
+    "vo": {
+      "15_zh_none": [
+        {
+          "id": "qinghua_zh_15_hook",
+          "text": "一笔青花，缠枝不断。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 0.4,
+          "max": 2.6
+        },
+        {
+          "id": "qinghua_zh_15_hero",
+          "text": "青花缠枝莲，桑蚕丝方巾。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 7.6,
+          "max": 2.4
+        },
+        {
+          "id": "qinghua_zh_15_end_none",
+          "text": "锦时，把纹样戴在身上。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 12.3,
+          "max": 2.3
+        }
+      ],
+      "15_en_launch": [
+        {
+          "id": "qinghua_en_15_hook",
+          "text": "One stroke of blue, a lotus without end.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 0.4,
+          "max": 2.6
+        },
+        {
+          "id": "qinghua_en_15_hero",
+          "text": "Blue Lotus Scroll, a mulberry silk square.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 7.6,
+          "max": 2.4
+        },
+        {
+          "id": "qinghua_en_15_end_launch",
+          "text": "New from Jinshi: Blue Lotus Scroll.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 12.3,
+          "max": 2.3
+        }
+      ],
+      "6_zh_1111": [
+        {
+          "id": "qinghua_zh_6_one_1111",
+          "text": "锦时青花缠枝莲，双十一到手二百九十九元。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 1.9,
+          "max": 3.4
+        }
+      ]
+    }
   },
   "yunhe": {
     "name": {
@@ -266,7 +407,8 @@
       "ink": "#f6ebdc",
       "accent": "#b8322a",
       "cta": "#e8c27a",
-      "ctaInk": "#2a1410"
+      "ctaInk": "#2a1410",
+      "soft": "#e3c9a8"
     },
     "deal": {
       "CNY": 299,
@@ -276,31 +418,77 @@
       "CNY": 399,
       "USD": 59
     },
-    "vo15_zh": [
-      {
-        "id": "yunhe_zh_15_hook",
-        "text": "云间一鹤，振翅而来。",
-        "voice": "zf_xiaoxiao",
-        "speed": 1,
-        "at": 0.4,
-        "max": 2.6
-      },
-      {
-        "id": "yunhe_zh_15_hero",
-        "text": "云鹤，桑蚕丝方巾。",
-        "voice": "zf_xiaoxiao",
-        "speed": 1,
-        "at": 7.6,
-        "max": 2.4
-      },
-      {
-        "id": "yunhe_zh_15_end_none",
-        "text": "锦时，把纹样戴在身上。",
-        "voice": "zf_xiaoxiao",
-        "speed": 1,
-        "at": 12.3,
-        "max": 2.3
-      }
-    ]
+    "tagline": {
+      "zh": "把纹样戴在身上",
+      "en": "Heritage you can wear"
+    },
+    "cta": {
+      "zh": "立即选购",
+      "en": "Shop now"
+    },
+    "vo": {
+      "15_zh_none": [
+        {
+          "id": "yunhe_zh_15_hook",
+          "text": "云间一鹤，振翅而来。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 0.4,
+          "max": 2.6
+        },
+        {
+          "id": "yunhe_zh_15_hero",
+          "text": "云鹤，桑蚕丝方巾。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 7.6,
+          "max": 2.4
+        },
+        {
+          "id": "yunhe_zh_15_end_none",
+          "text": "锦时，把纹样戴在身上。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 12.3,
+          "max": 2.3
+        }
+      ],
+      "15_en_launch": [
+        {
+          "id": "yunhe_en_15_hook",
+          "text": "A crane among the clouds, wings open.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 0.4,
+          "max": 2.6
+        },
+        {
+          "id": "yunhe_en_15_hero",
+          "text": "Cloud Crane, a mulberry silk square.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 7.6,
+          "max": 2.4
+        },
+        {
+          "id": "yunhe_en_15_end_launch",
+          "text": "New from Jinshi: Cloud Crane.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 12.3,
+          "max": 2.3
+        }
+      ],
+      "6_zh_1111": [
+        {
+          "id": "yunhe_zh_6_one_1111",
+          "text": "锦时云鹤，双十一到手二百九十九元。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 1.9,
+          "max": 3.4
+        }
+      ]
+    }
   }
 }
