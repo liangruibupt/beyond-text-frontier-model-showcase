@@ -1,0 +1,482 @@
+{
+  "beans_en_15_end_1111": {
+    "text": "New on Youji Live.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.224,
+    "lufs": -20
+  },
+  "beans_en_15_end_launch": {
+    "text": "New on Youji Live.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.224,
+    "lufs": -20
+  },
+  "beans_en_15_end_none": {
+    "text": "Youji Live, deals daily.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.536,
+    "lufs": -20
+  },
+  "beans_en_15_hook": {
+    "text": "Last deal of the night, everyone!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.728,
+    "lufs": -20
+  },
+  "beans_en_15_link": {
+    "text": "Link is live!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1.13,
+    "dur": 0.888,
+    "lufs": -20
+  },
+  "beans_en_15_price": {
+    "text": "Geisha beans, just nineteen dollars!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.184,
+    "lufs": -20
+  },
+  "beans_en_15_stock": {
+    "text": "Almost sold out!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.08,
+    "lufs": -20
+  },
+  "beans_en_6_one_1111": {
+    "text": "Geisha beans, Double Eleven, just nineteen dollars!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.096,
+    "lufs": -20
+  },
+  "beans_en_6_one_launch": {
+    "text": "Geisha beans, Double Eleven, just nineteen dollars!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.096,
+    "lufs": -20
+  },
+  "beans_en_6_one_none": {
+    "text": "Geisha beans, Double Eleven, just nineteen dollars!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.096,
+    "lufs": -20
+  },
+  "beans_zh_15_end_1111": {
+    "text": "有集直播，天天有好价。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1.05,
+    "dur": 1.992,
+    "lufs": -20
+  },
+  "beans_zh_15_end_launch": {
+    "text": "有集直播，天天有好价。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1.05,
+    "dur": 1.992,
+    "lufs": -20
+  },
+  "beans_zh_15_end_none": {
+    "text": "有集直播，天天有好价。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1.05,
+    "dur": 1.992,
+    "lufs": -20
+  },
+  "beans_zh_15_hook": {
+    "text": "家人们，今晚最后一波福利！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.136,
+    "lufs": -20
+  },
+  "beans_zh_15_link": {
+    "text": "上链接！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1.07,
+    "dur": 0.864,
+    "lufs": -20
+  },
+  "beans_zh_15_price": {
+    "text": "瑰夏咖啡豆，秒杀一百二十九！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.472,
+    "lufs": -20
+  },
+  "beans_zh_15_stock": {
+    "text": "只剩最后几件了！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.536,
+    "lufs": -20
+  },
+  "beans_zh_6_one_1111": {
+    "text": "瑰夏咖啡豆双十一，到手一百二十九！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.952,
+    "lufs": -20
+  },
+  "beans_zh_6_one_launch": {
+    "text": "瑰夏咖啡豆双十一，到手一百二十九！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.952,
+    "lufs": -20
+  },
+  "beans_zh_6_one_none": {
+    "text": "瑰夏咖啡豆双十一，到手一百二十九！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.952,
+    "lufs": -20
+  },
+  "headset_en_15_end_1111": {
+    "text": "New on Youji Live.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.224,
+    "lufs": -20
+  },
+  "headset_en_15_end_launch": {
+    "text": "New on Youji Live.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.224,
+    "lufs": -20
+  },
+  "headset_en_15_end_none": {
+    "text": "Youji Live, deals daily.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.536,
+    "lufs": -20
+  },
+  "headset_en_15_hook": {
+    "text": "Last deal of the night, everyone!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.728,
+    "lufs": -20
+  },
+  "headset_en_15_link": {
+    "text": "Link is live!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1.13,
+    "dur": 0.888,
+    "lufs": -20
+  },
+  "headset_en_15_price": {
+    "text": "headset, just fifty-five dollars!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.944,
+    "lufs": -20
+  },
+  "headset_en_15_stock": {
+    "text": "Almost sold out!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.08,
+    "lufs": -20
+  },
+  "headset_en_6_one_1111": {
+    "text": "headset, Double Eleven, just fifty-five dollars!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.904,
+    "lufs": -20
+  },
+  "headset_en_6_one_launch": {
+    "text": "headset, Double Eleven, just fifty-five dollars!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.904,
+    "lufs": -20
+  },
+  "headset_en_6_one_none": {
+    "text": "headset, Double Eleven, just fifty-five dollars!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.904,
+    "lufs": -20
+  },
+  "headset_zh_15_end_1111": {
+    "text": "有集直播，天天有好价。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1.05,
+    "dur": 1.992,
+    "lufs": -20
+  },
+  "headset_zh_15_end_launch": {
+    "text": "有集直播，天天有好价。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1.05,
+    "dur": 1.992,
+    "lufs": -20
+  },
+  "headset_zh_15_end_none": {
+    "text": "有集直播，天天有好价。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1.05,
+    "dur": 1.992,
+    "lufs": -20
+  },
+  "headset_zh_15_hook": {
+    "text": "家人们，今晚最后一波福利！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.136,
+    "lufs": -20
+  },
+  "headset_zh_15_link": {
+    "text": "上链接！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1.07,
+    "dur": 0.864,
+    "lufs": -20
+  },
+  "headset_zh_15_price": {
+    "text": "耳机，秒杀三百五十九！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.752,
+    "lufs": -20
+  },
+  "headset_zh_15_stock": {
+    "text": "只剩最后几件了！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.536,
+    "lufs": -20
+  },
+  "headset_zh_6_one_1111": {
+    "text": "耳机双十一，到手三百五十九！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.328,
+    "lufs": -20
+  },
+  "headset_zh_6_one_launch": {
+    "text": "耳机双十一，到手三百五十九！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.328,
+    "lufs": -20
+  },
+  "headset_zh_6_one_none": {
+    "text": "耳机双十一，到手三百五十九！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.328,
+    "lufs": -20
+  },
+  "lantern_en_15_end_1111": {
+    "text": "New on Youji Live.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.224,
+    "lufs": -20
+  },
+  "lantern_en_15_end_launch": {
+    "text": "New on Youji Live.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.224,
+    "lufs": -20
+  },
+  "lantern_en_15_end_none": {
+    "text": "Youji Live, deals daily.",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.536,
+    "lufs": -20
+  },
+  "lantern_en_15_hook": {
+    "text": "Last deal of the night, everyone!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.728,
+    "lufs": -20
+  },
+  "lantern_en_15_link": {
+    "text": "Link is live!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1.13,
+    "dur": 0.888,
+    "lufs": -20
+  },
+  "lantern_en_15_price": {
+    "text": "lantern, just nineteen dollars!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.872,
+    "lufs": -20
+  },
+  "lantern_en_15_stock": {
+    "text": "Almost sold out!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.08,
+    "lufs": -20
+  },
+  "lantern_en_6_one_1111": {
+    "text": "lantern, Double Eleven, just nineteen dollars!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.784,
+    "lufs": -20
+  },
+  "lantern_en_6_one_launch": {
+    "text": "lantern, Double Eleven, just nineteen dollars!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.784,
+    "lufs": -20
+  },
+  "lantern_en_6_one_none": {
+    "text": "lantern, Double Eleven, just nineteen dollars!",
+    "voice": "af_heart",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.784,
+    "lufs": -20
+  },
+  "lantern_zh_15_end_1111": {
+    "text": "有集直播，天天有好价。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1.05,
+    "dur": 1.992,
+    "lufs": -20
+  },
+  "lantern_zh_15_end_launch": {
+    "text": "有集直播，天天有好价。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1.05,
+    "dur": 1.992,
+    "lufs": -20
+  },
+  "lantern_zh_15_end_none": {
+    "text": "有集直播，天天有好价。",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1.05,
+    "dur": 1.992,
+    "lufs": -20
+  },
+  "lantern_zh_15_hook": {
+    "text": "家人们，今晚最后一波福利！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.136,
+    "lufs": -20
+  },
+  "lantern_zh_15_link": {
+    "text": "上链接！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1.07,
+    "dur": 0.864,
+    "lufs": -20
+  },
+  "lantern_zh_15_price": {
+    "text": "营地灯，秒杀一百二十九！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.04,
+    "lufs": -20
+  },
+  "lantern_zh_15_stock": {
+    "text": "只剩最后几件了！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.536,
+    "lufs": -20
+  },
+  "lantern_zh_6_one_1111": {
+    "text": "营地灯双十一，到手一百二十九！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.568,
+    "lufs": -20
+  },
+  "lantern_zh_6_one_launch": {
+    "text": "营地灯双十一，到手一百二十九！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.568,
+    "lufs": -20
+  },
+  "lantern_zh_6_one_none": {
+    "text": "营地灯双十一，到手一百二十九！",
+    "voice": "zf_xiaoyi",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.568,
+    "lufs": -20
+  }
+}
