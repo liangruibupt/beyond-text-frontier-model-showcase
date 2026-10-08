@@ -12,11 +12,27 @@ export const FONTS = {
 };
 
 export const T = {
-  zh: { brand: '有集', live: '有集直播', liveTag: 'LIVE', tagline: '有集直播，天天有好价', cta: '立即抢', deal: '直播间秒杀价', was: '日常价', link: '上链接！', soldout: '已抢光', couponed: '已领券', only: n => `仅剩 ${n} 件`, viewers: '在线', currency: 'CNY' },
-  en: { brand: 'Youji', live: 'Youji Live', liveTag: 'LIVE', tagline: 'Youji Live. Great prices daily.', cta: 'Grab it', deal: 'Flash price', was: 'Was', link: 'Link is live!', soldout: 'SOLD OUT', couponed: 'Coupon got', only: n => `Only ${n} left`, viewers: 'watching', currency: 'USD' },
+  zh: { brand: '有集', live: '有集直播', liveTag: 'LIVE', tagline: '有集直播，天天有好价', cta: '立即抢', deal: '直播间秒杀价', cartDeal: '秒杀价', was: '日常价', link: '上链接！', soldout: '已抢光', couponed: '已领券', only: n => `仅剩 ${n} 件`, viewers: '在线', currency: 'CNY' },
+  en: { brand: 'Youji', live: 'Youji Live', liveTag: 'LIVE', tagline: 'Youji Live, deals daily.', cta: 'Grab it', deal: 'Flash price', cartDeal: 'Flash', was: 'Was', link: 'Link is live!', soldout: 'SOLD OUT', couponed: 'Coupon got', only: n => `Only ${n} left`, viewers: 'watching', currency: 'USD' },
 };
 export const money = (n, lang) => (lang === 'zh' ? `¥${n}` : `$${n}`);
 export { sayNum };
+
+/** 在线人数展示：中文 12.8万人在看 / 英文 128K watching（取 chrome 组件给的整数，确定） */
+export function viewersText(n, lang) {
+  if (lang === 'zh') return `${(n / 10000).toFixed(1)}万人在看`;
+  return `${(n / 1000).toFixed(0)}K watching`;
+}
+
+/** overlay 要画的全部短文案（随变体），一次性打包：overlay.draw(state, txt) 用 */
+export function overlayText(v, viewers) {
+  const it = ITEMS[v.item], L = v.lang, Tl = T[L], cur = Tl.currency;
+  return {
+    lang: L, live: Tl.live, viewers: viewersText(viewers, L), link: Tl.link,
+    name: it.name[L], deal: Tl.cartDeal, priceStr: money(it.deal[cur], L), was: Tl.was, wasStr: money(it.price[cur], L), cta: Tl.cta,
+    only: Tl.only(0), onlyFn: Tl.only, soldout: Tl.soldout, couponed: Tl.couponed,
+  };
+}
 
 // ── 弹幕（手写的虚构评论，每条 4–10 个字，不用真实昵称、不用 emoji）──
 // §E：弹幕是手写虚构评论。两种语言各一组，chrome/danmaku 组件按 rng 排车道与出现时间。

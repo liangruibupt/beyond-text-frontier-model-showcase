@@ -15,7 +15,7 @@ const TURN_HZ = 0.12;   // 转台每秒转的圈数（慢转，像带货展示�
 const glow = (c, k = 1) => new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: k, roughness: 0.5, toneMapped: false });
 
 export function build(ctx, item) {
-  const { THREE: T3 = THREE, scene, renderer } = ctx;
+  const { scene, renderer } = ctx;
   const tint = item.sceneTint ?? '#20202a';
   scene.background = new THREE.Color(tint).multiplyScalar(0.5);
 
@@ -68,24 +68,41 @@ export function build(ctx, item) {
     bokeh.add(d);
   }
 
-  // ── 「有集直播」霓虹招牌：背景墙上的发光字牌（用发光板拼一个简化招牌 + 橙色外框） ──
-  const sign = new THREE.Group(); sign.position.set(0.0, 1.25, -1.55); root.add(sign);
-  const signBoard = new THREE.Mesh(new RoundedBoxGeometry(1.1, 0.34, 0.04, 3, 0.04), glow('#1a1420', 0.2));
+  // ── 「有集直播」霓虹招牌：背景墙上的发光字牌。有 document 时用 CanvasTexture 画出字，读得出是招牌；
+  //     Node 测试没有 canvas 时退回一块纯发光板（不报错）。 ──
+  const sign = new THREE.Group(); sign.position.set(0.0, 1.3, -1.5); root.add(sign);
+  let signTex = null;
+  if (HAS_DOC) {
+    const scv = document.createElement('canvas'); scv.width = 512; scv.height = 160;
+    const sg = scv.getContext('2d');
+    sg.fillStyle = '#140f1a'; sg.fillRect(0, 0, 512, 160);
+    sg.font = '900 96px "Noto Sans SC", sans-serif'; sg.textAlign = 'center'; sg.textBaseline = 'middle';
+    sg.shadowColor = ORANGE; sg.shadowBlur = 28; sg.fillStyle = '#ffd9a0'; sg.fillText('有集直播', 256, 84);
+    sg.shadowBlur = 0; sg.strokeStyle = ORANGE; sg.lineWidth = 4; sg.strokeText('有集直播', 256, 84);
+    signTex = new THREE.CanvasTexture(scv); signTex.colorSpace = THREE.SRGBColorSpace;
+  }
+  const signMat = signTex
+    ? new THREE.MeshBasicMaterial({ map: signTex, toneMapped: false })
+    : glow(ORANGE, 1.2);
+  const signBoard = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 0.34), signMat);
   sign.add(signBoard);
-  const neon = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.01, 8, 48).rotateX(0), glow(ORANGE, 2.0));
-  neon.scale.set(1, 0.3, 1); sign.add(neon);
-  const dot = new THREE.Mesh(new THREE.CircleGeometry(0.05, 20), glow(item.accent, 2.2)); dot.position.set(-0.42, 0, 0.03); sign.add(dot);
+  // 招牌外框光管
+  const frame = new THREE.Mesh(new RoundedBoxGeometry(1.18, 0.42, 0.03, 2, 0.02), glow(item.accent, 1.6));
+  frame.position.z = -0.03; sign.add(frame);
 
   const subjectBox = new THREE.Box3(new THREE.Vector3(-0.35, 0, -0.35), new THREE.Vector3(0.35, 0.6, 0.35));
+  const subjectCenter = new THREE.Vector3(0, 0.3, 0);
 
   const api = {
-    root, turntable, product, subjectBox,
-    post: { aperture: 1.6, maxBlur: 0.016, focus: 'target', bloom: { strength: 0.4, radius: 0.6, threshold: 0.7 }, vignette: 0.3, grain: 0.03 },
+    root, turntable, product, subjectBox, subjectCenter,
+    // 泛光阈值抬到 0.9：toneMapped:false 的高强度自发光（灯斑、招牌）仍然炸开发光，而 overlay 的 UI 白字（toneMapped 后≈0.8）不被泛光糊成白团
+    post: { aperture: 1.3, maxBlur: 0.014, focus: 'target', bloom: { strength: 0.5, radius: 0.6, threshold: 0.9 }, vignette: 0.3, grain: 0.03 },
     reset() { turntable.rotation.y = 0; },
     update(t) { turntable.rotation.y = t * TURN_HZ * Math.PI * 2; },
     dispose() {
       scene.remove(root, key, fill, rim);
       root.traverse(o => { o.geometry?.dispose?.(); if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.dispose?.()); });
+      signTex?.dispose?.();
       if (scene.environment) { scene.environment.dispose?.(); scene.environment = null; }
     },
   };
