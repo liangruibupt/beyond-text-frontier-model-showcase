@@ -14,6 +14,7 @@
 """
 import hashlib, json, os, shutil, subprocess, sys, tempfile
 from PIL import Image, ImageDraw, ImageFont
+import sfx as SFX
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -25,6 +26,23 @@ FPS = 24
 CJK = "/usr/share/fonts/opentype/noto/NotoSerifCJK-Bold.ttc"
 CAPS = json.load(open(os.path.join(HERE, "captions.json")))
 BOARDS = json.load(open(os.path.join(HERE, "boards.json")))
+
+# ASMR 拟音时刻表：shot id -> [(sfx 名, 相对该镜头起点的秒, 增益)]
+# 两款共享结构：tape 划胶带→撕裂音；flaps 开盖→纸响；tissue 拨膜→窸窣；rise 升起→气流+叮；hero 定格→低频垫底
+SFX_MAP = {
+    "lap_tape": [("tape", 0.4, 0.55)], "drn_tape": [("tape", 0.4, 0.55)],
+    "lap_flaps": [("crinkle", 0.3, 0.4), ("tape", 0.0, 0.3)], "drn_flaps": [("crinkle", 0.3, 0.4)],
+    "lap_tissue": [("crinkle", 0.2, 0.5)], "drn_tissue": [("crinkle", 0.2, 0.45)],
+    "lap_rise": [("whoosh", 0.3, 0.5), ("chime", 1.6, 0.4)], "drn_rise": [("whoosh", 0.3, 0.5), ("chime", 1.6, 0.4)],
+    "lap_hero": [("hum", 0.0, 0.35)], "drn_hero": [("hum", 0.0, 0.35)],
+}
+SFX_CACHE = os.path.join(HERE, "sfx_cache"); os.makedirs(SFX_CACHE, exist_ok=True)
+def sfx_wav(name):
+    """合成一次缓存复用，返回 wav 路径。"""
+    p = os.path.join(SFX_CACHE, f"sfx_{name}.wav")
+    if not os.path.exists(p):
+        SFX.render(name, p)
+    return p
 
 VO_VOICE = {"zh": "zf_xiaoxiao", "en": "bf_emma"}   # lambda 实际支持（tts.sh 注释漏列 zf_/bf_）
 TTS_SH = "/home/ubuntu/workplace/aws-is-how/ai-ml/aigc/audio_models/Kokoro/tts.sh"
@@ -142,24 +160,33 @@ def tts_line(text, voice, out):
     shutil.copy(cached, out); return out
 
 
-def mix_vo(video, scarf, vo_key, lang, tmp):
+def mix_audio(video, scarf, vo_key, lang, sfx_events, tmp):
+    """把 Kokoro 旁白 + ASMR 拟音一起按时间点 adelay 混进视频音轨。"""
     vo = CAPS[scarf]["vo"].get(vo_key, [])
-    if not vo:
-        return video, False
-    inputs, labels, n = [], [], 0
+    inputs, parts, n = [], [], 0
+    # 1) 旁白
     for ln in vo:
         mp3 = tts_line(ln["text"], VO_VOICE[lang], os.path.join(tmp, f"vo{n}.mp3"))
         if not mp3:
             continue
-        inputs += ["-i", mp3]; labels.append(int(float(ln["at"]) * 1000)); n += 1
+        ms = int(float(ln["at"]) * 1000)
+        inputs += ["-i", mp3]; parts.append((n, ms, 1.0)); n += 1
+    has_vo = any(True for _ in parts)
+    # 2) ASMR 拟音
+    for at, name, gain in sfx_events:
+        wav = sfx_wav(name)
+        ms = max(0, int(at * 1000))
+        inputs += ["-i", wav]; parts.append((n, ms, gain)); n += 1
     if n == 0:
         return video, False
-    fc = "".join(f"[{i+1}:a]adelay={ms}|{ms}[a{i}];" for i, ms in enumerate(labels))
-    fc += "".join(f"[a{i}]" for i in range(n)) + f"amix=inputs={n}:normalize=0,alimiter=limit=0.9[aout]"
+    fc = ""
+    for idx, ms, gain in parts:
+        fc += f"[{idx+1}:a]adelay={ms}|{ms},volume={gain:.2f}[a{idx}];"
+    fc += "".join(f"[a{idx}]" for idx, _, _ in parts) + f"amix=inputs={n}:normalize=0,alimiter=limit=0.9[aout]"
     out = os.path.join(tmp, "wv.mp4")
     sh([FF, "-y", "-i", video, *inputs, "-filter_complex", fc, "-map", "0:v", "-map", "[aout]",
         "-c:v", "copy", "-c:a", "aac", "-shortest", out])
-    return out, True
+    return out, has_vo
 
 
 def build(scarf, group_key, tmp):
@@ -174,6 +201,19 @@ def build(scarf, group_key, tmp):
         else:
             parts.append(prep_shot(e["shot"], e["dur"], e.get("from", 0.0), scarf, lang, V, tmp, i)); durs.append(e["dur"])
     trans = [e.get("transition") for e in shots]
+    # 每镜头在成片里的绝对起点（减去前面 xfade 的重叠量），用于摆 SFX
+    starts, acc = [], 0.0
+    for i, e in enumerate(shots):
+        t = trans[i] or {}
+        xd = float(t.get("dur", 0)) if t.get("type") in ("dissolve", "flash") else 0.0
+        xd = min(xd, durs[i - 1] - 0.1, durs[i] - 0.1) if (i > 0 and xd > 0) else 0.0
+        if i > 0:
+            acc += durs[i - 1] - xd
+        starts.append(acc)
+    sfx_events = []
+    for i, e in enumerate(shots):
+        for name, off, gain in SFX_MAP.get(e["shot"], []):
+            sfx_events.append((starts[i] + off, name, gain))
     cur, cur_dur = parts[0], durs[0]
     for i in range(1, len(parts)):
         t = trans[i] or {}
@@ -189,12 +229,12 @@ def build(scarf, group_key, tmp):
                 f"[0][1]xfade=transition={mode}:duration={xd:.3f}:offset={cur_dur-xd:.3f},format=yuv420p[v]",
                 "-map", "[v]", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-r", str(FPS), nxt]); cur_dur += durs[i] - xd
         cur = nxt
-    voiced, has = mix_vo(cur, scarf, group_key, lang, tmp)
+    voiced, has = mix_audio(cur, scarf, group_key, lang, sfx_events, tmp)
     promo_tag = "" if promo == "none" else f"_{promo}"
     name = f"kaiwu_{scarf}_{cut}s_{V['ar']}_{lang}{promo_tag}.mp4"
     final = os.path.join(OUT, name)
     sh([FF, "-y", "-i", voiced, "-c", "copy", "-movflags", "+faststart", final])
-    print(f"OK {name} (~{cur_dur:.1f}s vo={'y' if has else 'n'})", flush=True)
+    print(f"OK {name} (~{cur_dur:.1f}s vo={'y' if has else 'n'} sfx={len(sfx_events)})", flush=True)
     return final
 
 

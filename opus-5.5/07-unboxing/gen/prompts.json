@@ -1,26 +1,26 @@
 {
-  "_note": "07 开箱 ASMR 方式二 per-shot 文生视频提示词。shot id 见 meta.js BOARDS。品牌「开物 KAIWU」(虚构)。两款 item: laptop(银色全金属超薄本,牛皮纸箱白内衬,冷白顶光) / drone(折叠四轴无人机,黑色硬壳箱泡棉切槽,科技蓝顶光)。photoreal real footage, 微距浅景深, 影棚光, 无文字无水印(字幕/logo 后期叠)。end 片尾卡后期生成不在此。",
-  "_defaults": { "width": 704, "height": 480, "num_frames": 73, "fps": 24, "num_inference_steps": 24, "guidance_scale": 3.0, "negative_prompt": "worst quality, inconsistent motion, blurry, jittery, distorted, deformed, text, caption, subtitles, watermark, logo, hands deformed, extra fingers, low resolution, oversaturated" },
+  "_note": "07 开箱 ASMR 方式二 per-shot 文生视频提示词。shot id 见 meta.js BOARDS。品牌「开物 KAIWU」(虚构)。两款 item: laptop(苹果风银色阳极氧化一体成型超薄本,纯白极简包装无牛皮纸,明亮柔光;Apple-style 审美但虚构品牌无真logo) / drone(折叠四轴无人机,黑色硬壳箱泡棉切槽,科技蓝顶光)。photoreal real footage, 微距浅景深, 影棚光, 无文字无水印(字幕/logo 后期叠)。end 片尾卡后期生成不在此。",
+  "_defaults": { "width": 704, "height": 480, "num_frames": 73, "fps": 24, "num_inference_steps": 24, "guidance_scale": 3.0, "negative_prompt": "worst quality, inconsistent motion, blurry, jittery, distorted, deformed, text, caption, subtitles, watermark, logo, hands deformed, extra fingers, low resolution, oversaturated, cheap packaging, rough cardboard, kraft brown box, wrinkled, crumpled, dirty, scuffed, uneven surface, amateur, plastic toy look, cluttered" },
   "shots": {
     "lap_tape": {
       "item": "laptop",
-      "prompt": "Extreme macro of a utility knife blade slowly slicing through the packing tape along the seam of a kraft cardboard box, tape fibers splitting and peeling, blade glinting, warm softbox studio light, shallow depth of field, cinematic slow push-in, photoreal, high detail, real footage"
+      "prompt": "Extreme macro, a fingertip slowly peeling the thin plastic pull-tab seal around the lid of a pristine pure-white premium product box, flawless smooth matte finish, crisp razor-sharp edges, immaculate seamless cardboard, the lid breaking its vacuum seal, bright even soft studio lighting, luxury Apple-grade minimalist packaging, product photography, extremely clean, high-end, shallow depth of field, cinematic slow push-in, photoreal, ultra detailed, 4k, real footage"
     },
     "lap_flaps": {
       "item": "laptop",
-      "prompt": "Top-down view of a kraft cardboard box's four flaps slowly swinging open to reveal clean white tissue paper lining inside, soft folds, gentle motion, warm diffused studio light, premium unboxing, cinematic slow reveal, photoreal, high detail, real footage"
+      "prompt": "Top-down, the lid of a pristine pure-white premium product box slowly lifting straight up in one smooth motion, revealing a slim silver aluminium laptop seated perfectly in flawless white moulded packaging, immaculate matte-white surfaces, crisp precise edges, luxury Apple-grade minimalist presentation, bright even soft studio lighting, extremely clean and high-end, cinematic slow reveal, photoreal, ultra detailed, 4k, real footage"
     },
     "lap_tissue": {
       "item": "laptop",
-      "prompt": "Macro of fingers gently parting crinkling white tissue paper inside a box, the silver brushed-metal edge of a slim laptop emerging underneath, shallow depth of field, soft light, delicate tactile motion, cinematic, photoreal, high detail, real footage"
+      "prompt": "Macro, fingers slowly peeling a translucent protective film off the brushed-silver aluminium lid of a slim laptop resting in a pristine pure-white box, the film catching the light, flawless matte-white packaging around it, immaculate precise craftsmanship, luxury Apple-grade minimalist aesthetic, bright even soft studio lighting, extremely clean, delicate tactile motion, shallow depth of field, cinematic, photoreal, ultra detailed, 4k, real footage"
     },
     "lap_rise": {
       "item": "laptop",
-      "prompt": "A slim silver all-metal unibody laptop rising and slowly rotating out of its box into a beam of cool white top light, fine dust motes drifting in the light shaft, premium product reveal, dark clean background, cinematic slow motion, photoreal, high detail, real footage"
+      "prompt": "A slim silver anodized-aluminium unibody ultrabook laptop rising and slowly rotating out of its clean white minimalist box into a beam of cool white top light, fine dust motes drifting in the light shaft, premium product reveal, clean light background, Apple-style industrial design aesthetic, cinematic slow motion, photoreal, high detail, real footage"
     },
     "lap_hero": {
       "item": "laptop",
-      "prompt": "Hero product shot of a slim silver all-metal ultrabook laptop floating centered in a beam of cool studio light, brushed aluminium highlights sweeping across the lid, clean dark seamless background, slow cinematic push-in, luxurious, photoreal, high detail, real footage"
+      "prompt": "Hero product shot of a slim silver anodized-aluminium ultrabook laptop floating centered in a beam of cool studio light, seamless brushed-metal unibody, highlights sweeping across the closed lid, clean bright minimalist background, Apple-style industrial design aesthetic, slow cinematic push-in, luxurious, photoreal, high detail, real footage"
     },
     "drn_tape": {
       "item": "drone",
