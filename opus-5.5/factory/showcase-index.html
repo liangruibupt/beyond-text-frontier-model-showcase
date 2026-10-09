@@ -49,16 +49,25 @@
     { n: '13', name: '纽约地铁 · 百年沙画', kind: '沙画解说', film: null, desc: '金色沙粒逐笔画出纽约地铁百年史，12 幕换幕用流沙吹散堆成下一幕。' },
   ];
   const grid = document.getElementById('grid');
-  // 实际有画廊的场景（已上传成片）；其余 film 卡片标「成片待上传」
-  const READY = new Set(['06-silk-scarf', '07-unboxing']);
+  // 有成片画廊的场景（成片已上传）
+  const GALLERY = new Set(['06-silk-scarf', '07-unboxing']);
+  // 有可访问网页的场景（index.html 已上传）—— 07 是纯成片无网页
+  const WEB = new Set(['01-lantingxu','02-devastator','03-perfume','04-year-review','05-bubble-tea',
+    '06-silk-scarf','08-parcel-journey','09-singles-day','10-live-flash-sale','11-liquid-glass',
+    '12-pop-cats','13-nyc-subway-sandart']);
   for (const c of CASES) {
-    const ready = c.film && READY.has(c.film);
+    const slug = c.film || c.n; // 网页案例用目录名；01/02/12/13 的 film 为 null，用其目录 slug
+    const dir = ({ '01':'01-lantingxu','02':'02-devastator','12':'12-pop-cats','13':'13-nyc-subway-sandart' })[c.n] || c.film;
+    const hasGallery = c.film && GALLERY.has(c.film);
+    const hasWeb = dir && WEB.has(dir);
+    const href = hasGallery ? `factory/gallery.html?film=${c.film}` : (hasWeb ? `${dir}/index.html` : '#');
+    const badge = hasGallery ? '进入画廊 →' : (hasWeb ? '打开网页 →' : '待上传');
     const a = document.createElement('a');
-    a.className = 'card' + (ready ? '' : ' soon');
-    a.href = ready ? `factory/gallery.html?film=${c.film}` : '#';
+    a.className = 'card' + ((hasGallery || hasWeb) ? '' : ' soon');
+    a.href = href;
     a.innerHTML = `<div class="num">${c.n}</div><div class="name">${c.name}</div>`
       + `<span class="kind">${c.kind}</span><div class="desc">${c.desc}</div>`
-      + `<span class="badge">${ready ? '进入画廊 →' : (c.film ? '成片待上传' : '网页场景')}</span>`;
+      + `<span class="badge">${badge}</span>`;
     grid.append(a);
   }
 </script>
