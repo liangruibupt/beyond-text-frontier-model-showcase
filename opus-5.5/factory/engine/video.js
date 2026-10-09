@@ -51,6 +51,7 @@ export function createVideoBackground({ baseUrl, keys }) {
   scene.add(quad);
 
   const clips = new Map();   // key -> { manifest, imgs: Image[], cur: number }
+  let shownKey = null, shownIdx = -1;   // 共用纹理里当前是哪个片段的哪一帧
 
   async function loadImage(url) {
     const img = new Image();
@@ -80,13 +81,15 @@ export function createVideoBackground({ baseUrl, keys }) {
       const c = clips.get(key);
       if (!c) throw new Error(`video: clip ${key} not loaded (have: ${[...clips.keys()].join(', ') || 'none'})`);
       const idx = pickFrame(lt, c.manifest);
-      if (idx !== c.cur) {
+      // 纹理是所有片段共用的一张：「上次上传的是哪一帧」必须按 (片段, 帧) 记，不能按片段各记一份——
+      // 否则叠化时两个镜头交替绘制，停在同一帧的那一方会被误判为「无需更新」而画出另一方的画面
+      if (key !== shownKey || idx !== shownIdx) {
         const img = c.imgs[idx];
         if (canvas) {
           if (canvas.width !== img.naturalWidth || canvas.height !== img.naturalHeight) { canvas.width = img.naturalWidth; canvas.height = img.naturalHeight; }
           g2d.drawImage(img, 0, 0);
         }
-        tex.needsUpdate = true; c.cur = idx;
+        tex.needsUpdate = true; shownKey = key; shownIdx = idx; c.cur = idx;
       }
       const prevTarget = renderer.getRenderTarget();
       renderer.setRenderTarget(target);

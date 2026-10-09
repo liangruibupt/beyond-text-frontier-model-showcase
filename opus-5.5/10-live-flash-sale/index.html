@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>有集直播 · 直播间秒杀 · 视频工厂</title>
+  <meta name="description" content="一套可复用的直播带货图形组件：3-2-1 上链接、红包雨、库存清空到已抢光、弹幕滚动、购物车弹窗；覆盖三件商品、中英文、15 / 6 秒和促销版本。" />
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5/500.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5/900.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/fredoka@5/500.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/fredoka@5/700.css" />
+  <link rel="stylesheet" href="../factory/engine/player.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <main id="stage" aria-label="有集直播间秒杀预览"></main>
+  <script type="module">
+    import { boot } from '../factory/engine/app.js';
+    import film from './film.js';
+    boot(film);
+  </script>
+</body>
+</html>

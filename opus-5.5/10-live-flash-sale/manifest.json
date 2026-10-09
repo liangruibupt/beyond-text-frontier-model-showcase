@@ -1,0 +1,5 @@
+{ "jobs": [
+  { "item": ["lantern-ai", "headset-ai", "beans-ai"], "ar": ["16x9"], "lang": ["zh"], "cut": [15], "promo": ["none"]   },
+  { "item": ["lantern-ai", "headset-ai", "beans-ai"], "ar": ["16x9"], "lang": ["en"], "cut": [15], "promo": ["launch"] },
+  { "item": ["lantern-ai", "headset-ai", "beans-ai"], "ar": ["1x1"],  "lang": ["zh"], "cut": [6],  "promo": ["1111"]   }
+] }

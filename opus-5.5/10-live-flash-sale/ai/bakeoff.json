@@ -1,0 +1,16 @@
+{
+  "note": "10 直播间秒杀 整片 AI 变体的三模型对比配置（stage A）。同一组镜头、同一取景、同一种子，分别交给 LTX-2.5 / Wan 2.2 / MiniMax H3 生成，比速度、显存、成本和画质。镜头提示词取自 ./shots.json 的 lantern，只做 16:9（1280x704）两镜：room（主播挥手、商品在桌上）和 cart（主播把营地灯举近镜头）。画面里不要文字/logo/UI；上方 40% 留白给弹幕。",
+  "item": "lantern",
+  "ar": "16x9",
+  "size": { "width": 1280, "height": 704 },
+  "fps": 24,
+  "seed": 1111,
+  "shots": ["room", "cart"],
+  "frame_grids": {
+    "note": "每个模型按自身的时间网格取帧，但都约 3.0 秒（镜头 2.5s + 0.5s handle）。LTX 用 8k+1（73 帧）；Wan 2.2 的 VAE 时间下采样 4，用 4k+1（73 帧也合法，官方示例 121=4*30+1）；MiniMax H3 按 ComfyUI 节点的 length（取 73，约 3 秒）。",
+    "ltx": 73,
+    "wan": 73,
+    "minimax": 73
+  },
+  "negative": "text, letters, words, numbers, logo, watermark, subtitles, caption, UI, user interface, overlay, cartoon, anime, 3d render, CGI, low poly, plastic look, video game, uncanny face, deformed face, extra fingers, deformed hands, hands covering lens, oversaturated, blurry, jpeg artifacts, flicker, duplicated person, warped product"
+}
