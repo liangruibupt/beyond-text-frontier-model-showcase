@@ -44,23 +44,23 @@ export const SHOTS = {
     ctx.subjects.screen.draw(s.lt + 2.25, { nodeLit: lit, density, hubPulse: 0 });
     return { camera: cam(ctx, { scale: 1.02 - 0.02 * s.u }), text: text(ctx, s), post: { bloom: 0.4 } };
   },
-  // 3 弧线：密度升到峰值，仓库到达脉冲，轻微环绕
+  // 3 弧线：密度升到峰值，仓库到达脉冲，轻微环绕；节点略压暗让弧线突出
   arcs(ctx, s) {
-    const density = 0.4 + 0.6 * easeInOut(ss(0, 1.0, s.lt));       // 分批升到峰值（6.0 落拍）
+    const density = 0.5 + 0.5 * easeInOut(ss(0, 1.0, s.lt));       // 分批升到峰值（6.0 落拍）
     const hubPulse = Math.max(0, Math.sin((s.lt - 0.0) * 4)) * ss(0.4, 0.6, (s.lt % 1.5) / 1.5);
-    ctx.subjects.screen.draw(s.lt + 5.25, { nodeLit: 1, density, hubPulse });
+    ctx.subjects.screen.draw(s.lt + 5.25, { nodeLit: 1, density, hubPulse, dim: 0.6 });
     const yaw = Math.sin(s.u * Math.PI) * 0.12;
     return { camera: cam(ctx, { dir: [yaw, 0.04, 1], scale: 1.0 + 0.06 * s.u }), text: text(ctx, s), post: { bloom: 0.5 } };
   },
-  // 4 GMV：硬切到计数器主视角，背景弧线虚化流动
+  // 4 GMV：硬切到计数器主视角，背景大幅压暗、弧线虚化流动
   gmv(ctx, s) {
-    ctx.subjects.screen.draw(s.lt + 8.25, { nodeLit: 1, density: 0.5, hubPulse: 0 });
-    return { camera: cam(ctx, { scale: 0.92 }), text: [...text(ctx, s), gmvLayer(ctx, s)], post: { bloom: 0.35, vignette: 0.4 } };
+    ctx.subjects.screen.draw(s.lt + 8.25, { nodeLit: 1, density: 0.45, hubPulse: 0, dim: 0.32 });
+    return { camera: cam(ctx, { scale: 0.92 }), text: [...text(ctx, s), gmvLayer(ctx, s)], post: { bloom: 0.35, vignette: 0.5 } };
   },
-  // 5 里程碑爆屏：全亮背景闪 + 大字冲入
+  // 5 里程碑爆屏：全亮背景闪一下随即压暗，大字冲入
   milestone(ctx, s) {
-    const flash = 1 - clamp(s.lt / 0.6);
-    ctx.subjects.screen.draw(s.lt + 11.25, { nodeLit: 1 + flash, density: 1, hubPulse: flash });
+    const flash = 1 - clamp(s.lt / 0.5);
+    ctx.subjects.screen.draw(s.lt + 11.25, { nodeLit: 1 + flash, density: 1, hubPulse: flash, dim: 0.4 + 0.6 * flash });
     return { camera: cam(ctx, { scale: 1.0 }), text: text(ctx, s), post: { bloom: 0.6 + 0.4 * flash, exposure: 1.0 + 0.3 * flash } };
   },
   // 6 片尾：大屏收束成品牌卡，缓慢呼吸

@@ -31,19 +31,19 @@ export function buildScreen(THREE, theme) {
   const hubsN = centers ? centers.map((c) => ({ x: c.x, y: c.y })) : layoutHubs({ seed, nodes: nodesN, k: theme.hubs });
   const nodes = nodesN.map(toWorld).map((p, i) => ({ ...p, w: nodesN[i].w }));
   const hubs = hubsN.map(toWorld);
-  const sched = arcSchedule({ seed, nodeCount: nodes.length, hubCount: hubs.length, n: MAX_ARCS, t0: 0, t1: 3, reverse: theme.reverse });
+  const sched = arcSchedule({ seed, nodeCount: nodes.length, hubCount: hubs.length, n: MAX_ARCS, t0: 2.25, t1: 11.0, durMin: 0.8, durMax: 1.8, reverse: theme.reverse });
 
   // —— 背景大屏板 ——
   const bg = new THREE.Mesh(
-    new THREE.PlaneGeometry(AX * 2 + 0.3, 1.3),
+    new THREE.PlaneGeometry(AX * 2 + 0.02, 1.0),
     new THREE.MeshBasicMaterial({ color: new THREE.Color(theme.bg) }),
   );
   bg.position.z = -0.02;
   root.add(bg);
 
   // —— 节点（实例化小方块，加法混合辉光）——
-  const nodeGeo = new THREE.PlaneGeometry(0.008, 0.008);
-  const nodeMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(theme.node), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
+  const nodeGeo = new THREE.PlaneGeometry(0.006, 0.006);
+  const nodeMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(theme.node), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.55 });
   const nodeMesh = new THREE.InstancedMesh(nodeGeo, nodeMat, nodes.length);
   nodeMesh.instanceColor = null;
   root.add(nodeMesh);
@@ -57,12 +57,21 @@ export function buildScreen(THREE, theme) {
   const hubMesh = new THREE.InstancedMesh(hubGeo, hubMat, hubs.length);
   root.add(hubMesh);
 
-  // —— 弧线（实例化细长方块当线段：每条弧线 ARC_SEGS 段）——
-  const segGeo = new THREE.PlaneGeometry(1, 0.0016);
-  const segMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(theme.arc), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.6 });
+  // —— 弧线拖尾（实例化细长方块当线段：每条弧线 ARC_SEGS 段）——
+  const segGeo = new THREE.PlaneGeometry(1, 0.006);
+  const segMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(theme.arc), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.5 });
   const segMesh = new THREE.InstancedMesh(segGeo, segMat, MAX_ARCS * ARC_SEGS);
   segMesh.count = 0;
+  segMesh.frustumCulled = false;           // 动态实例，初始 count=0 会被空包围球裁掉，关闭视锥裁剪
   root.add(segMesh);
+
+  // —— 弧线彗头（每条活跃弧线一个明亮大点，飞行中的订单主体）——
+  const headGeo = new THREE.PlaneGeometry(0.014, 0.014);
+  const headMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(theme.arc), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.95 });
+  const headMesh = new THREE.InstancedMesh(headGeo, headMat, MAX_ARCS);
+  headMesh.count = 0;
+  headMesh.frustumCulled = false;          // 动态实例，初始 count=0 会被空包围球裁掉，关闭视锥裁剪
+  root.add(headMesh);
 
   const box = new THREE.Box3().setFromObject(bg);
   const _m = new THREE.Matrix4(), _q = new THREE.Quaternion(), _s = new THREE.Vector3(1, 1, 1), _p = new THREE.Vector3();
@@ -78,13 +87,13 @@ export function buildScreen(THREE, theme) {
   hubMesh.instanceMatrix.needsUpdate = true;
 
   // 节点亮度：ignite 相位按与仓库距离的波纹点亮；density = 当前允许的弧线密度 [0,1]
-  function draw(t, { nodeLit = 1, density = 1, hubPulse = 0 } = {}) {
-    // 节点逐实例缩放模拟点亮（波纹：近仓库先亮）
+  function draw(t, { nodeLit = 1, density = 1, hubPulse = 0, dim = 1 } = {}) {
+    // 节点逐实例缩放模拟点亮（波纹：近仓库先亮）；dim 整体压暗（文字镜头让背景退后）
     for (let i = 0; i < nodes.length; i++) {
       const litFront = nodeLit * (1 + 0.4);          // 波纹推进量
       const d = nodeDist[i] / maxDist;
       const on = ss(0, 0.25, litFront - d);
-      const sc = 0.5 + 1.5 * on * (0.7 + 0.3 * nodes[i].w);
+      const sc = (0.5 + 1.5 * on * (0.7 + 0.3 * nodes[i].w)) * dim;
       _p.set(nodes[i].x, nodes[i].y, 0); _s.set(sc, sc, 1); _m.compose(_p, _q, _s); nodeMesh.setMatrixAt(i, _m);
     }
     nodeMesh.instanceMatrix.needsUpdate = true;
@@ -99,7 +108,7 @@ export function buildScreen(THREE, theme) {
     // 活跃弧线：按 density 截断实例数（峰值密度分批升上来）
     const active = activeArcs(sched, t);
     const cap = Math.floor(MAX_ARCS * density);
-    let seg = 0;
+    let seg = 0, head = 0;
     for (const ai of active) {
       if (ai >= cap) continue;
       const a = sched.arcs[ai];
@@ -108,8 +117,11 @@ export function buildScreen(THREE, theme) {
       const P1 = a.fromHub ? nodes[a.to] : hubs[a.to];
       if (!P0 || !P1) continue;
       const u = progressAt(sched, ai, t);
-      // 画拖尾：从 max(0,u-tail) 到 u
-      const tail = 0.35;
+      // 彗头：弧线当前进度点，明亮大点（飞行中的订单主体）
+      const headPt = arcPath(P0, P1, u, a.lift, a.dir);
+      _p.set(headPt.x, headPt.y, 0.0008); _m.compose(_p, _q, _s); headMesh.setMatrixAt(head++, _m);
+      // 拖尾：从 max(0,u-tail) 到 u 的折线
+      const tail = 0.3;
       const u0 = Math.max(0, u - tail);
       let prev = arcPath(P0, P1, u0, a.lift, a.dir);
       for (let k = 1; k <= ARC_SEGS; k++) {
@@ -126,10 +138,12 @@ export function buildScreen(THREE, theme) {
         if (seg >= MAX_ARCS * ARC_SEGS) break;
       }
       _q.identity(); _s.set(1, 1, 1);
-      if (seg >= MAX_ARCS * ARC_SEGS) break;
+      if (seg >= MAX_ARCS * ARC_SEGS || head >= MAX_ARCS) break;
     }
     segMesh.count = seg;
     segMesh.instanceMatrix.needsUpdate = true;
+    headMesh.count = head;
+    headMesh.instanceMatrix.needsUpdate = true;
   }
 
   // GMV 计数器：t 的纯函数缓动（0 在 gmv 镜头起点，涨到 target）
