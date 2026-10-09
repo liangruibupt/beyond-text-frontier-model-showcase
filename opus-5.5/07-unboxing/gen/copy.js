@@ -1,7 +1,7 @@
 // copy.js — 07 文案：配音台词与时段（纯数据）。数字念成汉字/英文单词（Kokoro 读阿拉伯数字不稳）。
 import { ITEMS } from './items.js';
 
-export const VOICE = { zh: 'zf_xiaoxiao', en: 'bf_emma' };
+export const VOICE = { zh: 'zm_yunxi', en: 'bf_emma' };
 export const SPEED = { zh: 1, en: 1 };
 export const T = {
   zh: { tagline: '开物，为开启而生。', cta: '立即选购' },
