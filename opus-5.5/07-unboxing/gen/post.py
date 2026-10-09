@@ -44,7 +44,7 @@ def sfx_wav(name):
         SFX.render(name, p)
     return p
 
-VO_VOICE = {"zh": "zf_xiaoxiao", "en": "bf_emma"}   # lambda 实际支持（tts.sh 注释漏列 zf_/bf_）
+VO_VOICE = {"zh": "zm_yunxi", "en": "bf_emma"}   # zh 换 zm_yunxi（zf_xiaoxiao 听感不自然）
 TTS_SH = "/home/ubuntu/workplace/aws-is-how/ai-ml/aigc/audio_models/Kokoro/tts.sh"
 VO_CACHE = os.path.join(HERE, "vo_cache"); os.makedirs(VO_CACHE, exist_ok=True)
 

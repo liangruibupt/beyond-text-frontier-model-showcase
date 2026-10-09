@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Beyond Text · Claude Opus 5.5 · 视频 Demo 场景</title>
+<link rel="icon" href="data:," />
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0b0d10; color: #e8edf2; font: 15px/1.6 -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif; }
+  header { padding: 48px 24px 20px; max-width: 1200px; margin: 0 auto; }
+  h1 { margin: 0 0 6px; font-size: 26px; font-weight: 600; letter-spacing: 0.5px; }
+  header p { margin: 0; color: #9fb0c0; }
+  main { max-width: 1200px; margin: 0 auto; padding: 12px 24px 64px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  a.card { display: block; text-decoration: none; color: inherit; background: #141922; border: 1px solid #222b36; border-radius: 12px; padding: 18px 18px 16px; transition: border-color .15s, transform .15s, background .15s; position: relative; }
+  a.card:hover { border-color: #3a6ea5; background: #171d27; transform: translateY(-2px); }
+  a.card.soon { opacity: .62; pointer-events: none; }
+  .num { font-size: 12px; color: #6f8296; letter-spacing: 1px; }
+  .name { font-size: 17px; font-weight: 600; margin: 2px 0 4px; }
+  .kind { display: inline-block; font-size: 11px; color: #c9a24a; border: 1px solid #4a3f22; border-radius: 999px; padding: 1px 9px; margin-bottom: 8px; }
+  .desc { font-size: 13px; color: #a9b8c6; }
+  .badge { position: absolute; top: 14px; right: 14px; font-size: 11px; color: #6f8296; }
+  footer { max-width: 1200px; margin: 0 auto; padding: 0 24px 48px; color: #6f8296; font-size: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Beyond Text · Claude Opus 5.5</h1>
+  <p>视频 Demo 场景索引 — 点击任一场景进入成片画廊</p>
+</header>
+<main id="grid"></main>
+<footer>由 Claude Opus 5.5 构建。有画廊的场景展示批量出片的成片；其余场景的成片陆续上传中。</footer>
+<script>
+  // film: gallery 的 ?film 值（有成片才可点）；null = 暂无画廊（纯网页或成片未上传）
+  const CASES = [
+    { n: '01', name: '临《兰亭集序》', kind: '网页动画', film: null, desc: '一管毛笔逐笔临写全篇 324 字，写毕落款、钤印、展卷。' },
+    { n: '02', name: '大力神 · 挖地虎合体', kind: '实时 3D', film: null, desc: '六台工程车依次变形对接合成 G1 大力神；模型、材质、配乐全由代码生成。' },
+    { n: '03', name: '闻境 · 香水', kind: '商品视频工厂', film: '03-perfume', desc: '程序建模八角玻璃瓶，玻璃液体分层折射带焦散；四款香型各有场景和配乐。' },
+    { n: '04', name: '有集 · 年度购物报告', kind: '数据驱动盘点', film: '04-year-review', desc: '按订单数据生成年度盘点；数字由代码算出，旁白由模型按数据写成。' },
+    { n: '05', name: '啵茶 BOCHA · 奶茶', kind: '商品视频工厂', film: '05-bubble-tea', desc: '珍珠烘焙模拟落进薄壁杯，奶柱卷出大理石纹、冰块碰撞、吸管刺破封膜。' },
+    { n: '06', name: '锦时 JINSHI · 丝巾', kind: 'LTX 文生视频', film: '06-silk-scarf', desc: '四款方巾各一套分镜：敦煌飞天 / 宋锦织造 / 青花裹瓶 / 云鹤掠月。' },
+    { n: '07', name: '开物 KAIWU · 开箱 ASMR', kind: 'LTX + 程序拟音', film: '07-unboxing', desc: '笔记本与无人机开箱；拟音由 numpy 程序合成，混旁白出片。' },
+    { n: '08', name: '有集次日达 · 包裹的旅程', kind: '物流广告', film: '08-parcel-journey', desc: '营地灯 / 耳机 / 咖啡豆三条送货故事线，代码渲染版 + LTX 实拍版共 19 条。' },
+    { n: '09', name: '星潮 STARTIDE · 双11 大屏', kind: '数据大屏', film: '09-singles-day', desc: '零点作战大屏：订单像星座点亮，弧线飞向仓库，GMV 狂飙，里程碑爆屏。' },
+    { n: '10', name: '有集直播 · 直播间秒杀', kind: '直播带货', film: '10-live-flash-sale', desc: 'LTX 生成主播实拍，引擎叠弹幕 / 上链接 / 红包雨 / 库存条，9 条成片。' },
+    { n: '11', name: '琉光 · 液态玻璃主题', kind: '商品视频工厂', film: '11-liquid-glass', desc: '弥散渐变壁纸上磨砂组件与时钟，液态玻璃滑过、折射、相融；三款主题。' },
+    { n: '12', name: '六只绒毛波普猫猫', kind: '矢量插画', film: null, desc: '波普海报风格六只猫，每只由带种子的纯函数生成，导出 SVG / PNG。' },
+    { n: '13', name: '纽约地铁 · 百年沙画', kind: '沙画解说', film: null, desc: '金色沙粒逐笔画出纽约地铁百年史，12 幕换幕用流沙吹散堆成下一幕。' },
+  ];
+  const grid = document.getElementById('grid');
+  // 实际有画廊的场景（已上传成片）；其余 film 卡片标「成片待上传」
+  const READY = new Set(['06-silk-scarf', '07-unboxing']);
+  for (const c of CASES) {
+    const ready = c.film && READY.has(c.film);
+    const a = document.createElement('a');
+    a.className = 'card' + (ready ? '' : ' soon');
+    a.href = ready ? `factory/gallery.html?film=${c.film}` : '#';
+    a.innerHTML = `<div class="num">${c.n}</div><div class="name">${c.name}</div>`
+      + `<span class="kind">${c.kind}</span><div class="desc">${c.desc}</div>`
+      + `<span class="badge">${ready ? '进入画廊 →' : (c.film ? '成片待上传' : '网页场景')}</span>`;
+    grid.append(a);
+  }
+</script>
+</body>
+</html>
