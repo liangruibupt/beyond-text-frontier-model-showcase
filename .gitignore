@@ -9,3 +9,7 @@ node_modules/
 **/out/films/
 **/gen/vo_cache/
 **/out/verify/
+**/07-unboxing/gen/ltx_frames/
+**/07-unboxing/gen/ltx_mp4/
+**/07-unboxing/gen/vo_cache/
+**/07-unboxing/out/

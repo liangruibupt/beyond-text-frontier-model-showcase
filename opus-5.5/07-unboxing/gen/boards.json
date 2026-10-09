@@ -1,0 +1,166 @@
+{
+  "laptop": {
+    "6": {
+      "shots": [
+        {
+          "shot": "lap_flaps",
+          "dur": 1.5,
+          "from": 0.75
+        },
+        {
+          "shot": "lap_rise",
+          "dur": 1.5,
+          "from": 0.75,
+          "transition": {
+            "type": "flash",
+            "dur": 0.2
+          }
+        },
+        {
+          "shot": "end",
+          "dur": 3,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.4
+          }
+        }
+      ],
+      "hits": {
+        "open": 0.75,
+        "rise": 2.25,
+        "logo": 3
+      },
+      "cover": 2
+    },
+    "15": {
+      "shots": [
+        {
+          "shot": "lap_tape",
+          "dur": 2.25
+        },
+        {
+          "shot": "lap_flaps",
+          "dur": 3,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.3
+          }
+        },
+        {
+          "shot": "lap_tissue",
+          "dur": 2.25
+        },
+        {
+          "shot": "lap_rise",
+          "dur": 3,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.3
+          }
+        },
+        {
+          "shot": "lap_hero",
+          "dur": 1.5
+        },
+        {
+          "shot": "end",
+          "dur": 3,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.4
+          }
+        }
+      ],
+      "hits": {
+        "cut": 0.75,
+        "open": 3.75,
+        "reveal": 6,
+        "rise": 9,
+        "logo": 12
+      },
+      "cover": 9
+    }
+  },
+  "drone": {
+    "6": {
+      "shots": [
+        {
+          "shot": "drn_flaps",
+          "dur": 1.5,
+          "from": 0.75
+        },
+        {
+          "shot": "drn_rise",
+          "dur": 1.5,
+          "from": 0.75,
+          "transition": {
+            "type": "flash",
+            "dur": 0.2
+          }
+        },
+        {
+          "shot": "end",
+          "dur": 3,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.4
+          }
+        }
+      ],
+      "hits": {
+        "open": 0.75,
+        "rise": 2.25,
+        "logo": 3
+      },
+      "cover": 2
+    },
+    "15": {
+      "shots": [
+        {
+          "shot": "drn_tape",
+          "dur": 2.25
+        },
+        {
+          "shot": "drn_flaps",
+          "dur": 3,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.3
+          }
+        },
+        {
+          "shot": "drn_tissue",
+          "dur": 2.25
+        },
+        {
+          "shot": "drn_rise",
+          "dur": 3,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.3
+          }
+        },
+        {
+          "shot": "drn_hero",
+          "dur": 1.5
+        },
+        {
+          "shot": "end",
+          "dur": 3,
+          "transition": {
+            "type": "dissolve",
+            "dur": 0.4
+          }
+        }
+      ],
+      "hits": {
+        "cut": 0.75,
+        "open": 3.75,
+        "reveal": 6,
+        "rise": 9,
+        "logo": 12
+      },
+      "cover": 9
+    }
+  }
+}

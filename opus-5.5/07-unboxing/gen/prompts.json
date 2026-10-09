@@ -1,0 +1,46 @@
+{
+  "_note": "07 开箱 ASMR 方式二 per-shot 文生视频提示词。shot id 见 meta.js BOARDS。品牌「开物 KAIWU」(虚构)。两款 item: laptop(银色全金属超薄本,牛皮纸箱白内衬,冷白顶光) / drone(折叠四轴无人机,黑色硬壳箱泡棉切槽,科技蓝顶光)。photoreal real footage, 微距浅景深, 影棚光, 无文字无水印(字幕/logo 后期叠)。end 片尾卡后期生成不在此。",
+  "_defaults": { "width": 704, "height": 480, "num_frames": 73, "fps": 24, "num_inference_steps": 24, "guidance_scale": 3.0, "negative_prompt": "worst quality, inconsistent motion, blurry, jittery, distorted, deformed, text, caption, subtitles, watermark, logo, hands deformed, extra fingers, low resolution, oversaturated" },
+  "shots": {
+    "lap_tape": {
+      "item": "laptop",
+      "prompt": "Extreme macro of a utility knife blade slowly slicing through the packing tape along the seam of a kraft cardboard box, tape fibers splitting and peeling, blade glinting, warm softbox studio light, shallow depth of field, cinematic slow push-in, photoreal, high detail, real footage"
+    },
+    "lap_flaps": {
+      "item": "laptop",
+      "prompt": "Top-down view of a kraft cardboard box's four flaps slowly swinging open to reveal clean white tissue paper lining inside, soft folds, gentle motion, warm diffused studio light, premium unboxing, cinematic slow reveal, photoreal, high detail, real footage"
+    },
+    "lap_tissue": {
+      "item": "laptop",
+      "prompt": "Macro of fingers gently parting crinkling white tissue paper inside a box, the silver brushed-metal edge of a slim laptop emerging underneath, shallow depth of field, soft light, delicate tactile motion, cinematic, photoreal, high detail, real footage"
+    },
+    "lap_rise": {
+      "item": "laptop",
+      "prompt": "A slim silver all-metal unibody laptop rising and slowly rotating out of its box into a beam of cool white top light, fine dust motes drifting in the light shaft, premium product reveal, dark clean background, cinematic slow motion, photoreal, high detail, real footage"
+    },
+    "lap_hero": {
+      "item": "laptop",
+      "prompt": "Hero product shot of a slim silver all-metal ultrabook laptop floating centered in a beam of cool studio light, brushed aluminium highlights sweeping across the lid, clean dark seamless background, slow cinematic push-in, luxurious, photoreal, high detail, real footage"
+    },
+    "drn_tape": {
+      "item": "drone",
+      "prompt": "Extreme macro of a utility knife blade slowly slicing the tape on a sleek black hard-shell case seam, blade glinting under cool blue-tinged studio light, shallow depth of field, cinematic slow push-in, tech product unboxing, photoreal, high detail, real footage"
+    },
+    "drn_flaps": {
+      "item": "drone",
+      "prompt": "Top-down view of a black hard-shell case lid slowly opening to reveal grey foam cutouts cradling a folded quadcopter drone, precise die-cut foam, cool blue studio light, premium tech unboxing, cinematic slow reveal, photoreal, high detail, real footage"
+    },
+    "drn_tissue": {
+      "item": "drone",
+      "prompt": "Macro of fingers lifting a folded black quadcopter drone out of its grey foam cutout, carbon-fiber arms folded against the body, shallow depth of field, cool studio light, tactile delicate motion, cinematic, photoreal, high detail, real footage"
+    },
+    "drn_rise": {
+      "item": "drone",
+      "prompt": "A folded black quadcopter drone rising into a beam of cool blue top light and unfolding its four carbon-fiber arms mid-air, dust motes drifting in the light shaft, dark clean background, premium tech reveal, cinematic slow motion, photoreal, high detail, real footage"
+    },
+    "drn_hero": {
+      "item": "drone",
+      "prompt": "Hero product shot of a black quadcopter drone with arms fully unfolded, hovering centered in a beam of cool blue studio light, carbon-fiber texture and matte body highlights, clean dark seamless background, slow cinematic orbit, luxurious tech, photoreal, high detail, real footage"
+    }
+  }
+}
