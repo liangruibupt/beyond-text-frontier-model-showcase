@@ -1,0 +1,248 @@
+{
+  "laptop": {
+    "name": {
+      "zh": "开物 · 轻金属本",
+      "en": "KAIWU Ultrabook",
+      "say": {
+        "zh": "开物轻金属本",
+        "en": "KAIWU Ultrabook"
+      }
+    },
+    "caps": {
+      "lap_tape": {
+        "zh": "开箱时刻",
+        "en": "The moment"
+      },
+      "lap_flaps": {
+        "zh": "层层开启",
+        "en": "Layer by layer"
+      },
+      "lap_tissue": {
+        "zh": "",
+        "en": ""
+      },
+      "lap_rise": {
+        "zh": "轻薄全金属",
+        "en": "All-metal unibody"
+      },
+      "lap_hero": {
+        "zh": "开物 · 轻金属本",
+        "en": "KAIWU Ultrabook"
+      }
+    },
+    "hook": {
+      "zh": "开物开箱，见证开启。",
+      "en": "KAIWU unboxing — the moment it opens."
+    },
+    "palette": {
+      "ink": "#eef2f6",
+      "accent": "#3a6ea5",
+      "cta": "#c9a24a",
+      "ctaInk": "#10151c",
+      "soft": "#9fb3c8"
+    },
+    "deal": {
+      "CNY": 5999,
+      "USD": 899
+    },
+    "price": {
+      "CNY": 6999,
+      "USD": 999
+    },
+    "tagline": {
+      "zh": "开物，为开启而生。",
+      "en": "KAIWU. Made for the open."
+    },
+    "cta": {
+      "zh": "立即选购",
+      "en": "Shop now"
+    },
+    "vo": {
+      "15_zh_none": [
+        {
+          "id": "laptop_zh_15_hook",
+          "text": "开物开箱，见证开启。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 0.4,
+          "max": 2.6
+        },
+        {
+          "id": "laptop_zh_15_hero",
+          "text": "全金属轻薄本。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 7.6,
+          "max": 2.4
+        },
+        {
+          "id": "laptop_zh_15_end_none",
+          "text": "开物，为开启而生。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 12.3,
+          "max": 2.3
+        }
+      ],
+      "15_en_launch": [
+        {
+          "id": "laptop_en_15_hook",
+          "text": "KAIWU unboxing — the moment it opens.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 0.4,
+          "max": 2.6
+        },
+        {
+          "id": "laptop_en_15_hero",
+          "text": "An all-metal ultrabook.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 7.6,
+          "max": 2.4
+        },
+        {
+          "id": "laptop_en_15_end_launch",
+          "text": "New from KAIWU: KAIWU Ultrabook.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 12.3,
+          "max": 2.3
+        }
+      ],
+      "6_zh_1111": [
+        {
+          "id": "laptop_zh_6_one_1111",
+          "text": "开物开物轻金属本，双十一到手五千九百九十九元。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 1.9,
+          "max": 3.4
+        }
+      ]
+    }
+  },
+  "drone": {
+    "name": {
+      "zh": "开物 · 掌心无人机",
+      "en": "KAIWU Drone",
+      "say": {
+        "zh": "开物掌心无人机",
+        "en": "KAIWU Drone"
+      }
+    },
+    "caps": {
+      "drn_tape": {
+        "zh": "开箱时刻",
+        "en": "The moment"
+      },
+      "drn_flaps": {
+        "zh": "层层开启",
+        "en": "Layer by layer"
+      },
+      "drn_tissue": {
+        "zh": "",
+        "en": ""
+      },
+      "drn_rise": {
+        "zh": "展翼即飞",
+        "en": "Ready to fly"
+      },
+      "drn_hero": {
+        "zh": "开物 · 掌心无人机",
+        "en": "KAIWU Drone"
+      }
+    },
+    "hook": {
+      "zh": "开物开箱，见证开启。",
+      "en": "KAIWU unboxing — the moment it opens."
+    },
+    "palette": {
+      "ink": "#e8f0f8",
+      "accent": "#2a6ad0",
+      "cta": "#4db6e6",
+      "ctaInk": "#08121f",
+      "soft": "#8aa6c4"
+    },
+    "deal": {
+      "CNY": 3299,
+      "USD": 499
+    },
+    "price": {
+      "CNY": 3999,
+      "USD": 599
+    },
+    "tagline": {
+      "zh": "开物，为开启而生。",
+      "en": "KAIWU. Made for the open."
+    },
+    "cta": {
+      "zh": "立即选购",
+      "en": "Shop now"
+    },
+    "vo": {
+      "15_zh_none": [
+        {
+          "id": "drone_zh_15_hook",
+          "text": "开物开箱，见证开启。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 0.4,
+          "max": 2.6
+        },
+        {
+          "id": "drone_zh_15_hero",
+          "text": "掌心无人机，展翼即飞。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 7.6,
+          "max": 2.4
+        },
+        {
+          "id": "drone_zh_15_end_none",
+          "text": "开物，为开启而生。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 12.3,
+          "max": 2.3
+        }
+      ],
+      "15_en_launch": [
+        {
+          "id": "drone_en_15_hook",
+          "text": "KAIWU unboxing — the moment it opens.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 0.4,
+          "max": 2.6
+        },
+        {
+          "id": "drone_en_15_hero",
+          "text": "A palm-sized drone, ready to fly.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 7.6,
+          "max": 2.4
+        },
+        {
+          "id": "drone_en_15_end_launch",
+          "text": "New from KAIWU: KAIWU Drone.",
+          "voice": "bf_emma",
+          "speed": 1,
+          "at": 12.3,
+          "max": 2.3
+        }
+      ],
+      "6_zh_1111": [
+        {
+          "id": "drone_zh_6_one_1111",
+          "text": "开物开物掌心无人机，双十一到手三千二百九十九元。",
+          "voice": "zf_xiaoxiao",
+          "speed": 1,
+          "at": 1.9,
+          "max": 3.4
+        }
+      ]
+    }
+  }
+}
