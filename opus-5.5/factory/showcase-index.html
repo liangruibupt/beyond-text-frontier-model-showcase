@@ -46,11 +46,12 @@
     { n: '10', name: '有集直播 · 直播间秒杀', kind: '直播带货', film: '10-live-flash-sale', desc: 'LTX 生成主播实拍，引擎叠弹幕 / 上链接 / 红包雨 / 库存条，9 条成片。' },
     { n: '11', name: '琉光 · 液态玻璃主题', kind: '商品视频工厂', film: '11-liquid-glass', desc: '弥散渐变壁纸上磨砂组件与时钟，液态玻璃滑过、折射、相融；三款主题。' },
     { n: '12', name: '六只绒毛波普猫猫', kind: '矢量插画', film: null, desc: '波普海报风格六只猫，每只由带种子的纯函数生成，导出 SVG / PNG。' },
-    { n: '13', name: '纽约地铁 · 百年沙画', kind: '沙画解说', film: null, desc: '金色沙粒逐笔画出纽约地铁百年史，12 幕换幕用流沙吹散堆成下一幕。' },
+    { n: '13', name: '纽约地铁 · 百年沙画', kind: '沙画解说', film: '13-nyc-subway-sandart', desc: '金色沙粒逐笔画出纽约地铁百年史，12 幕换幕用流沙吹散堆成下一幕。' },
   ];
   const grid = document.getElementById('grid');
   // 有成片画廊的场景（成片已上传）
-  const GALLERY = new Set(['06-silk-scarf', '07-unboxing']);
+  const GALLERY = new Set(['03-perfume','04-year-review','05-bubble-tea','06-silk-scarf',
+    '07-unboxing','08-parcel-journey','09-singles-day','11-liquid-glass','13-nyc-subway-sandart']);
   // 有可访问网页的场景（index.html 已上传）—— 07 是纯成片无网页
   const WEB = new Set(['01-lantingxu','02-devastator','03-perfume','04-year-review','05-bubble-tea',
     '06-silk-scarf','08-parcel-journey','09-singles-day','10-live-flash-sale','11-liquid-glass',
