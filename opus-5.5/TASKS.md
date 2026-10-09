@@ -1,7 +1,7 @@
 # 遗留任务（2026-09-29 交接；进度更新至 2026-10-09）
 
-**整体进度：** 03 ✅ · 04 ✅ · 05 ✅ · 06 ✅（方法1脚手架 + 方法2 LTX 成片）· 07 ⬜ 待办 · 08 ✅ · 09 ✅（方法1 code-authored 数据大屏，2 条成片）· 10 ✅。
-下一个待办是 07（开箱 ASMR）。详见下方各节。
+**整体进度：** 03 ✅ · 04 ✅ · 05 ✅ · 06 ✅（方法1脚手架 + 方法2 LTX 成片）· 07 ✅（方法2 LTX，苹果式白盒 + ASMR 拟音层）· 08 ✅ · 09 ✅（方法1 code-authored 数据大屏，2 条成片）· 10 ✅。
+**全部 03–10 完成。** 详见下方各节。
 
 给接手的 code agent：先读完这一页再动手。和用户用中文沟通，有进展、发现或改计划时及时告诉用户。
 
@@ -69,7 +69,7 @@
 |---|---|---|---|
 | 05 | C 奶茶广告 | ✅ 完成 | `bake.js`（在 `setup` 里定步长模拟，按 t 查表）；把 03 的玻璃 shader 挪成共用模块 |
 | 06 | D 丝巾 | ✅ 完成（方法1脚手架 + 方法2 LTX 成片，详见 §2.06） | `bake.js`（布料） |
-| 07 | E 开箱 ASMR | ⬜ 待办 | `audio.js` 加拟音（胶带、纸） |
+| 07 | E 开箱 ASMR | ✅ 完成（方法2 LTX，KAIWU laptop+drone，苹果式白盒 + `gen/sfx.py` 程序合成 ASMR 拟音层，详见 §2.07） | `sfx.py` 拟音（胶带、纸、气流、叮、低频） |
 | 08 | F 一个包裹的旅程 | ✅ 完成（代码版 + LTX AI 版，详见 §2.08） | `bake.js`（机器人群路径）；`engine/video.js` 视频背景层 |
 | 09 | G 双11 零点大屏 | ✅ 完成（方法1 code-authored 数据大屏，2 条成片，详见 §2.09） | 「订单星座」布局（不画地理边界）`constellation.js` |
 | 10 | H 直播间秒杀 motion pack | ✅ 完成（LTX AI 版成片，详见 §2.10） | —（修了 `video.js` 叠化串帧） |
@@ -105,6 +105,14 @@
 - **云鹤「鹤」**：dusk 0–2.25 暮色云海明月 · crane 2.25–5.25 两角上下扇动如鹤展翅掠过月亮 · glide 5.25–7.5 贴身跟拍鹤纹 · land 7.5–10.5 收翅落逆光人台肩 · hero 10.5–12 慢推。暮色天幕逆光，合成器 + 笙。6 s：crane → land → end
 
 共同：字幕「桑蚕丝 · 十六姆米」；片尾卡同 05 的三种；配音每款 hook / hero / end + 6 s 一句，台词按各自分镜写，数字念成字；声音建议 zh `zf_xiaoxiao`、en `bf_emma`（待用户定）。风险：青花裹瓶滑落、云鹤扇翅（退路：缩短或按脚本过渡）；不做布自碰撞。
+
+### 07 开箱 ASMR（✅ 2026-10-09 完成）
+
+方法2 LTX 文生视频。品牌「开物 KAIWU」(虚构)。两款 `item`：`laptop`（苹果式白色极简包装 + 银色阳极氧化一体超薄本审美，无真 logo）、`drone`（折叠四轴无人机，黑硬壳箱泡棉）。分镜：tape 划封条 → flaps 揭盖 → tissue 拨保护层 → rise 升入光束 → hero 定格，片尾卡同 05 三型。交付 2 款 × 3 变体 = 6 条，全部带 Kokoro 配音（zh `zf_xiaoxiao` / en `bf_emma`）+ ASMR 拟音。
+
+**新增能力 `gen/sfx.py`**：numpy 程序合成五种 ASMR 拟音（胶带撕裂 / 纸膜窸窣 / 升起气流 / 定格叮 / 英雄低频），标准库 `wave` 写 WAV（无 scipy），固定 per-sound seed（不用 hash，确定性跨进程逐字节一致）；`post.py` 的 `SFX_MAP` + `mix_audio()` 按每镜头 hit point 混旁白 + SFX。详见 `07-unboxing/README.md` 与 `gen/DEPLOYMENT-method2.md`。成片在 `out/films/`（不入库），clip+帧备份 `assets_backup/`，画廊 `factory/gallery.html?film=07-unboxing`。PR #33 已合并。
+
+局限：配乐缺失（同 06，SFX+旁白替代）；字幕简化安全区定位。踩坑记录（多 session 共用 GPU 实例互删→OPUS55_INSTANCE 隔离、scratch 回收丢素材→assets_backup、监控 gate 卡住→关键节点手动查）见 DEPLOYMENT-method2.md。
 
 ### 08 一个包裹的旅程（✅ 2026-10-08 完成）
 
