@@ -1,6 +1,6 @@
 # 遗留任务（2026-09-29 交接；进度更新至 2026-10-09）
 
-**整体进度：** 03 ✅ · 04 ✅ · 05 ✅ · 06 ✅（方法1脚手架 + 方法2 LTX 成片）· 07 ⬜ 待办 · 08 ✅ · 09 🔄 进行中（另一 agent）· 10 ✅。
+**整体进度：** 03 ✅ · 04 ✅ · 05 ✅ · 06 ✅（方法1脚手架 + 方法2 LTX 成片）· 07 ⬜ 待办 · 08 ✅ · 09 ✅（方法1 code-authored 数据大屏，2 条成片）· 10 ✅。
 下一个待办是 07（开箱 ASMR）。详见下方各节。
 
 给接手的 code agent：先读完这一页再动手。和用户用中文沟通，有进展、发现或改计划时及时告诉用户。
@@ -71,7 +71,7 @@
 | 06 | D 丝巾 | ✅ 完成（方法1脚手架 + 方法2 LTX 成片，详见 §2.06） | `bake.js`（布料） |
 | 07 | E 开箱 ASMR | ⬜ 待办 | `audio.js` 加拟音（胶带、纸） |
 | 08 | F 一个包裹的旅程 | ✅ 完成（代码版 + LTX AI 版，详见 §2.08） | `bake.js`（机器人群路径）；`engine/video.js` 视频背景层 |
-| 09 | G 双11 零点大屏 | 🔄 进行中（另一 agent；引擎 `constellation.js` + 分镜已合入，PR #29） | 「订单星座」布局（不画地理边界） |
+| 09 | G 双11 零点大屏 | ✅ 完成（方法1 code-authored 数据大屏，2 条成片，详见 §2.09） | 「订单星座」布局（不画地理边界）`constellation.js` |
 | 10 | H 直播间秒杀 motion pack | ✅ 完成（LTX AI 版成片，详见 §2.10） | —（修了 `video.js` 叠化串帧） |
 
 **G 的地图已定（2026-09-30）：** 用户拍板改用不画地理边界的「订单星座」布局，不用标准地图。背景：用户提过用自然资源部的标准地图（带审图号）再叠城市灯光和弧线。按 2025 年的规定，标准地图只有原样使用才不用送审，叠加、缩放、裁剪、改色都算修改，要重新送审（只能法人申请，约 20 个工作日）。所以不走标准地图。
@@ -113,6 +113,16 @@
 - [x] 营地灯门口镜头重生成：住户在门口、快递员露脸递包裹（PR #20）
 - [x] 耳机 AI 版只换 victory 镜为 LTX 实拍，引擎叠「VICTORY」HUD（PR #21）
 - 已知小问题（不修）：耳机 AI 16:9 片尾卡出场时盖住玩家举起的拳头
+
+### 09 双11 零点大屏（✅ 2026-10-09 完成）
+
+分镜：`docs/specs/2026-10-08-09-singles-day-storyboard.md`（已批）。方法1 code-authored 数据大屏：Three.js 实例化 motion graphics，`factory/engine/constellation.js`「订单星座」布局（确定性纯函数，13 测试；spread / clusters / rings / worldmap 四模式 + `lonLatToXY`/`cityCenters`/`inLandMask`）。**不画任何地理边界/标准地图**（规避问题地图送审）。四款主题 `national`（铺满星座）/ `megacity`（北上广深真实经纬度团簇）/ `crossborder`（无国界点阵世界地图）/ `logistics`（弧线反向发货）。六镜头 countdown/ignite/arcs/gmv/milestone/end；GMV 计数器 t 纯函数缓动；配音 Kokoro `zf_xiaoxiao`/`bf_emma`。
+
+- [x] 09 引擎 `constellation.js` + 分镜（PR #29）
+- [x] 09 脚手架 + 六镜头 + 配音 + **2 条成片**（`startide_national_15s_16x9_zh`、`startide_national_6s_1x1_en_launch`），check 全过，入 gallery，S3 备份 `s3://cdh-ingest-demo/showcase/09-singles-day/`，README + 根索引（PR #30 已合并，merge eb35897）
+- 范围：用户 2026-10-08 缩为 2 条（默认 national），`film.js` 轴仍保留完整四主题 × 中英 × 15/6s × 三活动
+- 坑：弧线 `InstancedMesh` 初始 count=0 需 `frustumCulled=false` 才渲染；Kokoro 本账号函数名是 `kokoro-tts` 无 `:live` alias（传 `FUNC=kokoro-tts`）；本机无 ffmpeg 用主 checkout 的 ffmpeg-static
+- 已知（不修，本次 2 条不涉及）：英文 15s 的 end/hero 台词超槽，要出 en 15s 需再缩
 
 ### 10 直播间秒杀（✅ 2026-10-09 完成）
 
