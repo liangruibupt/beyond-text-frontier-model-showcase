@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   layoutNodes, layoutHubs, arcPath, arcSchedule, progressAt, activeArcs,
+  lonLatToXY, cityCenters, inLandMask, CITIES_BJSHGZSZ,
 } from '../engine/constellation.js';
 
 const eqNodes = (a, b) => a.length === b.length && a.every((n, i) =>
@@ -119,4 +120,46 @@ test('module uses no forbidden randomness (no Math.random/Date.now/performance.n
   assert.ok(!/Math\.random\s*\(/.test(src), 'no Math.random()');
   assert.ok(!/Date\.now\s*\(/.test(src), 'no Date.now()');
   assert.ok(!/performance\.now\s*\(/.test(src), 'no performance.now()');
+});
+
+test('worldmap mode: every node lands inside the continent mask, deterministic', () => {
+  const cfg = { seed: 21, count: 900, mode: 'worldmap' };
+  const a = layoutNodes(cfg), b = layoutNodes(cfg);
+  assert.ok(eqNodes(a, b), 'worldmap same args → identical');
+  assert.equal(a.length, 900, 'worldmap reaches requested count');
+  const scale = 1.35; // 默认 mapScale
+  for (const n of a) {
+    assert.ok(n.x >= 0 && n.x <= 1 && n.y >= 0 && n.y <= 1, 'xy in range');
+    assert.ok(inLandMask(n.x, n.y, scale), `node (${n.x.toFixed(2)},${n.y.toFixed(2)}) must be on land`);
+  }
+  // 放大 mapScale 应让更多随机点落在陆地内（点阵更大/更满）→ 不同于默认布局
+  assert.ok(!eqNodes(a, layoutNodes({ ...cfg, mapScale: 1.0 })), 'mapScale changes the layout');
+});
+
+test('clusters mode with external centers pins nodes near 北上广深', () => {
+  const centers = cityCenters(16 / 9);
+  assert.equal(centers.length, 4);
+  assert.deepEqual(centers.map(c => c.name), ['北京', '上海', '广州', '深圳']);
+  const nodes = layoutNodes({ seed: 13, count: 800, mode: 'clusters', centers, tightness: 0.08 });
+  // 每个节点到其标注团簇中心的距离应很小（聚集到四城）
+  for (const n of nodes) {
+    const c = centers[n.c];
+    assert.ok(Math.hypot(n.x - c.x, n.y - c.y) < 0.3, 'node sits near its city centre');
+  }
+  // 四城都被用到
+  const used = new Set(nodes.map(n => n.c));
+  assert.equal(used.size, 4, 'all four cities populated');
+});
+
+test('lonLatToXY and cityCenters are deterministic and preserve relative city positions', () => {
+  // 等距柱状：北京(lat 39.9)在上海(lat 31.2)之上 → y 更小
+  const bj = lonLatToXY(116.41, 39.90);
+  const sh = lonLatToXY(121.47, 31.23);
+  assert.ok(bj.y < sh.y, '北京在上海之上 (y smaller)');
+  assert.ok(sh.x > bj.x, '上海在北京之东 (x larger)');
+  const c = cityCenters();
+  const bjC = c.find(x => x.name === '北京'), szC = c.find(x => x.name === '深圳');
+  assert.ok(bjC.y < szC.y, 'mapped 北京 above 深圳');
+  assert.deepEqual(cityCenters(), cityCenters(), 'cityCenters deterministic');
+  assert.equal(CITIES_BJSHGZSZ.length, 4);
 });

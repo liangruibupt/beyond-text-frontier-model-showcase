@@ -1,0 +1,378 @@
+{
+  "crossborder_en_15_hook": {
+    "text": "Midnight strikes, the nation lights up.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.016,
+    "lufs": -20
+  },
+  "crossborder_en_6_one_1111": {
+    "text": "Ten billion in ninety-six seconds. Double Eleven.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.096,
+    "lufs": -20
+  },
+  "crossborder_en_6_one_launch": {
+    "text": "Ten billion in ninety-six seconds. Double Eleven.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.096,
+    "lufs": -20
+  },
+  "crossborder_en_6_one_none": {
+    "text": "Ten billion in ninety-six seconds. Double Eleven.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.096,
+    "lufs": -20
+  },
+  "crossborder_zh_15_end_1111": {
+    "text": "星潮双十一，峰值即巅峰。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.232,
+    "lufs": -20
+  },
+  "crossborder_zh_15_end_launch": {
+    "text": "星潮大屏，全新上线。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.04,
+    "lufs": -20
+  },
+  "crossborder_zh_15_end_none": {
+    "text": "星潮双十一，峰值即巅峰。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.232,
+    "lufs": -20
+  },
+  "crossborder_zh_15_hero": {
+    "text": "六十八国订单，同时奔向仓库。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1.06,
+    "dur": 2.544,
+    "lufs": -20
+  },
+  "crossborder_zh_15_hook": {
+    "text": "零点已到，全国点亮。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.872,
+    "lufs": -20
+  },
+  "crossborder_zh_6_one_1111": {
+    "text": "双十一成交额破十亿，只用一分三十六秒。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.6,
+    "lufs": -20
+  },
+  "crossborder_zh_6_one_launch": {
+    "text": "双十一成交额破十亿，只用一分三十六秒。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.6,
+    "lufs": -20
+  },
+  "crossborder_zh_6_one_none": {
+    "text": "双十一成交额破十亿，只用一分三十六秒。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.6,
+    "lufs": -20
+  },
+  "logistics_en_15_hook": {
+    "text": "Midnight strikes, the nation lights up.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.016,
+    "lufs": -20
+  },
+  "logistics_en_6_one_1111": {
+    "text": "Ten billion in ninety-six seconds. Double Eleven.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.096,
+    "lufs": -20
+  },
+  "logistics_en_6_one_launch": {
+    "text": "Ten billion in ninety-six seconds. Double Eleven.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.096,
+    "lufs": -20
+  },
+  "logistics_en_6_one_none": {
+    "text": "Ten billion in ninety-six seconds. Double Eleven.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.096,
+    "lufs": -20
+  },
+  "logistics_zh_15_end_1111": {
+    "text": "星潮双十一，峰值即巅峰。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.232,
+    "lufs": -20
+  },
+  "logistics_zh_15_end_launch": {
+    "text": "星潮大屏，全新上线。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.04,
+    "lufs": -20
+  },
+  "logistics_zh_15_end_none": {
+    "text": "星潮双十一，峰值即巅峰。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.232,
+    "lufs": -20
+  },
+  "logistics_zh_15_hook": {
+    "text": "零点已到，全国点亮。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.872,
+    "lufs": -20
+  },
+  "logistics_zh_6_one_1111": {
+    "text": "双十一成交额破十亿，只用一分三十六秒。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.6,
+    "lufs": -20
+  },
+  "logistics_zh_6_one_launch": {
+    "text": "双十一成交额破十亿，只用一分三十六秒。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.6,
+    "lufs": -20
+  },
+  "logistics_zh_6_one_none": {
+    "text": "双十一成交额破十亿，只用一分三十六秒。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.6,
+    "lufs": -20
+  },
+  "megacity_en_15_hook": {
+    "text": "Midnight strikes, the nation lights up.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.016,
+    "lufs": -20
+  },
+  "megacity_en_6_one_1111": {
+    "text": "Ten billion in ninety-six seconds. Double Eleven.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.096,
+    "lufs": -20
+  },
+  "megacity_en_6_one_launch": {
+    "text": "Ten billion in ninety-six seconds. Double Eleven.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.096,
+    "lufs": -20
+  },
+  "megacity_en_6_one_none": {
+    "text": "Ten billion in ninety-six seconds. Double Eleven.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.096,
+    "lufs": -20
+  },
+  "megacity_zh_15_end_1111": {
+    "text": "星潮双十一，峰值即巅峰。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.232,
+    "lufs": -20
+  },
+  "megacity_zh_15_end_launch": {
+    "text": "星潮大屏，全新上线。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.04,
+    "lufs": -20
+  },
+  "megacity_zh_15_end_none": {
+    "text": "星潮双十一，峰值即巅峰。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.232,
+    "lufs": -20
+  },
+  "megacity_zh_15_hero": {
+    "text": "核心都市圈，单城破亿。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.992,
+    "lufs": -20
+  },
+  "megacity_zh_15_hook": {
+    "text": "零点已到，全国点亮。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.872,
+    "lufs": -20
+  },
+  "megacity_zh_6_one_1111": {
+    "text": "双十一成交额破十亿，只用一分三十六秒。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.6,
+    "lufs": -20
+  },
+  "megacity_zh_6_one_launch": {
+    "text": "双十一成交额破十亿，只用一分三十六秒。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.6,
+    "lufs": -20
+  },
+  "megacity_zh_6_one_none": {
+    "text": "双十一成交额破十亿，只用一分三十六秒。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.6,
+    "lufs": -20
+  },
+  "national_en_15_hook": {
+    "text": "Midnight strikes, the nation lights up.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.016,
+    "lufs": -20
+  },
+  "national_en_6_one_1111": {
+    "text": "Ten billion in ninety-six seconds. Double Eleven.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.096,
+    "lufs": -20
+  },
+  "national_en_6_one_launch": {
+    "text": "Ten billion in ninety-six seconds. Double Eleven.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.096,
+    "lufs": -20
+  },
+  "national_en_6_one_none": {
+    "text": "Ten billion in ninety-six seconds. Double Eleven.",
+    "voice": "bf_emma",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.096,
+    "lufs": -20
+  },
+  "national_zh_15_end_1111": {
+    "text": "星潮双十一，峰值即巅峰。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.232,
+    "lufs": -20
+  },
+  "national_zh_15_end_launch": {
+    "text": "星潮大屏，全新上线。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.04,
+    "lufs": -20
+  },
+  "national_zh_15_end_none": {
+    "text": "星潮双十一，峰值即巅峰。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.232,
+    "lufs": -20
+  },
+  "national_zh_15_hero": {
+    "text": "每秒百万订单，奔向仓库。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 2.28,
+    "lufs": -20
+  },
+  "national_zh_15_hook": {
+    "text": "零点已到，全国点亮。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 1.872,
+    "lufs": -20
+  },
+  "national_zh_6_one_1111": {
+    "text": "双十一成交额破十亿，只用一分三十六秒。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.6,
+    "lufs": -20
+  },
+  "national_zh_6_one_launch": {
+    "text": "双十一成交额破十亿，只用一分三十六秒。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.6,
+    "lufs": -20
+  },
+  "national_zh_6_one_none": {
+    "text": "双十一成交额破十亿，只用一分三十六秒。",
+    "voice": "zf_xiaoxiao",
+    "speed": 1,
+    "rate": 1,
+    "dur": 3.6,
+    "lufs": -20
+  }
+}

@@ -1,0 +1,4 @@
+{ "jobs": [
+  { "theme": ["national"], "ar": ["16x9"], "lang": ["zh"], "cut": [15], "promo": ["none"]   },
+  { "theme": ["national"], "ar": ["1x1"],  "lang": ["en"], "cut": [6],  "promo": ["launch"] }
+] }
