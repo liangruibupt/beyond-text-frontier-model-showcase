@@ -1,0 +1,32 @@
+// promos.js — 片尾卡三种预设：none（标语 + 下单按钮）、1111（双11 价签）、launch（新品首发）
+// 09 无实物商品，1111 价签用虚构大促「活动价」展示；图层放在 end 镜头 line1–line3 三个区
+import { T, FONTS } from './copy.js';
+
+export const PROMO_T = {
+  zh: { ribbon: '双11 零点价', deal: '到手价', was: '日常价', launch: '全新上线', gift: '零点下单享加赠' },
+  en: { ribbon: 'Double 11 Deal', deal: 'Now', was: 'Was', launch: 'New Arrival', gift: 'Order at midnight for a gift' },
+};
+export const RED = '#e1251b';
+// 虚构活动价（固定，不代表真实平台）
+const DEAL = { zh: '¥1111', en: '$111' }, WAS = { zh: '¥2222', en: '$222' };
+
+/** a = 入场起点（镜头本地秒），pal = 主题配色 { ink, soft, cta, ctaInk, accent } */
+export function promoLayers(v, { a = 0, align = 'center', pal, fonts = FONTS, glow = null }) {
+  const L = v.lang, P = PROMO_T[L], F = fonts[L];
+  const base = { lang: L, align, valign: 'middle', color: pal.ink, shadow: glow };
+  const pill = (id, zone, text, t0, fill, ink) => ({ ...base, id, zone, text, font: F.display, size: 0.04, tracking: L === 'zh' ? 0.08 : 0.02, maxLines: 1, in: [t0, t0 + 0.5], box: { fill, color: ink, pad: 0.55, radius: 0.5 }, shadow: null });
+  if (v.promo === '1111') return [
+    { ...pill('ribbon', 'line1', P.ribbon, a, RED, '#ffffff'), size: 0.042, box: { fill: RED, color: '#ffffff', pad: 0.45, radius: 0.15 } },
+    { ...base, id: 'price', zone: 'line2', text: `${P.deal} ${DEAL[L]}`, font: FONTS.num, size: 0.075, lineHeight: 1.1, maxLines: 1, color: RED, in: [a + 0.3, a + 0.7], pop: true },
+    { ...base, id: 'was', zone: 'line3', text: `${P.was} ${WAS[L]}`, font: FONTS.num, size: 0.038, maxLines: 1, in: [a + 0.6, a + 1.0], strike: true, color: pal.soft },
+  ];
+  if (v.promo === 'launch') return [
+    pill('ribbon', 'line1', P.launch, a, pal.accent, pal.ctaInk),
+    { ...base, id: 'gift', zone: 'line2', text: P.gift, font: F.body, size: 0.046, tracking: L === 'zh' ? 0.06 : 0.01, maxLines: 1, in: [a + 0.3, a + 0.8] },
+    pill('cta', 'line3', T[L].cta, a + 0.6, pal.cta, pal.ctaInk),
+  ];
+  return [
+    { ...base, id: 'tagline', zone: 'line1', text: T[L].tagline, font: F.display, size: 0.05, tracking: L === 'zh' ? 0.12 : 0.01, maxLines: 2, in: [a, a + 0.6] },
+    pill('cta', 'line2', T[L].cta, a + 0.5, pal.cta, pal.ctaInk),
+  ];
+}
