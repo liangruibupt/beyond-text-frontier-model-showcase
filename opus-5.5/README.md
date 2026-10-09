@@ -38,7 +38,7 @@ Opus 5.5 写分镜（镜头表、运动、时长）和每个镜头的文生视�
 | 画面来自 | GPU 逐帧算（确定） | 视频模型推理（有随机性） |
 | 强项 | 几何精确、文字清晰、可批量多变体、逐帧可复现 | 写实质感、自然运动、复杂光影 |
 | 工具 | Three.js · GLSL · Canvas 2D · Web Audio · Node + Playwright + ffmpeg | LTX-2.5 / WAN 2.2 / Minimax H3（EC2 GPU）+ ffmpeg + Kokoro |
-| 案例 | 01–05、11、12 | 06（丝巾）、07（开箱 ASMR） |
+| 案例 | 01–05、09、11–13；06 方式一脚手架；08 代码版 | 06（丝巾）、07（开箱 ASMR）、10（直播间秒杀）；08 AI 版（LTX 画面 + 引擎叠加） |
 
 ## 案例
 
@@ -68,7 +68,12 @@ npm run serve            # 或 python3 -m http.server 8765
 #     http://127.0.0.1:8765/02-devastator/
 #     http://127.0.0.1:8765/03-perfume/
 #     http://127.0.0.1:8765/04-year-review/
+#     http://127.0.0.1:8765/05-bubble-tea/?ar=16x9
+#     http://127.0.0.1:8765/06-silk-scarf/          （方式一程序化预览）
 #     http://127.0.0.1:8765/11-liquid-glass/
+#     http://127.0.0.1:8765/12-pop-cats/
+#     06、07 为 LTX 文生视频 + ffmpeg 后期出片，审片见 http://127.0.0.1:8765/factory/gallery.html?film=06-silk-scarf
+#                                 和 http://127.0.0.1:8765/factory/gallery.html?film=07-unboxing
 #     08、10 为批量出片的视频，审片见 http://127.0.0.1:8765/factory/gallery.html?film=08-parcel-journey
 #                                 和 http://127.0.0.1:8765/factory/gallery.html?film=10-live-flash-sale
 #     09 为批量出片的数据大屏视频，审片见 http://127.0.0.1:8765/factory/gallery.html?film=09-singles-day
