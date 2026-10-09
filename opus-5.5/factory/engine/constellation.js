@@ -11,36 +11,126 @@ const r2 = (seed, i, c) => rand(seed, (i * 8 + c) >>> 0);
 // 一维钳制到 [0,1]
 const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
 
+// ——— 地理映射（经纬度 → 归一化画面坐标，等距柱状投影；不画任何国界线） ———
+
+// 北上广深四城经纬度（lon, lat）
+export const CITIES_BJSHGZSZ = [
+  { name: '北京', lon: 116.41, lat: 39.90 },
+  { name: '上海', lon: 121.47, lat: 31.23 },
+  { name: '广州', lon: 113.26, lat: 23.13 },
+  { name: '深圳', lon: 114.06, lat: 22.54 },
+];
+
 /**
- * 星座节点布局 → 归一化坐标 [{x, y, w}]（x,y ∈ [0,1]，w 是权重/亮度 ∈ (0,1]）。
+ * 经纬度 → 归一化坐标 [0,1]。等距柱状投影：lon∈[-180,180]→x，lat∈[90,-90]→y。
+ * 可传 bbox {lonMin,lonMax,latMin,latMax} 把一小片区域放大铺满画面（四城用）。
+ */
+export function lonLatToXY(lon, lat, bbox) {
+  if (bbox) {
+    const { lonMin, lonMax, latMin, latMax } = bbox;
+    const x = (lon - lonMin) / Math.max(1e-6, lonMax - lonMin);
+    const y = (latMax - lat) / Math.max(1e-6, latMax - latMin);
+    return { x: clamp01(x), y: clamp01(y) };
+  }
+  return { x: clamp01((lon + 180) / 360), y: clamp01((90 - lat) / 180) };
+}
+
+/** 北上广深四城 → 归一化坐标（取四城包围盒并放大居中，使四城在画面里散得开）。 */
+export function cityCenters(aspect = 16 / 9, pad = 0.16) {
+  const lons = CITIES_BJSHGZSZ.map((c) => c.lon);
+  const lats = CITIES_BJSHGZSZ.map((c) => c.lat);
+  const bbox = {
+    lonMin: Math.min(...lons), lonMax: Math.max(...lons),
+    latMin: Math.min(...lats), latMax: Math.max(...lats),
+  };
+  // 用包围盒把四城映射到 [pad,1-pad] 的居中方框，保留相对位置
+  return CITIES_BJSHGZSZ.map((c) => {
+    const p = lonLatToXY(c.lon, c.lat, bbox);
+    return {
+      name: c.name,
+      x: pad + (1 - 2 * pad) * p.x,
+      y: pad + (1 - 2 * pad) * p.y,
+    };
+  });
+}
+
+/**
+ * 粗糙大陆掩膜（7 个大陆用椭圆块近似，等距柱状投影下的归一化坐标 [0,1]）。
+ * 只判断"是否在陆地"，绝不画任何国界线/海岸线 → 彻底规避问题地图送审。
+ * scale 放大每块椭圆的半径（>1 让点阵世界地图铺得更满）。
+ */
+const CONTINENT_BLOBS = [
+  // [cx, cy, rx, ry]  归一化中心与半径（等距柱状投影经验值）
+  [0.30, 0.30, 0.095, 0.085], // 北美
+  [0.33, 0.62, 0.055, 0.120], // 南美
+  [0.49, 0.30, 0.060, 0.075], // 欧洲
+  [0.56, 0.58, 0.075, 0.130], // 非洲
+  [0.70, 0.36, 0.150, 0.110], // 亚洲
+  [0.82, 0.72, 0.055, 0.045], // 澳洲
+  [0.16, 0.33, 0.045, 0.040], // 阿拉斯加/西北美补块
+];
+
+export function inLandMask(x, y, scale = 1) {
+  for (const [cx, cy, rx, ry] of CONTINENT_BLOBS) {
+    const dx = (x - cx) / (rx * scale);
+    const dy = (y - cy) / (ry * scale);
+    if (dx * dx + dy * dy <= 1) return true;
+  }
+  return false;
+}
+
+/**
+ * 星座节点布局 → 归一化坐标 [{x, y, w, c?}]（x,y ∈ [0,1]，w 是权重/亮度 ∈ (0,1]，c 是团簇下标）。
  * mode:
  *   'spread'   均匀铺满（抖动网格，近泊松盘）—— national
- *   'clusters' 聚成 `clusters` 个团簇 —— megacity（默认 3 团）
- *   'rings'    内外两环 —— crossborder（内环 60%，外环 40%）
+ *   'clusters' 聚成若干团簇 —— megacity（可传 centers 用真实城市坐标，否则随机 `clusters` 团）
+ *   'rings'    内外两环 —— crossborder 的备选
+ *   'worldmap' 点阵世界地图（从大陆掩膜拒绝采样，不画任何国界线）—— crossborder 默认
  * aspect = W/H，用来把布局拉成画面比例（坐标仍归一化，布局不被压扁）。
+ * centers   外部指定团簇中心 [{x,y,name?}]（clusters 模式用，如北上广深四城）。
+ * tightness clusters 团簇半径（默认 0.12）。
+ * mapScale  worldmap 大陆椭圆放大系数（默认 1.35，>1 让点阵铺得更满/更大）。
  */
-export function layoutNodes({ seed, count, mode = 'spread', clusters = 3, aspect = 16 / 9 }) {
+export function layoutNodes({ seed, count, mode = 'spread', clusters = 3, aspect = 16 / 9, centers = null, tightness = 0.12, mapScale = 1.35 }) {
   if (!Number.isInteger(count) || count < 1) throw new Error(`layoutNodes: bad count ${count}`);
   const s = seed >>> 0;
   const nodes = [];
   const ax = aspect >= 1 ? 1 : aspect;        // 横向可用幅度
   const ay = aspect >= 1 ? 1 / aspect : 1;    // 纵向可用幅度
 
+  if (mode === 'worldmap') {
+    // 从大陆掩膜拒绝采样：在 [0.04,0.96]x[0.08,0.92] 内撒点，只保留落在陆地椭圆内的
+    // mapScale 放大椭圆 → 点阵世界地图更大、铺满更多画面
+    let i = 0, guard = 0;
+    const maxGuard = count * 400;
+    while (nodes.length < count && guard < maxGuard) {
+      const px = 0.04 + 0.92 * r2(s, i, 0);
+      const py = 0.08 + 0.84 * r2(s, i, 1);
+      guard++; i++;
+      if (!inLandMask(px, py, mapScale)) continue;
+      nodes.push({ x: px, y: py, w: 0.4 + 0.6 * r2(s, i, 6) });
+    }
+    return nodes;
+  }
+
   if (mode === 'clusters') {
-    const C = Math.max(1, clusters | 0);
-    const centers = [];
+    const ext = Array.isArray(centers) && centers.length > 0;
+    const C = ext ? centers.length : Math.max(1, clusters | 0);
+    const ctr = [];
     for (let k = 0; k < C; k++) {
-      centers.push([0.2 + 0.6 * r2(s, 1000 + k, 0), 0.25 + 0.5 * r2(s, 1000 + k, 1)]);
+      if (ext) ctr.push([centers[k].x, centers[k].y]);
+      else ctr.push([0.2 + 0.6 * r2(s, 1000 + k, 0), 0.25 + 0.5 * r2(s, 1000 + k, 1)]);
     }
     for (let i = 0; i < count; i++) {
       const k = Math.floor(r2(s, i, 2) * C) % C;
-      const [cx, cy] = centers[k];
-      const dr = 0.12 * (r2(s, i, 3) + r2(s, i, 4) - 1); // 两路均匀差近似高斯
+      const [cx, cy] = ctr[k];
+      const dr = tightness * (r2(s, i, 3) + r2(s, i, 4) - 1); // 两路均匀差近似高斯
       const da = r2(s, i, 5) * Math.PI * 2;
       nodes.push({
         x: clamp01(cx + Math.cos(da) * dr * ax * 2),
         y: clamp01(cy + Math.sin(da) * dr * ay * 2),
         w: 0.4 + 0.6 * r2(s, i, 6),
+        c: k,
       });
     }
   } else if (mode === 'rings') {
