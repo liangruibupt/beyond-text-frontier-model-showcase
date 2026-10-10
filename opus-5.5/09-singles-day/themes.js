@@ -23,9 +23,9 @@ export const THEMES = {
     pal: { ink: '#e6fff8', soft: '#8fd0c4', cta: '#38e8c8', ctaInk: '#06161c', accent: '#ffd84a', shadow: '#14b8a6' },
     gmvTarget: 68, gmvUnit: '国', milestoneTime: '同时', milestoneTimeEn: 'at once',
   },
-  // 物流履约：琥珀金，弧线反向（仓库→星座，代表发货），每分钟 X 单已发出
+  // 物流履约：琥珀金，内外双环辐射（rings）+ 弧线反向（环心仓库→星座，代表发货），每分钟 X 单已发出
   logistics: {
-    seed: 3080, mode: 'spread', nodeCount: 1200, hubs: 8, reverse: true,
+    seed: 3080, mode: 'rings', nodeCount: 1200, hubs: 8, reverse: true,
     bg: '#1a1206', node: '#ffc24a', hub: '#5fd0ff', arc: '#ffb347', glow: '#f59e0b',
     pal: { ink: '#fff2d8', soft: '#d0b78f', cta: '#ffc24a', ctaInk: '#1a1206', accent: '#5fd0ff', shadow: '#f59e0b' },
     gmvTarget: 2_400_000, gmvUnit: '单/分', milestoneTime: '每分钟', milestoneTimeEn: 'per minute',

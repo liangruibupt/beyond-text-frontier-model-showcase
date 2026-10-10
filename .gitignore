@@ -15,3 +15,6 @@ node_modules/
 **/07-unboxing/out/
 **/07-unboxing/gen/sfx_cache/
 **/07-unboxing/assets_backup/
+**/09-singles-day/shotcraft/node_modules/
+**/09-singles-day/shotcraft/out/
+**/09-singles-day/shotcraft/.cache/
