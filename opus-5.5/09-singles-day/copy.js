@@ -48,7 +48,7 @@ const ONE = {
   en: () => 'Ten billion in ninety-six seconds. Double Eleven.',
 };
 const HERO = {
-  zh: { national: '每秒百万订单，奔向仓库。', megacity: '核心都市圈，单城破亿。', crossborder: '六十八国订单，同时奔向仓库。', logistics: '每分钟两百四十万单，已经发出。' },
+  zh: { national: '每秒百万订单，奔向仓库。', megacity: '核心都市圈，单城破亿。', crossborder: '六十八国订单，同时奔向仓库。', logistics: '每分钟两百四十万单。' },
   en: { national: 'A million orders a second, racing to the warehouse.', megacity: 'The megacities — one city past a hundred million.', crossborder: 'Sixty-eight countries, all racing to the warehouse.', logistics: 'Two point four million parcels a minute, already shipped.' },
 };
 

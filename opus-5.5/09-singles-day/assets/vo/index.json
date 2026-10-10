@@ -376,11 +376,11 @@
     "lufs": -20
   },
   "logistics_zh_15_hero": {
-    "text": "每分钟两百四十万单，已经发出。",
+    "text": "每分钟两百四十万单。",
     "voice": "zf_xiaoxiao",
     "speed": 1,
-    "rate": 1.3,
-    "dur": 3.075,
+    "rate": 1.2,
+    "dur": 2.55,
     "lufs": -20
   }
 }
