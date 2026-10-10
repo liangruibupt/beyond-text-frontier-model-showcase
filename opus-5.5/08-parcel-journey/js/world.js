@@ -468,7 +468,16 @@ export function build(ctx, item, plan) {
   const handle = {
     root, parts, M, plan, item, scene, key, amb,
     env, pmrem,
-    post: { exposure: 1.0, vignette: 0.3, grain: 0.02, bloom: { strength: 0.3, threshold: 0.82 }, saturation: 1.08 },
+    // 电影级后期：AgX 色调映射（引擎默认）+ 青暗/暖高光调色轮、略降饱和走胶片灰、更实的泛光与暗角颗粒
+    post: {
+      exposure: 1.02, tone: 'agx',
+      bloom: { strength: 0.5, radius: 0.5, threshold: 0.75 },
+      lift: [-0.01, 0.0, 0.02],   // 暗部微微压青蓝（电影阴影）
+      gamma: [1.0, 1.0, 0.99],
+      gain: [1.04, 1.01, 0.96],   // 高光偏暖金
+      saturation: 0.96,            // 略去饱和，胶片灰质感
+      vignette: 0.34, grain: 0.028,
+    },
     /** 按故事时间摆好所有会动的件（闭式；AGV 走规划表）。s = { t: 故事时间, focus?: 取景点（世界坐标） } */
     update(s) {
       const t = s.t;

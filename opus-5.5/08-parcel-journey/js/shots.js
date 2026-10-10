@@ -14,14 +14,14 @@ function frame(ctx, s, lt = s.lt) {
 }
 
 export const SHOTS = {
-  order(ctx, s) { return { camera: frame(ctx, s), text: text(ctx, s), post: { aperture: 0.5, maxBlur: 0.01 } }; },
-  robots(ctx, s) { return { camera: frame(ctx, s), text: text(ctx, s), post: { aperture: 0.6, maxBlur: 0.012 } }; },   // 前景 AGV 掠过时虚化
-  pack(ctx, s) { return { camera: frame(ctx, s), text: text(ctx, s), post: { aperture: 0.55, maxBlur: 0.01 } }; },
-  sort(ctx, s) { return { camera: frame(ctx, s), text: text(ctx, s), post: { aperture: 0.5, maxBlur: 0.01 } }; },
-  truck(ctx, s) { return { camera: frame(ctx, s), text: text(ctx, s), post: { aperture: 0.4, maxBlur: 0.009 } }; },
-  lastmile(ctx, s) { return { camera: frame(ctx, s), text: text(ctx, s), post: { aperture: 0.45, maxBlur: 0.01 } }; },
+  order(ctx, s) { return { camera: frame(ctx, s), text: text(ctx, s), post: { aperture: 0.5, maxBlur: 0.022 } }; },
+  robots(ctx, s) { return { camera: frame(ctx, s), text: text(ctx, s), post: { aperture: 0.6, maxBlur: 0.024 } }; },   // 前景 AGV 掠过时虚化
+  pack(ctx, s) { return { camera: frame(ctx, s), text: text(ctx, s), post: { aperture: 0.55, maxBlur: 0.022 } }; },
+  sort(ctx, s) { return { camera: frame(ctx, s), text: text(ctx, s), post: { aperture: 0.5, maxBlur: 0.022 } }; },
+  truck(ctx, s) { return { camera: frame(ctx, s), text: text(ctx, s), post: { aperture: 0.4, maxBlur: 0.018 } }; },
+  lastmile(ctx, s) { return { camera: frame(ctx, s), text: text(ctx, s), post: { aperture: 0.45, maxBlur: 0.022 } }; },
   /** 门口：敲门、门开暖光，lt ≥ 2 之后画面停住（6 秒版 door 要播 3.5 s），片尾卡 / 价签照常入场 */
   door(ctx, s) {
-    return { camera: frame(ctx, s, Math.min(s.lt, 2.0)), text: text(ctx, s), post: { exposure: 1.02, aperture: 0.5, maxBlur: 0.01, bloom: { strength: 0.3, threshold: 0.8 } } };
+    return { camera: frame(ctx, s, Math.min(s.lt, 2.0)), text: text(ctx, s), post: { exposure: 1.02, aperture: 0.5, maxBlur: 0.022, bloom: { strength: 0.3, threshold: 0.8 } } };
   },
 };
