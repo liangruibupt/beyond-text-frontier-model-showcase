@@ -1,15 +1,41 @@
 {
-  "note": "08 电竞耳机 AI 变体（headset-ai）的出片提示词。和 beans-ai / lantern-ai 不同——这里只有「胜利」一个镜头换成 LTX-2.5 实拍（代码版玩家太风格化），其余六镜仍是 stories/headset 的代码 3D。所以这个文件只有一个 shot: victory。画面里不要任何可读文字 / logo（引擎会把「VICTORY」HUD、字幕、片尾卡、价签叠上去），构图把玩家 + 耳机放在 16:9 的右半 / 1:1 的上半，另一侧 / 下半留白给引擎的卡片。",
+  "note": "08 电竞耳机 AI 变体（headset-ai）整片 AI 出片提示词。七镜全部 LTX-2.5 实拍：defeat 失利 → order 下单 → cube 立体仓储 → route 夜城路径 → ride 雨夜配送 → lift 电梯 → victory 戴上翻盘。画面里不要任何可读文字/数字/logo（引擎会把字幕、VICTORY/DEFEAT HUD、价签、片尾卡叠上去）；构图给引擎的卡片留安全区（主体偏右半/上半）。电竞夜色调：深蓝 + 品红/青霓虹。photoreal live-action，无 CGI 感。",
   "model": "Lightricks/LTX-2.5 (DistilledPipeline, fp8-cast)",
   "fps": 24,
   "seed": 1111,
   "negative": "text, letters, words, numbers, logo, watermark, subtitles, caption, cartoon, anime, CGI render, 3d render, low poly, plastic look, video game character, oversaturated, blurry, jpeg artifacts, deformed hands, extra fingers, hands near camera, flicker, person looking at camera, eye contact",
-  "note_lengths": "victory 在 1:1 的 6 秒版里停得最久（约 3 s），加 ~0.5 s handle，帧数取 8k+1 网格 → 89 帧（3.71 s），和已验证的 door 片段同长。",
-  "framings": {
-    "16x9": { "width": 1280, "height": 704 },
-    "1x1": { "width": 960, "height": 960 }
-  },
+  "framings": { "16x9": { "width": 1280, "height": 704 }, "1x1": { "width": 960, "height": 960 } },
   "shots": [
+    {
+      "id": "defeat", "story_dur": 2.0, "frames": 49, "seconds": 2.04,
+      "prompt": "Cinematic live-action commercial footage, a dim gaming room at night lit by deep blue ambient light and faint magenta RGB glow. A realistic young gamer seen from three-quarter rear, slumped back in a gaming chair wearing an old worn headset, shoulders dropped in frustration after a loss, face only partly visible, no eye contact. In front of him a large monitor glows with abstract cold red light only, no readable text. Subject kept in the right portion of the frame, left side calm dark out-of-focus room. Shallow depth of field, slow subtle push-in, moody rim light. Natural film grain, 24fps.",
+      "prompt_11": "Cinematic live-action commercial footage, square 1:1, a dim gaming room at night, deep blue ambient with faint magenta RGB. A realistic young gamer three-quarter rear, slumped in a gaming chair in an old worn headset after a loss, shoulders dropped, no eye contact, monitor glowing abstract cold red light only, no readable text. Subject in the upper half, lower half calm dark desk. Shallow depth of field, slow push-in, moody rim light. Natural film grain, 24fps."
+    },
+    {
+      "id": "order", "story_dur": 1.5, "frames": 49, "seconds": 2.04,
+      "prompt": "Cinematic macro close-up, live-action commercial footage, a smartphone held in one hand at night, warm skin tone against cool blue room light. A fingertip taps a glowing product page showing an abstract premium over-ear gaming headphone image, no readable text on screen, soft bokeh of magenta neon behind. Shallow depth of field, gentle motion, tactile. Natural film grain, 24fps.",
+      "prompt_11": "Cinematic macro close-up, square 1:1, a smartphone held at night, warm hand against cool blue light, a fingertip tapping a glowing product page with an abstract gaming headphone image, no readable text, magenta neon bokeh behind. Subject centered upper, shallow depth of field, tactile. Natural film grain, 24fps."
+    },
+    {
+      "id": "cube", "story_dur": 2.5, "frames": 65, "seconds": 2.71,
+      "prompt": "Cinematic low-angle tracking shot, live-action commercial footage inside a modern automated warehouse at night, towering shelving racks, robotic arms and shuttles gliding between stacks retrieving parcels, cold blue industrial light with magenta accents, volumetric haze, sense of scale and speed. No readable text or signage. Shallow depth of field, smooth motion. Natural film grain, 24fps.",
+      "prompt_11": "Cinematic low-angle shot, square 1:1, inside a modern automated warehouse at night, towering shelving racks and robotic shuttles retrieving parcels, cold blue industrial light with magenta accents, volumetric haze. Subject in upper half, no readable text. Shallow depth of field, smooth motion. Natural film grain, 24fps."
+    },
+    {
+      "id": "route", "story_dur": 2.5, "frames": 65, "seconds": 2.71,
+      "prompt": "Cinematic high aerial shot, live-action commercial footage, a sprawling city at night from above, dense grid of glowing neon streets in blue and magenta, car light trails, a cyberpunk night cityscape conveying a delivery racing across town. No readable text or map labels. Slow drift, atmospheric haze. Natural film grain, 24fps.",
+      "prompt_11": "Cinematic aerial shot, square 1:1, a city at night from above, dense glowing neon street grid in blue and magenta, car light trails, cyberpunk night cityscape. No readable text. Upper half dense city, slow drift, atmospheric haze. Natural film grain, 24fps."
+    },
+    {
+      "id": "ride", "story_dur": 2.5, "frames": 65, "seconds": 2.71,
+      "prompt": "Cinematic tracking shot, live-action commercial footage, a delivery rider on an electric scooter speeding through wet neon-lit streets at night after rain, reflections of magenta and blue signs shimmering on the wet asphalt, motion blur of passing lights, dynamic energy, rider in dark gear with a delivery box. No readable text or brand on signs. Low angle, fast motion. Natural film grain, 24fps.",
+      "prompt_11": "Cinematic tracking shot, square 1:1, a delivery rider on an electric scooter speeding through wet neon streets after rain at night, magenta and blue reflections on wet asphalt, motion blur, rider with a delivery box. Subject upper-centered, no readable text. Low angle, fast motion. Natural film grain, 24fps."
+    },
+    {
+      "id": "lift", "story_dur": 2.0, "frames": 49, "seconds": 2.04,
+      "prompt": "Cinematic close-up, live-action commercial footage inside an apartment elevator at night, warm interior light, a pair of hands holding a sleek dark delivery box, the floor indicator panel glowing abstractly above with no readable numbers, soft reflections in the brushed metal walls. Subject right-of-center, calm space left. Shallow depth of field, gentle rise motion. Natural film grain, 24fps.",
+      "prompt_11": "Cinematic close-up, square 1:1, inside an apartment elevator at night, warm light, hands holding a sleek dark delivery box, abstract glowing floor panel above with no readable numbers, brushed metal reflections. Subject upper half, shallow depth of field, gentle rise. Natural film grain, 24fps."
+    },
     {
       "id": "victory", "story_dur": 3.0, "frames": 89, "seconds": 3.71,
       "prompt": "Cinematic live-action commercial footage, night gaming room lit in deep night-blue with magenta neon accents, composed with the gamer in the RIGHT half of the frame. A realistic young gamer seen from behind and three-quarter rear, face only partly visible and never making eye contact with the camera, tousled hair, wearing a dark hoodie and large over-ear gaming headphones that are black with a glowing magenta-pink headband accent. He leans back in a gaming chair in a moment of relief and triumph, fists raised. In front of him a large monitor glows with abstract gold and magenta light only, no readable text or numbers on the screen. The LEFT roughly 40% of the frame is calm, dark, out-of-focus room with nothing in it. Shallow depth of field, gentle slow push-in, soft neon rim light on the hair and headphones, hands kept away from the camera. Natural film grain, 24fps.",
