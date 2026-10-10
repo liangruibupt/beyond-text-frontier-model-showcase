@@ -51,10 +51,10 @@
   const grid = document.getElementById('grid');
   // 有成片画廊的场景（成片已上传）
   const GALLERY = new Set(['03-perfume','04-year-review','05-bubble-tea','06-silk-scarf',
-    '07-unboxing','08-parcel-journey','09-singles-day','11-liquid-glass','13-nyc-subway-sandart']);
-  // 有可访问网页的场景（index.html 已上传）—— 07 是纯成片无网页
+    '07-unboxing','08-parcel-journey','09-singles-day','10-live-flash-sale','11-liquid-glass','13-nyc-subway-sandart']);
+  // 有可访问网页的场景（index.html 已上传）—— 07/10 是纯成片无可看网页，只走 gallery
   const WEB = new Set(['01-lantingxu','02-devastator','03-perfume','04-year-review','05-bubble-tea',
-    '06-silk-scarf','08-parcel-journey','09-singles-day','10-live-flash-sale','11-liquid-glass',
+    '06-silk-scarf','08-parcel-journey','09-singles-day','11-liquid-glass',
     '12-pop-cats','13-nyc-subway-sandart']);
   for (const c of CASES) {
     const slug = c.film || c.n; // 网页案例用目录名；01/02/12/13 的 film 为 null，用其目录 slug
