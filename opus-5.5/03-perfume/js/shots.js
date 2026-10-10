@@ -52,22 +52,31 @@ export const SHOTS = {
   },
   hero(ctx, s) {
     world(ctx, s);
-    return { camera: fit('hero', s), text: text(ctx, s) };
+    // 浅景深把背景熔开、瓶子从环境里立起来；略加暗角做纵深反差（Q 质感：DoF/bloom 做深度）
+    const post = { aperture: 0.5, maxBlur: 0.014, vignette: 0.34 };
+    return { camera: fit('hero', s), text: text(ctx, s), post };
   },
   anatomy(ctx, s) {
     world(ctx, s);
     ctx.subjects.bottle.pose({ explode: easeInOut(ss(0.15, 1.1, s.lt)) * (1 - easeInOut(ss(2.2, 2.9, s.lt))) });
-    return { camera: fit('anatomy', s), text: text(ctx, s) };
+    // 分解件慢环绕 + 浅景深：前后部件有虚实层次，暗角压出体积（Q7 物件特写）
+    const post = { aperture: 0.45, maxBlur: 0.012, vignette: 0.32 };
+    return { camera: fit('anatomy', s), text: text(ctx, s), post };
   },
   spray(ctx, s) {
     world(ctx, s);
     const lt = s.lt, lift = easeInOut(ss(EV.lift, EV.lift + 0.3, lt)) * (1 - easeInOut(ss(EV.seat - 0.35, EV.seat, lt)));   // 瓶盖浮起、喷完落回
     ctx.subjects.bottle.pose({ capLift: LIFT * lift, press: ss(EV.spray, EV.spray + 0.1, lt) * (1 - ss(0.75, 0.9, lt)) });
     ctx.subjects.spray.update(lt);
-    return { camera: fit('spray', s), text: text(ctx, s) };
+    // 浅景深让喷雾雾粒在景深里发亮、瓶身实、背景虚（Q 质感）；1.5s 快镜 maxBlur 收一点避免背景过虚显空
+    const post = { aperture: 0.42, maxBlur: 0.01, vignette: 0.32 };
+    return { camera: fit('spray', s), text: text(ctx, s), post };
   },
   end(ctx, s) {
     world(ctx, s);
-    return { camera: fit('end', s), text: text(ctx, s) };
+    // 结尾推到全片能量峰值（Q8）：前 1.4s 随 logo 落定做一次缓推 + 泛光上扬，后 1.6s 真静止 hold（R1 字标 hold ≥1s），不再是慢速泄气
+    const push = easeInOut(ss(0, 1.4, s.lt));
+    const post = { aperture: 0.4, maxBlur: 0.012, vignette: 0.3, bloom: { strength: 0.35 + 0.25 * push } };
+    return { camera: fit('end', s, { scale: lerp(1, 1.08, push) }), text: text(ctx, s), post };
   },
 };
