@@ -38,9 +38,9 @@ export const BOX = {
 export const VIEW = {
   drop: { box: 'bottle', pitch: 12, yaw: [-8, -8], fov: 30 },
   hero: { box: 'bottle', pitch: 6, yaw: [-25, 15], fov: 28 },
-  anatomy: { box: 'exploded', pitch: 8, yaw: [30, 30], fov: 26 },
-  spray: { box: 'bottle', pitch: 5, yaw: [-35, -35], fov: 30 },
-  end: { box: 'bottle', pitch: 7, yaw: [10, 4], fov: 28 },
+  anatomy: { box: 'exploded', pitch: 8, yaw: [22, 38], fov: 26 },      // 慢环绕：分解件绕 16° 让观众看出体积，不再死机位
+  spray: { box: 'bottle', pitch: 5, yaw: [-40, -30], fov: 30 },        // 微环绕 10°：喷雾时镜头有一点推移
+  end: { box: 'bottle', pitch: 7, yaw: [14, -2], fov: 28 },            // 环绕 16° 收向正面：配合结尾推近，字标落定在正视
 };
 const R = Math.PI / 180;
 export const viewDir = (pitch, yaw) => [Math.sin(yaw * R) * Math.cos(pitch * R), Math.sin(pitch * R), Math.cos(yaw * R) * Math.cos(pitch * R)];
