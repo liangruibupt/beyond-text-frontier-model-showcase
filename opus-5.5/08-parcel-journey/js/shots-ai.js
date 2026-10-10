@@ -17,6 +17,8 @@ export const SHOTS_AI = {
   // 手冲：和代码版一致，画面在 lt ≥ 2.0 后停住（6 秒版价签要停满），片尾卡照常入场
   pour(ctx, s) { return shot(ctx, s, Math.min(s.lt, 2.0)); },
   order: plain, robots: plain, pack: plain, sort: plain, truck: plain, lastmile: plain,
+  // headset 电竞故事线的镜头（整片 AI）：defeat 失利 / cube 立体仓储 / route 夜城 / ride 雨夜配送 / lift 电梯
+  defeat: plain, cube: plain, route: plain, ride: plain, lift: plain,
   // 门口：片段 89 帧（3.7 s），6 秒版要播 3.5 s，不用停帧；钳在 3.4 s 以防越界
   door(ctx, s) { return shot(ctx, s, Math.min(s.lt, 3.4)); },
   // 胜利（headset-ai 逐镜 AI）：片段 89 帧（3.7 s），6 秒版 victory 播 3 s；钳在 3.6 s 以防越界
