@@ -68,8 +68,8 @@ export const SHOTS = {
     const lt = s.lt, lift = easeInOut(ss(EV.lift, EV.lift + 0.3, lt)) * (1 - easeInOut(ss(EV.seat - 0.35, EV.seat, lt)));   // 瓶盖浮起、喷完落回
     ctx.subjects.bottle.pose({ capLift: LIFT * lift, press: ss(EV.spray, EV.spray + 0.1, lt) * (1 - ss(0.75, 0.9, lt)) });
     ctx.subjects.spray.update(lt);
-    // 浅景深让喷雾雾粒在景深里发亮、瓶身实、背景虚（Q 质感）
-    const post = { aperture: 0.42, maxBlur: 0.012, vignette: 0.3 };
+    // 浅景深让喷雾雾粒在景深里发亮、瓶身实、背景虚（Q 质感）；1.5s 快镜 maxBlur 收一点避免背景过虚显空
+    const post = { aperture: 0.42, maxBlur: 0.01, vignette: 0.32 };
     return { camera: fit('spray', s), text: text(ctx, s), post };
   },
   end(ctx, s) {
