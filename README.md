@@ -30,3 +30,10 @@ WebGL 是浏览器里的 OpenGL ES（WebGL 1 对应 ES 2.0，WebGL 2 对应 ES 3
 - 每个模型目录自成一体：有自己的 README、`package.json` 和工具，命令都在这个目录下执行，不引用别的模型目录里的代码。
 - 新建案例按 `NN-name/` 编号，编号在各模型目录里各自排；迁入案例可保留原名，避免破坏工具路径。
 - 成片和渲染产物（`out/`）不入库。
+
+## 参考
+
+同样探索「用前沿模型做视频」的两个外部项目，收录在此作为参考与对照：
+
+- [yihui-dev/awesome-opus5-5-videos](https://github.com/yihui-dev/awesome-opus5-5-videos) —— 一份持续更新的精选清单，收集用 Claude Opus 5.5 做出的爆款视频，并公开它们背后的提示词；每条都把原作和 Skillry 上的实时复刻放在一起对照。偏「作品 + 提示词」的 awesome-list，覆盖 creative-coding、motion-graphics、Three.js 等方向。
+- [Vincentwei1021/video-shotcraft](https://github.com/Vincentwei1021/video-shotcraft) —— 面向 Claude Code / Codex 的 AI 视频技能（agent skill），用 Remotion 做电影感商品视频：提供 152 张分镜配方卡、209 个动效预览和一套可直接投产的模板。偏「工程化 + 可复用管线」，把分镜、动效和产出模板沉淀成 agent 可调用的技能。
