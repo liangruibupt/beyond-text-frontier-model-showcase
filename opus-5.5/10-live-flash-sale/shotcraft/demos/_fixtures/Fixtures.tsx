@@ -3,17 +3,18 @@
 // 不求页面质感，全部灰阶。
 import React from 'react';
 
+// 10 直播秒杀：暗色电影调色板（原灰阶占位 → 深夜直播间：深紫黑底、霓虹红强调、暖白字）
 export const G = {
-  bg: '#ececea',
-  panel: '#f7f7f6',
-  line: '#dcdcda',
-  bar: '#c2c2c0',
-  ink: '#2f2f2f',
-  mid: '#8f8f8d',
-  card: '#ffffff',
-  border: '#d8d8d6',
-  side: '#3a3a3a',
-  sideBar: '#5a5a58',
+  bg: '#0b0710',
+  panel: '#150d1c',
+  line: '#2a1c33',
+  bar: '#ff2d55',
+  ink: '#fff4ec',
+  mid: '#a8879a',
+  card: '#140b1a',
+  border: '#3a2340',
+  side: '#ff2d55',
+  sideBar: '#ff6b35',
 };
 
 export const Card: React.FC<{

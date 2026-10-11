@@ -26,9 +26,8 @@ const fieldStyle = (t: number, f0: number, mode: 'rise' | 'pop' = 'rise'): React
 
 // 描述行：[文本, 是否马克笔高亮]
 const LINES: [string, boolean?][][] = [
-  [['星潮轻负重双肩包 · '], ['直播专享价', true], ['，']],
-  [['航空级面料 · '], ['限量 999 件', true], ['，手慢']],
-  [['无门槛直降，拍下立减到手。']],
+  [['7.1 环绕声 · '], ['直播专享价', true], ['，']],
+  [['低延迟无线 · '], ['限量 999 件', true], ['，手慢无']],
 ];
 
 export const ProductCardProgressiveAssemble: React.FC = () => {
@@ -39,7 +38,7 @@ export const ProductCardProgressiveAssemble: React.FC = () => {
   const cut = t >= F(26);
   const nk = seg(t, F(26), F(26) + 0.12);
   return (
-    <DesignStage bg="#0d0e13" raster="zoom">
+    <DesignStage bg="radial-gradient(70% 70% at 50% 45%, #3a0d26 0%, #0b0710 75%)" raster="zoom">
       <div
         style={{
           position: 'absolute',
@@ -51,7 +50,7 @@ export const ProductCardProgressiveAssemble: React.FC = () => {
           background: '#f6f5f2',
           borderRadius: 12,
           boxShadow: '0 18px 50px rgba(0,0,0,.5)',
-          fontFamily: '-apple-system,Helvetica,sans-serif',
+          fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif",
           display: 'flex',
           padding: '4.5%',
           boxSizing: 'border-box',
@@ -62,37 +61,42 @@ export const ProductCardProgressiveAssemble: React.FC = () => {
         <div
           style={{
             flex: '0 0 38%',
-            background: '#e2e0da',
+            background: 'radial-gradient(80% 80% at 50% 40%,#3a2a52,#1a1428)',
             borderRadius: 8,
             position: 'relative',
             overflow: 'hidden',
             ...fieldStyle(t, 0),
           }}
         >
+          {/* 耳机剪影：头梁 + 两只耳罩，品牌粉描边发光 */}
           <div
             style={{
-              position: 'absolute',
-              left: '18%',
-              top: '14%',
-              width: '64%',
-              height: '72%',
-              background: 'linear-gradient(160deg,#2b3040,#171a24)',
-              borderRadius: '40% 40% 14% 14%/26% 26% 10% 10%',
+              position: 'absolute', left: '17%', top: '16%', width: '66%', height: '56%',
+              border: '9px solid #f2eeff', borderBottom: 'none', boxSizing: 'border-box',
+              borderRadius: '50% 50% 0 0 / 70% 70% 0 0',
+              filter: 'drop-shadow(0 0 6px rgba(255,92,138,.6))',
             }}
-          >
-            {/* 拉链 */}
-            <div style={{ position: 'absolute', left: '49%', top: '20%', width: '2%', height: '58%', background: '#525a70' }} />
-          </div>
+          />
+          {[0, 1].map((k) => (
+            <div
+              key={k}
+              style={{
+                position: 'absolute', top: '50%', [k ? 'right' : 'left']: '8%', width: '28%', height: '36%',
+                background: 'linear-gradient(160deg,#3a2f55,#120d1c)', borderRadius: '42%',
+                boxShadow: 'inset 0 0 0 3px #ff5c8a, 0 0 18px rgba(255,92,138,.55)',
+              }}
+            />
+          ))}
         </div>
         {/* 右列 */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
           {/* 标题（f=4） */}
           <div style={{ fontSize: 19, fontWeight: 800, color: '#17181c', letterSpacing: '-.3px', ...fieldStyle(t, 4) }}>
-            星潮轻负重双肩包
+            有集电竞耳机
           </div>
           {/* breadcrumb pills（f=8 起每 2 帧一个 pop） */}
           <div style={{ display: 'flex', gap: 6, margin: '8px 0 10px' }}>
-            {['户外出行', '轻负重', '直播爆款'].map((txt, i) => (
+            {['游戏', '7.1 环绕', '直播爆款'].map((txt, i) => (
               <div
                 key={txt}
                 style={{
@@ -119,7 +123,7 @@ export const ProductCardProgressiveAssemble: React.FC = () => {
                 textDecoration: cut ? 'line-through' : 'none',
               }}
             >
-              ¥599
+              ¥499
             </span>
             <span
               style={{
@@ -164,7 +168,7 @@ export const ProductCardProgressiveAssemble: React.FC = () => {
           </div>
           {/* 色卡（f=40 起每 2 帧一个 pop） */}
           <div style={{ display: 'flex', gap: 7, marginTop: 'auto' }}>
-            {['#191b20', '#8b8f99', '#3a5b8c'].map((cclr, i) => (
+            {['#26203a', '#ff5c8a', '#f2eeff'].map((cclr, i) => (
               <div
                 key={cclr}
                 style={{
