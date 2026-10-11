@@ -9,13 +9,13 @@
 // 附 1.035 微缩放加码）→ 66–84 下方标签条淡入 → 84–150 全静止（66f ≥45f）。
 import React from 'react';
 import { useCurrentFrame, interpolate, interpolateColors, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 const ROW = 210; // 数位行高（overflow 盒高）
 const DW = 126; // 数位盒宽
 const FS = 190; // 字号
 const SPIN = 0.85; // 高速滚动速度：行/帧
-const DIGITS = [9, 9, 9, 8]; // 目标数位（"99.98" 中可滚的四位）
+const DIGITS = [1, 0, 0, 0]; // 目标数位："10.00"（亿）
 
 // 位 i 的 strip 位置（单位：行，连续值）。纯帧函数，天然确定性。
 const posAt = (f: number, i: number): number => {
@@ -119,13 +119,13 @@ const StaticGlyph: React.FC<{ ch: string; color: string; w?: number }> = ({ ch, 
 export const OdometerDigitRoll: React.FC = () => {
   const frame = useCurrentFrame();
   // 全位锁定于 63f：整体加深脉冲 ink→#000→ink（8f），附微缩放加码可感性
-  const inkNow = interpolateColors(frame, [63, 67, 71], [G.ink, '#000000', G.ink]);
+  const inkNow = interpolateColors(frame, [63, 67, 71], ['#ffd84a', '#ffffff', '#ffd84a']);
   const pulseScale = interpolate(frame, [63, 67, 71], [1, 1.035, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.inOut(Easing.quad),
   });
-  const labelOp = interpolate(frame, [66, 84], [0, 1], {
+  const labelOp = interpolate(frame, [58, 68], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.quad),
@@ -133,9 +133,6 @@ export const OdometerDigitRoll: React.FC = () => {
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', left: 120, top: 96 }}>
-        <TitleBlock text="ODOMETER DIGIT ROLL" size={54} />
-      </div>
       <div
         style={{
           position: 'absolute',
@@ -144,7 +141,8 @@ export const OdometerDigitRoll: React.FC = () => {
           width: 1920,
           display: 'flex',
           justifyContent: 'center',
-          fontFamily: 'Helvetica, Arial, sans-serif',
+          fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif",
+          textShadow: '0 0 40px rgba(255,216,74,.45)',
           transform: `scale(${pulseScale})`,
           transformOrigin: '960px 105px',
         }}
@@ -154,7 +152,7 @@ export const OdometerDigitRoll: React.FC = () => {
         <StaticGlyph ch="." color={inkNow} w={70} />
         <DigitReel frame={frame} i={2} color={inkNow} />
         <DigitReel frame={frame} i={3} color={inkNow} />
-        <StaticGlyph ch="%" color={inkNow} />
+        <StaticGlyph ch="亿" color={inkNow} />
       </div>
       {/* 下方标签条：全部锁定后淡入 */}
       <div
@@ -170,8 +168,8 @@ export const OdometerDigitRoll: React.FC = () => {
           opacity: labelOp,
         }}
       >
-        <div style={{ width: 520, height: 22, background: G.bar, borderRadius: 11 }} />
-        <div style={{ width: 320, height: 14, background: G.line, borderRadius: 7 }} />
+        <div style={{ fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif", fontWeight: 900, fontSize: 52, color: G.ink, letterSpacing: 8 }}>星潮双11 · 全国成交额</div>
+        <div style={{ fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif", fontWeight: 700, fontSize: 30, color: G.mid, letterSpacing: 6 }}>零点后 1 分 36 秒破十亿</div>
       </div>
     </div>
   );

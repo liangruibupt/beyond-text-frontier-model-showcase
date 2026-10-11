@@ -7,9 +7,9 @@
 // 帧确定性：数据硬编码，全部 frame 派生，无 Math.random / Date.now。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
-const AMBER = '#b45309';
+const AMBER = '#ffd84a';
 
 const CARD_W = 1060;
 const CARD_H = 600;
@@ -23,9 +23,9 @@ const PLOT_X = PAD + AXIS_W;
 const PLOT_Y = 130;
 
 // 历史数据（$k，0–100 量程内温和爬升），最后一点爆表 340
-const DATA = [22, 30, 26, 38, 35, 47, 44, 58, 55, 66, 72, 340];
+const DATA = [0.2, 0.4, 0.6, 0.85, 1.1, 1.4, 1.7, 2.0, 2.3, 2.55, 2.8, 10]; // 亿元累计；末点冲破 ¥10亿
 const N = DATA.length;
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTHS = ['00:00', '', '', '00:24', '', '', '00:48', '', '', '01:12', '', '01:36'];
 
 const HOLD = 12;
 const DRAW_END = HOLD + 34; // f46：历史段画完
@@ -41,7 +41,7 @@ export const AxisRescaleShockV2: React.FC = () => {
   const frame = useCurrentFrame();
 
   // 量程：0–100 → 0–400，重标 12f out-cubic
-  const range = interpolate(frame, [BEAT, RESCALE_END], [100, 400], {
+  const range = interpolate(frame, [BEAT, RESCALE_END], [3, 12], {
     easing: Easing.out(Easing.cubic),
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -102,8 +102,8 @@ export const AxisRescaleShockV2: React.FC = () => {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const OLD_TICKS = ['25亿', '50亿', '75亿', '100亿'];
-  const NEW_TICKS = ['100亿', '200亿', '300亿', '400亿'];
+  const OLD_TICKS = ['0.75亿', '1.5亿', '2.25亿', '3亿'];
+  const NEW_TICKS = ['3亿', '6亿', '9亿', '12亿'];
 
   // 网格密度 4→8：新增的 4 根细网格随 swap 浮现
   const denseOp = swap;
@@ -129,8 +129,9 @@ export const AxisRescaleShockV2: React.FC = () => {
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: 100, width: '100%', textAlign: 'center' }}>
-        <TitleBlock text="AXIS RESCALE SHOCK V2" size={72} />
+      <div style={{ position: 'absolute', top: 96, width: '100%', textAlign: 'center', fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif",
+        fontWeight: 900, fontSize: 64, color: G.ink, letterSpacing: 6, textShadow: '0 0 24px rgba(95,208,255,.55)' }}>
+        零点后 96 秒
       </div>
 
       <div
@@ -144,13 +145,13 @@ export const AxisRescaleShockV2: React.FC = () => {
           border: `2px solid ${G.border}`,
           borderRadius: 14,
           boxSizing: 'border-box',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+          boxShadow: '0 0 0 1px rgba(95,208,255,.25), 0 30px 80px rgba(0,0,0,.6)',
           transform: `translateY(${kick.toFixed(2)}px)`,
           overflow: 'visible', // 让爆表段真的越出卡片
         }}
       >
         {/* 真卡头 */}
-        <div style={{ position: 'absolute', left: PAD, top: 34, fontFamily: 'Helvetica, Arial, sans-serif' }}>
+        <div style={{ position: 'absolute', left: PAD, top: 34, fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif" }}>
           <div style={{ fontSize: 30, fontWeight: 700, color: G.ink }}>实时成交额 GMV</div>
           <div style={{ fontSize: 19, fontWeight: 500, color: G.mid, marginTop: 6 }}>星潮双十一 · 全国 · 人民币</div>
         </div>
@@ -173,7 +174,7 @@ export const AxisRescaleShockV2: React.FC = () => {
                   style={{
                     position: 'absolute',
                     inset: 0,
-                    fontFamily: 'Helvetica',
+                    fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif",
                     fontWeight: 700,
                     fontSize: 21,
                     color: G.mid,
@@ -188,7 +189,7 @@ export const AxisRescaleShockV2: React.FC = () => {
                   style={{
                     position: 'absolute',
                     inset: 0,
-                    fontFamily: 'Helvetica',
+                    fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif",
                     fontWeight: 700,
                     fontSize: 21,
                     color: G.ink,
@@ -202,7 +203,7 @@ export const AxisRescaleShockV2: React.FC = () => {
               </div>
             );
           })}
-          <div style={{ position: 'absolute', left: -AXIS_W, top: PLOT_H - 13, width: AXIS_W - 14, fontFamily: 'Helvetica', fontWeight: 700, fontSize: 21, color: G.mid, textAlign: 'right' }}>$0</div>
+          <div style={{ position: 'absolute', left: -AXIS_W, top: PLOT_H - 13, width: AXIS_W - 14, fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif", fontWeight: 700, fontSize: 21, color: G.mid, textAlign: 'right' }}>0</div>
 
           {/* 图表上沿强调线 */}
           <div style={{ position: 'absolute', left: 0, right: 0, top: 0, height: 3, background: G.bar }} />
@@ -241,8 +242,8 @@ export const AxisRescaleShockV2: React.FC = () => {
                 height: 54,
                 background: AMBER,
                 borderRadius: 10,
-                color: '#fff',
-                fontFamily: 'Helvetica, Arial, sans-serif',
+                color: '#06101c',
+                fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif",
                 fontWeight: 800,
                 fontSize: 30,
                 display: 'flex',
@@ -252,7 +253,7 @@ export const AxisRescaleShockV2: React.FC = () => {
                 transformOrigin: 'right center',
               }}
             >
-              ¥340亿
+              ¥10亿
             </div>
           )}
 
@@ -266,7 +267,7 @@ export const AxisRescaleShockV2: React.FC = () => {
                 top: PLOT_H + 16,
                 width: 60,
                 textAlign: 'center',
-                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif",
                 fontSize: 18,
                 fontWeight: 600,
                 color: i === N - 1 ? AMBER : G.mid,

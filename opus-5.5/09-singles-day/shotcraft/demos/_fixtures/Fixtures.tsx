@@ -3,17 +3,18 @@
 // 不求页面质感，全部灰阶。
 import React from 'react';
 
+// 09 星潮双11 数据大屏：national 冷蓝 + 金色强调（原灰阶占位已替换）
 export const G = {
-  bg: '#ececea',
-  panel: '#f7f7f6',
-  line: '#dcdcda',
-  bar: '#c2c2c0',
-  ink: '#2f2f2f',
-  mid: '#8f8f8d',
-  card: '#ffffff',
-  border: '#d8d8d6',
-  side: '#3a3a3a',
-  sideBar: '#5a5a58',
+  bg: '#06101c',
+  panel: '#0b1a2c',
+  line: '#17324d',
+  bar: '#5fd0ff',
+  ink: '#eaf6ff',
+  mid: '#7fa3c2',
+  card: '#0a1828',
+  border: '#1f4466',
+  side: '#5fd0ff',
+  sideBar: '#ffd84a',
 };
 
 export const Card: React.FC<{

@@ -1,38 +1,81 @@
-// StartideShowcase.tsx — 09 数据大屏的 video-shotcraft 对比样片（15s/1920×1080/30fps）
-// 把 7 张镜头卡的 demo 实现按叙事串起来：倒计时 → 数据景观开场 → 图表冲击 → 粒子庆祝 →
-// 里程碑计数 → odometer 数字滚动 → 片尾闪白 logo。电影感来自各卡调校过的缓动/节拍。
+// StartideShowcase.tsx — 09 星潮双11 数据大屏 · video-shotcraft 电影版（15s/1920×1080/30fps）
+// 分镜（Opus 5.5 导演复审版）：6→0 零点开抢 → 全国订单汇流 → 成交曲线冲破量程 →
+// ¥10亿·1分36秒 礼炮 → 10.00亿 里程表锁定 → 68 国 → 星潮 STARTIDE
+// 镜头时长按各 demo 的真实时间轴给足：绝对帧 demo 的高潮帧都落在镜头内。
 import React from 'react';
-import { AbsoluteFill, Sequence, useVideoConfig } from 'remotion';
+import { AbsoluteFill, Audio, Sequence, staticFile, interpolate } from 'remotion';
 import { CountdownArcScatter } from '../demos/typography/countdown-arc-scatter/CountdownArcScatter';
 import { DatavizLandscapeOpen } from '../demos/opening/dataviz-landscape-open/DatavizLandscapeOpen';
 import { AxisRescaleShockV2 } from '../demos/data/chart-live-moves/AxisRescaleShockV2';
 import { ConfettiCrossfire } from '../demos/data/particle-celebrate-hits/ConfettiCrossfire';
-import { CounterConfetti } from '../demos/data/counter-confetti/CounterConfetti';
 import { OdometerDigitRoll } from '../demos/data/odometer-digit-roll/OdometerDigitRoll';
+import { CounterConfetti } from '../demos/data/counter-confetti/CounterConfetti';
 import { WhiteFlashLogoSimplifyCut } from '../demos/transition/white-flash-logo-simplify-cut/WhiteFlashLogoSimplifyCut';
+import { CutFlash, FilmLook, ShotCam } from './Cinematic';
 
-// 镜头表（帧 @30fps）：起点 + 时长；相邻略有重叠靠闪白转场衔接
-const SHOTS: { from: number; dur: number; C: React.FC }[] = [
-  { from: 0,   dur: 45,  C: CountdownArcScatter },   // 0.0–1.5 倒计时归零
-  { from: 45,  dur: 75,  C: DatavizLandscapeOpen },  // 1.5–4.0 数据景观开场（订单星座点亮）
-  { from: 120, dur: 70,  C: AxisRescaleShockV2 },    // 4.0–6.3 图表轴缩放冲击（弧线汇聚）
-  { from: 190, dur: 60,  C: ConfettiCrossfire },     // 6.3–8.3 粒子庆祝（命中点）
-  { from: 250, dur: 90,  C: CounterConfetti },       // 8.3–11.3 里程碑计数爆屏
-  { from: 340, dur: 60,  C: OdometerDigitRoll },     // 11.3–13.3 GMV odometer 数字滚动
-  { from: 400, dur: 50,  C: WhiteFlashLogoSimplifyCut }, // 13.3–15.0 片尾闪白 logo
+type Shot = { from: number; dur: number; C: React.FC; drift: number; push: number; punch: number; blur: number };
+// 绝对帧 demo 的关键帧：Dataviz 汇点亮 f118+；Axis 重标 f90、标签 f108；Confetti 发射 f16；Odometer 锁定 f63、标签 f66–84
+const SHOTS: Shot[] = [
+  { from: 0,   dur: 40,  C: CountdownArcScatter,       drift: -1, push: 0.04, punch: 0.05, blur: 0 }, // 0.0–1.3 归一化
+  { from: 40,  dur: 95,  C: DatavizLandscapeOpen,      drift: 0,  push: 0.02, punch: 0,    blur: 0 }, // 1.3–4.5 自带横移
+  { from: 135, dur: 118, C: AxisRescaleShockV2,        drift: 1,  push: 0.05, punch: 0.04, blur: 3 }, // 4.5–8.4 ≥f108 标签
+  { from: 253, dur: 40,  C: ConfettiCrossfire,         drift: 0,  push: 0.03, punch: 0.08, blur: 0 }, // 8.4–9.8 f16 发射
+  { from: 293, dur: 75,  C: OdometerDigitRoll,         drift: -1, push: 0.06, punch: 0.04, blur: 0 }, // 9.8–12.3 f63 锁定
+  { from: 368, dur: 30,  C: CounterConfetti,           drift: 1,  push: 0.04, punch: 0.06, blur: 0 }, // 12.3–13.3 归一化：0→68 国
+  { from: 398, dur: 52,  C: WhiteFlashLogoSimplifyCut, drift: 0,  push: 0.03, punch: 0,    blur: 0 }, // 13.3–15.0 归一化
 ];
 
-export const StartideShowcase: React.FC = () => {
-  const { durationInFrames } = useVideoConfig();
-  return (
-    <AbsoluteFill style={{ backgroundColor: '#0a0e14' }}>
-      {SHOTS.map((s, i) => (
-        <Sequence key={i} from={s.from} durationInFrames={s.dur}>
+const CUTS = [
+  { at: 40, color: '#5fd0ff', k: 0.4 },
+  { at: 135, color: '#ffffff', k: 0.45 },
+  { at: 253, color: '#ffd84a', k: 0.55 },
+  { at: 293, color: '#5fd0ff', k: 0.4 },
+  { at: 368, color: '#ffd84a', k: 0.45 },
+];
+
+// 配音（national 现成 Kokoro）：hook 对齐 0 落定；片尾句。hero 原句「每秒百万订单」与 96 秒破十亿矛盾，不用
+const VO: [number, string][] = [
+  [22, 'vo/national_zh_15_hook.mp3'],
+  [380, 'vo/national_zh_15_end_none.mp3'],
+];
+const VO_SPAN: [number, number][] = [[22, 80], [380, 450]];
+
+const SFX: [number, string, number][] = [
+  [0, 'riser-cine.mp3', 0.3],
+  [40, 'whoosh-big.mp3', 0.4],
+  [135, 'transition-snap.mp3', 0.4],
+  [135 + 62, 'impact-cine.mp3', 0.7], // 曲线冲顶
+  [135 + 90, 'whoosh-fast.mp3', 0.4], // 重标
+  [253 + 16, 'impact-cine.mp3', 0.8], // 礼炮
+  [253 + 17, 'sparkle.mp3', 0.45],
+  [293, 'transition-snap.mp3', 0.35],
+  [293 + 63, 'impact-cine.mp3', 0.6], // 里程表锁定
+  [368, 'transition-soft.mp3', 0.45],
+];
+const duck = (f: number) => (VO_SPAN.some(([a, b]) => f >= a && f < b) ? 0.6 : 1);
+
+export const StartideShowcase: React.FC = () => (
+  <AbsoluteFill style={{ backgroundColor: '#06101c' }}>
+    {SHOTS.map((s, i) => (
+      <Sequence key={i} from={s.from} durationInFrames={s.dur}>
+        <ShotCam dur={s.dur} drift={s.drift} push={s.push} punch={s.punch} blur={s.blur}>
           <s.C />
-        </Sequence>
-      ))}
-    </AbsoluteFill>
-  );
-};
+        </ShotCam>
+      </Sequence>
+    ))}
+    <CutFlash cuts={CUTS} />
+    <FilmLook leak="95,208,255" vignette={0.42} />
+    {VO.map(([f, file], i) => (
+      <Sequence key={`v${i}`} from={f}>
+        <Audio src={staticFile(file)} volume={1} />
+      </Sequence>
+    ))}
+    {SFX.map(([f, file, vol], i) => (
+      <Sequence key={`a${i}`} from={f}>
+        <Audio src={staticFile(`audio/${file}`)} volume={(lf) => vol * duck(f + lf) * interpolate(lf, [0, 2], [0.6, 1], { extrapolateRight: 'clamp' })} />
+      </Sequence>
+    ))}
+  </AbsoluteFill>
+);
 
 export const STARTIDE_SHOWCASE_DURATION = 450; // 15s @30fps

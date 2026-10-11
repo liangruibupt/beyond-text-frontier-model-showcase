@@ -7,7 +7,7 @@ import { DesignStage, E, lerp, rand, seg, useT } from '../../_fixtures/Motion';
 
 export const COUNTER_CONFETTI_DURATION = 138; // 4600ms @30fps
 
-const PAL = ['#ff6b8b', '#ffb347', '#ffe86b', '#7bff9e', '#5fd8ff', '#6c8cff', '#c86cff', '#ff6cf0'];
+const PAL = ['#ffd84a', '#5fd0ff', '#eaf6ff', '#2f8fd8', '#ffd84a', '#9fe4ff', '#ffe68a', '#5fd0ff'];
 const BURST = 0.52; // 计数到位(0.56)前"抢拍"
 
 // 52 片纸屑的静态参数（种子与 effect.js 完全一致，确定性可复现）
@@ -35,7 +35,7 @@ export const CounterConfetti: React.FC = () => {
   const t = useT();
   // 计数：easeOutQuart 冲刺
   const p = seg(t, 0.06, 0.56, E.outQuart);
-  const val = Math.round(p * 1000);
+  const val = Math.round(p * 68);
   // scale 过冲 [0.2,1.3,1.3,1]
   const s1 = seg(t, 0.06, 0.3, E.outCubic);
   const s2 = seg(t, 0.56, 0.72, E.outBack);
@@ -43,7 +43,7 @@ export const CounterConfetti: React.FC = () => {
   // 到位冲击环
   const rp = seg(t, 0.545, 0.75, E.outQuart);
   return (
-    <DesignStage bg="radial-gradient(80% 80% at 50% 45%,#161a2b,#07080e 75%)">
+    <DesignStage bg="radial-gradient(80% 80% at 50% 45%,#0f2a44,#06101c 75%)">
       {/* 中心辉光 */}
       <div
         style={{
@@ -54,7 +54,7 @@ export const CounterConfetti: React.FC = () => {
           height: 340,
           margin: -170,
           borderRadius: '50%',
-          background: 'radial-gradient(circle,rgba(120,160,255,.28),transparent 66%)',
+          background: 'radial-gradient(circle,rgba(95,208,255,.32),transparent 66%)',
           opacity: 0.35 + seg(t, 0.5, 0.62, E.outCubic) * 0.65 - seg(t, 0.72, 1) * 0.5,
         }}
       />
@@ -72,17 +72,17 @@ export const CounterConfetti: React.FC = () => {
             lineHeight: 1,
             // 原栈 -apple-system 在 Remotion 无头浏览器解析不到（落到 Arial），
             // 补 Helvetica 兜底——度量与原片的 SF Pro 逐字形吻合
-            fontFamily: "-apple-system,Helvetica,'Segoe UI',sans-serif",
+            fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif",
             letterSpacing: -2,
-            background: 'linear-gradient(180deg,#ffffff,#a9bcff)',
+            background: 'linear-gradient(180deg,#ffffff,#ffd84a)',
             WebkitBackgroundClip: 'text',
             backgroundClip: 'text',
             color: 'transparent',
-            textShadow: '0 0 34px rgba(130,160,255,.28)',
+            textShadow: '0 0 34px rgba(255,216,74,.45)',
             opacity: Math.min(1, seg(t, 0.02, 0.12) * 1.2),
           }}
         >
-          {val.toLocaleString('en-US')}
+          {val} 国
         </div>
       </div>
       {/* 底部标签：淡入 + letter-spacing 收拢 */}
@@ -93,16 +93,16 @@ export const CounterConfetti: React.FC = () => {
           top: '70%',
           transform: 'translate(-50%,0)',
           fontWeight: 700,
-          fontSize: 10,
+          fontSize: 15,
           lineHeight: 1,
-          fontFamily: '-apple-system,Helvetica,sans-serif', // 同上：Helvetica 兜底对齐原片
+          fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif",
 
           color: '#7d88a8',
           opacity: seg(t, 0.62, 0.78, E.outCubic),
-          letterSpacing: lerp(seg(t, 0.62, 0.82, E.outCubic), 11, 5),
+          letterSpacing: lerp(seg(t, 0.62, 0.82, E.outCubic), 4, 1.5),
         }}
       >
-        METRIC THIS WEEK
+        同时下单的国家和地区
       </div>
       {/* 到位冲击环 */}
       <div

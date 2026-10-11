@@ -108,13 +108,13 @@ type LabelSpec = {trib: number; t: number; id: string; appear: number; above: bo
 
 // 错峰 6–10f 间隔; 最后一枚 f103, 距交棒帧 (f120) ≥15f 无新增
 const LABELS: LabelSpec[] = [
-  {trib: 0, t: 0.62, id: 'OKR-1024', appear: 48, above: true},
-  {trib: 1, t: 0.58, id: 'TEAM-4417', appear: 56, above: false},
-  {trib: 2, t: 0.66, id: 'KR-2093', appear: 66, above: true},
-  {trib: 3, t: 0.6, id: 'SYNC-3308', appear: 74, above: false},
-  {trib: 4, t: 0.68, id: 'OBJ-2471', appear: 84, above: true},
-  {trib: 5, t: 0.64, id: 'PLAN-9124', appear: 93, above: false},
-  {trib: 4, t: 0.86, id: 'GOAL-7752', appear: 103, above: true},
+  {trib: 0, t: 0.62, id: '北京仓 · 12,408 单', appear: 48, above: true},
+  {trib: 1, t: 0.58, id: '上海仓 · 15,902 单', appear: 56, above: false},
+  {trib: 2, t: 0.66, id: '广州仓 · 11,377 单', appear: 66, above: true},
+  {trib: 3, t: 0.6, id: '成都仓 · 9,846 单', appear: 74, above: false},
+  {trib: 4, t: 0.68, id: '武汉仓 · 8,215 单', appear: 84, above: true},
+  {trib: 5, t: 0.64, id: '西安仓 · 7,630 单', appear: 93, above: false},
+  {trib: 4, t: 0.86, id: '全国汇流 → 星潮', appear: 103, above: true},
 ];
 
 // 汇点 (偏画面一侧, 收尾亮部引导视线)
@@ -163,14 +163,14 @@ export const DatavizLandscapeOpen: React.FC = () => {
   });
 
   return (
-    <AbsoluteFill style={{backgroundColor: '#050505', overflow: 'hidden'}}>
+    <AbsoluteFill style={{backgroundColor: '#06101c', overflow: 'hidden'}}>
       {/* zoom 容器: 以画面中心为原点 */}
       <AbsoluteFill style={{transform: `scale(${zoom})`, transformOrigin: '50% 50%'}}>
         {/* 底色微渐变, 避免纯黑死平 */}
         <AbsoluteFill
           style={{
             background:
-              'radial-gradient(120% 90% at 62% 45%, #0b0b0d 0%, #060607 55%, #040404 100%)',
+              'radial-gradient(120% 90% at 62% 45%, #0f2a44 0%, #081626 55%, #040a12 100%)',
           }}
         />
 
@@ -184,7 +184,7 @@ export const DatavizLandscapeOpen: React.FC = () => {
                   <path
                     d={farPath(l)}
                     fill="none"
-                    stroke="#ffffff"
+                    stroke="#7fd6ff"
                     strokeWidth={1.3}
                     strokeLinecap="round"
                     opacity={l.op}
@@ -201,7 +201,7 @@ export const DatavizLandscapeOpen: React.FC = () => {
                         cx={p.x}
                         cy={p.y}
                         r={3}
-                        fill="#ffffff"
+                        fill="#7fd6ff"
                         opacity={t <= g ? l.op + 0.08 : 0}
                       />
                     );
@@ -220,7 +220,7 @@ export const DatavizLandscapeOpen: React.FC = () => {
               <path
                 d={trunkPath()}
                 fill="none"
-                stroke="#ffffff"
+                stroke="#7fd6ff"
                 strokeWidth={7}
                 strokeLinecap="round"
                 opacity={0.16}
@@ -233,7 +233,7 @@ export const DatavizLandscapeOpen: React.FC = () => {
                   key={i}
                   d={tribPath(t)}
                   fill="none"
-                  stroke="#ffffff"
+                  stroke="#7fd6ff"
                   strokeWidth={5.5}
                   strokeLinecap="round"
                   opacity={t.opacity * 0.18}
@@ -247,7 +247,7 @@ export const DatavizLandscapeOpen: React.FC = () => {
             <path
               d={trunkPath()}
               fill="none"
-              stroke="#ffffff"
+              stroke="#7fd6ff"
               strokeWidth={2.8}
               strokeLinecap="round"
               opacity={0.8}
@@ -261,7 +261,7 @@ export const DatavizLandscapeOpen: React.FC = () => {
                 key={i}
                 d={tribPath(t)}
                 fill="none"
-                stroke="#ffffff"
+                stroke="#7fd6ff"
                 strokeWidth={2.2}
                 strokeLinecap="round"
                 opacity={t.opacity}
@@ -274,7 +274,7 @@ export const DatavizLandscapeOpen: React.FC = () => {
             <path
               d={trunkPath()}
               fill="none"
-              stroke="#ffffff"
+              stroke="#7fd6ff"
               strokeWidth={2.8}
               strokeLinecap="round"
               opacity={0.3 * flowIn(38)}
@@ -286,7 +286,7 @@ export const DatavizLandscapeOpen: React.FC = () => {
                 key={`flow-${i}`}
                 d={tribPath(t)}
                 fill="none"
-                stroke="#ffffff"
+                stroke="#7fd6ff"
                 strokeWidth={2.2}
                 strokeLinecap="round"
                 opacity={0.26 * flowIn(t.growStart + t.growDur)}
@@ -327,7 +327,8 @@ export const DatavizLandscapeOpen: React.FC = () => {
                     top: py - 8,
                     width: 16,
                     height: 16,
-                    backgroundColor: '#ffffff',
+                    backgroundColor: '#ffd84a',
+                    boxShadow: '0 0 12px rgba(255,216,74,.8)',
                     opacity: fadeIn * 0.9,
                   }}
                 />
@@ -336,10 +337,10 @@ export const DatavizLandscapeOpen: React.FC = () => {
                     position: 'absolute',
                     left: px + 14,
                     top: py + textOff,
-                    fontFamily: 'Menlo, "SF Mono", Consolas, monospace',
+                    fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif", fontWeight: 700,
                     fontSize: 22,
                     letterSpacing: 3,
-                    color: '#e8e8e8',
+                    color: '#eaf6ff',
                     whiteSpace: 'nowrap',
                     opacity: fadeIn * 0.92,
                   }}
@@ -359,7 +360,7 @@ export const DatavizLandscapeOpen: React.FC = () => {
               width: 840,
               height: 520,
               background:
-                'radial-gradient(50% 50% at 50% 50%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.12) 45%, rgba(255,255,255,0) 72%)',
+                'radial-gradient(50% 50% at 50% 50%, rgba(255,216,74,0.55) 0%, rgba(95,208,255,0.14) 45%, rgba(95,208,255,0) 72%)',
               opacity: handoffGlow,
               filter: 'blur(18px)',
               pointerEvents: 'none',
@@ -375,7 +376,7 @@ export const DatavizLandscapeOpen: React.FC = () => {
                 key={i}
                 d={l.d}
                 fill="none"
-                stroke="#ffffff"
+                stroke="#7fd6ff"
                 strokeWidth={l.w}
                 strokeLinecap="round"
                 opacity={l.op}
