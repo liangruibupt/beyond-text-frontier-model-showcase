@@ -22,9 +22,9 @@ type Word = {
 
 const LAND = 6; // 入场弹落时长：start+6 落定，同帧起闪
 const WORDS: Word[] = [
-  { text: '限时', start: 0, end: 30, rot: 2.5, flashLen: 6, flashDark: '#cfcfca' },
-  { text: '秒杀', start: 30, end: 60, rot: -2.5, flashLen: 6, flashDark: '#cfcfca' },
-  { text: '¥359', start: 60, end: 9999, rot: 0, flashLen: 8, flashDark: '#c4c4c0' },
+  { text: '限时', start: 0, end: 20, rot: 2.5, flashLen: 6, flashDark: '#3a0a1a' },
+  { text: '秒杀', start: 20, end: 40, rot: -2.5, flashLen: 6, flashDark: '#3a0a1a' },
+  { text: '¥359', start: 40, end: 9999, rot: 0, flashLen: 10, flashDark: '#ff2d55' },
 ];
 
 export const CelFlashStomp: React.FC = () => {
@@ -51,7 +51,7 @@ export const CelFlashStomp: React.FC = () => {
   const bg = flashing && Math.floor(ft / 2) % 2 === 0 ? word.flashDark : G.bg;
 
   // 第三词落定同帧起底部标签条淡入（66–80）
-  const labelOp = interpolate(frame, [66, 80], [0, 1], {
+  const labelOp = interpolate(frame, [46, 58], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.quad),
@@ -71,11 +71,12 @@ export const CelFlashStomp: React.FC = () => {
       >
         <div
           style={{
-            fontFamily: 'Helvetica, Arial, sans-serif',
-            fontWeight: 800,
-            fontSize: 210,
+            fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif",
+            fontWeight: 900,
+            fontSize: 260,
             color: G.ink,
             letterSpacing: -4,
+            textShadow: '0 0 30px rgba(255,45,85,.85), 0 0 90px rgba(255,107,53,.55), 0 8px 0 #7a0f2a',
             transform: `scale(${scale}) rotate(${word.rot}deg)`,
           }}
         >
@@ -90,7 +91,8 @@ export const CelFlashStomp: React.FC = () => {
           right: 0,
           bottom: 0,
           height: 96,
-          background: G.ink,
+          background: 'linear-gradient(90deg,rgba(255,45,85,.28),rgba(20,11,26,.92) 40%)',
+          borderTop: '2px solid #ff2d55',
           opacity: labelOp,
           display: 'flex',
           alignItems: 'center',
@@ -99,9 +101,9 @@ export const CelFlashStomp: React.FC = () => {
           boxSizing: 'border-box',
         }}
       >
-        <div style={{ width: 40, height: 40, borderRadius: 10, background: G.sideBar }} />
-        <div style={{ height: 16, width: 320, background: G.mid, borderRadius: 8 }} />
-        <div style={{ marginLeft: 'auto', height: 16, width: 180, background: G.sideBar, borderRadius: 8 }} />
+        <div style={{ fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif", fontWeight: 900, fontSize: 40, color: '#fff4ec', letterSpacing: 4 }}>有集电竞耳机</div>
+        <div style={{ fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif", fontWeight: 700, fontSize: 34, color: '#a8879a', textDecoration: 'line-through' }}>日常价 ¥499</div>
+        <div style={{ marginLeft: 'auto', fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif", fontWeight: 900, fontSize: 40, color: '#0b0710', background: '#ffcf4a', padding: '6px 22px', borderRadius: 10 }}>限量 999 件</div>
       </div>
     </div>
   );

@@ -35,7 +35,7 @@ export const WhiteFlashLogoSimplifyCut: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            font: `900 62px/1 -apple-system,'Helvetica Neue',sans-serif`,
+            font: `900 62px/1 'Noto Sans CJK SC','Noto Sans SC',sans-serif`,
             letterSpacing: 6,
             background: 'linear-gradient(105deg,#ff5fa2 0%,#ff9d4d 22%,#ffe45c 38%,#4de3c1 58%,#4d9bff 76%,#a05cff 100%)',
             backgroundSize: '320% 100%',
@@ -67,7 +67,8 @@ export const WhiteFlashLogoSimplifyCut: React.FC = () => {
           }}
         />
         {/* 白色全屏层：easeIn 冲入后保持 */}
-        <div style={{ position: 'absolute', inset: 0, background: '#fff', opacity: flashK }} />
+        <div style={{ position: 'absolute', inset: 0, background: '#fff', opacity: flashK * (1 - lk) }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(70% 70% at 50% 50%,#3a0d26,#0b0710 78%)', opacity: lk }} />
         {/* 扁平渐变字标层（渐变色见顶部 GRAD_*） */}
         <div
           style={{
@@ -83,15 +84,26 @@ export const WhiteFlashLogoSimplifyCut: React.FC = () => {
         >
           <div
             style={{
-              font: `800 58px/1 -apple-system,'Helvetica Neue',sans-serif`,
+              font: `800 58px/1 'Noto Sans CJK SC','Noto Sans SC',sans-serif`,
               letterSpacing: 8,
               background: `linear-gradient(92deg,${GRAD_A} 0%,${GRAD_B} 45%,${GRAD_C} 100%)`,
               WebkitBackgroundClip: 'text',
               backgroundClip: 'text',
               color: 'transparent',
+              filter: 'drop-shadow(0 0 10px rgba(255,45,85,.7)) drop-shadow(0 0 28px rgba(255,107,53,.45))',
             }}
           >
             {WORDMARK}
+          </div>
+          <div style={{ marginTop: 14, font: `700 18px/1 'Noto Sans CJK SC','Noto Sans SC',sans-serif`, letterSpacing: 6,
+            color: '#fff4ec', opacity: seg(t, 0.66, 0.78, E.outCubic), transform: `translateY(${lerp(seg(t, 0.66, 0.78, E.outCubic), 6, 0)}px)` }}>
+            天天有好价
+          </div>
+          <div style={{ marginTop: 14, padding: '6px 22px', borderRadius: 99, background: 'linear-gradient(92deg,#ff2d55,#ff6b35)',
+            font: `900 16px/1 'Noto Sans CJK SC','Noto Sans SC',sans-serif`, letterSpacing: 4, color: '#fff',
+            boxShadow: '0 0 18px rgba(255,80,60,.7)', opacity: seg(t, 0.76, 0.84),
+            transform: `scale(${lerp(seg(t, 0.76, 0.86, E.outBack), 0.6, 1)})` }}>
+            立即抢
           </div>
         </div>
       </div>

@@ -8,20 +8,21 @@ import { DesignStage, E, lerp, seg, useT } from '../../_fixtures/Motion';
 
 export const COUNTDOWN_ARC_SCATTER_DURATION = 33; // 1100ms @30fps
 
-const INK = '#17181c';
+const INK = '#fff4ec';
 const ACCENT_RGB = [255, 45, 85]; // 双11红
-const R0 = 150; // 弧半径
+const R0 = 118; // 弧半径
 const SP = 24; // 相邻数字角距
 // i=6 是 "0"，落位时角度归零停在弧顶（双11 零点归零）
-const NUMS = [45, 35, 28, 22, 17, 10, 0, 4, 3];
+const NUMS = [6, 5, 4, 3, 2, 1, 0, -1, -2]; // 负数不显示：弧右端留空
 // "0" 落位的目标点（相对 pivot）
 const TARGET = { x: -148, y: -30 };
 
 // 数字/标题共用的字形
 const NUM_FONT: React.CSSProperties = {
   color: INK,
-  fontWeight: 600,
+  fontWeight: 900,
   fontSize: 40,
+  textShadow: '0 0 16px rgba(255,45,85,.55)',
   letterSpacing: '-0.5px',
   whiteSpace: 'nowrap',
 };
@@ -43,20 +44,21 @@ export const CountdownArcScatter: React.FC = () => {
   // 结尾整词（末双字母收尾）转强调色 #17181c → ACCENT
   const bl = seg(t, 0.84, 0.98);
   return (
-    <DesignStage bg="#fff">
+    <DesignStage bg="radial-gradient(70% 70% at 50% 55%,#3a0d26,#0b0710 75%)">
       <div
         style={{
           position: 'absolute',
           inset: 0,
-          background: '#fff',
+          background: 'transparent',
           overflow: 'hidden',
-          fontFamily: '-apple-system,system-ui,sans-serif',
+          fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif",
         }}
       >
         {/* pivot：所有元素都以它为原点定位 */}
-        <div style={{ position: 'absolute', left: '50%', top: '58%', width: 0, height: 0 }}>
+        <div style={{ position: 'absolute', left: '50%', top: '64%', width: 0, height: 0 }}>
           {NUMS.map((n, i) => {
-            const is5 = n === 5;
+            const is5 = n === 0;
+            if (n < 0) return null;
             const pa = (i - 6) * SP + rot; // 当前位置角
             const rad = (pa * Math.PI) / 180;
             let x = Math.sin(rad) * R0;
@@ -134,7 +136,7 @@ export const CountdownArcScatter: React.FC = () => {
                     opacity: p,
                     filter: `blur(${(1 - p) * 6}px)`,
                     color: isLast
-                      ? `rgb(${mix(bl, 23, ACCENT_RGB[0])},${mix(bl, 24, ACCENT_RGB[1])},${mix(bl, 28, ACCENT_RGB[2])})`
+                      ? `rgb(${mix(bl, 255, ACCENT_RGB[0])},${mix(bl, 244, ACCENT_RGB[1])},${mix(bl, 236, ACCENT_RGB[2])})`
                       : undefined,
                   }}
                 >

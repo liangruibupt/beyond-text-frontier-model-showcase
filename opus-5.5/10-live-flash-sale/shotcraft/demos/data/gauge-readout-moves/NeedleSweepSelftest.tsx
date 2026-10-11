@@ -5,7 +5,7 @@
 // 帧确定性：纯 interpolate 分段，全部 clamp，settle 后每帧输出常数。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 const AMBER = '#b45309';
 const RED = '#7c2d12';
@@ -34,10 +34,11 @@ const arcPath = (d0: number, d1: number, r: number): string => {
 };
 
 // 三表：点火 f12，错峰 4f
+// 三色库存：满格甩起后跌进红区（12% / 5% / 0%），0% 落定盖「已抢光」
 const GAUGES = [
-  { start: 12, target: 190 },
-  { start: 16, target: 120 },
-  { start: 20, target: 235 },
+  { start: 6, target: 32, label: '黑夜紫' },
+  { start: 10, target: 14, label: '樱花粉' },
+  { start: 14, target: 0, label: '月光白' },
 ];
 
 const needleAngle = (frame: number, s: number, target: number): number => {
@@ -61,7 +62,7 @@ const needleAngle = (frame: number, s: number, target: number): number => {
   });
 };
 
-const Gauge: React.FC<{ start: number; target: number }> = ({ start, target }) => {
+const Gauge: React.FC<{ start: number; target: number; label: string }> = ({ start, target, label }) => {
   const frame = useCurrentFrame();
   const d = needleAngle(frame, start, target);
   const settle = start + 32;
@@ -112,32 +113,41 @@ const Gauge: React.FC<{ start: number; target: number }> = ({ start, target }) =
         position: 'absolute', left: 0, right: 0, top: 396, textAlign: 'center',
         opacity: popOp, transform: `scale(${popScale.toFixed(4)})`,
       }}>
-        <span style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 62, color: G.ink }}>
+        <span style={{ fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif", fontWeight: 900, fontSize: 62, color: value === 0 ? '#ff2d55' : G.ink,
+          textShadow: value === 0 ? '0 0 18px rgba(255,45,85,.8)' : 'none' }}>
           {value}
         </span>
-        <span style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 700, fontSize: 30, color: G.mid, marginLeft: 8 }}>
+        <span style={{ fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif", fontWeight: 700, fontSize: 30, color: G.mid, marginLeft: 8 }}>
           %
         </span>
+        <div style={{ fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif", fontWeight: 700, fontSize: 30, color: G.mid, marginTop: 4, letterSpacing: 4 }}>{label}</div>
+        {value === 0 && (
+          <div style={{ position: 'absolute', left: '50%', top: -250, transform: `translateX(-50%) rotate(-10deg) scale(${popScale.toFixed(4)})`,
+            border: '5px solid #ff2d55', borderRadius: 12, padding: '6px 22px', color: '#ff2d55', fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif",
+            fontWeight: 900, fontSize: 56, letterSpacing: 6, background: 'rgba(11,7,16,.7)',
+            boxShadow: '0 0 30px rgba(255,45,85,.7)', textShadow: '0 0 14px rgba(255,45,85,.9)' }}>已抢光</div>
+        )}
       </div>
     </div>
   );
 };
 
 export const NeedleSweepSelftest: React.FC = () => {
+  const frame = useCurrentFrame();
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <TitleBlock text="库存余量实时自检" size={60} />
+        <div style={{ fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif", fontWeight: 900, fontSize: 76, color: '#ff2d55', letterSpacing: 8,
+          textShadow: '0 0 24px rgba(255,45,85,.7)', opacity: 0.75 + 0.25 * Math.sin(frame / 3) }}>库存告急</div>
       </div>
       <div style={{
         position: 'absolute', left: CARD_X, top: CARD_Y, width: CARD_W, height: CARD_H,
         background: G.card, border: `2px solid ${G.border}`, borderRadius: 14,
         boxSizing: 'border-box', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', padding: 32,
       }}>
-        <div style={{ height: 16, width: 320, background: G.bar, borderRadius: 8 }} />
         <div style={{ position: 'absolute', left: 0, top: 96, display: 'flex' }}>
           {GAUGES.map((g, i) => (
-            <Gauge key={i} start={g.start} target={g.target} />
+            <Gauge key={i} start={g.start} target={g.target} label={g.label} />
           ))}
         </div>
       </div>
