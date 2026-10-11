@@ -12,8 +12,8 @@ W, OUT = Path(sys.argv[1]), Path(sys.argv[2])
 REPO = "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts"
 groups = {g["id"]: g for g in json.loads((W / "groups.json").read_text())}
 rows = []
-for i in range(1, 7):
-    rows += json.loads((W / f"out{i}.json").read_text())
+for f in sorted(W.glob("out*.json"), key=lambda p: int("".join(c for c in p.stem if c.isdigit()) or 0)):
+    rows += json.loads(f.read_text())
 rows.sort(key=lambda r: r["id"])
 for r in rows:
     g = groups[r["id"]]
