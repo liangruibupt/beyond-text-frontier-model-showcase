@@ -10,9 +10,9 @@ import { DesignStage, E, lerp, seg, useT } from '../../_fixtures/Motion';
 export const WHITE_FLASH_LOGO_SIMPLIFY_CUT_DURATION = 108; // 3600ms @30fps
 
 // 该效果依赖的文件级共享量（扁平字标渐变三色 + 占位词标）
-const GRAD_A = '#ff2d55';
-const GRAD_B = '#ff6b35';
-const GRAD_C = '#ffd166';
+const GRAD_A = '#5fd0ff';
+const GRAD_B = '#eaf6ff';
+const GRAD_C = '#ffd84a';
 const WORDMARK = '星潮 STARTIDE';
 
 export const WhiteFlashLogoSimplifyCut: React.FC = () => {
@@ -35,9 +35,10 @@ export const WhiteFlashLogoSimplifyCut: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            font: `900 62px/1 -apple-system,'Helvetica Neue',sans-serif`,
-            letterSpacing: 6,
-            background: 'linear-gradient(105deg,#ff5fa2 0%,#ff9d4d 22%,#ffe45c 38%,#4de3c1 58%,#4d9bff 76%,#a05cff 100%)',
+            font: `900 40px/1 'Noto Sans CJK SC','Noto Sans SC',sans-serif`,
+            letterSpacing: 4,
+            whiteSpace: 'nowrap',
+            background: 'linear-gradient(105deg,#2f8fd8 0%,#5fd0ff 30%,#eaf6ff 50%,#ffd84a 70%,#5fd0ff 100%)',
             backgroundSize: '320% 100%',
             WebkitBackgroundClip: 'text',
             backgroundClip: 'text',
@@ -67,7 +68,8 @@ export const WhiteFlashLogoSimplifyCut: React.FC = () => {
           }}
         />
         {/* 白色全屏层：easeIn 冲入后保持 */}
-        <div style={{ position: 'absolute', inset: 0, background: '#fff', opacity: flashK }} />
+        <div style={{ position: 'absolute', inset: 0, background: '#fff', opacity: flashK * (1 - lk) }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(70% 70% at 50% 50%,#0f2a44,#06101c 78%)', opacity: lk }} />
         {/* 扁平渐变字标层（渐变色见顶部 GRAD_*） */}
         <div
           style={{
@@ -83,15 +85,21 @@ export const WhiteFlashLogoSimplifyCut: React.FC = () => {
         >
           <div
             style={{
-              font: `800 58px/1 -apple-system,'Helvetica Neue',sans-serif`,
-              letterSpacing: 8,
+              font: `800 40px/1 'Noto Sans CJK SC','Noto Sans SC',sans-serif`,
+              letterSpacing: 5,
+              whiteSpace: 'nowrap',
               background: `linear-gradient(92deg,${GRAD_A} 0%,${GRAD_B} 45%,${GRAD_C} 100%)`,
               WebkitBackgroundClip: 'text',
               backgroundClip: 'text',
               color: 'transparent',
+              filter: 'drop-shadow(0 0 10px rgba(95,208,255,.6)) drop-shadow(0 0 26px rgba(255,216,74,.35))',
             }}
           >
             {WORDMARK}
+          </div>
+          <div style={{ marginTop: 16, font: `700 18px/1 'Noto Sans CJK SC','Noto Sans SC',sans-serif`, letterSpacing: 8, color: '#eaf6ff',
+            opacity: seg(t, 0.68, 0.82, E.outCubic), transform: `translateY(${lerp(seg(t, 0.68, 0.82, E.outCubic), 6, 0)}px)` }}>
+            峰值，由你点亮
           </div>
         </div>
       </div>

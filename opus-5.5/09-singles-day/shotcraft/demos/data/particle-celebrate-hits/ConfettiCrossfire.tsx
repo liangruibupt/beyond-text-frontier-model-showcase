@@ -5,9 +5,9 @@
 // 帧确定性：sin 散列伪随机派生每颗初速/角度/翻转率，弹道 = 纯 age 的函数。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
-const AMBER = '#b45309';
+const AMBER = '#ffd84a';
 const FIRE = 16; // 揭晓帧 = 发射帧
 const DECAY = 0.9;
 const GRAV = 1.5; // px/f² （等效重力；decay 下终端落速 = GRAV/(1-d) = 15px/f）
@@ -29,7 +29,7 @@ const makeGun = (originDeg: number, saltBase: number): Confetto[] =>
     // decay 0.9 下初速总位移只有 10×v0（velocity 6.6f 减半），18px/f 只够 180px 完全不可感
     // → 加码到 70–95px/f：最陡颗峰值升到 y≈390（画面上 1/3），弹幕跨越中央卡，~f96 全部落出
     const speed = 70 + rnd(i, saltBase + 1) * 25;
-    const grays = ['#6d6d6b', '#8f8f8d', '#4a4a48', '#b0b0ae'];
+    const grays = ['#5fd0ff', '#eaf6ff', '#2f8fd8', '#9fe4ff'];
     return {
       vx: Math.cos(ang) * speed,
       vy: -Math.sin(ang) * speed, // 屏幕坐标向下为正，射向斜上
@@ -86,26 +86,23 @@ export const ConfettiCrossfire: React.FC = () => {
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <TitleBlock text="CONFETTI CROSSFIRE" size={72} />
-      </div>
 
       {/* 中央 KPI 卡 */}
       <div style={{
-        position: 'absolute', left: 660, top: 400, width: 600, height: 320,
+        position: 'absolute', left: 560, top: 360, width: 800, height: 360,
         background: G.card, border: `2px solid ${G.border}`, borderRadius: 16,
-        boxSizing: 'border-box', padding: 36, boxShadow: '0 4px 14px rgba(0,0,0,0.08)',
+        boxSizing: 'border-box', padding: 36, boxShadow: '0 0 0 1px rgba(255,216,74,.4), 0 0 60px rgba(95,208,255,.25)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         transform: `scale(${cardScale})`, opacity: cardOp,
       }}>
-        <div style={{ height: 14, width: 220, background: G.bar, borderRadius: 7 }} />
+        <div style={{ fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif", fontWeight: 700, fontSize: 30, color: G.mid, letterSpacing: 6 }}>星潮双11 · 全国成交额</div>
         <div style={{
-          fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 150,
+          fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif", fontWeight: 900, fontSize: 150, textShadow: '0 0 36px rgba(255,216,74,.55)',
           color: AMBER, letterSpacing: -3, lineHeight: 1.1, fontVariantNumeric: 'tabular-nums',
         }}>
-          ¥100亿
+          ¥10亿
         </div>
-        <div style={{ height: 10, width: 150, background: G.line, borderRadius: 5 }} />
+        <div style={{ fontFamily: "'Noto Sans CJK SC','Noto Sans SC',sans-serif", fontWeight: 900, fontSize: 36, color: G.ink, letterSpacing: 4 }}>零点后 1 分 36 秒</div>
       </div>
 
       {renderGun(LEFT_GUN, LEFT_POS, 'L')}
