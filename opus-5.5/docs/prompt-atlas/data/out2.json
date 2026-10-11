@@ -1,0 +1,1307 @@
+[
+ {
+  "id": 77,
+  "slug": "henkvaness-975279",
+  "title_zh": "文章转科普视频",
+  "capability": [
+   "科普讲解"
+  ],
+  "highlights_zh": "把文章内容改编为SVG图解讲解动画",
+  "techniques": [
+   "动态排版",
+   "数据驱动"
+  ],
+  "reuse_for_us": "长文/白皮书转讲解短片",
+  "prompt_quality": "只给方向",
+  "keep_note": "依赖外部文章素材"
+ },
+ {
+  "id": 78,
+  "slug": "johnsavage-ai-427263",
+  "title_zh": "复古未来风发布片",
+  "capability": [
+   "产品发布/营销",
+   "着色器/视觉特效"
+  ],
+  "highlights_zh": "胶片颗粒、CRT扫描效果、复古未来美学、20秒16:9",
+  "techniques": [
+   "着色器",
+   "光照/后期",
+   "3D"
+  ],
+  "reuse_for_us": "新品发布20秒风格化短片",
+  "prompt_quality": "完整可复用",
+  "keep_note": "依赖参考图；Claude自宣"
+ },
+ {
+  "id": 79,
+  "slug": "froessell-562325",
+  "title_zh": "警匪追逐街机游戏",
+  "capability": [
+   "游戏/可玩",
+   "粒子/物理模拟"
+  ],
+  "highlights_zh": "俯视角漂移追逐、警车连环相撞、通缉等级递增",
+  "techniques": [
+   "物理",
+   "交互",
+   "3D"
+  ],
+  "reuse_for_us": "品牌互动小游戏原型",
+  "prompt_quality": "完整可复用",
+  "keep_note": "Unity PRD，原文较长"
+ },
+ {
+  "id": 80,
+  "slug": "rammanq-034553",
+  "title_zh": "投资平台宣传动画",
+  "capability": [
+   "产品发布/营销"
+  ],
+  "highlights_zh": "全力展现平台能力的动态图形宣传",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "SaaS平台宣传短片",
+  "prompt_quality": "只给方向",
+  "keep_note": "真实品牌AllInvestView"
+ },
+ {
+  "id": 81,
+  "slug": "polydao-566862",
+  "title_zh": "品牌色主题作品集",
+  "capability": [
+   "动效作品集",
+   "产品发布/营销"
+  ],
+  "highlights_zh": "24秒展示动效功力、品牌色、音效卡点切换",
+  "techniques": [
+   "卡点/节奏",
+   "转场设计",
+   "动态排版"
+  ],
+  "reuse_for_us": "可套模板的品牌主题快剪",
+  "prompt_quality": "完整可复用",
+  "keep_note": "含[TOPIC]等占位符"
+ },
+ {
+  "id": 82,
+  "slug": "ratheejaisal-154698",
+  "title_zh": "产品功能发布短片",
+  "capability": [
+   "产品发布/营销"
+  ],
+  "highlights_zh": "20秒内快节奏展示全部核心功能、贴合品牌",
+  "techniques": [
+   "卡点/节奏",
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "新品功能15-20秒快剪",
+  "prompt_quality": "只给方向",
+  "keep_note": "依赖自有品牌素材"
+ },
+ {
+  "id": 83,
+  "slug": "visheshbaghell-119508",
+  "title_zh": "网站产品演示片",
+  "capability": [
+   "产品发布/营销",
+   "UI/交互演示"
+  ],
+  "highlights_zh": "用/brag技能制作强调所有功能的产品演示",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "官网产品Demo视频",
+  "prompt_quality": "只给方向",
+  "keep_note": "依赖/brag技能"
+ },
+ {
+  "id": 84,
+  "slug": "wani-shola-459278",
+  "title_zh": "开发者个人作品集",
+  "capability": [
+   "动效作品集",
+   "UI/交互演示"
+  ],
+  "highlights_zh": "真实网站截屏入框、聊天问答大字、120BPM卡点、平滑转场",
+  "techniques": [
+   "真实素材/调研",
+   "卡点/节奏",
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "个人/品牌官网90秒展示片",
+  "prompt_quality": "完整可复用",
+  "keep_note": "真实个人网站与人名"
+ },
+ {
+  "id": 85,
+  "slug": "robvjourney-237474",
+  "title_zh": "实验室官网炫酷短片",
+  "capability": [
+   "产品发布/营销",
+   "品牌/Logo演绎"
+  ],
+  "highlights_zh": "15秒全力打造最炸的网站动态视频",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "官网15秒品牌快剪",
+  "prompt_quality": "只给方向",
+  "keep_note": "真实品牌nohandslabs"
+ },
+ {
+  "id": 86,
+  "slug": "paukraft-585863",
+  "title_zh": "项目特性动效作品集",
+  "capability": [
+   "动效作品集",
+   "产品发布/营销"
+  ],
+  "highlights_zh": "以作品集标准展示项目独特功能",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "开源项目/产品特性介绍",
+  "prompt_quality": "只给方向",
+  "keep_note": ""
+ },
+ {
+  "id": 87,
+  "slug": "aisongman-461057",
+  "title_zh": "像素风卡牌对战游戏",
+  "capability": [
+   "游戏/可玩"
+  ],
+  "highlights_zh": "炉石式1v1卡牌对战、像素美术",
+  "techniques": [
+   "交互",
+   "程序化"
+  ],
+  "reuse_for_us": "像素风互动营销小游戏",
+  "prompt_quality": "只给方向",
+  "keep_note": "参照炉石传说"
+ },
+ {
+  "id": 88,
+  "slug": "blushpetal795-170220",
+  "title_zh": "求职自我介绍动效",
+  "capability": [
+   "动效作品集",
+   "动态排版"
+  ],
+  "highlights_zh": "15秒向招聘方自我介绍的动态图形",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "个人简历/招聘介绍短片",
+  "prompt_quality": "只给方向",
+  "keep_note": ""
+ },
+ {
+  "id": 89,
+  "slug": "bilimfili1-459762",
+  "title_zh": "App功能竖屏展示",
+  "capability": [
+   "产品发布/营销",
+   "UI/交互演示"
+  ],
+  "highlights_zh": "真实录屏、功能冲出手机改变世界、每功能≥2.5秒",
+  "techniques": [
+   "真实素材/调研",
+   "转场设计",
+   "动态排版"
+  ],
+  "reuse_for_us": "App上架竖屏45秒宣传",
+  "prompt_quality": "完整可复用",
+  "keep_note": "依赖模拟器录屏"
+ },
+ {
+  "id": 90,
+  "slug": "amitsingha89-780553",
+  "title_zh": "网站首访讲解片",
+  "capability": [
+   "科普讲解",
+   "产品发布/营销"
+  ],
+  "highlights_zh": "为首次访客讲解网站的专业解说视频",
+  "techniques": [
+   "动态排版",
+   "真实素材/调研"
+  ],
+  "reuse_for_us": "官网新访客解说视频",
+  "prompt_quality": "只给方向",
+  "keep_note": "真实网站anuprerna"
+ },
+ {
+  "id": 91,
+  "slug": "lester-tyy-480587",
+  "title_zh": "实验产品展示片",
+  "capability": [
+   "产品发布/营销",
+   "UI/交互演示"
+  ],
+  "highlights_zh": "研究产品运作后用Remotion制作展示视频",
+  "techniques": [
+   "真实素材/调研",
+   "动态排版"
+  ],
+  "reuse_for_us": "Web产品功能展示片",
+  "prompt_quality": "只给方向",
+  "keep_note": "真实网站cloudjoi"
+ },
+ {
+  "id": 92,
+  "slug": "pound75423-464968",
+  "title_zh": "迷幻故障风MV",
+  "capability": [
+   "音乐可视化/音画同步",
+   "角色/叙事动画"
+  ],
+  "highlights_zh": "逐拍切镜、白闪、RGB撕裂、万华镜、色相流动、巨字闪现",
+  "techniques": [
+   "卡点/节奏",
+   "转场设计",
+   "光照/后期",
+   "动态排版"
+  ],
+  "reuse_for_us": "音乐/角色IP宣传MV",
+  "prompt_quality": "完整可复用",
+  "keep_note": "需用户提供歌曲与角色图"
+ },
+ {
+  "id": 93,
+  "slug": "alexwtlf-981005",
+  "title_zh": "太空站舷窗悲剧短片",
+  "capability": [
+   "角色/叙事动画",
+   "3D场景/建筑"
+  ],
+  "highlights_zh": "舷窗内外双机位7切、夜面地球城市灯光、流星撞击",
+  "techniques": [
+   "运镜",
+   "3D",
+   "光照/后期"
+  ],
+  "reuse_for_us": "叙事型情感短片分镜",
+  "prompt_quality": "完整可复用",
+  "keep_note": "引用人物素材@mila"
+ },
+ {
+  "id": 94,
+  "slug": "souravbhar871-477361",
+  "title_zh": "Opus自我介绍动效",
+  "capability": [
+   "动效作品集",
+   "动态排版"
+  ],
+  "highlights_zh": "10秒展示模型自我、避免角落框字AI痕迹",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "品牌自我介绍10秒片",
+  "prompt_quality": "只给方向",
+  "keep_note": "Claude自宣"
+ },
+ {
+  "id": 95,
+  "slug": "ved-cj-066575",
+  "title_zh": "多人射击可破坏游戏",
+  "capability": [
+   "游戏/可玩",
+   "粒子/物理模拟"
+  ],
+  "highlights_zh": "多人对战、近距离语音、可破坏环境",
+  "techniques": [
+   "3D",
+   "物理",
+   "交互"
+  ],
+  "reuse_for_us": "多人互动游戏原型",
+  "prompt_quality": "只给方向",
+  "keep_note": ""
+ },
+ {
+  "id": 96,
+  "slug": "mustaphafenzar-973906",
+  "title_zh": "App发布动效短片",
+  "capability": [
+   "产品发布/营销",
+   "动效作品集"
+  ],
+  "highlights_zh": "以作品集标准做15秒App发布视频",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "App上线15秒快剪",
+  "prompt_quality": "只给方向",
+  "keep_note": "真实品牌mounis.app"
+ },
+ {
+  "id": 97,
+  "slug": "gautam-mer1-530003",
+  "title_zh": "苹果风App短片",
+  "capability": [
+   "产品发布/营销"
+  ],
+  "highlights_zh": "苹果发布会风格30秒App展示",
+  "techniques": [
+   "动态排版",
+   "转场设计",
+   "景深/虚化"
+  ],
+  "reuse_for_us": "苹果风高级感产品片",
+  "prompt_quality": "部分公开",
+  "keep_note": "仿Apple风格"
+ },
+ {
+  "id": 98,
+  "slug": "doubleunplussed-181894",
+  "title_zh": "AI梗文化音乐MV",
+  "capability": [
+   "音乐可视化/音画同步",
+   "角色/叙事动画"
+  ],
+  "highlights_zh": "参照仓库风格、歌词配AI安全冷知识梗、剪掉尾拍",
+  "techniques": [
+   "卡点/节奏",
+   "真实素材/调研"
+  ],
+  "reuse_for_us": "歌曲MV/梗文化内容",
+  "prompt_quality": "完整可复用",
+  "keep_note": "依赖外部仓库与YouTube歌"
+ },
+ {
+  "id": 99,
+  "slug": "bizibeast-505124",
+  "title_zh": "Bento网站动效片",
+  "capability": [
+   "产品发布/营销",
+   "动效作品集"
+  ],
+  "highlights_zh": "先调研网站，40秒全力展现动效功力",
+  "techniques": [
+   "真实素材/调研",
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "网站产品40秒宣传",
+  "prompt_quality": "只给方向",
+  "keep_note": "真实品牌Bento.surf"
+ },
+ {
+  "id": 100,
+  "slug": "motiondsgnr-313960",
+  "title_zh": "15秒动效作品集",
+  "capability": [
+   "动效作品集"
+  ],
+  "highlights_zh": "15秒全力展示动效设计功力的作品集",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "品牌通用15秒炫技片",
+  "prompt_quality": "只给方向",
+  "keep_note": ""
+ },
+ {
+  "id": 101,
+  "slug": "groundcontrol-230877",
+  "title_zh": "日本高温数据动画",
+  "capability": [
+   "数据可视化",
+   "科普讲解",
+   "音乐可视化/音画同步"
+  ],
+  "highlights_zh": "铅笔手绘风、色差效果、真实气温数据、JS合成配乐",
+  "techniques": [
+   "数据驱动",
+   "音频合成",
+   "真实素材/调研"
+  ],
+  "reuse_for_us": "气候/行业数据3分钟可视化",
+  "prompt_quality": "完整可复用",
+  "keep_note": ""
+ },
+ {
+  "id": 102,
+  "slug": "designbyfusun-559069",
+  "title_zh": "创意工作室动效片",
+  "capability": [
+   "动效作品集",
+   "品牌/Logo演绎"
+  ],
+  "highlights_zh": "15秒全力展现工作室的动态图形",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "工作室品牌15秒片",
+  "prompt_quality": "只给方向",
+  "keep_note": "真实品牌octostudio"
+ },
+ {
+  "id": 103,
+  "slug": "tak3sh8-441895",
+  "title_zh": "白板科普物理概念",
+  "capability": [
+   "科普讲解"
+  ],
+  "highlights_zh": "手绘白板动画讲解SK模型副本对称破缺+旁白",
+  "techniques": [
+   "动态排版",
+   "音频合成"
+  ],
+  "reuse_for_us": "硬核知识白板讲解",
+  "prompt_quality": "完整可复用",
+  "keep_note": ""
+ },
+ {
+  "id": 104,
+  "slug": "ceowinkz-683602",
+  "title_zh": "电商批发招商动效",
+  "capability": [
+   "产品发布/营销",
+   "品牌/Logo演绎"
+  ],
+  "highlights_zh": "15秒向品牌方展示为何合作的招商动画",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "B2B招商/合作提案短片",
+  "prompt_quality": "只给方向",
+  "keep_note": "真实公司Winkz"
+ },
+ {
+  "id": 105,
+  "slug": "vanshwtfff-992798",
+  "title_zh": "10秒粒子作品集",
+  "capability": [
+   "动效作品集",
+   "粒子/物理模拟"
+  ],
+  "highlights_zh": "10秒动效作品集，粒子炫技",
+  "techniques": [
+   "粒子",
+   "动态排版"
+  ],
+  "reuse_for_us": "10秒品牌开屏",
+  "prompt_quality": "只给方向",
+  "keep_note": ""
+ },
+ {
+  "id": 106,
+  "slug": "sudiyasa-076027",
+  "title_zh": "首百用户感谢短片",
+  "capability": [
+   "动效作品集",
+   "产品发布/营销"
+  ],
+  "highlights_zh": "15秒作品集风格感谢首批100位用户",
+  "techniques": [
+   "粒子",
+   "动态排版"
+  ],
+  "reuse_for_us": "用户里程碑感谢视频",
+  "prompt_quality": "只给方向",
+  "keep_note": "真实品牌eyezonbot"
+ },
+ {
+  "id": 107,
+  "slug": "kentcdodds-858193",
+  "title_zh": "Kody产品讲解短片",
+  "capability": [
+   "动效作品集",
+   "科普讲解"
+  ],
+  "highlights_zh": "先调研、30秒让人秒懂产品、可多版本",
+  "techniques": [
+   "真实素材/调研",
+   "动态排版"
+  ],
+  "reuse_for_us": "产品概念30秒讲解",
+  "prompt_quality": "只给方向",
+  "keep_note": "需外部Dropbox/Discord"
+ },
+ {
+  "id": 108,
+  "slug": "xanderwow-a-597063",
+  "title_zh": "科技大佬搞笑对决",
+  "capability": [
+   "角色/叙事动画"
+  ],
+  "highlights_zh": "Dario与Sam一分钟抽象搞笑打斗、有爆点有胜负",
+  "techniques": [
+   "转场设计",
+   "粒子"
+  ],
+  "reuse_for_us": "搞笑叙事短片",
+  "prompt_quality": "只给方向",
+  "keep_note": "涉及真实人物"
+ },
+ {
+  "id": 109,
+  "slug": "astrothewizard-618782",
+  "title_zh": "光子旅程科普动画",
+  "capability": [
+   "科普讲解",
+   "角色/叙事动画",
+   "模拟/仿真"
+  ],
+  "highlights_zh": "拟人光子、真实随机游走模拟、真实数据、配音配乐字幕",
+  "techniques": [
+   "数据驱动",
+   "物理",
+   "音频合成",
+   "动态排版"
+  ],
+  "reuse_for_us": "60秒高质量科普讲解片",
+  "prompt_quality": "完整可复用",
+  "keep_note": ""
+ },
+ {
+  "id": 110,
+  "slug": "nolit64-347627",
+  "title_zh": "冒险岛复刻游戏",
+  "capability": [
+   "游戏/可玩"
+  ],
+  "highlights_zh": "用Raylib-cs复刻冒险岛横版游戏",
+  "techniques": [
+   "交互",
+   "音频合成"
+  ],
+  "reuse_for_us": "横版互动小游戏",
+  "prompt_quality": "部分公开",
+  "keep_note": "复刻MapleStory"
+ },
+ {
+  "id": 111,
+  "slug": "iammxfschr-955831",
+  "title_zh": "推理创业公司发布片",
+  "capability": [
+   "产品发布/营销"
+  ],
+  "highlights_zh": "仿Anthropic风格、时尚利落、加流行配乐",
+  "techniques": [
+   "卡点/节奏",
+   "动态排版"
+  ],
+  "reuse_for_us": "创业公司发布病毒短片",
+  "prompt_quality": "只给方向",
+  "keep_note": "仿Anthropic风格"
+ },
+ {
+  "id": 112,
+  "slug": "kangaroohere-818789",
+  "title_zh": "Newsletter动效片",
+  "capability": [
+   "动效作品集",
+   "产品发布/营销"
+  ],
+  "highlights_zh": "20秒作品集风格为通讯做宣传",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "内容订阅推广短片",
+  "prompt_quality": "只给方向",
+  "keep_note": ""
+ },
+ {
+  "id": 113,
+  "slug": "sachaarbonel-673648",
+  "title_zh": "设计稿产品发布片",
+  "capability": [
+   "产品发布/营销",
+   "UI/交互演示"
+  ],
+  "highlights_zh": "基于Pen设计稿做发布片、改用免版税音乐、放慢节奏",
+  "techniques": [
+   "动态排版",
+   "卡点/节奏"
+  ],
+  "reuse_for_us": "基于设计稿的发布片",
+  "prompt_quality": "完整可复用",
+  "keep_note": "依赖Pen设计稿"
+ },
+ {
+  "id": 114,
+  "slug": "manuelogomigo-052364",
+  "title_zh": "Flowdrive动效片",
+  "capability": [
+   "动效作品集",
+   "产品发布/营销"
+  ],
+  "highlights_zh": "15秒全力为Flowdrive做动效作品",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "产品15秒快剪",
+  "prompt_quality": "只给方向",
+  "keep_note": "品牌Flowdrive"
+ },
+ {
+  "id": 115,
+  "slug": "chrisjdimarco-808196",
+  "title_zh": "民主主题宣言动效",
+  "capability": [
+   "动效作品集",
+   "动态排版"
+  ],
+  "highlights_zh": "60秒讲述知情公众与反裙带资本主义的作品集",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "观点/倡议类宣言片",
+  "prompt_quality": "只给方向",
+  "keep_note": "含政治议题"
+ },
+ {
+  "id": 116,
+  "slug": "madhav-xo-524440",
+  "title_zh": "关于我的10秒视频",
+  "capability": [
+   "其他",
+   "着色器/视觉特效"
+  ],
+  "highlights_zh": "根据模型对用户的了解生成10秒视频",
+  "techniques": [
+   "着色器",
+   "3D"
+  ],
+  "reuse_for_us": "个性化用户画像短片",
+  "prompt_quality": "只给方向",
+  "keep_note": "依赖模型记忆"
+ },
+ {
+  "id": 117,
+  "slug": "jhylee95-452427",
+  "title_zh": "Supademo发布片",
+  "capability": [
+   "产品发布/营销",
+   "UI/交互演示"
+  ],
+  "highlights_zh": "首秒钩子、产品证明与AI分段、品牌精确UI、配乐全卡点",
+  "techniques": [
+   "卡点/节奏",
+   "真实素材/调研",
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "SaaS社媒发布快剪",
+  "prompt_quality": "完整可复用",
+  "keep_note": "真实品牌Supademo"
+ },
+ {
+  "id": 118,
+  "slug": "astrodevil-392708",
+  "title_zh": "工作室案例介绍片",
+  "capability": [
+   "产品发布/营销",
+   "品牌/Logo演绎"
+  ],
+  "highlights_zh": "从案例研究提取信息做15秒工作室开场",
+  "techniques": [
+   "真实素材/调研",
+   "动态排版"
+  ],
+  "reuse_for_us": "公司/工作室15秒介绍",
+  "prompt_quality": "只给方向",
+  "keep_note": "品牌Studio1"
+ },
+ {
+  "id": 119,
+  "slug": "johnsavage-ai-041677",
+  "title_zh": "纯代码动效作品集",
+  "capability": [
+   "动效作品集",
+   "着色器/视觉特效"
+  ],
+  "highlights_zh": "15秒只用代码的动效作品集",
+  "techniques": [
+   "着色器",
+   "动态排版"
+  ],
+  "reuse_for_us": "纯代码品牌开屏",
+  "prompt_quality": "只给方向",
+  "keep_note": ""
+ },
+ {
+  "id": 120,
+  "slug": "shinskinakamoto-589043",
+  "title_zh": "15秒动效作品集",
+  "capability": [
+   "动效作品集"
+  ],
+  "highlights_zh": "15秒全力展示动效功力",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "品牌通用15秒炫技片",
+  "prompt_quality": "只给方向",
+  "keep_note": ""
+ },
+ {
+  "id": 121,
+  "slug": "m1n9-k7-295601",
+  "title_zh": "15秒动效作品集",
+  "capability": [
+   "动效作品集"
+  ],
+  "highlights_zh": "15秒全力展示动效功力",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "品牌通用15秒炫技片",
+  "prompt_quality": "只给方向",
+  "keep_note": "成片用了AI生图"
+ },
+ {
+  "id": 122,
+  "slug": "madebyjmayala-649220",
+  "title_zh": "基因公司宣传短片",
+  "capability": [
+   "产品发布/营销",
+   "品牌/Logo演绎"
+  ],
+  "highlights_zh": "15秒宣传片、复用官网素材",
+  "techniques": [
+   "真实素材/调研",
+   "动态排版"
+  ],
+  "reuse_for_us": "官网素材15秒宣传",
+  "prompt_quality": "只给方向",
+  "keep_note": "真实品牌gene spectra"
+ },
+ {
+  "id": 123,
+  "slug": "annacher-433425",
+  "title_zh": "单形变UI产品宣传",
+  "capability": [
+   "UI/交互演示",
+   "产品发布/营销"
+  ],
+  "highlights_zh": "一形不切、弹簧形变、光标驱动、120BPM每拍有事、首尾循环",
+  "techniques": [
+   "卡点/节奏",
+   "动态模糊",
+   "运镜",
+   "交互"
+  ],
+  "reuse_for_us": "SaaS UI循环产品片",
+  "prompt_quality": "完整可复用",
+  "keep_note": "真实品牌sprites.ai"
+ },
+ {
+  "id": 124,
+  "slug": "paranoidamerica-686717",
+  "title_zh": "诡异披萨店MV",
+  "capability": [
+   "音乐可视化/音画同步",
+   "角色/叙事动画"
+  ],
+  "highlights_zh": "太空明信片+圆珠笔手绘风、歌词同步、镜头穿入地下室",
+  "techniques": [
+   "运镜",
+   "卡点/节奏",
+   "2.5D视差"
+  ],
+  "reuse_for_us": "歌曲叙事MV",
+  "prompt_quality": "完整可复用",
+  "keep_note": "借助SDXL生图素材"
+ },
+ {
+  "id": 125,
+  "slug": "slvdev-975986",
+  "title_zh": "自我推广短片",
+  "capability": [
+   "产品发布/营销"
+  ],
+  "highlights_zh": "15秒以上自我推广",
+  "techniques": [
+   "动态排版"
+  ],
+  "reuse_for_us": "个人品牌短片",
+  "prompt_quality": "只给方向",
+  "keep_note": ""
+ },
+ {
+  "id": 126,
+  "slug": "gizakdag-239768",
+  "title_zh": "过度思考概念片",
+  "capability": [
+   "动效作品集",
+   "动态排版"
+  ],
+  "highlights_zh": "以“过度思考”为主题、参照附图的15秒作品集",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "概念主题品牌片",
+  "prompt_quality": "只给方向",
+  "keep_note": "依赖附加参考图"
+ },
+ {
+  "id": 127,
+  "slug": "nummanali-340931",
+  "title_zh": "大模型进化史视频",
+  "capability": [
+   "数据可视化",
+   "动态排版"
+  ],
+  "highlights_zh": "年内LLM演进轨迹与能力、炸裂节奏感",
+  "techniques": [
+   "数据驱动",
+   "动态排版",
+   "卡点/节奏"
+  ],
+  "reuse_for_us": "行业年度回顾快剪",
+  "prompt_quality": "只给方向",
+  "keep_note": "涉及真实模型品牌"
+ },
+ {
+  "id": 128,
+  "slug": "advait-jayant-712107",
+  "title_zh": "AI普惠宣言动效",
+  "capability": [
+   "品牌/Logo演绎",
+   "动态排版"
+  ],
+  "highlights_zh": "20秒宣言、画面与声音全代码生成",
+  "techniques": [
+   "动态排版",
+   "音频合成"
+  ],
+  "reuse_for_us": "品牌宣言/愿景片",
+  "prompt_quality": "只给方向",
+  "keep_note": "真实品牌DreamFort"
+ },
+ {
+  "id": 129,
+  "slug": "abhinayguptha-259981",
+  "title_zh": "惊悚剧片头字幕",
+  "capability": [
+   "动态排版",
+   "着色器/视觉特效"
+  ],
+  "highlights_zh": "艾美奖级惊悚剧片头、20秒",
+  "techniques": [
+   "着色器",
+   "动态排版",
+   "光照/后期"
+  ],
+  "reuse_for_us": "影视/活动片头",
+  "prompt_quality": "只给方向",
+  "keep_note": "借Netflix名义"
+ },
+ {
+  "id": 130,
+  "slug": "reflex-cloud-304046",
+  "title_zh": "品牌简历动效片",
+  "capability": [
+   "动效作品集",
+   "品牌/Logo演绎"
+  ],
+  "highlights_zh": "首秒钩子、排版形状运镜色变、卡点节奏、干净收尾",
+  "techniques": [
+   "动态排版",
+   "运镜",
+   "卡点/节奏",
+   "着色器"
+  ],
+  "reuse_for_us": "品牌15秒宣传快剪",
+  "prompt_quality": "完整可复用",
+  "keep_note": "真实品牌reflex"
+ },
+ {
+  "id": 131,
+  "slug": "dansushik-289121",
+  "title_zh": "代理公司品牌片",
+  "capability": [
+   "动效作品集",
+   "品牌/Logo演绎"
+  ],
+  "highlights_zh": "15秒作品集风格为Based Agency做品牌",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "代理公司15秒品牌片",
+  "prompt_quality": "只给方向",
+  "keep_note": "品牌Based Agency"
+ },
+ {
+  "id": 132,
+  "slug": "macrohou-733862",
+  "title_zh": "Ren音画动效片",
+  "capability": [
+   "产品发布/营销",
+   "音乐可视化/音画同步"
+  ],
+  "highlights_zh": "30秒展现动效与声音设计",
+  "techniques": [
+   "音频合成",
+   "卡点/节奏",
+   "动态排版"
+  ],
+  "reuse_for_us": "带音效设计的产品片",
+  "prompt_quality": "只给方向",
+  "keep_note": "依赖Ren代码仓库"
+ },
+ {
+  "id": 133,
+  "slug": "samuel-spitz-503053",
+  "title_zh": "顶级作品集核心片",
+  "capability": [
+   "动效作品集",
+   "着色器/视觉特效",
+   "3D场景/建筑"
+  ],
+  "highlights_zh": "展现全部能力的作品集核心作品",
+  "techniques": [
+   "3D",
+   "着色器",
+   "光照/后期"
+  ],
+  "reuse_for_us": "高端品牌炫技片",
+  "prompt_quality": "只给方向",
+  "keep_note": ""
+ },
+ {
+  "id": 134,
+  "slug": "adamdesgns-768014",
+  "title_zh": "管道工手册动效片",
+  "capability": [
+   "动效作品集",
+   "产品发布/营销"
+  ],
+  "highlights_zh": "15秒作品集风格介绍管道工手册",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "垂直行业产品15秒片",
+  "prompt_quality": "只给方向",
+  "keep_note": ""
+ },
+ {
+  "id": 135,
+  "slug": "stewchan2-369810",
+  "title_zh": "SEO外链原理可视化",
+  "capability": [
+   "科普讲解",
+   "数据可视化"
+  ],
+  "highlights_zh": "前沿感可视化讲解外链如何作用于SEO",
+  "techniques": [
+   "数据驱动",
+   "动态排版"
+  ],
+  "reuse_for_us": "营销概念讲解片",
+  "prompt_quality": "只给方向",
+  "keep_note": ""
+ },
+ {
+  "id": 136,
+  "slug": "ghinaiya-nirmal-308943",
+  "title_zh": "15秒动效作品集",
+  "capability": [
+   "动效作品集"
+  ],
+  "highlights_zh": "自由发挥的15秒动效作品集",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "品牌通用15秒炫技片",
+  "prompt_quality": "只给方向",
+  "keep_note": ""
+ },
+ {
+  "id": 137,
+  "slug": "l3d1c-752011",
+  "title_zh": "官网广告动效片",
+  "capability": [
+   "产品发布/营销"
+  ],
+  "highlights_zh": "先让模型写动效提示词再执行",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "两步法生成广告脚本",
+  "prompt_quality": "只给方向",
+  "keep_note": ""
+ },
+ {
+  "id": 138,
+  "slug": "cansincengiz-me-424245",
+  "title_zh": "App推广动效短片",
+  "capability": [
+   "产品发布/营销",
+   "动效作品集"
+  ],
+  "highlights_zh": "面向X上万人的15秒App推广动画",
+  "techniques": [
+   "3D",
+   "动态排版"
+  ],
+  "reuse_for_us": "社媒App推广15秒",
+  "prompt_quality": "只给方向",
+  "keep_note": "品牌lidlezz.app"
+ },
+ {
+  "id": 139,
+  "slug": "kikelopezdesign-173471",
+  "title_zh": "作品集网站短片",
+  "capability": [
+   "动效作品集"
+  ],
+  "highlights_zh": "仅用作品集网站自身素材做20秒视频",
+  "techniques": [
+   "真实素材/调研",
+   "动态排版"
+  ],
+  "reuse_for_us": "个人作品集20秒片",
+  "prompt_quality": "只给方向",
+  "keep_note": "依赖自有网站素材"
+ },
+ {
+  "id": 140,
+  "slug": "thegrootdev-966114",
+  "title_zh": "宝可梦UI动效短片",
+  "capability": [
+   "UI/交互演示",
+   "品牌/Logo演绎"
+  ],
+  "highlights_zh": "精灵球持续形变为各UI、光标驱动、120BPM、首尾循环",
+  "techniques": [
+   "卡点/节奏",
+   "交互",
+   "运镜",
+   "转场设计"
+  ],
+  "reuse_for_us": "IP主题UI循环片",
+  "prompt_quality": "完整可复用",
+  "keep_note": "涉及宝可梦IP版权"
+ },
+ {
+  "id": 141,
+  "slug": "charliie-334026",
+  "title_zh": "链接工具Ins广告",
+  "capability": [
+   "产品发布/营销"
+  ],
+  "highlights_zh": "为liinks制作酷炫Instagram广告",
+  "techniques": [
+   "动态排版"
+  ],
+  "reuse_for_us": "社媒竖屏广告",
+  "prompt_quality": "部分公开",
+  "keep_note": "品牌liinks"
+ },
+ {
+  "id": 142,
+  "slug": "samaote-124569",
+  "title_zh": "歌词动态排版MV",
+  "capability": [
+   "音乐可视化/音画同步",
+   "动态排版"
+  ],
+  "highlights_zh": "歌词与人声节拍精准同步的动态排版",
+  "techniques": [
+   "动态排版",
+   "卡点/节奏",
+   "着色器"
+  ],
+  "reuse_for_us": "歌词视频/音乐宣传",
+  "prompt_quality": "只给方向",
+  "keep_note": "依赖附加音乐"
+ },
+ {
+  "id": 143,
+  "slug": "onewaysidewalks-440008",
+  "title_zh": "区块链基础设施短片",
+  "capability": [
+   "产品发布/营销",
+   "动效作品集"
+  ],
+  "highlights_zh": "为Alchemy做15秒作品集风格视频",
+  "techniques": [
+   "3D",
+   "动态排版"
+  ],
+  "reuse_for_us": "技术品牌15秒片",
+  "prompt_quality": "只给方向",
+  "keep_note": "真实品牌Alchemy"
+ },
+ {
+  "id": 144,
+  "slug": "bhanujraj-928454",
+  "title_zh": "10秒动效作品集",
+  "capability": [
+   "动效作品集"
+  ],
+  "highlights_zh": "10秒全力展示动效功力",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "10秒品牌开屏",
+  "prompt_quality": "只给方向",
+  "keep_note": ""
+ },
+ {
+  "id": 145,
+  "slug": "andginja-618685",
+  "title_zh": "个人网站作品集",
+  "capability": [
+   "动效作品集",
+   "产品发布/营销"
+  ],
+  "highlights_zh": "15秒网站展示作品集",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "官网15秒展示",
+  "prompt_quality": "只给方向",
+  "keep_note": "依赖自有网站"
+ },
+ {
+  "id": 146,
+  "slug": "anas0ra-952637",
+  "title_zh": "法语网站宣传片",
+  "capability": [
+   "产品发布/营销"
+  ],
+  "highlights_zh": "为heeya.fr做一支炫酷视频",
+  "techniques": [
+   "3D",
+   "动态排版"
+  ],
+  "reuse_for_us": "官网宣传短片",
+  "prompt_quality": "只给方向",
+  "keep_note": "真实品牌heeya.fr"
+ },
+ {
+  "id": 147,
+  "slug": "monokern-613142",
+  "title_zh": "作品集概念动效片",
+  "capability": [
+   "动效作品集",
+   "动态排版"
+  ],
+  "highlights_zh": "与作品集概念呼应的15秒动效",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "设计师个人品牌片",
+  "prompt_quality": "只给方向",
+  "keep_note": "品牌monokern；含AI生图"
+ },
+ {
+  "id": 148,
+  "slug": "sudo-kiran-254201",
+  "title_zh": "书籍产品讲解片",
+  "capability": [
+   "产品发布/营销",
+   "科普讲解"
+  ],
+  "highlights_zh": "30秒惊艳的产品讲解动画",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "产品30秒讲解",
+  "prompt_quality": "只给方向",
+  "keep_note": "品牌distilbook"
+ },
+ {
+  "id": 149,
+  "slug": "buildfastwithai-597035",
+  "title_zh": "可漫游3D宝塔",
+  "capability": [
+   "3D场景/建筑",
+   "游戏/可玩"
+  ],
+  "highlights_zh": "可第一人称在3D宝塔中自由漫游",
+  "techniques": [
+   "3D",
+   "交互"
+  ],
+  "reuse_for_us": "建筑/文旅3D漫游",
+  "prompt_quality": "只给方向",
+  "keep_note": ""
+ },
+ {
+  "id": 150,
+  "slug": "kyonax-on-tech-049316",
+  "title_zh": "ASCII品牌产品片",
+  "capability": [
+   "动效作品集",
+   "UI/交互演示"
+  ],
+  "highlights_zh": "展示用例与流程、ASCII Logo、贴合配色",
+  "techniques": [
+   "动态排版",
+   "转场设计"
+  ],
+  "reuse_for_us": "开发者工具15秒介绍",
+  "prompt_quality": "只给方向",
+  "keep_note": "依赖kyo-web素材"
+ },
+ {
+  "id": 151,
+  "slug": "aistocksavvy-483320",
+  "title_zh": "梦想工作作品集",
+  "capability": [
+   "动效作品集"
+  ],
+  "highlights_zh": "15秒利落节奏、流畅转场、亮眼视觉",
+  "techniques": [
+   "转场设计",
+   "卡点/节奏",
+   "动态排版"
+  ],
+  "reuse_for_us": "品牌通用15秒炫技片",
+  "prompt_quality": "只给方向",
+  "keep_note": ""
+ },
+ {
+  "id": 152,
+  "slug": "xelandre-687413",
+  "title_zh": "代码渲染动画流程",
+  "capability": [
+   "其他",
+   "动效作品集"
+  ],
+  "highlights_zh": "逐帧时间计算、Playwright截帧、ffmpeg合成、动态模糊、代码音效",
+  "techniques": [
+   "动态模糊",
+   "音频合成",
+   "程序化"
+  ],
+  "reuse_for_us": "代码渲染视频管线模板",
+  "prompt_quality": "完整可复用",
+  "keep_note": ""
+ }
+]
