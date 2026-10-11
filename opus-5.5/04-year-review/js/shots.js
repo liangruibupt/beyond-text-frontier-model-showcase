@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { SHOTS as NAMES, VIEW, BOX, endBox, viewDir, joinOf } from '../meta.js';
 import { LAYOUTS } from '../layouts.js';
 import { layersFor } from '../captions.js';
-import { lerp, easeInOut } from '../../factory/engine/ease.js';
+import { lerp, easeInOut, ss } from '../../factory/engine/ease.js';
 
 const box3 = ([a, b]) => new THREE.Box3(new THREE.Vector3(...a), new THREE.Vector3(...b));
 const BOXES = Object.fromEntries(Object.entries(BOX).map(([k, b]) => [k, box3(b)]));
@@ -18,8 +18,8 @@ function fit(name, u, v) {
   const V = VIEW[name];
   return { type: 'fit', box: BOXES[boxOf(name, v)], dir: viewDir(V.pitch, lerp(V.yaw[0], V.yaw[1], easeInOut(u))), fov: V.fov };
 }
-/** 在 fit 之外改相机意图：open 慢推，主体从 90% 线性长到 100% */
-const PUSH = { open: u => ({ scale: lerp(0.9, 1, u) }) };
+/** 在 fit 之外改相机意图：open 慢推，主体从 90% 缓动（easeInOut 加速度，不是匀速）长到 100%（Q3） */
+const PUSH = { open: u => ({ scale: lerp(0.9, 1, easeInOut(u)) }) };
 
 /**
  * 镜头 name 的相机意图。接缝处开头 EASE_IN 秒是 blend：a 是上一镜头的终点机位（带上它那一行构图的锚点和大小，
@@ -46,13 +46,30 @@ const ACT = {
   title: (S, s, cam) => S.medal.drop(s.lt, cam.dir),
   end: (S, s) => { S.medal.rest(s.lt); S.stand.pose(s.lt); },
 };
-/** 镜头的后期（泛光门限是全片的，见 scene.js）。接缝两边一样，泛光不跳 */
-const glow = (strength, radius) => ({ bloom: { strength, radius } });
-const POST = { open: glow(0.45, 0.5), count: glow(0.45, 0.5), months: glow(0.4, 0.5), top: glow(0.4, 0.5), title: glow(0.55, 0.55), end: glow(0.45, 0.5) };
+/** 镜头的后期（泛光门限是全片的，见 scene.js）。接缝两边一样，泛光不跳
+ *  特写镜（count/top/title/end）加浅景深 DoF + 暗角做纵深反差（Q2/Q6/Q7），全景镜（open/months）保持清晰 */
+const glow = (strength, radius, dof = {}) => ({ bloom: { strength, radius }, ...dof });
+const DOF = (aperture, vignette) => ({ aperture, maxBlur: 0.012, vignette });
+const POST = {
+  open: glow(0.45, 0.5),
+  count: glow(0.45, 0.5, DOF(0.42, 0.3)),
+  months: glow(0.4, 0.5),
+  top: glow(0.4, 0.5, DOF(0.4, 0.3)),
+  title: glow(0.55, 0.55, DOF(0.45, 0.32)),
+  end: glow(0.55, 0.55, DOF(0.42, 0.32)),
+};
 
 export const SHOTS = Object.fromEntries(NAMES.map(name => [name, (ctx, s) => {
   const v = ctx.variant, S = ctx.subjects, camera = cameraOf(name, s, v, ctx.ar);
   S.show(...SHOW[name](v));
   ACT[name](S, s, camera.type === 'blend' ? camera.b : camera);
-  return { camera, text: layersFor(v, s), post: POST[name] };
+  let post = POST[name];
+  if (name === 'end') {
+    // 结尾推到全片能量峰值（Q8）：前 1.4s 随 logo 落定 push-in + 泛光上扬，后 1.6s 真静止 hold（R1 字标 hold ≥1s）
+    const push = easeInOut(ss(0, 1.4, s.lt));
+    if (camera.type === 'fit') camera.scale = (camera.scale ?? 1) * lerp(1, 1.08, push);
+    else if (camera.b) camera.b.scale = (camera.b.scale ?? 1) * lerp(1, 1.08, push);
+    post = { ...POST.end, bloom: { strength: 0.4 + 0.25 * push, radius: 0.55 } };
+  }
+  return { camera, text: layersFor(v, s), post };
 }]));
