@@ -1,0 +1,1266 @@
+[
+{
+"id": 381,
+"slug": "djadkison-394122",
+"title_zh": "Verde产品动效短片",
+"capability": [
+"产品发布/营销"
+],
+"highlights_zh": "30分钟内讲完产品故事的动效短片",
+"techniques": [
+"转场设计",
+"动态排版"
+],
+"reuse_for_us": "SaaS产品故事短片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实品牌Verde"
+},
+{
+"id": 382,
+"slug": "mousszy-baby-014197",
+"title_zh": "一句提示动效短片",
+"capability": [
+"其他"
+],
+"highlights_zh": "单条提示词生成的动效短片",
+"techniques": [
+"动态排版"
+],
+"reuse_for_us": "一键生成通用动效试样",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 383,
+"slug": "fr-sorrentino-871017",
+"title_zh": "手表App发布短片",
+"capability": [
+"产品发布/营销",
+"UI/交互演示"
+],
+"highlights_zh": "先分镜后逐拍定帧，真实手表照片与App录屏结合",
+"techniques": [
+"真实素材/调研",
+"转场设计",
+"动态排版"
+],
+"reuse_for_us": "智能硬件+App联动宣传片",
+"prompt_quality": "部分公开",
+"keep_note": "依赖真实照片与录屏素材"
+},
+{
+"id": 384,
+"slug": "proanaliteg-458642",
+"title_zh": "桌面应用推广片",
+"capability": [
+"产品发布/营销",
+"UI/交互演示"
+],
+"highlights_zh": "从XAML与设计令牌复刻桌面应用UI，配点缀音效",
+"techniques": [
+"交互",
+"卡点/节奏",
+"动态排版"
+],
+"reuse_for_us": "桌面软件功能宣传片",
+"prompt_quality": "部分公开",
+"keep_note": "需提供源码与设计令牌"
+},
+{
+"id": 385,
+"slug": "kingokings-992769",
+"title_zh": "开源简历工具展示片",
+"capability": [
+"产品发布/营销",
+"UI/交互演示"
+],
+"highlights_zh": "读取代码库自主决定展示重点的产品展示片",
+"techniques": [
+"转场设计",
+"动态排版",
+"真实素材/调研"
+],
+"reuse_for_us": "基于代码库的产品发布片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实产品ReactiveResume"
+},
+{
+"id": 386,
+"slug": "dys-hay-749645",
+"title_zh": "奥迪RS6性能短片",
+"capability": [
+"产品发布/营销",
+"音乐可视化/音画同步",
+"数据可视化"
+],
+"highlights_zh": "合成V8声浪，气缸按点火顺序闪烁，实时百公里计时",
+"techniques": [
+"音频合成",
+"卡点/节奏",
+"数据驱动",
+"真实素材/调研"
+],
+"reuse_for_us": "汽车性能参数15秒快剪",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实品牌奥迪(非官方)"
+},
+{
+"id": 387,
+"slug": "ambiguous-ai-389509",
+"title_zh": "3D动态图形练习",
+"capability": [
+"3D场景/建筑",
+"动效作品集"
+],
+"highlights_zh": "Three.js驱动的3D动态图形片段",
+"techniques": [
+"3D",
+"运镜"
+],
+"reuse_for_us": "可复用3D动态模板",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 388,
+"slug": "heymrzak-349060",
+"title_zh": "Gofy地图App介绍片",
+"capability": [
+"产品发布/营销"
+],
+"highlights_zh": "“万物实时地图”App发布介绍动效",
+"techniques": [
+"动态排版",
+"转场设计"
+],
+"reuse_for_us": "地图类App发布片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实品牌Gofy"
+},
+{
+"id": 389,
+"slug": "ambiguous-ai-505873",
+"title_zh": "着色器动态图形",
+"capability": [
+"着色器/视觉特效",
+"动效作品集"
+],
+"highlights_zh": "着色器视觉的可复用动态图形片段",
+"techniques": [
+"着色器",
+"程序化"
+],
+"reuse_for_us": "可复用视觉特效素材",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 390,
+"slug": "lnkiai-544254",
+"title_zh": "M3E Canvas宣传片",
+"capability": [
+"产品发布/营销",
+"3D场景/建筑"
+],
+"highlights_zh": "Remotion结合three.js的3D产品宣传",
+"techniques": [
+"3D",
+"运镜",
+"动态排版"
+],
+"reuse_for_us": "带3D元素的产品宣传片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实产品M3E Canvas"
+},
+{
+"id": 391,
+"slug": "tejasthange3-128242",
+"title_zh": "Twitter到X品牌史",
+"capability": [
+"品牌/Logo演绎",
+"科普讲解",
+"音乐可视化/音画同步"
+],
+"highlights_zh": "30秒讲完Twitter更名X，代码合成配乐",
+"techniques": [
+"音频合成",
+"转场设计",
+"动态排版"
+],
+"reuse_for_us": "品牌演变/更名故事短片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实品牌Twitter/X"
+},
+{
+"id": 392,
+"slug": "helloshiva0801-438284",
+"title_zh": "纸艺风SaaS发布片",
+"capability": [
+"产品发布/营销"
+],
+"highlights_zh": "900帧10场景纸艺风格发布片",
+"techniques": [
+"转场设计",
+"动态排版"
+],
+"reuse_for_us": "独立开发者SaaS发布片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实产品redesignr"
+},
+{
+"id": 393,
+"slug": "itakahashikun-990109",
+"title_zh": "对话生成简易短片",
+"capability": [
+"其他"
+],
+"highlights_zh": "仅靠对话生成的简易动效视频",
+"techniques": [
+"动态排版"
+],
+"reuse_for_us": "零门槛内部短片试做",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 394,
+"slug": "als-link-301108",
+"title_zh": "社媒竖版Reel",
+"capability": [
+"产品发布/营销",
+"动态排版"
+],
+"highlights_zh": "AI写场景并渲染、可直接上传的社媒短片",
+"techniques": [
+"动态排版",
+"转场设计"
+],
+"reuse_for_us": "社媒竖版快剪Reel",
+"prompt_quality": "部分公开",
+"keep_note": "提示词未公开需评论索取"
+},
+{
+"id": 395,
+"slug": "cboyack-407181",
+"title_zh": "废除美联储观点片",
+"capability": [
+"科普讲解",
+"数据可视化"
+],
+"highlights_zh": "15秒观点类论证短片",
+"techniques": [
+"动态排版",
+"数据驱动"
+],
+"reuse_for_us": "观点/议题15秒宣传",
+"prompt_quality": "只给方向",
+"keep_note": "政治敏感议题"
+},
+{
+"id": 396,
+"slug": "salmanr2d2-661615",
+"title_zh": "货币App演示片",
+"capability": [
+"UI/交互演示",
+"产品发布/营销"
+],
+"highlights_zh": "货币类移动App功能演示",
+"techniques": [
+"交互",
+"动态排版"
+],
+"reuse_for_us": "移动端工具App演示",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 397,
+"slug": "piyushaaryan2-196586",
+"title_zh": "卡点产品发布片",
+"capability": [
+"产品发布/营销",
+"音乐可视化/音画同步"
+],
+"highlights_zh": "159个音效与音乐全部卡拍同步",
+"techniques": [
+"卡点/节奏",
+"转场设计",
+"动态排版"
+],
+"reuse_for_us": "重节奏新品发布片",
+"prompt_quality": "部分公开",
+"keep_note": "依赖ElevenLabs音乐音效"
+},
+{
+"id": 398,
+"slug": "thuggy-juice-072370",
+"title_zh": "首次尝试动效片",
+"capability": [
+"其他"
+],
+"highlights_zh": "首次尝试的动效作品",
+"techniques": [
+"动态排版"
+],
+"reuse_for_us": "通用动效试样",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 399,
+"slug": "ninjaswebcom-684126",
+"title_zh": "配音讲解短片",
+"capability": [
+"科普讲解"
+],
+"highlights_zh": "配合AI配音的讲解短片",
+"techniques": [
+"动态排版"
+],
+"reuse_for_us": "配音讲解类短视频",
+"prompt_quality": "部分公开",
+"keep_note": "依赖ElevenLabs配音"
+},
+{
+"id": 400,
+"slug": "tequilafunks-127728",
+"title_zh": "AI动效设计师作品集",
+"capability": [
+"动效作品集"
+],
+"highlights_zh": "15秒全力炫技的个人简历动效Showreel",
+"techniques": [
+"转场设计",
+"动态排版",
+"3D",
+"卡点/节奏"
+],
+"reuse_for_us": "品牌能力炫技Showreel",
+"prompt_quality": "只给方向",
+"keep_note": ""
+},
+{
+"id": 401,
+"slug": "iammukeshm-421585",
+"title_zh": "开发者个人介绍片",
+"capability": [
+"动效作品集"
+],
+"highlights_zh": "30秒介绍开发者与创作者的个人Showreel",
+"techniques": [
+"转场设计",
+"动态排版"
+],
+"reuse_for_us": "个人/团队介绍30秒片",
+"prompt_quality": "只给方向",
+"keep_note": "需提供个人作品素材"
+},
+{
+"id": 402,
+"slug": "yarhmm-341449",
+"title_zh": "相机音效风Reel",
+"capability": [
+"动态排版",
+"产品发布/营销"
+],
+"highlights_zh": "以相机快门镜头音效为主的Reel，配TTS旁白",
+"techniques": [
+"卡点/节奏",
+"动态排版",
+"转场设计"
+],
+"reuse_for_us": "社媒Reel风格快剪",
+"prompt_quality": "部分公开",
+"keep_note": "依赖Gemini TTS配音"
+},
+{
+"id": 403,
+"slug": "t4k1ra-cg-110846",
+"title_zh": "纯代码动效短片",
+"capability": [
+"动效作品集"
+],
+"highlights_zh": "一次生成的纯代码动态图形",
+"techniques": [
+"动态排版",
+"转场设计"
+],
+"reuse_for_us": "动效风格试样",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 404,
+"slug": "francoxavier33-341663",
+"title_zh": "育儿App炒作发布片",
+"capability": [
+"产品发布/营销"
+],
+"highlights_zh": "基于品牌规范仓库的高能发布片，音乐音效全代码",
+"techniques": [
+"音频合成",
+"卡点/节奏",
+"动态排版"
+],
+"reuse_for_us": "带品牌规范的发布片",
+"prompt_quality": "只给方向",
+"keep_note": "涉及真实品牌momwise"
+},
+{
+"id": 405,
+"slug": "tony-tt-872147",
+"title_zh": "贸易商行动画短片",
+"capability": [
+"历史/地理重建",
+"角色/叙事动画",
+"科普讲解"
+],
+"highlights_zh": "SVG/Canvas手绘画面、开源TTS旁白、Python合成配乐",
+"techniques": [
+"音频合成",
+"真实素材/调研",
+"动态排版"
+],
+"reuse_for_us": "历史/企业故事叙事短片",
+"prompt_quality": "只给方向",
+"keep_note": "Trading House具体所指不明"
+},
+{
+"id": 406,
+"slug": "thallisribeiro-829318",
+"title_zh": "一次成型广告片",
+"capability": [
+"产品发布/营销"
+],
+"highlights_zh": "一次提示生成可投广告的动效",
+"techniques": [
+"动态排版",
+"转场设计"
+],
+"reuse_for_us": "效果广告投放素材",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 407,
+"slug": "tycenjm-098014",
+"title_zh": "自我复盘动效片",
+"capability": [
+"动态排版",
+"产品发布/营销"
+],
+"highlights_zh": "自带旁白配乐、逐词同步动画",
+"techniques": [
+"动态排版",
+"卡点/节奏",
+"真实素材/调研"
+],
+"reuse_for_us": "批量生成App广告",
+"prompt_quality": "部分公开",
+"keep_note": "参考他人作品链接"
+},
+{
+"id": 408,
+"slug": "samissudo-927179",
+"title_zh": "讲解型动效短片",
+"capability": [
+"科普讲解"
+],
+"highlights_zh": "讲解类动效短片",
+"techniques": [
+"动态排版"
+],
+"reuse_for_us": "通用讲解短片",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 409,
+"slug": "imthatcarlos-133592",
+"title_zh": "代理对冲基金讲解片",
+"capability": [
+"科普讲解",
+"产品发布/营销"
+],
+"highlights_zh": "复用落地页组件与品牌，简洁有力讲清概念",
+"techniques": [
+"动态排版",
+"转场设计",
+"真实素材/调研"
+],
+"reuse_for_us": "Web3/金融产品讲解片",
+"prompt_quality": "只给方向",
+"keep_note": "涉及真实品牌sherwood"
+},
+{
+"id": 410,
+"slug": "iamshankhadeep-506266",
+"title_zh": "工具目录站发布片",
+"capability": [
+"产品发布/营销",
+"数据可视化"
+],
+"highlights_zh": "突出11.6万工具数量的目录站发布",
+"techniques": [
+"动态排版",
+"数据驱动"
+],
+"reuse_for_us": "平台/目录站上线片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实品牌ccdirectory"
+},
+{
+"id": 411,
+"slug": "safaelmali-004843",
+"title_zh": "DualSense发布片",
+"capability": [
+"产品发布/营销",
+"3D场景/建筑"
+],
+"highlights_zh": "含three.js 3D元素的发布片",
+"techniques": [
+"3D",
+"转场设计"
+],
+"reuse_for_us": "带3D元素的发布片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实品牌DualSense"
+},
+{
+"id": 412,
+"slug": "localjulius-625706",
+"title_zh": "Audivo播客广告",
+"capability": [
+"产品发布/营销",
+"角色/叙事动画"
+],
+"highlights_zh": "用热门播客片段串成故事讲清产品",
+"techniques": [
+"真实素材/调研",
+"动态排版"
+],
+"reuse_for_us": "音频产品故事型广告",
+"prompt_quality": "只给方向",
+"keep_note": "依赖真实播客片段/版权"
+},
+{
+"id": 413,
+"slug": "alanschwegler-629665",
+"title_zh": "活动管理网站Reel",
+"capability": [
+"产品发布/营销",
+"音乐可视化/音画同步"
+],
+"highlights_zh": "Python合成120BPM音乐，每个切点卡拍",
+"techniques": [
+"音频合成",
+"卡点/节奏",
+"转场设计"
+],
+"reuse_for_us": "SaaS卡点宣传Reel",
+"prompt_quality": "部分公开",
+"keep_note": "真实产品planningmanager"
+},
+{
+"id": 414,
+"slug": "seantiffonnet-675262",
+"title_zh": "TvTrack App宣传片",
+"capability": [
+"产品发布/营销"
+],
+"highlights_zh": "Gemini配乐的iOS App宣传片",
+"techniques": [
+"动态排版"
+],
+"reuse_for_us": "iOS App上架宣传",
+"prompt_quality": "部分公开",
+"keep_note": "依赖Gemini生成音乐"
+},
+{
+"id": 415,
+"slug": "priyansh0327-206409",
+"title_zh": "转机送酒店发布片",
+"capability": [
+"产品发布/营销"
+],
+"highlights_zh": "转场、节奏与品牌感到位的发布片",
+"techniques": [
+"转场设计",
+"卡点/节奏",
+"动态排版"
+],
+"reuse_for_us": "旅行类产品发布片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实品牌GetStopover"
+},
+{
+"id": 416,
+"slug": "goldiez2599-685869",
+"title_zh": "十分钟动效短片",
+"capability": [
+"其他"
+],
+"highlights_zh": "10分钟生成的CSS动效短片",
+"techniques": [
+"动态排版"
+],
+"reuse_for_us": "快速动效试样",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 417,
+"slug": "bridgemindai-286423",
+"title_zh": "周边卫衣发布片",
+"capability": [
+"产品发布/营销"
+],
+"highlights_zh": "转场与节奏讲究的周边商品发布",
+"techniques": [
+"转场设计",
+"卡点/节奏",
+"动态排版"
+],
+"reuse_for_us": "电商新品/周边上新",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实品牌BridgeMind"
+},
+{
+"id": 418,
+"slug": "arumii-movie-622720",
+"title_zh": "虚构游戏机开机Logo",
+"capability": [
+"品牌/Logo演绎",
+"3D场景/建筑"
+],
+"highlights_zh": "游戏主机开机时的3D Logo演绎",
+"techniques": [
+"3D",
+"着色器",
+"光照/后期"
+],
+"reuse_for_us": "品牌开场Logo动画",
+"prompt_quality": "部分公开",
+"keep_note": ""
+},
+{
+"id": 419,
+"slug": "arumii-movie-249613",
+"title_zh": "虚构企业片尾Logo",
+"capability": [
+"品牌/Logo演绎",
+"3D场景/建筑"
+],
+"highlights_zh": "广告片尾式3D企业Logo演绎",
+"techniques": [
+"3D",
+"光照/后期"
+],
+"reuse_for_us": "广告片尾Logo定版",
+"prompt_quality": "部分公开",
+"keep_note": ""
+},
+{
+"id": 420,
+"slug": "justinbuilds-412401",
+"title_zh": "一次复刻配音动效",
+"capability": [
+"其他"
+],
+"highlights_zh": "一次性复刻参考视频并配AI人声",
+"techniques": [
+"动态排版"
+],
+"reuse_for_us": "参考片复刻快速提案",
+"prompt_quality": "部分公开",
+"keep_note": "复刻他人作品/依赖ElevenLabs"
+},
+{
+"id": 421,
+"slug": "dheepanratnam-706454",
+"title_zh": "创作主题动态图形",
+"capability": [
+"动效作品集",
+"音乐可视化/音画同步"
+],
+"highlights_zh": "Python写配乐并自动同步音效，嵌入真实调色作品",
+"techniques": [
+"音频合成",
+"卡点/节奏",
+"真实素材/调研"
+],
+"reuse_for_us": "创意工作室形象片",
+"prompt_quality": "部分公开",
+"keep_note": "依赖真实美术作品素材"
+},
+{
+"id": 422,
+"slug": "soumymaheshwri-825921",
+"title_zh": "HyperFrames动效片",
+"capability": [
+"其他"
+],
+"highlights_zh": "HyperFrames生成的CSS动效",
+"techniques": [
+"动态排版"
+],
+"reuse_for_us": "通用动效试样",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 423,
+"slug": "joaquimcassano-778239",
+"title_zh": "HTML动效视频",
+"capability": [
+"其他"
+],
+"highlights_zh": "30分钟内用HTML完成的GSAP动效",
+"techniques": [
+"动态排版",
+"转场设计"
+],
+"reuse_for_us": "HTML动效快速制作",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 424,
+"slug": "kzmucx-402052",
+"title_zh": "一次提示动效片",
+"capability": [
+"其他"
+],
+"highlights_zh": "一次提示生成的GSAP动效",
+"techniques": [
+"动态排版"
+],
+"reuse_for_us": "通用动效试样",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 425,
+"slug": "tankazunori0914-156748",
+"title_zh": "今天星期几动效片",
+"capability": [
+"动态排版",
+"音乐可视化/音画同步"
+],
+"highlights_zh": "30秒酷炫动态图形报星期，Python现场合成BGM",
+"techniques": [
+"动态排版",
+"音频合成",
+"卡点/节奏"
+],
+"reuse_for_us": "日期/倒计时节日海报片",
+"prompt_quality": "完整可复用",
+"keep_note": ""
+},
+{
+"id": 426,
+"slug": "liu8in-891423",
+"title_zh": "GitHub热榜庆祝片",
+"capability": [
+"数据可视化",
+"品牌/Logo演绎"
+],
+"highlights_zh": "开源项目登GitHub热榜的庆祝视频",
+"techniques": [
+"动态排版",
+"数据驱动"
+],
+"reuse_for_us": "里程碑/成就庆祝短片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实品牌HeyGen"
+},
+{
+"id": 427,
+"slug": "ideavim-986785",
+"title_zh": "IdeaVim推广片",
+"capability": [
+"产品发布/营销",
+"UI/交互演示"
+],
+"highlights_zh": "编辑器插件功能推广动效",
+"techniques": [
+"动态排版",
+"交互"
+],
+"reuse_for_us": "开发者工具推广片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实品牌IdeaVim"
+},
+{
+"id": 428,
+"slug": "leandroriviello-827135",
+"title_zh": "单提示动效作品",
+"capability": [
+"其他"
+],
+"highlights_zh": "单一提示生成的GSAP动效",
+"techniques": [
+"动态排版"
+],
+"reuse_for_us": "通用动效试样",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 429,
+"slug": "0xlangeai-597929",
+"title_zh": "CLIProxyAPI宣传片",
+"capability": [
+"科普讲解",
+"产品发布/营销"
+],
+"highlights_zh": "把文章流程环节讲清楚的视频版宣传",
+"techniques": [
+"动态排版",
+"转场设计"
+],
+"reuse_for_us": "文章/教程配套宣传片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实工具CLIProxyAPI"
+},
+{
+"id": 430,
+"slug": "maxhirsch13-600983",
+"title_zh": "吐槽领英恶搞发布片",
+"capability": [
+"产品发布/营销",
+"其他"
+],
+"highlights_zh": "恶搞风格的反领英发布片",
+"techniques": [
+"动态排版",
+"转场设计"
+],
+"reuse_for_us": "幽默恶搞类营销短片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实品牌LinkedIn/X"
+},
+{
+"id": 431,
+"slug": "xamfonos-004331",
+"title_zh": "讲解动效短片",
+"capability": [
+"科普讲解"
+],
+"highlights_zh": "SVG讲解类动效",
+"techniques": [
+"动态排版"
+],
+"reuse_for_us": "通用讲解短片",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 432,
+"slug": "saadpastadev-347341",
+"title_zh": "Nafa营销动效片",
+"capability": [
+"产品发布/营销"
+],
+"highlights_zh": "注入品牌审美的营销动效",
+"techniques": [
+"动态排版",
+"转场设计"
+],
+"reuse_for_us": "持续化品牌营销素材",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实品牌Nafa"
+},
+{
+"id": 433,
+"slug": "envoldev-017555",
+"title_zh": "TopSlash发布片",
+"capability": [
+"产品发布/营销"
+],
+"highlights_zh": "SaaS榜单平台的上线发布动效",
+"techniques": [
+"动态排版",
+"转场设计"
+],
+"reuse_for_us": "平台上线发布片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实品牌TopSlash"
+},
+{
+"id": 434,
+"slug": "dengent-412996",
+"title_zh": "Cardilife版本介绍片",
+"capability": [
+"产品发布/营销",
+"3D场景/建筑"
+],
+"highlights_zh": "56秒介绍片，开头3D，Python合成音乐，中英双版本",
+"techniques": [
+"3D",
+"音频合成",
+"动态排版"
+],
+"reuse_for_us": "多语言App版本发布片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实App Cardilife"
+},
+{
+"id": 435,
+"slug": "apoorvjain25-150112",
+"title_zh": "Link in bio发布片",
+"capability": [
+"产品发布/营销"
+],
+"highlights_zh": "代码写动效与音乐的功能上线片",
+"techniques": [
+"音频合成",
+"动态排版",
+"转场设计"
+],
+"reuse_for_us": "新功能上线短片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实品牌Synclify"
+},
+{
+"id": 436,
+"slug": "smitjaineditor-843957",
+"title_zh": "动效设计师危机短片",
+"capability": [
+"动效作品集"
+],
+"highlights_zh": "展示AI动效能力的炫技短片",
+"techniques": [
+"动态排版",
+"转场设计"
+],
+"reuse_for_us": "动效能力展示",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 437,
+"slug": "argbeknwn-466818",
+"title_zh": "AI内心世界艺术片",
+"capability": [
+"着色器/视觉特效",
+"程序化生成",
+"音乐可视化/音画同步"
+],
+"highlights_zh": "15秒无文字自由艺术风格，配音乐",
+"techniques": [
+"着色器",
+"3D",
+"程序化",
+"音频合成"
+],
+"reuse_for_us": "品牌氛围抽象艺术短片",
+"prompt_quality": "完整可复用",
+"keep_note": ""
+},
+{
+"id": 438,
+"slug": "leowenai-125931",
+"title_zh": "LongCat产品发布片",
+"capability": [
+"产品发布/营销",
+"角色/叙事动画",
+"音乐可视化/音画同步"
+],
+"highlights_zh": "半调复印风、运镜转场、猫眼随拍眨动落版Logo",
+"techniques": [
+"运镜",
+"卡点/节奏",
+"音频合成",
+"光照/后期"
+],
+"reuse_for_us": "AI模型发布叙事片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及美团LongCat真实Logo"
+},
+{
+"id": 439,
+"slug": "humzaakhalid-537875",
+"title_zh": "AIInPublic品牌片",
+"capability": [
+"品牌/Logo演绎",
+"动态排版",
+"UI/交互演示"
+],
+"highlights_zh": "动态模糊辉光、镜头冲击、HUD终端、粒子、Logo定版",
+"techniques": [
+"动态模糊",
+"动态排版",
+"粒子",
+"音频合成"
+],
+"reuse_for_us": "科技品牌24秒形象片",
+"prompt_quality": "完整可复用",
+"keep_note": "指定品牌色与Logo"
+},
+{
+"id": 440,
+"slug": "xenit-v0-532873",
+"title_zh": "scroll+介绍片",
+"capability": [
+"产品发布/营销"
+],
+"highlights_zh": "图片应用的介绍宣传动效",
+"techniques": [
+"动态排版",
+"转场设计"
+],
+"reuse_for_us": "小工具App介绍片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实品牌scroll+"
+},
+{
+"id": 441,
+"slug": "sonali-sahu-09-350200",
+"title_zh": "参考片电影感发布片",
+"capability": [
+"产品发布/营销"
+],
+"highlights_zh": "依据单个参考视频生成电影感发布片",
+"techniques": [
+"运镜",
+"转场设计",
+"动态排版"
+],
+"reuse_for_us": "按参考片仿制发布片",
+"prompt_quality": "部分公开",
+"keep_note": "依赖外部参考视频"
+},
+{
+"id": 442,
+"slug": "aijipusi75693-284735",
+"title_zh": "鸽子音乐节开场",
+"capability": [
+"音乐可视化/音画同步",
+"3D场景/建筑",
+"动态排版"
+],
+"highlights_zh": "歌词逐字对拍、three.js 3D化开场",
+"techniques": [
+"卡点/节奏",
+"3D",
+"动态排版",
+"着色器"
+],
+"reuse_for_us": "活动/音乐节开场片",
+"prompt_quality": "部分公开",
+"keep_note": "依赖Suno歌曲"
+},
+{
+"id": 443,
+"slug": "seri-nonnon-231813",
+"title_zh": "就医记录App发布片",
+"capability": [
+"产品发布/营销"
+],
+"highlights_zh": "iOS家庭就医服药管理App发布",
+"techniques": [
+"动态排版"
+],
+"reuse_for_us": "医疗健康App上架片",
+"prompt_quality": "部分公开",
+"keep_note": "依赖Gemini API"
+},
+{
+"id": 444,
+"slug": "tetsu-tetsu333-576886",
+"title_zh": "SEO工具发布讲解片",
+"capability": [
+"产品发布/营销",
+"UI/交互演示",
+"科普讲解"
+],
+"highlights_zh": "自动截图38张、旁白32句逐句同步、BGM自动避让",
+"techniques": [
+"真实素材/调研",
+"卡点/节奏",
+"音频合成",
+"动态排版"
+],
+"reuse_for_us": "SaaS功能讲解发布全流程",
+"prompt_quality": "部分公开",
+"keep_note": "依赖真实截图与Gemini TTS"
+},
+{
+"id": 445,
+"slug": "0xrapzz-433554",
+"title_zh": "Remotion动效试作",
+"capability": [
+"其他"
+],
+"highlights_zh": "动效试作",
+"techniques": [
+"动态排版"
+],
+"reuse_for_us": "通用动效试样",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 446,
+"slug": "rishit30g-568278",
+"title_zh": "ClaudeCode吉祥物片",
+"capability": [
+"角色/叙事动画",
+"品牌/Logo演绎"
+],
+"highlights_zh": "以吉祥物为主角的角色动画",
+"techniques": [
+"动态排版"
+],
+"reuse_for_us": "品牌IP吉祥物短片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及Claude Code吉祥物"
+},
+{
+"id": 447,
+"slug": "alex-leiro-867087",
+"title_zh": "CSS动效短片",
+"capability": [
+"其他"
+],
+"highlights_zh": "CSS动效短片",
+"techniques": [
+"动态排版"
+],
+"reuse_for_us": "通用动效试样",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 448,
+"slug": "asei-ikarashi-437835",
+"title_zh": "企业业绩数据短片",
+"capability": [
+"数据可视化",
+"动态排版"
+],
+"highlights_zh": "15秒文字、业绩数字与销售图表动态",
+"techniques": [
+"数据驱动",
+"动态排版"
+],
+"reuse_for_us": "企业业绩/财报15秒片",
+"prompt_quality": "部分公开",
+"keep_note": "公司与数据为虚构"
+},
+{
+"id": 449,
+"slug": "nehalmax-802479",
+"title_zh": "lernok预告片",
+"capability": [
+"产品发布/营销"
+],
+"highlights_zh": "产品预热Teaser动效",
+"techniques": [
+"动态排版",
+"转场设计"
+],
+"reuse_for_us": "新品预热Teaser",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实品牌lernok"
+},
+{
+"id": 450,
+"slug": "colecornelll-047465",
+"title_zh": "玻璃折射3D营销片",
+"capability": [
+"产品发布/营销",
+"3D场景/建筑"
+],
+"highlights_zh": "three.js真实玻璃折射光线，Python作曲",
+"techniques": [
+"3D",
+"光照/后期",
+"音频合成"
+],
+"reuse_for_us": "高质感品牌营销系列",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实品牌Shillz"
+},
+{
+"id": 451,
+"slug": "allodev-069765",
+"title_zh": "浏览器插件展示片",
+"capability": [
+"产品发布/营销",
+"UI/交互演示"
+],
+"highlights_zh": "几分钟生成的插件功能展示",
+"techniques": [
+"交互",
+"动态排版"
+],
+"reuse_for_us": "浏览器插件推广片",
+"prompt_quality": "部分公开",
+"keep_note": "涉及真实产品futurepost"
+},
+{
+"id": 452,
+"slug": "aylmerth-356252",
+"title_zh": "两句话讲解片",
+"capability": [
+"科普讲解"
+],
+"highlights_zh": "两句提示生成的讲解短片",
+"techniques": [
+"动态排版"
+],
+"reuse_for_us": "简短讲解视频",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 453,
+"slug": "falcong-j-277506",
+"title_zh": "文章开头动态字幕片",
+"capability": [
+"动态排版"
+],
+"highlights_zh": "第一秒主角大字强烈运动的30秒片头",
+"techniques": [
+"动态排版",
+"卡点/节奏"
+],
+"reuse_for_us": "文章/专栏30秒片头",
+"prompt_quality": "部分公开",
+"keep_note": "提示词在外部文章"
+},
+{
+"id": 454,
+"slug": "saxxyweb3-690124",
+"title_zh": "动画动效设计片",
+"capability": [
+"动效作品集"
+],
+"highlights_zh": "动画化动态设计展示",
+"techniques": [
+"动态排版",
+"转场设计"
+],
+"reuse_for_us": "动效风格试样",
+"prompt_quality": "部分公开",
+"keep_note": "无具体提示内容"
+},
+{
+"id": 455,
+"slug": "ayumi-t820-871023",
+"title_zh": "角色配音短视频",
+"capability": [
+"角色/叙事动画"
+],
+"highlights_zh": "既有角色插画配自动生成旁白与音效",
+"techniques": [
+"动态排版",
+"真实素材/调研"
+],
+"reuse_for_us": "IP角色社媒短视频",
+"prompt_quality": "部分公开",
+"keep_note": "依赖MJ插画与ElevenLabs"
+}
+]
