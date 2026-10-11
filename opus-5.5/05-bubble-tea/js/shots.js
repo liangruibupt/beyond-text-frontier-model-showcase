@@ -35,23 +35,27 @@ export const SHOTS = {
   /** 三块冰落进满杯，0.75 秒第二块撞上第一块 */
   ice(ctx, s) {
     ctx.subjects.cup.pose({ pearlsT: SIM.t1, iceT: s.lt - (EV.clink - 0.3), lid: false });
-    return { camera: fit('ice', s, {}, ctx), text: text(ctx, s) };
+    // 冰块特写浅景深，液面上冰粒发亮、背景虚（Q2）
+    return { camera: fit('ice', s, {}, ctx), text: text(ctx, s), post: { aperture: 0.4, maxBlur: 0.01, vignette: 0.28 } };
   },
   /** 整杯环绕：封好的杯子，杯壁慢慢凝出水珠，1.5 秒一颗滑下来 */
   hero(ctx, s) {
     ctx.subjects.cup.pose({ ...DONE, dewT: 0.6 + s.lt });
-    return { camera: fit('hero', s, {}, ctx), text: text(ctx, s) };
+    // 浅景深把背景熔开、杯子从环境里立起来 + 暗角做纵深反差（Q2/Q7）
+    return { camera: fit('hero', s, {}, ctx), text: text(ctx, s), post: { aperture: 0.45, maxBlur: 0.014, vignette: 0.3 } };
   },
   /** 吸管从上方压下，封膜凹下去，0.75 秒刺破；吸管插到底，搅动珍珠 */
   straw(ctx, s) {
     const lt = s.lt, press = easeInOut(ss(0.1, EV.punch, lt)), punch = lt - EV.punch, sd = punch >= 0 ? ss(0, 1.1, punch) : clamp(press);
     ctx.subjects.cup.pose({ ...DONE, dewT: 3.6 + lt, press, punch: punch >= 0 ? punch : -1, straw: sd, nudge: punch >= 0 ? punch - 0.5 : -1 });
-    return { camera: fit('straw', s, {}, ctx), text: text(ctx, s) };
+    // 吸管刺破特写浅景深：吸管/封膜实、背景虚（Q2）
+    return { camera: fit('straw', s, {}, ctx), text: text(ctx, s), post: { aperture: 0.42, maxBlur: 0.012, vignette: 0.3 } };
   },
-  /** 片尾：杯子插着吸管，缓慢转动 */
+  /** 片尾：杯子插着吸管；前 1.4s push-in + 泛光上扬 + 转到位，后 1.6s 静止 hold（Q8 结尾能量峰值 + R1 字标 hold） */
   end(ctx, s) {
     ctx.subjects.cup.pose({ ...DONE, dewT: 6, punch: 3, straw: 1 });
-    ctx.subjects.cup.root.rotation.y = lerp(-0.2, 0.25, easeInOut(s.u));
-    return { camera: fit('end', s, {}, ctx), text: text(ctx, s) };
+    const push = easeInOut(ss(0, 1.4, s.lt));
+    ctx.subjects.cup.root.rotation.y = lerp(-0.18, 0.12, push);         // 转到位后停住，不再匀速漂移
+    return { camera: fit('end', s, { scale: lerp(1, 1.08, push) }, ctx), text: text(ctx, s), post: { aperture: 0.42, maxBlur: 0.012, vignette: 0.3, bloom: { strength: 0.35 + 0.25 * push } } };
   },
 };
