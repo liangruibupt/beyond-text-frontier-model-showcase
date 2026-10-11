@@ -68,7 +68,9 @@ export default {
     renderer.setRenderTarget(target); renderer.clear(); renderer.render(scene, camera);
   },
   // 代码版与 AI 版用同名镜头，按当前世界分流：AI 世界（有 cue）走 shots-ai（cue 片段 + 同样的字幕），否则走代码版 3D 镜头。
-  shots: shotDispatch({ ...SHOTS, ...BEANS_SHOTS, ...HEADSET_SHOTS }),
+  // 三条故事线的镜头表按商品分开取：headset 也有一个叫 order 的镜头，合成一张表时会盖掉包裹旅程（lantern）的 order，
+  // 营地灯开场就用了耳机的机位，拍到一片空（2026-10-11 修）
+  shots: shotDispatch(SHOTS, BEANS_SHOTS, HEADSET_SHOTS),
   score: (v, built) => (isBeans(v.item) ? beansScore : isHeadset(v.item) ? headsetScore : parcelScore)(v, built),
   voLines,
   audition: AUDITION,
@@ -78,13 +80,17 @@ export default {
  *  - 逐镜 AI（world.isAiShot 存在，headset-ai）：只有 isAiShot(name) 的镜头走 shots-ai，其余走代码 3D 镜头；
  *  - 整片 AI（只有 world.cue，没有 isAiShot，beans-ai / lantern-ai）：所有镜头走 shots-ai；
  *  - 代码版（没有 cue）：全部走代码 3D 镜头。 */
-function shotDispatch(code) {
+function shotDispatch(parcel, beans, headset) {
+  const pick = item => (isBeans(item) ? beans : isHeadset(item) ? headset : parcel);
   const out = {};
-  for (const [name, fn] of Object.entries(code)) {
+  for (const name of new Set([...Object.keys(parcel), ...Object.keys(beans), ...Object.keys(headset)])) {
     out[name] = (ctx, s) => {
       const w = ctx.world;
       const ai = w?.isAiShot ? w.isAiShot(name) : !!w?.cue;
-      return ai ? SHOTS_AI[name](ctx, s) : fn(ctx, s);
+      if (ai) return SHOTS_AI[name](ctx, s);
+      const fn = pick(ctx.variant.item)[name];
+      if (!fn) throw new Error(`08: shot ${name} not in ${ctx.variant.item}'s story`);
+      return fn(ctx, s);
     };
   }
   return out;
