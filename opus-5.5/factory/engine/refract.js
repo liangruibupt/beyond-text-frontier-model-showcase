@@ -104,7 +104,9 @@ function main(o, g) {
     vec3 d = refract(I, N, 1.0 / ior);                                   // 液体里的东西（冰块）：当作厚 uThick 的平板，出去时方向不变
     seen = behind(bp + d * uThick, I) * exp(-uAbsorb * uThick);` : '';
   const scatter = o.scatter != null ? `
-    seen = mix(totalDiffuse, seen, exp(-uScatter * L));                  // 乳浊液体：走得越远越接近它自己被照亮的颜色` : '';
+    float Ls = min(L, max(-viewZ(gUv) - gZin, 0.0));                     // 只走到看见的那样东西为止（泡在液体里的珍珠）：贴壁的清楚，深处的隐进液体
+    seen *= exp(uAbsorb * (L - Ls));
+    seen = mix(totalDiffuse, seen, exp(-uScatter * Ls));                 // 乳浊液体：走得越远越接近它自己被照亮的颜色` : '';
   return /* glsl */`
   vec3 bp = (uV2B * vec4(-vViewPosition, 1.0)).xyz, I = normalize(bp - uV2B[3].xyz), N = normalize(mat3(uV2B) * normal);
   gZin = -vViewPosition.z;

@@ -121,7 +121,8 @@ export function buildCup(ctx, flavor, pearls, { art = null } = {}) {
   // 茶汤：一个实心截锥，顶面是液面（fill 由 pose 改：pour 镜头里茶汤往上涨）
   const liquid = new THREE.Group(), gap = 0.0003, r = y => rIn(y) - gap * SLANT;
   const liqMat = new THREE.MeshPhysicalMaterial({ color: flavor.liquid.color, roughness: 0.2 });
-  const body = new THREE.Mesh(frustumGeo(r(CUP.pile), r(CUP.fill), CUP.pile, CUP.fill, 96, true), liqMat);   // 茶汤从珍珠层上面开始；侧面，顶面另画
+  const B = CUP.base + gap;                                              // 茶汤从杯底开始：珍珠泡在茶里（乳浊散射按看到的那颗珍珠的距离算，贴壁的看得清、深处的隐进奶茶）
+  const body = new THREE.Mesh(frustumGeo(r(B), r(CUP.fill), B, CUP.fill, 96, true), liqMat);   // 侧面，顶面另画
   // 液面：极坐标网格，倒奶时逐帧改高度（坑、波纹、浪）；和 body 一样只缩 y，几何坐标里 y = fill 就是液面（奶纹按几何坐标算）
   const SR = r(CUP.fill), SRINGS = 36, SSEGS = 96, spos = [0, CUP.fill, 0], sidx = [];
   for (let j = 1; j <= SRINGS; j++) for (let i = 0; i < SSEGS; i++) { const a = (i / SSEGS) * Math.PI * 2, rr = (SR * j) / SRINGS; spos.push(Math.cos(a) * rr, CUP.fill, Math.sin(a) * rr); }
@@ -209,13 +210,13 @@ export function buildCup(ctx, flavor, pearls, { art = null } = {}) {
       }
       pearlMesh.instanceMatrix.needsUpdate = true;
       // 茶汤：fill 0..1 从杯底涨到 CUP.fill
-      const top = lerp(CUP.pile + 0.001, CUP.fill, clamp(fill));
+      const top = lerp(B + 0.001, CUP.fill, clamp(fill));
       liquid.visible = fill > 0.001;
       syrup.visible = fill > 0.001;
-      body.scale.y = Math.max((top - CUP.pile) / (CUP.fill - CUP.pile), 1e-3); body.position.y = CUP.pile * (1 - body.scale.y);
+      body.scale.y = Math.max((top - B) / (CUP.fill - B), 1e-3); body.position.y = B * (1 - body.scale.y);
       surface.scale.y = body.scale.y; surface.position.y = body.position.y;
-      // 液面：几何坐标里 y = fill + 起伏 / 缩放（缩回去正好是 top + 起伏）；茶汤很浅时起伏跟着变小，坑不会挖进珍珠层
-      const dep = clamp((top - CUP.pile) / 0.012), sp = sgeo.attributes.position;
+      // 液面：几何坐标里 y = fill + 起伏 / 缩放（缩回去正好是 top + 起伏）；茶汤很浅时起伏跟着变小，坑不会挖穿到杯底
+      const dep = clamp((top - B) / 0.012), sp = sgeo.attributes.position;
       const disp = (x, z) => dep * surfaceDisp(x, z, pourT, SR);
       for (let v = 0; v < sp.count; v++) sp.setY(v, CUP.fill + disp(sxz[3 * v], sxz[3 * v + 2]) / body.scale.y);
       sp.needsUpdate = true; sgeo.computeVertexNormals();
