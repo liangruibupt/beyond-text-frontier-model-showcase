@@ -54,6 +54,7 @@ ${NOISE}`).replace('#include <color_fragment>', `#include <color_fragment>
   }
   float band = smoothstep(uFill - uBand, uFill - uBand * 0.4, p.y);     // 顶上一层清茶
   c = mix(c, uTea * 1.15, band * (1.0 - 0.6 * uMilk));
+  c = mix(c, uSyrup, 0.45 * (1.0 - smoothstep(-0.15, 0.12, h)));       // 珍珠层（h < 0）：沉在杯底的糖浆 / 果泥把茶汤染深，珍珠泡在里面
   diffuseColor.rgb = c;
 }`);
   };
