@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { META, CUTS, SHOTS, GRID, BAR } from '../meta.js';
 import { THEMES } from '../themes.js';
-import { T, voLines, SLOTS, VOICE, CAP, MILE } from '../copy.js';
+import { T, voLines, SLOTS, VOICE, capText, MILE } from '../copy.js';
 import { PROMO_T } from '../promos.js';
 import { layersFor, fontsFor } from '../captions.js';
 import { LAYOUTS } from '../layouts.js';
@@ -22,11 +22,13 @@ test('file names encode every axis that changes the output', () => {
   assert.equal(new Set(names).size, names.length, 'two variants share a file name');
 });
 
-test('manifest = the 2 videos the user scoped (national 15s 16x9 zh none + national 6s 1x1 en launch)', () => {
+test('manifest = 4 themes x (zh 15s 16x9 + zh 6s 1x1 1111) = 8 videos', () => {
   const jobs = expandJobs(META, manifest);
-  assert.equal(jobs.length, 2);
-  const kinds = jobs.map(j => `${j.theme} ${j.ar} ${j.cut} ${j.lang} ${j.promo}`).sort();
-  assert.deepEqual(kinds, ['national 16x9 15 zh none', 'national 1x1 6 en launch']);
+  assert.equal(jobs.length, 8);
+  for (const th of META.axes.theme) {
+    const k = jobs.filter(j => j.theme === th).map(j => `${j.ar} ${j.cut} ${j.lang} ${j.promo}`).sort();
+    assert.deepEqual(k, ['16x9 15 zh none', '1x1 6 zh 1111'], th);
+  }
 });
 
 test('cuts: lengths add up, shot names known, hits land on the 0.75 s grid, logo = end start', () => {
@@ -73,10 +75,13 @@ test('themes: the four approved ones, each with palette, constellation mode, hub
   }
 });
 
-test('captions present for every shot that has one, in both languages', () => {
-  for (const key of ['countdown', 'ignite', 'arcs', 'gmv']) {
-    for (const L of ['zh', 'en']) assert.ok(CAP[key][L], `CAP.${key}.${L}`);
+test('captions present for every shot that has one, every theme, both languages; counter label fits the theme', () => {
+  for (const th of META.axes.theme) for (const key of ['countdown', 'ignite', 'arcs', 'gmv']) {
+    for (const L of ['zh', 'en']) assert.ok(capText(key, th, L), `cap ${key} ${th} ${L}`);
   }
+  assert.ok(!/全国/.test(capText('ignite', 'crossborder', 'zh')), 'crossborder must not say 全国');
+  assert.ok(!/成交额/.test(capText('gmv', 'logistics', 'zh')), 'logistics counter is parcels, not GMV');
+  assert.ok(!/成交额/.test(capText('gmv', 'crossborder', 'zh')), 'crossborder counter is countries, not GMV');
 });
 
 test('voice-over: chosen voices, numbers spelt out, Double Eleven not 11.11, each line ends before the fade', () => {

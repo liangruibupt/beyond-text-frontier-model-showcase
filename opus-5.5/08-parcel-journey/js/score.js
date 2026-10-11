@@ -40,7 +40,8 @@ export function score(v, built) {
   // 发车 depart（9.5）：引擎声由近及远
   if (H.depart != null) { n(H.depart, 'noise', 55, 1.6, 0.34, { type: 'lowpass', q: 0.9, a: 0.05, r: 1.2 }, 'sfx', 0); hit(H.depart, 7, 1.2, 0.32); }
   // 敲门 knock（13.0）：两声 click
-  if (H.knock != null) { n(H.knock, 'click', 58, 0.06, 0.6, {}, 'sfx', 0); n(H.knock + 0.25, 'click', 58, 0.06, 0.6, {}, 'sfx', 0); }
+  // lantern-ai 的 door 是 LTX 实拍，第一帧门已开着：不放敲门声，免得声画矛盾（Opus 5.5 复审 #7）
+  if (H.knock != null && !String(v.item).endsWith('-ai')) { n(H.knock, 'click', 58, 0.06, 0.6, {}, 'sfx', 0); n(H.knock + 0.25, 'click', 58, 0.06, 0.6, {}, 'sfx', 0); }
   // 品牌动机 logo（13.5）：三音
   if (H.logo != null) LOGO.forEach((d, i) => n(H.logo + i * BEAT * 0.5, 'bell', KEY + 12 + d, i === 2 ? 1.6 : 0.7, 0.42, { bright: 0.6, ratios: [1, 2, 3] }, 'sfx', 0));
 
