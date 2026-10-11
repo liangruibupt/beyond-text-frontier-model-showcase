@@ -44,7 +44,7 @@ export const VIEW = {
   months: { box: 'bars', pitch: 14, yaw: [-8, -4], fov: 28 },
   top: { box: 'top', pitch: 30, yaw: [-14, -8], fov: 30 },
   title: { box: 'medal', pitch: 6, yaw: [-20, 0], fov: 28 },
-  end: { box: 'medal', pitch: 8, yaw: [12, 6], fov: 28 },
+  end: { box: 'medal', pitch: 8, yaw: [16, 0], fov: 28 },             // 环绕 16° 收向正面，配合结尾推近，字标落定在正视（Q8）
 };
 // 画面接着上一镜头的两处：count 接 open（包裹从年份墙上跳下来），top 接 months（柱子沉下去、饼块升上来）。
 // 硬切接在搭档后面、或者是全片第一个镜头（6 秒版的 count），开头的机位就从搭档的终点机位缓过来；top 接 months 时柱子也还在
