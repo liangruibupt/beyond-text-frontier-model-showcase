@@ -79,7 +79,7 @@ function poseAt(c, dist) {
 // at 返回世界坐标的看点；卡车 / 三轮车的看点跟着 MOTION 走。push：hold 期间缓慢推近的比例。
 const P = (k, dy = 0, dq = 0, ds = 0) => () => { const c = STATIONS[k], o = lane(ds, dq, dy); return [c[0] + o[0], o[1], c[2] + o[2]]; };
 export const RIG = {
-  order: { at: P('phone', 0.06), dist: 1.5, push: 0.12, move: [0.7, 1.0] },
+  order: { at: P('phone', 0.06), dist: 1.5, push: 0.3, move: [0.7, 1.0] },   // 开场推得更猛做钩子（原 0.12）
   robots: { at: P('warehouse', 0.06), dist: 1.35, push: 0.1, move: [0.8, 1.0] },
   pack: { at: P('pack', 0.14), dist: 1.5, push: 0.12, move: [0.8, 1.0] },
   sort: { at: P('sorter', 0.12, 0.05, 0.05), dist: 1.9, push: 0.08, move: [0.75, 1.0] },

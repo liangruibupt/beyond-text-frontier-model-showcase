@@ -1,7 +1,7 @@
 // captions.js — 各镜头的字幕图层（纯数据）：文字、字体、区、字号（画面短边比例）、入场 / 退场（镜头本地秒）
 // 入场时段相对 s.from，所以 6 秒版从中段切入的镜头字幕照样完整入场。字幕按分镜 §B：robots / sort / lastmile 有句子，door 是品牌 + 活动
 import { cutFor } from './meta.js';
-import { ITEMS, isAiItem, isPerShotAi } from './items.js';
+import { ITEMS, isAiItem, isPerShotAi, isHeadset } from './items.js';
 import { T, FONTS } from './copy.js';
 import { promoLayers } from './promos.js';
 
@@ -13,9 +13,9 @@ const CAP = {
   // 瑰夏咖啡豆（分镜 v2 §四）
   roast: { zh: '今天早上 7 点，刚出炉', en: 'Roasted at 7 this morning' },
   bag: { zh: '当天烘焙，当天发出', en: 'Roasted today, shipped today' },
-  alley: { zh: '明天一早，到你门口', en: 'At your door by morning' },
+  alley: { zh: '凌晨出发，清晨到巷口', en: 'Out before dawn, at your lane by morning' },
   // 电竞耳机（分镜 v2 §三）
-  defeat: { zh: '明早决赛，耳机坏了？', en: 'Finals at 9. Headset dead?' },
+  defeat: { zh: '耳机断音 · 00:47', en: 'AUDIO LOST · 00:47' },
   cube: { zh: '城市前置仓，夜里也在跑', en: 'City hubs never sleep' },
   route: { zh: '路线实时规划，绕开每一个红灯', en: 'Routed live, around every red light' },
   lift: { zh: '08:12，送到门口', en: '08:12. At your door.' },
@@ -47,7 +47,8 @@ export function layersFor(v, s) {
       const card = endCard(v, base, F, a + (v.cut === 15 ? 0.6 : 0), align);
       // 仅 headset-ai（逐镜 AI，victory 为 LTX 实拍）：实拍屏幕只剩金/品光，代码版显示器上的「VICTORY」随之消失，
       // 用引擎在 overlay 层补一个同款 game-HUD 大标题，让「DEFEAT→VICTORY」的反转叙事活下来。代码版 headset 不受影响（走 default/下方）。
-      return isPerShotAi(v.item) ? [...victoryTitle(v, F, a, align), ...card] : card;
+      // headset-ai 现为整片 AI（victory 也是 LTX 实拍）：同样要补标题，否则 DEFEAT→VICTORY 的反转丢失（Opus 5.5 复审 #1）
+      return isAiItem(v.item) && isHeadset(v.item) ? [...victoryTitle(v, F, a, align), ...card] : card;
     }
     case 'pour': return endCard(v, base, F, a + (v.cut === 15 ? 0.6 : 0), align);   // 15 秒版片尾卡晚 0.6 s 入场，先看一眼注水；6 秒版价签要停满 3 秒
     case 'door': return endCard(v, base, F, a, align);

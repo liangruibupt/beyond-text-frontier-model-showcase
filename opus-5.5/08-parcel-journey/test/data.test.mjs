@@ -25,15 +25,12 @@ test('file names encode every axis that changes the output', () => {
   assert.equal(new Set(names).size, names.length, 'two variants share a file name');
 });
 
-test('default manifest = base items × (16:9 15 s zh, 16:9 15 s en launch, 1:1 6 s zh 1111) = 9 jobs; the AI variant is opt-in, not in the standard deliverables', () => {
+test('default manifest = (3 code items + 3 AI variants) × (16:9 15 s zh, 16:9 15 s en launch, 1:1 6 s zh 1111) = 18 jobs', () => {
   const jobs = expandJobs(META, manifest);
-  assert.equal(jobs.length, 9);
+  assert.equal(jobs.length, 18);
   const kinds = new Set(jobs.map(j => `${j.ar} ${j.cut} ${j.lang} ${j.promo} ${j.vo}`));
   assert.deepEqual([...kinds].sort(), ['16x9 15 en launch on', '16x9 15 zh none on', '1x1 6 zh 1111 on']);
-  // 标准交付只覆盖三件代码版商品，每件 3 条；AI 变体（beans-ai）不进默认清单，单独按 --item beans-ai 出
-  assert.deepEqual([...new Set(jobs.map(j => j.item))].sort(), ['beans', 'headset', 'lantern']);
-  for (const it of ['lantern', 'headset', 'beans']) assert.equal(jobs.filter(j => j.item === it).length, 3, `item ${it}`);
-  for (const it of ['beans-ai', 'lantern-ai', 'headset-ai']) assert.equal(jobs.filter(j => j.item === it).length, 0, `${it} is not a standard deliverable`);
+  for (const it of ['lantern', 'headset', 'beans', 'lantern-ai', 'headset-ai', 'beans-ai']) assert.equal(jobs.filter(j => j.item === it).length, 3, `item ${it}`);
 });
 
 test('items reuse 04 catalog: three approved products + opt-in beans-ai / lantern-ai / headset-ai variants that alias them', () => {
@@ -123,7 +120,7 @@ test('headset is its own story (stories/headset): seven shots per §三, hits on
   assert.ok(b6.cover > shotAt(b6, 'victory').start + 1.0, '6 s cover shows the price card on victory');
   // 字幕照 §三 表（defeat / cube / route / lift 有句子；order / ride 无字幕；victory 是片尾卡）
   const capOf = (name) => layersFor(v15, { name, from: 0, dur: 2 });
-  assert.equal(capOf('defeat').find(l => l.id === 'cap').text, '明早决赛，耳机坏了？');
+  assert.equal(capOf('defeat').find(l => l.id === 'cap').text, '耳机断音 · 00:47');
   assert.equal(capOf('route').find(l => l.id === 'cap').text, '路线实时规划，绕开每一个红灯');
   assert.deepEqual(capOf('order'), []);
   assert.deepEqual(capOf('ride'), []);
@@ -215,10 +212,10 @@ test('lantern-ai is an AI picture variant of lantern: same parcel cut / VO files
   }
 });
 
-test('headset-ai is a PER-SHOT AI variant of headset: only victory is live-action, same headset cut / VO files / captions, its own filename, not a standard deliverable', () => {
+test('headset-ai is a WHOLE-FILM AI variant of headset (user 2026-10-10): same headset cut / VO files / captions, its own filename', () => {
   assert.ok(isAiItem('headset-ai') && !isAiItem('headset'));
-  assert.ok(isPerShotAi('headset-ai') && !isPerShotAi('beans-ai') && !isPerShotAi('lantern-ai'));
-  assert.deepEqual(aiShotsOf('headset-ai'), ['victory']);        // 只有胜利镜换成实拍
+  assert.ok(!isPerShotAi('headset-ai') && !isPerShotAi('beans-ai') && !isPerShotAi('lantern-ai'));
+  assert.deepEqual(aiShotsOf('headset-ai'), []);                 // 七镜全部 LTX 实拍
   assert.ok(isHeadset('headset-ai') && !isBeans('headset-ai'));
   assert.equal(baseItem('headset-ai'), 'headset');
   assert.deepEqual(ITEMS['headset-ai'].price, ITEMS.headset.price);
@@ -241,7 +238,7 @@ test('headset-ai is a PER-SHOT AI variant of headset: only victory is live-actio
     const b = layersFor({ ...v, item: 'headset', lang: 'zh', cut: 15, promo: 'none', ar: '16x9' }, { name, from: 0, dur: 2 });
     assert.deepEqual(a.map(l => l.id), b.map(l => l.id), `${name} caption ids`);
   }
-  // victory 片尾卡：headset-ai 用紧凑的 ai_* 区（实拍主体占大半）+ 一个 VICTORY HUD 标题；代码版 headset 用整张卡、无 HUD（显示器 3D 自带 VICTORY）
+  // victory 片尾卡：headset-ai 用紧凑的 ai_* 区（实拍主体占大半）+ 引擎补的 VICTORY HUD 标题（Opus 5.5 复审 #1）；代码版 headset 用整张卡、无 HUD（显示器 3D 自带 VICTORY）
   const vz = { item: 'headset-ai', lang: 'zh', cut: 15, promo: '1111', ar: '16x9', vo: 'on' };
   const ai = layersFor(vz, { name: 'victory', from: 0, dur: 2 }), code = layersFor({ ...vz, item: 'headset' }, { name: 'victory', from: 0, dur: 2 });
   // headset-ai 的 victory = 代码版的全部 id（片尾卡）+ 额外的 vtitle / vrank（HUD 标题）
@@ -269,7 +266,7 @@ test('AI variants use the compact ai_* end-card zones; code versions keep the fu
   assert.ok(c11[1] >= 0.6, '1:1 AI card stays in the bottom 40%');
 });
 
-test('headset-ai victory carries an engine-drawn VICTORY HUD title (restores the DEFEAT→VICTORY payoff lost with the LTX monitor); code headset never does', () => {
+test('headset-ai (whole-film AI) victory carries an engine-drawn VICTORY HUD title (restores the DEFEAT→VICTORY payoff); code headset never does', () => {
   const MARGIN = 0.04;
   for (const ar of ['16x9', '1x1']) for (const [lang, cut, promo] of [['zh', 15, 'none'], ['en', 15, 'launch'], ['zh', 6, '1111']]) {
     const v = { item: 'headset-ai', lang, cut, promo, ar, vo: 'on' };

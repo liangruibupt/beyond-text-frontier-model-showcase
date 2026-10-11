@@ -35,14 +35,17 @@ export const SHOTS = {
   // 1 倒计时：大数字跳动，背景星座微弱呼吸待命
   countdown(ctx, s) {
     ctx.subjects.screen.draw(0, { nodeLit: 0.12 + 0.05 * Math.sin(s.lt * 6), density: 0, hubPulse: 0 });
-    return { camera: cam(ctx, { scale: 1.04 - 0.02 * s.u }), text: [...text(ctx, s), countdownLayer(ctx.variant, s)] };
+    // 逐拍顶一下：每跳一个数字相机前冲 4% 再回落
+    const kick = Math.exp(-((s.lt % 0.75) / 0.12));
+    return { camera: cam(ctx, { scale: 1.08 - 0.04 * s.u + 0.04 * kick }), text: [...text(ctx, s), countdownLayer(ctx.variant, s)] };
   },
-  // 2 点亮：归零瞬间星座依次点亮（波纹），弧线开始飞起
+  // 2 点亮：归零瞬间星座依次点亮（波纹），弧线开始飞起；相机从近处冲击后拉开
   ignite(ctx, s) {
     const lit = easeOut(ss(0, 1.6, s.lt));
     const density = ss(0.75, 2.6, s.lt) * 0.4;
     ctx.subjects.screen.draw(s.lt + 2.25, { nodeLit: lit, density, hubPulse: 0 });
-    return { camera: cam(ctx, { scale: 1.02 - 0.02 * s.u }), text: text(ctx, s), post: { bloom: 0.4 } };
+    const pull = 1.15 - 0.15 * easeOut(ss(0, 1.2, s.lt));
+    return { camera: cam(ctx, { dir: [-0.05 * s.u, 0.02, 1], scale: pull }), text: text(ctx, s), post: { bloom: 0.4 + 0.3 * (1 - lit) } };
   },
   // 3 弧线：密度升到峰值，仓库到达脉冲，轻微环绕；节点略压暗让弧线突出
   arcs(ctx, s) {

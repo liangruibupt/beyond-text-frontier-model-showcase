@@ -33,12 +33,13 @@ const CUTS = [
   { at: 368, color: '#ffd84a', k: 0.45 },
 ];
 
-// 配音（national 现成 Kokoro）：hook 对齐 0 落定；片尾句。hero 原句「每秒百万订单」与 96 秒破十亿矛盾，不用
+// 配音（national Kokoro，Opus 5.5 复审后重新生成）：hook 对齐 0 落定；hero 在订单汇流镜头；片尾句
 const VO: [number, string][] = [
-  [22, 'vo/national_zh_15_hook.mp3'],
-  [380, 'vo/national_zh_15_end_none.mp3'],
+  [22, 'vo/national_zh_15_hook.mp3'],          // 零点！全国点亮。
+  [70, 'vo/national_zh_15_hero.mp3'],          // 每秒十万笔，奔向八大仓。
+  [380, 'vo/national_zh_15_end_none.mp3'],     // 星潮双十一，峰值由你点亮。
 ];
-const VO_SPAN: [number, number][] = [[22, 80], [380, 450]];
+const VO_SPAN: [number, number][] = [[22, 66], [70, 136], [380, 450]];
 
 const SFX: [number, string, number][] = [
   [0, 'riser-cine.mp3', 0.3],

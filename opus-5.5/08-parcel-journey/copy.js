@@ -25,7 +25,7 @@ export const SPEED = { zh: 1, en: 1 };
 
 // §E 时段（成片秒）：[开始, 最长]；句子都在 14.7 s 前念完，6 秒版在 5.7 s 前
 export const SLOTS = {
-  15: { hook: [0.3, 1.7], robots: [2.0, 2.6], route: [7.0, 2.4], door: [10.8, 2.0], end: [12.9, 1.8] },   // 片尾句提前 0.3 s 起念：品牌句在 1.5 s 里放不下
+  15: { hook: [0.3, 1.7], robots: [2.0, 2.6], route: [5.1, 2.4], door: [10.8, 2.0], end: [12.9, 1.8] },   // 片尾句提前 0.3 s 起念：品牌句在 1.5 s 里放不下
   6: { one: [2.0, 3.6] },
 };
 
@@ -37,7 +37,7 @@ const NARR = {
 // 片尾句：none 收尾、launch 新品（§E）；只有 one_1111（6 秒）里的商品名和价格随商品变
 const END = {
   zh: { none: () => '有集，次次都次日达。', launch: () => '有集次日达，上新了。', 1111: () => '有集，次次都次日达。' },
-  en: { none: () => 'Youji. Tomorrow, every time.', launch: () => 'Youji Next Day is here.', 1111: () => 'Youji. Tomorrow, every time.' },
+  en: { none: () => 'Youji. Tomorrow, every time.', launch: () => 'Tonight. Yours tomorrow.', 1111: () => 'Youji. Tomorrow, every time.' },
 };
 // 画面写 "Double 11"，配音念 "Double Eleven"。数字用 sayNum 转成汉字 / 英文单词
 const ONE = {
@@ -89,8 +89,8 @@ export const HEADSET_SLOTS = {
   6: { one: [2.0, 3.6] },
 };
 const HEADSET_NARR = {
-  zh: { hook: '明早决赛，耳机坏了？', order: '今晚下单，', hub: '城市前置仓连夜出货，', hands: '开赛之前，送到你手上。' },
-  en: { hook: "Finals tomorrow. Headset's dead?", order: 'Order tonight,', hub: 'our city hubs work all night,', hands: "and it's in your hands before the match." },
+  zh: { hook: '明早决赛，耳机坏了？', order: '今晚下单，', hub: '城市前置仓连夜出货，', hands: '开赛之前，戴上它。' },
+  en: { hook: "Finals at nine. Headset's dead?", order: 'Order tonight,', hub: 'our city hubs work all night,', hands: "Before the match, it's on." },
 };
 function headsetLines(v, it, d, L, voice) {
   const base = baseItem(v.item);   // 将来的 headset-ai 复用 headset_* 配音文件

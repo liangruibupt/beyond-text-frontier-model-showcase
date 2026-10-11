@@ -32,11 +32,11 @@
     "lufs": -20
   },
   "beans_en_15_end_launch": {
-    "text": "Youji Next Day is here.",
+    "text": "Tonight. Yours tomorrow.",
     "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.44,
+    "dur": 1.351,
     "lufs": -20
   },
   "beans_en_15_end_none": {
@@ -152,11 +152,11 @@
     "lufs": -20
   },
   "headset_en_15_end_launch": {
-    "text": "Youji Next Day is here.",
+    "text": "Tonight. Yours tomorrow.",
     "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.44,
+    "dur": 1.351,
     "lufs": -20
   },
   "headset_en_15_end_none": {
@@ -168,19 +168,19 @@
     "lufs": -20
   },
   "headset_en_15_h_hands": {
-    "text": "and it's in your hands before the match.",
+    "text": "Before the match, it's on.",
     "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 2.208,
+    "dur": 1.442,
     "lufs": -20
   },
   "headset_en_15_h_hook": {
-    "text": "Finals tomorrow. Headset's dead?",
+    "text": "Finals at nine. Headset's dead?",
     "voice": "am_michael",
     "speed": 1,
-    "rate": 1,
-    "dur": 2.088,
+    "rate": 1.06,
+    "dur": 2.001,
     "lufs": -20
   },
   "headset_en_15_h_hub": {
@@ -248,11 +248,11 @@
     "lufs": -20
   },
   "headset_zh_15_h_hands": {
-    "text": "开赛之前，送到你手上。",
+    "text": "开赛之前，戴上它。",
     "voice": "zm_yunjian",
     "speed": 1,
     "rate": 1,
-    "dur": 2.064,
+    "dur": 1.676,
     "lufs": -20
   },
   "headset_zh_15_h_hook": {
@@ -320,11 +320,11 @@
     "lufs": -20
   },
   "lantern_en_15_end_launch": {
-    "text": "Youji Next Day is here.",
+    "text": "Tonight. Yours tomorrow.",
     "voice": "am_michael",
     "speed": 1,
     "rate": 1,
-    "dur": 1.44,
+    "dur": 1.351,
     "lufs": -20
   },
   "lantern_en_15_end_none": {

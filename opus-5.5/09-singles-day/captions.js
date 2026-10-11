@@ -2,7 +2,7 @@
 // 入场相对 s.from，所以 6 秒版从中段切入的镜头字幕照样完整入场。脚手架阶段：批准的台词 + 片尾卡
 import { CUTS } from './meta.js';
 import { THEMES } from './themes.js';
-import { CAP, MILE, T, FONTS } from './copy.js';
+import { CAP, MILE, T, FONTS, capText } from './copy.js';
 import { promoLayers } from './promos.js';
 
 /** s = { name, from, dur, row } → 图层数组 */
@@ -11,7 +11,7 @@ export function layersFor(v, s) {
   const F = FONTS[L];
   const base = { lang: L, align, valign: 'top', color: pal.ink, shadow: { color: pal.glow, blur: 0.5 } };
   const cap = (zone, key, size = L === 'zh' ? 0.055 : 0.05) =>
-    ({ ...base, id: 'cap', zone, text: CAP[key][L], font: F.display, size, tracking: L === 'zh' ? 0.08 : 0.02, lineHeight: 1.3, maxLines: 2, in: [a + 0.35, a + 0.95] });
+    ({ ...base, id: 'cap', zone, text: capText(key, v.theme, L), font: F.display, size, tracking: L === 'zh' ? 0.08 : 0.02, lineHeight: 1.3, maxLines: 2, in: [a + 0.35, a + 0.95] });
 
   switch (s.name) {
     case 'countdown': return [cap('cap', 'countdown')];
