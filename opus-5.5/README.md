@@ -160,5 +160,5 @@ factory 是 03 起各案例共用的商品视频引擎。一部成片只提供�
 
 ## 参考
 
-- [Opus 5.5 爆款视频提示词速查表](docs/prompt-atlas/opus55-prompt-atlas.md)：把 [awesome-opus5-5-videos](https://github.com/yihui-dev/awesome-opus5-5-videos) 的 455 条提示词按能力、出彩点、手法分类，新任务先查这里
+- [Opus 5.5 爆款视频提示词速查表](docs/prompt-atlas/opus55-prompt-atlas.md)：把 [awesome-opus5-5-videos](https://github.com/yihui-dev/awesome-opus5-5-videos) 的 789 条提示词按能力、出彩点、手法分类，新任务先查这里
 - [claude-opus-5.5-game-demo](https://github.com/liangruibupt/claude-opus-5.5-game-demo)：Claude Opus 5.5 生成的 3D 网页游戏示例（fork）
