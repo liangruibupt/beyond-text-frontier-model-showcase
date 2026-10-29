@@ -17,6 +17,7 @@
 | [Claude Opus 5.5](opus-5.5/README.md) | 11 [琉光 · 液态玻璃主题视频工厂](opus-5.5/11-liquid-glass/) | 商品视频工厂 | GLSL 全屏着色器（WebGL 2，经 Three.js）· Canvas 2D · Web Audio · Node + Playwright + ffmpeg | 弥散渐变壁纸上的磨砂小组件和数字时钟，液态玻璃滑过、折射、相融；三款主题各有配色和配乐，配 Kokoro 配音，批量出片 |
 | [Claude Opus 5.5](opus-5.5/README.md) | 12 [六只绒毛波普猫猫](opus-5.5/12-pop-cats/) | 矢量插画 | SVG（程序生成）· resvg | 参照宠物零食的波普海报画出六只不同品种的猫：短绒毛团子脸、马克笔式淡描边、花色边缘一丝一丝晕开；每只猫由带种子的纯函数生成，导出 SVG / PNG 和拼贴海报 |
 | [Claude Opus 5.5](opus-5.5/README.md) | 13 [纽约地铁 · 百年沙画](opus-5.5/13-nyc-subway-sandart/) | 沙画解说视频 | Canvas 2D · Node + Playwright + ffmpeg · Kokoro TTS | 金色沙粒带压感逐笔落在纸上，12 幕画出纽约地铁从 1869 到今天的发展史，换幕用流沙吹散再堆成下一幕；每幕绘制时长由配音时长驱动，中文旁白用部署在 AWS 的 Kokoro Lambda 合成，片尾定格在官方风格的实心彩色线路字母球 |
+| [Claude Opus 5.5](opus-5.5/README.md) | 14 [Roadster 2 · 飞行原理讲解](opus-5.5/14-roadster2-remotion/) | 科技讲解视频（Remotion） | Remotion · React · SVG · Kokoro TTS · ffmpeg | 用 Remotion 把每幕写成 React 组件，9 幕讲解特斯拉 Roadster 2「SpaceX Package」冷气推进器让车短暂离地的原理（含牛顿第三定律受力图、COPV 高压罐与喷口布局）；每幕时长由配音驱动，中文旁白走 AWS 上的 Kokoro Lambda，配极客风背景音乐。片中注明该套件仍是未量产概念 |
 | [GPT-6 Astra](gpt-6-astra/README.md) | [中国古建筑](gpt-6-astra/chinese-architecture/index.html) | 交互式 3D 可视化 | Three.js（WebGL 2）· SVG | 六座木构的三维外观、材质、光照、结构剖面与分层拆解 |
 | [GPT-6 Astra](gpt-6-astra/README.md) | [清明上河图](gpt-6-astra/qingming-scroll/index.html) | 原画动画 | WebGL 1 · GLSL | 原画人物、轿子、动物、树木与水面的局部动态，完整展卷和图片导出 |
 | [Claude Fable 5](fable5/README.md) | [太阳系课堂动画](fable5/solar-system/index.html) | 课堂演示 | Canvas 2D | 八大行星轨道、课堂导览、行星竞速、真实直径比例带、开普勒椭圆轨道与等面积演示 |

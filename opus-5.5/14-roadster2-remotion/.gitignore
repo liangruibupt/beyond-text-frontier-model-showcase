@@ -1,0 +1,9 @@
+node_modules/
+.venv/
+out/
+audio/
+package-lock.json
+narration.wav
+narration_bgm.wav
+bgm.wav
+*.log

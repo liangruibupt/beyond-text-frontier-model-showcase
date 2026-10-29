@@ -58,6 +58,7 @@ Opus 5.5 写分镜（镜头表、运动、时长）和每个镜头的文生视�
 | 11 | [琉光 · 液态玻璃主题视频工厂](11-liquid-glass/) | 商品视频工厂（全屏着色器 + Node 批量出片） | 虚构品牌「琉光」的手机主题宣传片：弥散渐变壁纸上的磨砂小组件和数字时钟，液态玻璃滑过、折射、色散，两滴相融长出液桥，磨砂玻璃幕扫过整屏。三款主题各有配色和移调的配乐，配 Kokoro 配音，接入 factory 引擎批量出片 |
 | 12 | [六只绒毛波普猫猫](12-pop-cats/) | 矢量插画（SVG 程序生成 + resvg 出 PNG） | 参照宠物零食的波普海报，画出六只不同品种的猫：短绒毛的团子脸，马克笔式的淡描边，领毛把头和身子接起来，三花等花色的边缘一丝一丝晕开。每只猫由带种子的纯函数生成，导出单张 SVG / PNG 和拼贴海报 |
 | 13 | [纽约地铁 · 百年沙画](13-nyc-subway-sandart/) | 沙画解说视频（Canvas 2D + Node 逐帧出片） | 以沙画风格讲述纽约地铁百年发展史：金色沙粒带压感逐笔落在暖色纸底上，一幕幕画出蒸汽机车、隧道、桥梁、地标与线路网，换幕时整幅沙被风吹散再重新堆成下一幕。12 幕从 1869 到今天，每幕绘制时长由该幕配音时长驱动；中文旁白用部署在 AWS 的 Kokoro Lambda（arm64）合成，纯中文字幕，低音量氛围垫乐，片尾定格在官方风格的实心彩色线路字母球 |
+| 14 | [Roadster 2 · 飞行原理讲解](14-roadster2-remotion/) | 科技讲解视频（Remotion + React 逐帧渲染） | 用 Remotion 把每一幕写成 React 组件（SVG 矢量跑车、冷气喷流、牛顿第三定律受力箭头、数据排版），9 幕拆解特斯拉 Roadster 2「SpaceX Package」冷气推进器让车短暂离地的原理：后备箱 COPV 高压空气罐 + 车身约十个喷口，高压气下喷、车获反作用力上推。每幕时长由该幕配音驱动，中文旁白走 AWS 上的 Kokoro Lambda，配 ffmpeg 原创极客风背景乐。片中第 8 幕注明该套件仍是未量产概念 |
 
 ## 运行
 
@@ -79,6 +80,7 @@ npm run serve            # 或 python3 -m http.server 8765
 #                                 和 http://127.0.0.1:8765/factory/gallery.html?film=10-live-flash-sale
 #     09 为批量出片的数据大屏视频，审片见 http://127.0.0.1:8765/factory/gallery.html?film=09-singles-day
 #     13 为逐帧出片的沙画视频，成品见 13-nyc-subway-sandart/assets/nyc-subway-sandart.mp4
+#     14 为 Remotion 项目（npm install 后 npx remotion studio 预览），成品见 14-roadster2-remotion/assets/roadster2.mp4
 ```
 
 从 03 起，批量出片、测试和审片工具都在 [factory/](factory/README.md) 里，要先 `npm install`（另需 Node 22 和 ffmpeg）。出片用 `node factory/render.mjs 03-perfume`；本机慢的话，用 `node factory/cloud.mjs render 03-perfume` 放到 AWS 的 GPU 实例上出，出完拉回本机（见 [factory/README.md](factory/README.md#cloudmjs云端出片)）。出完打开 `http://127.0.0.1:8765/factory/gallery.html?film=03-perfume` 看画廊。要从一段故事梗概起一部新片，在本目录运行 Claude Code，让它按 `new-film` 技能（`.claude/skills/new-film/`）来做。
