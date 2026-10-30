@@ -1,80 +1,94 @@
 import React from 'react';
 import { AbsoluteFill, Sequence, useCurrentFrame, interpolate, Easing, spring, useVideoConfig } from 'remotion';
-import { Bg, Caption, Jet, Roadster2, C } from './lib';
+import { Bg, Caption, Jet, Roadster2, C, FONT } from './lib';
 
 export const ROADSTER_FPS = 30;
 
 // narration-driven per-scene frame counts (written by narrate.py); fallback to defaults.
 import durJson from '../durations.json';
-const DEFAULT_SEC = [5,7,8,9,9,8,8,8,6];
+const DEFAULT_SEC = [7,12,12,11,13,10,11,13,8];
 const SCENE_IDS = ['title','reveal','truth','layout','newton','hover','vector','limits','end'];
 const SCENE_FRAMES: number[] = (Array.isArray(durJson) && durJson.length===SCENE_IDS.length)
   ? durJson as number[]
   : DEFAULT_SEC.map(s=>Math.round(s*ROADSTER_FPS));
 const SCENES = SCENE_IDS.map((id,i)=>({id, frames: SCENE_FRAMES[i]}));
-const F = (frames:number)=>frames;
 export const roadsterDurationInFrames = ()=> SCENES.reduce((a,s)=>a+s.frames,0);
 
-/* ---------------- individual scenes ---------------- */
-
-const Title: React.FC = () => {
-  const f = useCurrentFrame(); const {fps} = useVideoConfig();
-  const s = spring({frame:f, fps, config:{damping:200}, durationInFrames:30});
-  const sub = interpolate(f,[18,34],[0,1],{extrapolateRight:'clamp'});
-  return (
-    <AbsoluteFill style={{justifyContent:'center', alignItems:'center'}}>
-      <div style={{transform:`scale(${0.8+s*0.2})`, opacity:s, textAlign:'center'}}>
-        <div style={{color:C.tesla, fontWeight:900, letterSpacing:10, fontSize:34}}>TESLA ROADSTER 2</div>
-        <div style={{color:C.ink, fontWeight:900, fontSize:92, marginTop:10}}>“飞行汽车”的原理</div>
-        <div style={{color:C.dim, fontSize:34, marginTop:18, opacity:sub}}>它真的会飞吗？ SpaceX Package 到底做了什么</div>
-      </div>
-    </AbsoluteFill>
-  );
+/* reusable slow-camera helper: gentle push-in over a scene for keynote feel */
+const usePush = (from=1.0, to=1.06, dur=120) => {
+  const f = useCurrentFrame();
+  return interpolate(f, [0, dur], [from, to], {extrapolateRight:'clamp', easing:Easing.out(Easing.quad)});
 };
 
-const CarStage: React.FC<{children?:React.ReactNode; y?:number; carScale?:number}> = ({children, y=360, carScale=0.78}) => (
+/* the car staged on the floor, horizontally centered; y is the floor line */
+const CarStage: React.FC<{children?:React.ReactNode; y?:number; carScale?:number; wing?:number; headlight?:number; camScale?:number}> =
+ ({children, y=470, carScale=0.82, wing=0, headlight=1, camScale=1}) => (
   <svg width="1920" height="1080" style={{position:'absolute',inset:0}}>
-    <g transform={`translate(${960-540*carScale},${y})`}>
-      <Roadster2 scale={carScale}/>
+    <g transform={`translate(960,${y}) scale(${camScale}) translate(${-540*carScale},0)`}>
+      <g transform={`scale(${carScale})`}><Roadster2 scale={1} wing={wing} headlight={headlight}/></g>
       {children}
     </g>
   </svg>
 );
 
+/* ---------------- individual scenes ---------------- */
+
+const Title: React.FC = () => {
+  const f = useCurrentFrame(); const {fps} = useVideoConfig();
+  const s = spring({frame:f, fps, config:{damping:200}, durationInFrames:36});
+  const track = interpolate(f,[0,40],[26,13],{extrapolateRight:'clamp'});
+  const sub = interpolate(f,[24,46],[0,1],{extrapolateRight:'clamp'});
+  const line = interpolate(f,[10,40],[0,1],{extrapolateRight:'clamp'});
+  return (
+    <AbsoluteFill style={{justifyContent:'center', alignItems:'center'}}>
+      <div style={{textAlign:'center', opacity:s, transform:`translateY(${(1-s)*20}px)`}}>
+        <div style={{color:C.tesla, fontWeight:600, letterSpacing:track, fontSize:24}}>T E S L A &nbsp; R O A D S T E R &nbsp; 2</div>
+        <div style={{width:interpolate(line,[0,1],[0,340]), height:1, background:`linear-gradient(90deg,transparent,${C.faint},transparent)`, margin:'26px auto'}}/>
+        <div style={{color:C.ink, fontWeight:800, fontSize:104, letterSpacing:-1, lineHeight:1.05}}>“飞行汽车”的原理</div>
+        <div style={{color:C.dim, fontSize:30, marginTop:26, fontWeight:300, opacity:sub, letterSpacing:1}}>它真的会飞吗？ SpaceX Package 到底做了什么</div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
 const Reveal: React.FC = () => {
   const f = useCurrentFrame();
-  const x = interpolate(f,[0,50],[-500,0],{easing:Easing.out(Easing.cubic),extrapolateRight:'clamp'});
-  const shine = interpolate(f%90,[0,45,90],[0,1,0]);
+  const x = interpolate(f,[0,70],[760,0],{easing:Easing.out(Easing.cubic),extrapolateRight:'clamp'});
+  const cam = usePush(1.08, 1.0, 70);
+  const head = interpolate(f,[40,70],[0,1],{extrapolateRight:'clamp'});
+  const shine = interpolate(f%110,[0,55,110],[0,1,0]);
   return (
     <AbsoluteFill>
       <svg width="1920" height="1080" style={{position:'absolute',inset:0}}>
-        <g transform={`translate(${960-540*0.82+x},360)`}>
-          <Roadster2 scale={0.82}/>
-          <rect x={120} y={60} width={120} height={160} fill="#ffffff" opacity={shine*0.18} transform="skewX(-20)"/>
+        <g transform={`translate(${960+x},470) scale(${cam}) translate(${-540*0.86},0)`}>
+          <g transform="scale(0.86)"><Roadster2 scale={1} wing={0} headlight={head}/></g>
+          <g transform="scale(0.86)"><rect x={200} y={110} width={90} height={150} fill="#ffffff" opacity={shine*0.1} transform="skewX(-22)"/></g>
         </g>
       </svg>
-      <Caption tag="ROADSTER 2 · 2020 发布的第二代" title="最快的量产电动跑车" sub="官方称 0–100 km/h 约 1.9 秒。但真正出圈的，是马斯克说的那套能让它“飞”的 SpaceX Package。"/>
+      <Caption tag="Roadster 2 · 第二代" title="最快的量产电动跑车" sub="官方称 0–100 km/h 约 1.9 秒。但真正让它出圈的，是马斯克说的那套能让它“飞”的 SpaceX Package。"/>
     </AbsoluteFill>
   );
 };
 
 const Truth: React.FC = () => {
   const f = useCurrentFrame();
-  const cross = interpolate(f,[20,40],[0,1],{extrapolateRight:'clamp'});
+  const a = interpolate(f,[6,24],[0,1],{extrapolateRight:'clamp'});
+  const cross = interpolate(f,[30,52],[0,1],{extrapolateRight:'clamp'});
+  const b = interpolate(f,[40,60],[0,1],{extrapolateRight:'clamp'});
   return (
     <AbsoluteFill>
-      <AbsoluteFill style={{justifyContent:'flex-start', alignItems:'center', paddingTop:150}}>
-        <div style={{display:'flex', gap:120, alignItems:'center'}}>
-          <div style={{textAlign:'center', opacity:1}}>
-            <div style={{fontSize:120}}>✈️</div>
-            <div style={{color:C.dim, fontSize:30, marginTop:10, position:'relative'}}>机翼气动飞行
-              <svg width="220" height="40" style={{position:'absolute',left:-10,top:10}}><line x1={10} y1={30} x2={200} y2={5} stroke={C.tesla} strokeWidth={6} opacity={cross} strokeLinecap="round"/></svg>
+      <AbsoluteFill style={{justifyContent:'center', alignItems:'center', paddingBottom:120}}>
+        <div style={{display:'flex', gap:150, alignItems:'center'}}>
+          <div style={{textAlign:'center', opacity:a, transform:`translateY(${(1-a)*20}px)`}}>
+            <div style={{fontSize:118, filter:'grayscale(0.4)'}}>✈️</div>
+            <div style={{color:C.dim, fontSize:27, marginTop:12, position:'relative', fontWeight:300}}>机翼气动飞行
+              <svg width="240" height="46" style={{position:'absolute',left:-20,top:6}}><line x1={10} y1={34} x2={220} y2={8} stroke={C.tesla} strokeWidth={5} opacity={cross} strokeLinecap="round"/></svg>
             </div>
           </div>
-          <div style={{color:C.dim, fontSize:50}}>→</div>
-          <div style={{textAlign:'center'}}>
-            <div style={{fontSize:120}}>🚀</div>
-            <div style={{color:C.jet, fontSize:30, marginTop:10, fontWeight:700}}>冷气推进（火箭思路）</div>
+          <div style={{color:C.faint, fontSize:52, opacity:b, fontWeight:200}}>→</div>
+          <div style={{textAlign:'center', opacity:b, transform:`translateY(${(1-b)*20}px)`}}>
+            <div style={{fontSize:118}}>🚀</div>
+            <div style={{color:C.jet, fontSize:27, marginTop:12, fontWeight:600}}>冷气推进 · 火箭思路</div>
           </div>
         </div>
       </AbsoluteFill>
@@ -85,27 +99,30 @@ const Truth: React.FC = () => {
 
 const Layout: React.FC = () => {
   const f = useCurrentFrame();
+  const cam = usePush(1.0, 1.05, 160);
   const appear = (d:number)=>interpolate(f,[d,d+10],[0,1],{extrapolateRight:'clamp'});
-  // thruster positions around the car (in car-local coords, car drawn at translate below)
+  // thruster positions in car-local coords (car is 1080 wide, wheels at y~252)
   const thr = [
-    {x:200,y:205,a:90}, {x:380,y:205,a:90}, {x:560,y:205,a:90}, {x:720,y:205,a:90}, {x:900,y:205,a:90}, // underside down-jets
-    {x:70,y:160,a:175}, {x:1055,y:170,a:5}, // nose / tail
+    {x:230,y:262,a:90}, {x:400,y:262,a:90}, {x:560,y:262,a:90}, {x:720,y:262,a:90}, {x:880,y:262,a:90}, // underside
+    {x:78,y:238,a:178}, {x:1050,y:228,a:2}, // nose / tail
   ];
   return (
     <AbsoluteFill>
-      <CarStage y={360} carScale={0.78}>
+      <CarStage y={430} carScale={0.82} camScale={cam}>
+        {/* COPV tank callout above rear deck */}
+        <g opacity={appear(48)}>
+          <line x1={820} y1={170} x2={820} y2={120} stroke={C.gold} strokeWidth={1.5} opacity={0.6}/>
+          <rect x={720} y={66} width={200} height={54} rx={27} fill="#10131a" stroke={C.gold} strokeWidth={1.5}/>
+          <ellipse cx={766} cy={93} rx={20} ry={16} fill="none" stroke={C.gold} strokeWidth={1.5}/>
+          <text x={800} y={99} fill={C.gold} fontSize={19} fontWeight={600} fontFamily={FONT}>COPV 高压罐</text>
+        </g>
         {thr.map((p,i)=>(
           <g key={i} opacity={appear(8+i*5)}>
-            <circle cx={p.x} cy={p.y} r={10} fill={C.jet}/>
-            <Jet x={p.x} y={p.y} angle={p.a} power={0.45} scale={0.7}/>
+            <circle cx={p.x} cy={p.y} r={6} fill={C.jet}/>
+            <circle cx={p.x} cy={p.y} r={11} fill="none" stroke={C.jet} strokeWidth={1} opacity={0.5}/>
+            <Jet x={p.x} y={p.y} angle={p.a} power={0.4} scale={0.6}/>
           </g>
         ))}
-        {/* COPV tank seated in the rear deck */}
-        <g opacity={appear(42)}>
-          <ellipse cx={820} cy={120} rx={78} ry={30} fill="#1a2544" stroke={C.gold} strokeWidth={3}/>
-          <text x={820} y={127} fill={C.gold} fontSize={20} textAnchor="middle" fontWeight={700}>COPV 高压罐</text>
-          <line x1={820} y1={150} x2={820} y2={196} stroke={C.gold} strokeWidth={2} strokeDasharray="5 5"/>
-        </g>
       </CarStage>
       <Caption tag="布局" title="车身周围约十个喷口 + 后备箱一只高压空气罐" sub="方案把后备箱换成一只碳纤维缠绕高压气瓶（COPV），通过车身四周隐藏的喷口按需放气。"/>
     </AbsoluteFill>
@@ -114,21 +131,24 @@ const Layout: React.FC = () => {
 
 const Newton: React.FC = () => {
   const f = useCurrentFrame();
-  const p = interpolate(f,[10,40],[0,1],{easing:Easing.inOut(Easing.cubic),extrapolateRight:'clamp'});
+  const p = interpolate(f,[14,46],[0,1],{easing:Easing.inOut(Easing.cubic),extrapolateRight:'clamp'});
+  const cam = usePush(1.02, 1.08, 180);
   return (
     <AbsoluteFill>
       <svg width="1920" height="1080" style={{position:'absolute',inset:0}}>
-        <g transform="translate(420,380)">
-          <Roadster2 scale={0.78}/>
-          {/* down jet */}
-          <Jet x={500} y={215} angle={90} power={p} scale={1.4}/>
-          {/* reaction arrow up */}
-          <g opacity={p}>
-            <line x1={500} y1={140} x2={500} y2={140-180*p} stroke={C.gold} strokeWidth={10} strokeLinecap="round"/>
-            <path d={`M500,${140-180*p} l-16,26 l32,0 z`} fill={C.gold}/>
-            <text x={540} y={60} fill={C.gold} fontSize={30} fontWeight={800}>反作用力 ↑</text>
+        <g transform={`translate(960,480) scale(${cam}) translate(${-540*0.82},0)`}>
+          <g transform="scale(0.82)">
+            <Roadster2 scale={1} wing={0.3} headlight={1}/>
+            <Jet x={540} y={272} angle={90} power={p} scale={1.5}/>
+            <g opacity={p}>
+              <line x1={540} y1={150} x2={540} y2={150-140*p} stroke={C.gold} strokeWidth={9} strokeLinecap="round"/>
+              <path d={`M540,${150-140*p} l-15,24 l30,0 z`} fill={C.gold}/>
+            </g>
           </g>
-          <text x={560} y={300} fill={C.jet} fontSize={30} fontWeight={800}>高压气体喷出 ↓</text>
+          <g opacity={p}>
+            <text x={90} y={-30} fill={C.gold} fontSize={27} fontWeight={700} fontFamily={FONT}>反作用力 ↑ 车被上推</text>
+            <text x={90} y={300} fill={C.jet} fontSize={25} fontWeight={600} fontFamily={FONT}>高压气体喷出 ↓</text>
+          </g>
         </g>
       </svg>
       <Caption tag="原理 · 牛顿第三定律" title="气体往下喷，车就被往上推" sub="高压空气以极高速度向下喷出，根据作用力与反作用力，车身获得一个向上的反推力——和火箭、冷气姿控完全同一个道理。"/>
@@ -138,17 +158,22 @@ const Newton: React.FC = () => {
 
 const Hover: React.FC = () => {
   const f = useCurrentFrame(); const {fps}=useVideoConfig();
-  const lift = spring({frame:f-15, fps, config:{damping:12, mass:1.2}, durationInFrames:60});
-  const dy = -140*lift + Math.sin(f*0.15)*6*lift;
+  const lift = spring({frame:f-18, fps, config:{damping:13, mass:1.3}, durationInFrames:70});
+  const dy = -150*lift + Math.sin(f*0.14)*7*lift;
+  const cam = usePush(1.0, 1.04, 150);
+  const dust = Math.min(1, lift*1.3);
   return (
     <AbsoluteFill>
       <svg width="1920" height="1080" style={{position:'absolute',inset:0}}>
-        {/* ground */}
-        <line x1={0} y1={640} x2={1920} y2={640} stroke={C.grid} strokeWidth={3}/>
-        <g transform={`translate(${960-540*0.78},${400+dy})`}>
-          <Roadster2 scale={0.78}/>
-          <Jet x={160} y={215} angle={90} power={0.6+0.4*lift} scale={1.1}/>
-          <Jet x={840} y={215} angle={90} power={0.6+0.4*lift} scale={1.1}/>
+        {/* floor glow where jets hit */}
+        <ellipse cx={960} cy={690} rx={320*dust} ry={26*dust} fill={C.jet} opacity={0.12*dust}/>
+        <g transform={`translate(960,${520+dy}) scale(${cam}) translate(${-540*0.82},0)`}>
+          <g transform="scale(0.82)">
+            <Roadster2 scale={1} wing={0.6} headlight={1}/>
+            <Jet x={250} y={272} angle={90} power={0.55+0.45*lift} scale={1.2}/>
+            <Jet x={540} y={272} angle={90} power={0.5+0.4*lift} scale={1.1}/>
+            <Jet x={830} y={272} angle={90} power={0.55+0.45*lift} scale={1.2}/>
+          </g>
         </g>
       </svg>
       <Caption tag="效果" title="短暂离地悬停" sub="多组下喷喷口一起工作，可以把整车短暂抬离地面、稳定悬停——这就是演示里“飞起来”的那几秒。"/>
@@ -158,15 +183,20 @@ const Hover: React.FC = () => {
 
 const Vector: React.FC = () => {
   const f = useCurrentFrame();
-  const lean = interpolate(f%120,[0,60,120],[-6,6,-6],{easing:Easing.inOut(Easing.sin)});
+  const lift = interpolate(f,[0,30],[0,1],{extrapolateRight:'clamp'});
+  const lean = interpolate(f%130,[0,65,130],[-5,5,-5],{easing:Easing.inOut(Easing.sin)});
+  const dy = -90*lift;
   return (
     <AbsoluteFill>
       <svg width="1920" height="1080" style={{position:'absolute',inset:0}}>
-        <g transform={`translate(${960-540*0.78},400) rotate(${lean},540,160)`}>
-          <Roadster2 scale={0.78}/>
-          {/* vectored side jets push for cornering/accel */}
-          <Jet x={60} y={170} angle={200} power={0.7} scale={1.0}/>
-          <Jet x={1060} y={170} angle={-20} power={0.4} scale={0.8}/>
+        <g transform={`translate(960,${520+dy}) rotate(${lean}) translate(${-540*0.82},0)`}>
+          <g transform="scale(0.82)">
+            <Roadster2 scale={1} wing={0.8} headlight={1}/>
+            <Jet x={70} y={210} angle={205} power={0.75} scale={1.0}/>
+            <Jet x={1055} y={210} angle={-25} power={0.45} scale={0.8}/>
+            <Jet x={300} y={272} angle={90} power={0.5} scale={0.9}/>
+            <Jet x={780} y={272} angle={90} power={0.5} scale={0.9}/>
+          </g>
         </g>
       </svg>
       <Caption tag="进阶" title="喷口可定向：帮助加速、过弯、起步" sub="按需调整各喷口的方向与开度，能在直线上再加一把推力、过弯时多一份侧向力——这是“推进辅助操控”，不只是悬浮。"/>
@@ -177,14 +207,14 @@ const Vector: React.FC = () => {
 const Limits: React.FC = () => {
   const f = useCurrentFrame();
   const items = ['不是真正的航空飞行，只是短时冷气推进','高压气瓶容量有限，喷射时间很短','噪音、安全、法规都是现实门槛','截至目前仍是概念 / 演示，未量产交付'];
-  const appear=(i:number)=>interpolate(f,[10+i*12,22+i*12],[0,1],{extrapolateRight:'clamp'});
+  const appear=(i:number)=>interpolate(f,[12+i*14,26+i*14],[0,1],{extrapolateRight:'clamp'});
   return (
     <AbsoluteFill>
-      <AbsoluteFill style={{justifyContent:'center', paddingLeft:140}}>
+      <AbsoluteFill style={{justifyContent:'center', paddingLeft:150, paddingBottom:120}}>
         {items.map((t,i)=>(
-          <div key={i} style={{display:'flex',alignItems:'center',gap:20,opacity:appear(i),transform:`translateX(${(1-appear(i))*40}px)`, margin:'14px 0'}}>
-            <div style={{width:16,height:16,borderRadius:8,background:C.tesla}}/>
-            <div style={{color:C.ink, fontSize:40, fontWeight:600}}>{t}</div>
+          <div key={i} style={{display:'flex',alignItems:'center',gap:24,opacity:appear(i),transform:`translateX(${(1-appear(i))*40}px)`, margin:'16px 0'}}>
+            <div style={{width:9,height:9,borderRadius:5,background:C.tesla, boxShadow:`0 0 14px ${C.tesla}`}}/>
+            <div style={{color:C.ink, fontSize:38, fontWeight:400, letterSpacing:0.3}}>{t}</div>
           </div>
         ))}
       </AbsoluteFill>
@@ -195,13 +225,16 @@ const Limits: React.FC = () => {
 
 const End: React.FC = () => {
   const f = useCurrentFrame(); const {fps}=useVideoConfig();
-  const s = spring({frame:f, fps, config:{damping:200}, durationInFrames:30});
+  const s = spring({frame:f, fps, config:{damping:200}, durationInFrames:40});
+  const track = interpolate(f,[0,50],[6,18],{extrapolateRight:'clamp'});
+  const line = interpolate(f,[16,46],[0,1],{extrapolateRight:'clamp'});
   return (
     <AbsoluteFill style={{justifyContent:'center', alignItems:'center'}}>
-      <div style={{textAlign:'center', transform:`scale(${0.9+s*0.1})`, opacity:s}}>
-        <div style={{color:C.tesla, fontWeight:900, letterSpacing:16, fontSize:72}}>T E S L A</div>
-        <div style={{color:C.ink, fontSize:40, marginTop:16}}>ROADSTER 2 · SpaceX Package</div>
-        <div style={{color:C.dim, fontSize:26, marginTop:30}}>冷气推进原理讲解 · 本片由代码生成</div>
+      <div style={{textAlign:'center', opacity:s}}>
+        <div style={{color:C.ink, fontWeight:800, letterSpacing:track, fontSize:84}}>T E S L A</div>
+        <div style={{width:interpolate(line,[0,1],[0,420]), height:1, background:`linear-gradient(90deg,transparent,${C.tesla},transparent)`, margin:'28px auto'}}/>
+        <div style={{color:C.dim, fontSize:34, fontWeight:300, letterSpacing:3}}>ROADSTER 2 · SpaceX Package</div>
+        <div style={{color:C.faint, fontSize:22, marginTop:34, fontWeight:300, letterSpacing:1}}>冷气推进原理讲解 · 本片由代码生成</div>
       </div>
     </AbsoluteFill>
   );
