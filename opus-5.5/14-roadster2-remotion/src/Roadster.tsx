@@ -25,8 +25,7 @@ const CarStage: React.FC<{children?:React.ReactNode; y?:number; carScale?:number
  ({children, y=470, carScale=0.82, wing=0, headlight=1, camScale=1}) => (
   <svg width="1920" height="1080" style={{position:'absolute',inset:0}}>
     <g transform={`translate(960,${y}) scale(${camScale}) translate(${-540*carScale},0)`}>
-      <g transform={`scale(${carScale})`}><Roadster2 scale={1} wing={wing} headlight={headlight}/></g>
-      {children}
+      <g transform={`scale(${carScale})`}><Roadster2 scale={1} wing={wing} headlight={headlight}/>{children}</g>
     </g>
   </svg>
 );
@@ -62,7 +61,7 @@ const Reveal: React.FC = () => {
       <svg width="1920" height="1080" style={{position:'absolute',inset:0}}>
         <g transform={`translate(${960+x},470) scale(${cam}) translate(${-540*0.86},0)`}>
           <g transform="scale(0.86)"><Roadster2 scale={1} wing={0} headlight={head}/></g>
-          <g transform="scale(0.86)"><rect x={200} y={110} width={90} height={150} fill="#ffffff" opacity={shine*0.1} transform="skewX(-22)"/></g>
+          <g transform="scale(0.86)"><rect x={300} y={60} width={90} height={200} fill="#ffffff" opacity={shine*0.1} transform="skewX(-22)"/></g>
         </g>
       </svg>
       <Caption tag="Roadster 2 · 第二代" title="最快的量产电动跑车" sub="官方称 0–100 km/h 约 1.9 秒。但真正让它出圈的，是马斯克说的那套能让它“飞”的 SpaceX Package。"/>
@@ -101,20 +100,20 @@ const Layout: React.FC = () => {
   const f = useCurrentFrame();
   const cam = usePush(1.0, 1.05, 160);
   const appear = (d:number)=>interpolate(f,[d,d+10],[0,1],{extrapolateRight:'clamp'});
-  // thruster positions in car-local coords (car is 1080 wide, wheels at y~252)
+  // thruster positions in car-local coords (traced body: sill y~276, roof y~17, nose x~42, tail x~1035)
   const thr = [
-    {x:230,y:262,a:90}, {x:400,y:262,a:90}, {x:560,y:262,a:90}, {x:720,y:262,a:90}, {x:880,y:262,a:90}, // underside
-    {x:78,y:238,a:178}, {x:1050,y:228,a:2}, // nose / tail
+    {x:300,y:280,a:90}, {x:420,y:280,a:90}, {x:540,y:280,a:90}, {x:660,y:280,a:90}, {x:790,y:280,a:90}, // underside, between wheels
+    {x:42,y:240,a:178}, {x:1035,y:236,a:2}, // nose / tail
   ];
   return (
     <AbsoluteFill>
       <CarStage y={430} carScale={0.82} camScale={cam}>
         {/* COPV tank callout above rear deck */}
         <g opacity={appear(48)}>
-          <line x1={820} y1={170} x2={820} y2={120} stroke={C.gold} strokeWidth={1.5} opacity={0.6}/>
-          <rect x={720} y={66} width={200} height={54} rx={27} fill="#10131a" stroke={C.gold} strokeWidth={1.5}/>
-          <ellipse cx={766} cy={93} rx={20} ry={16} fill="none" stroke={C.gold} strokeWidth={1.5}/>
-          <text x={800} y={99} fill={C.gold} fontSize={19} fontWeight={600} fontFamily={FONT}>COPV 高压罐</text>
+          <line x1={830} y1={44} x2={830} y2={-6} stroke={C.gold} strokeWidth={1.5} opacity={0.6}/>
+          <rect x={730} y={-60} width={200} height={54} rx={27} fill="#10131a" stroke={C.gold} strokeWidth={1.5}/>
+          <ellipse cx={776} cy={-33} rx={20} ry={16} fill="none" stroke={C.gold} strokeWidth={1.5}/>
+          <text x={810} y={-27} fill={C.gold} fontSize={19} fontWeight={600} fontFamily={FONT}>COPV 高压罐</text>
         </g>
         {thr.map((p,i)=>(
           <g key={i} opacity={appear(8+i*5)}>
@@ -139,15 +138,15 @@ const Newton: React.FC = () => {
         <g transform={`translate(960,480) scale(${cam}) translate(${-540*0.82},0)`}>
           <g transform="scale(0.82)">
             <Roadster2 scale={1} wing={0.3} headlight={1}/>
-            <Jet x={540} y={272} angle={90} power={p} scale={1.5}/>
+            <Jet x={540} y={280} angle={90} power={p} scale={1.5}/>
             <g opacity={p}>
-              <line x1={540} y1={150} x2={540} y2={150-140*p} stroke={C.gold} strokeWidth={9} strokeLinecap="round"/>
-              <path d={`M540,${150-140*p} l-15,24 l30,0 z`} fill={C.gold}/>
+              <line x1={540} y1={4} x2={540} y2={4-130*p} stroke={C.gold} strokeWidth={9} strokeLinecap="round"/>
+              <path d={`M540,${4-130*p-20} l-15,24 l30,0 z`} fill={C.gold}/>
             </g>
           </g>
           <g opacity={p}>
-            <text x={90} y={-30} fill={C.gold} fontSize={27} fontWeight={700} fontFamily={FONT}>反作用力 ↑ 车被上推</text>
-            <text x={90} y={300} fill={C.jet} fontSize={25} fontWeight={600} fontFamily={FONT}>高压气体喷出 ↓</text>
+            <text x={90} y={-120} fill={C.gold} fontSize={27} fontWeight={700} fontFamily={FONT}>反作用力 ↑ 车被上推</text>
+            <text x={520} y={320} fill={C.jet} fontSize={25} fontWeight={600} fontFamily={FONT}>高压气体喷出 ↓</text>
           </g>
         </g>
       </svg>
@@ -170,9 +169,9 @@ const Hover: React.FC = () => {
         <g transform={`translate(960,${520+dy}) scale(${cam}) translate(${-540*0.82},0)`}>
           <g transform="scale(0.82)">
             <Roadster2 scale={1} wing={0.6} headlight={1}/>
-            <Jet x={250} y={272} angle={90} power={0.55+0.45*lift} scale={1.2}/>
-            <Jet x={540} y={272} angle={90} power={0.5+0.4*lift} scale={1.1}/>
-            <Jet x={830} y={272} angle={90} power={0.55+0.45*lift} scale={1.2}/>
+            <Jet x={330} y={280} angle={90} power={0.55+0.45*lift} scale={1.2}/>
+            <Jet x={545} y={280} angle={90} power={0.5+0.4*lift} scale={1.1}/>
+            <Jet x={760} y={280} angle={90} power={0.55+0.45*lift} scale={1.2}/>
           </g>
         </g>
       </svg>
@@ -192,10 +191,10 @@ const Vector: React.FC = () => {
         <g transform={`translate(960,${520+dy}) rotate(${lean}) translate(${-540*0.82},0)`}>
           <g transform="scale(0.82)">
             <Roadster2 scale={1} wing={0.8} headlight={1}/>
-            <Jet x={70} y={210} angle={205} power={0.75} scale={1.0}/>
-            <Jet x={1055} y={210} angle={-25} power={0.45} scale={0.8}/>
-            <Jet x={300} y={272} angle={90} power={0.5} scale={0.9}/>
-            <Jet x={780} y={272} angle={90} power={0.5} scale={0.9}/>
+            <Jet x={42} y={240} angle={200} power={0.75} scale={1.0}/>
+            <Jet x={1035} y={236} angle={-20} power={0.45} scale={0.8}/>
+            <Jet x={360} y={280} angle={90} power={0.5} scale={0.9}/>
+            <Jet x={730} y={280} angle={90} power={0.5} scale={0.9}/>
           </g>
         </g>
       </svg>
