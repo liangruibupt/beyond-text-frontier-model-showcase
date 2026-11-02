@@ -1,0 +1,193 @@
+"""Generate the Roadster2 SVG component from points traced off ref/roadster2_side.png.
+
+Photo coords (1568x481) are mapped into the 1080-wide local box the scenes use:
+wheel centres at y=220, sill at ~y273, ground at ~y305. Run:
+    .venv/bin/python tools/trace_roadster.py
+It rewrites the Roadster2 block in src/lib.tsx in place.
+"""
+import math, re, pathlib
+
+S = 0.652            # photo px -> local units
+OX, OY = 10, 319     # photo anchor (nose x, wheel-centre y)
+LX, LY = 40, 220     # local anchor
+
+
+def m(p):
+    x, y = p
+    return (round(LX + (x - OX) * S, 1), round(LY + (y - OY) * S, 1))
+
+
+def cr_path(pts, closed=True):
+    """Catmull-Rom spline through pts -> SVG cubic path (local coords)."""
+    P = [m(p) for p in pts]
+    n = len(P)
+    out = [f"M{P[0][0]},{P[0][1]}"]
+    rng = range(n) if closed else range(n - 1)
+    for i in rng:
+        p0 = P[(i - 1) % n] if (closed or i > 0) else P[i]
+        p1 = P[i]
+        p2 = P[(i + 1) % n]
+        p3 = P[(i + 2) % n] if (closed or i + 2 < n) else p2
+        c1 = (p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6)
+        c2 = (p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6)
+        out.append(f"C{c1[0]:.1f},{c1[1]:.1f} {c2[0]:.1f},{c2[1]:.1f} {p2[0]},{p2[1]}")
+    if closed:
+        out.append("Z")
+    return " ".join(out)
+
+
+def poly(pts):
+    P = [m(p) for p in pts]
+    return "M" + " L".join(f"{x},{y}" for x, y in P) + " Z"
+
+
+# ---- traced outlines (photo coords) ----
+BODY = [
+    (20, 401), (9, 372), (8, 338), (13, 304), (26, 280), (48, 250), (72, 226),
+    (100, 205), (128, 185), (160, 171), (200, 160), (250, 154), (300, 153),
+    (350, 153), (385, 151), (420, 138), (470, 112), (520, 88), (580, 64),
+    (650, 41), (720, 22), (790, 12), (860, 8), (930, 10), (1010, 17),
+    (1100, 30), (1200, 49), (1300, 70), (1400, 94), (1456, 113), (1495, 121),
+    (1528, 128), (1534, 146), (1548, 178), (1559, 220), (1562, 265),
+    (1559, 310), (1553, 350), (1542, 385), (1522, 399), (1460, 402),
+    (1300, 404), (1180, 404), (900, 397), (600, 400), (360, 405), (200, 404),
+    (110, 403),
+]
+GLASS = [
+    (432, 150), (480, 113), (522, 92), (562, 74), (602, 59), (680, 45),
+    (760, 31), (840, 25), (900, 25), (960, 30), (1040, 40), (1120, 54),
+    (1188, 70), (1150, 92), (1080, 102), (1000, 110), (960, 116), (920, 121),
+    (840, 128), (760, 136), (680, 143), (600, 149), (520, 154), (468, 155),
+]
+DOOR = [(440, 168), (437, 300), (440, 384), (600, 378), (760, 368), (845, 352),
+        (880, 300), (905, 220), (918, 160), (926, 124)]
+VENT = [(338, 194), (432, 200), (426, 222), (382, 226)]
+HEADLIGHT = [(36, 268), (60, 240), (92, 220), (100, 230), (70, 250), (46, 276)]
+DIFFUSER = [(1492, 262), (1560, 280), (1556, 380), (1522, 399), (1494, 396)]
+TAILLAMP = [(1455, 117), (1528, 128), (1530, 140), (1462, 134)]
+SHOULDER = [(150, 200), (330, 186), (600, 176), (900, 168), (1150, 172), (1350, 160), (1470, 150)]
+LOWSHADE = [(110, 403), (200, 330), (420, 300), (900, 292), (1180, 300), (1300, 330),
+            (1460, 402), (1180, 404), (600, 400), (360, 405)]
+
+FRONT_W = m((239, 319))
+REAR_W = m((1324, 319))
+TIRE_R = round(130 * S, 1)
+ARCH_R = round(144 * S, 1)
+RIM_R = round(98 * S, 1)
+SILL_Y = m((0, 404))[1]
+
+
+def wheel_spokes(cx, cy):
+    """5 Y-split spokes, like the reference wheel."""
+    parts = []
+    for k in range(5):
+        a = -math.pi / 2 + k * 2 * math.pi / 5
+        hx, hy = cx + math.cos(a) * 14, cy + math.sin(a) * 14
+        mx, my = cx + math.cos(a) * 34, cy + math.sin(a) * 34
+        stem = f"M{hx:.1f},{hy:.1f} L{mx:.1f},{my:.1f}"
+        for d in (-0.26, 0.26):
+            ex, ey = cx + math.cos(a + d) * (RIM_R - 4), cy + math.sin(a + d) * (RIM_R - 4)
+            stem += f" M{mx:.1f},{my:.1f} L{ex:.1f},{ey:.1f}"
+        parts.append(stem)
+    return " ".join(parts)
+
+
+def wheel(cx, cy):
+    return f"""      <g>
+        <circle cx={{{cx}}} cy={{{cy}}} r={{{TIRE_R}}} fill="#0c0d0f"/>
+        <circle cx={{{cx}}} cy={{{cy}}} r={{{TIRE_R - 3}}} fill="none" stroke="#25282d" strokeWidth={{2}}/>
+        <circle cx={{{cx}}} cy={{{cy}}} r={{{RIM_R}}} fill="url(#r2rim)"/>
+        <path d="{wheel_spokes(cx, cy)}" stroke="#2e3238" strokeWidth={{7}} strokeLinecap="round" fill="none"/>
+        <path d="{wheel_spokes(cx, cy)}" stroke="#4a4f57" strokeWidth={{1.6}} strokeLinecap="round" fill="none" opacity={{0.6}}/>
+        <circle cx={{{cx}}} cy={{{cy}}} r={{{RIM_R}}} fill="none" stroke="#16181b" strokeWidth={{3}}/>
+        <circle cx={{{cx}}} cy={{{cy}}} r={{11}} fill="#202328" stroke="#3a3f47" strokeWidth={{2}}/>
+        <path d="M{cx - RIM_R * 0.7:.1f},{cy - RIM_R * 0.7:.1f} A{RIM_R} {RIM_R} 0 0 1 {cx + RIM_R * 0.6:.1f},{cy - RIM_R * 0.8:.1f}" fill="none" stroke="#7a828e" strokeWidth={{1.5}} opacity={{0.45}}/>
+      </g>"""
+
+
+fx, fy = FRONT_W
+rx, ry = REAR_W
+nose_jet = m((14, 345))
+
+BLOCK = f"""/* -------------------------------------------------------------- *
+ * Roadster 2 side profile, generated by tools/trace_roadster.py   *
+ * from points traced off ref/roadster2_side.png (real car photo). *
+ * Local box ~1080 wide: wheel centres y={fy}, sill y~{SILL_Y},        *
+ * ground y~{round(fy + TIRE_R)}. Pearl-white body, black glass, black   *
+ * 5 Y-spoke wheels. `wing` adds a sheen pulse; `headlight` lights  *
+ * the headlamp. Edit the point lists in the script, not this code. *
+ * -------------------------------------------------------------- */
+export const R2 = {{frontX:{fx}, rearX:{rx}, wheelY:{fy}, tireR:{TIRE_R}, sillY:{SILL_Y}, noseX:{nose_jet[0]}, noseY:{nose_jet[1]}}};
+
+export const Roadster2: React.FC<{{scale?:number; wing?:number; headlight?:number}}> = ({{scale=1, wing=0, headlight=1}}) => {{
+  return (
+  <g transform={{`scale(${{scale}})`}}>
+    <defs>
+      <linearGradient id="r2body" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#fbfbfc"/>
+        <stop offset="0.35" stopColor="#eceef1"/>
+        <stop offset="0.7" stopColor="#c9cdd3"/>
+        <stop offset="1" stopColor="#9ba1aa"/>
+      </linearGradient>
+      <linearGradient id="r2shade" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#5d636c" stopOpacity="0"/>
+        <stop offset="1" stopColor="#3c4148" stopOpacity="0.55"/>
+      </linearGradient>
+      <linearGradient id="r2glass" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#3a4250"/>
+        <stop offset="0.6" stopColor="#1b2028"/>
+        <stop offset="1" stopColor="#11151a"/>
+      </linearGradient>
+      <radialGradient id="r2rim" cx="0.45" cy="0.4" r="0.6">
+        <stop offset="0" stopColor="#24272c"/>
+        <stop offset="1" stopColor="#0f1114"/>
+      </radialGradient>
+      <linearGradient id="r2under" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stopColor={{C.tesla}} stopOpacity="0"/>
+        <stop offset="0.5" stopColor={{C.tesla}} stopOpacity="0.9"/>
+        <stop offset="1" stopColor={{C.tesla}} stopOpacity="0"/>
+      </linearGradient>
+      <clipPath id="r2clip"><path d="{cr_path(BODY)}"/></clipPath>
+    </defs>
+
+    <ellipse cx={{{round((fx + rx) / 2)}}} cy={{{round(fy + TIRE_R + 2)}}} rx={{{round((rx - fx) / 2 + TIRE_R + 40)}}} ry={{20}} fill="#000" opacity={{0.6}}/>
+
+    <path d="{cr_path(BODY)}" fill="url(#r2body)"/>
+
+    <g clipPath="url(#r2clip)">
+      <path d="{cr_path(LOWSHADE)}" fill="url(#r2shade)"/>
+      <circle cx={{{fx}}} cy={{{fy}}} r={{{ARCH_R}}} fill="#0a0b0d"/>
+      <circle cx={{{rx}}} cy={{{ry}}} r={{{ARCH_R}}} fill="#0a0b0d"/>
+      <path d="{poly(DIFFUSER)}" fill="#14161a"/>
+    </g>
+
+    <path d="{cr_path(SHOULDER, closed=False)}" fill="none" stroke="#ffffff" strokeWidth={{2.2}} opacity={{0.55}}/>
+    <path d="{cr_path(GLASS)}" fill="url(#r2glass)"/>
+    <path d="{cr_path([(470, 108), (620, 56), (780, 28), (880, 24)], closed=False)}" fill="none" stroke="#8d99a8" strokeWidth={{1.6}} opacity={{0.45}}/>
+    <path d="M{m((548, 98))[0]},{m((548, 98))[1]} L{m((551, 152))[0]},{m((551, 152))[1]}" stroke="#0b0d10" strokeWidth={{2.5}}/>
+    <path d="M{m((936, 26))[0]},{m((936, 26))[1]} L{m((916, 122))[0]},{m((916, 122))[1]}" stroke="#0b0d10" strokeWidth={{3}}/>
+    <path d="{cr_path(DOOR, closed=False)}" fill="none" stroke="#5b6069" strokeWidth={{1.3}} opacity={{0.8}}/>
+    <path d="{poly(VENT)}" fill="#15181c"/>
+    <path d="{poly(TAILLAMP)}" fill="#1a1c20"/>
+    <path d="{poly(HEADLIGHT)}" fill="#14171b"/>
+    <path d="M{m((44, 266))[0]},{m((44, 266))[1]} L{m((94, 224))[0]},{m((94, 224))[1]}" stroke="#eef6ff" strokeWidth={{2.2}} strokeLinecap="round" opacity={{0.15 + 0.85 * headlight}}/>
+    <rect x={{{m((72, 268))[0]}}} y={{{m((72, 268))[1]}}} width={{{round(14 * S, 1)}}} height={{{round(36 * S, 1)}}} rx={{3}} fill="#e8892c" opacity={{0.85}}/>
+    <rect x={{{m((1477, 276))[0]}}} y={{{m((1477, 276))[1]}}} width={{{round(13 * S, 1)}}} height={{{round(40 * S, 1)}}} rx={{3}} fill="#c4222a" opacity={{0.85}}/>
+    <path d="M{m((350, 400))[0]},{m((350, 400))[1]} L{m((1185, 398))[0]},{m((1185, 398))[1]} L{m((1185, 410))[0]},{m((1185, 410))[1]} L{m((350, 412))[0]},{m((350, 412))[1]} Z" fill="#141619"/>
+    <path d="{cr_path(SHOULDER, closed=False)}" fill="none" stroke="#fff6e6" strokeWidth={{4}} opacity={{0.4 * wing}}/>
+    <rect x={{{m((380, 0))[0]}}} y={{{round(SILL_Y + 6, 1)}}} width={{{round((1170 - 380) * S)}}} height={{3}} rx={{1.5}} fill="url(#r2under)"/>
+
+{wheel(fx, fy)}
+{wheel(rx, ry)}
+  </g>
+  );
+}};
+
+"""
+
+lib = pathlib.Path(__file__).resolve().parent.parent / "src" / "lib.tsx"
+src = lib.read_text()
+start = src.index("/* -------------------------------------------------------------- *\n * ", src.index("export const Jet"))
+end = src.index("export const useAppear")
+lib.write_text(src[:start] + BLOCK + src[end:])
+print("wrote", lib, "front", FRONT_W, "rear", REAR_W, "tireR", TIRE_R, "sill", SILL_Y, "nose", nose_jet)
